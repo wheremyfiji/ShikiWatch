@@ -17,3 +17,6 @@
 | <img src="screenshots/scr-andr-library.jpg?raw=true" width="200"/> | <img src="screenshots/scr-andr-anime_info.jpg?raw=true" width="200"/> | <img src="screenshots/scr-andr-search-filters.jpg?raw=true" width="200"/> |<img src="screenshots/scr-andr-local_history.jpg" width="200"/> |
 | :--: | :--: | :--: | :--: |
 |Библиотека|Аниме|Фильтры поиска|Локальная история|
+
+#### Windows
+soon
