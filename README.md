@@ -10,7 +10,7 @@
 2. Запустите приложение и войдите в свой аккаунт **Shikimori**
 3. Наслаждайтесь **онлайн просмотром**, а также удобным доступом к **любимому аниме**
 
-### Скриншоты [больше](https://github.com/NozhkiBaal/ShikiDev/tree/master/screenshots)
+### Скриншоты [Ещё](https://github.com/wheremyfiji/ShikiDev/tree/master/screenshots)
 
 #### Android
 
