@@ -1,0 +1,171 @@
+import 'package:flutter/material.dart';
+
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:tinycolor2/tinycolor2.dart';
+
+//part 'app_theme.g.dart';
+// @riverpod
+// AppThemeDataNotifier appThemeData(AppThemeDataRef ref) {
+//   return AppThemeDataNotifier();
+// }
+
+class NoTransitions extends PageTransitionsTheme {
+  @override
+  Widget buildTransitions<T>(
+    route,
+    context,
+    animation,
+    secondaryAnimation,
+    child,
+  ) {
+    return child;
+
+    return super.buildTransitions(
+      route,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
+}
+
+final appThemeDataProvider = Provider.autoDispose<AppThemeDataNotifier>((ref) {
+  return AppThemeDataNotifier();
+});
+
+class AppThemeData {
+  const AppThemeData({
+    required this.day,
+    required this.night,
+    required this.midnight,
+  });
+
+  final ThemeData day;
+  final ThemeData night;
+  final ThemeData midnight;
+}
+
+class AppThemeDataNotifier {
+  late AppThemeData _data = _createAppThemeData();
+
+  AppThemeData get data => _data;
+
+  AppThemeData fillWith(
+      {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {
+    _data = _createAppThemeData(light: light, dark: dark, useMonet: useMonet);
+    return _data;
+  }
+
+  AppThemeData _createAppThemeData(
+      {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {
+    return AppThemeData(
+      day: _createThemeData(light, Brightness.light, useMonet!),
+      night: _createThemeData(dark, Brightness.dark, useMonet),
+      midnight: _createThemeDataMidnight(dark, useMonet),
+    );
+  }
+
+  ThemeData _createThemeData(
+      ColorScheme? scheme, Brightness brightness, bool useMonet) {
+    final isDark = brightness == Brightness.dark;
+    final defScheme = isDark ? defDarkScheme : defLightScheme;
+    final harmonized = useMonet ? scheme?.harmonized() ?? defScheme : defScheme;
+    final colorScheme = harmonized.copyWith(
+      background: harmonized.surface.shade(isDark ? 30 : 3),
+      outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
+    );
+    final origin = isDark ? ThemeData.dark() : ThemeData.light();
+    return origin.copyWith(
+      //pageTransitionsTheme: NoTransitions(),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        //color: colorScheme.background,
+        backgroundColor: colorScheme.background,
+        foregroundColor: colorScheme.onSurface,
+        //shadowColor: Colors.transparent,
+        //surfaceTintColor: Colors.transparent,
+      ),
+      canvasColor: colorScheme.background,
+      scaffoldBackgroundColor: colorScheme.background,
+      dialogBackgroundColor: colorScheme.background,
+      drawerTheme: origin.drawerTheme.copyWith(
+        backgroundColor: colorScheme.surface,
+      ),
+      cardTheme: origin.cardTheme.copyWith(
+        elevation: 0,
+        shadowColor: Colors.transparent,
+      ),
+      snackBarTheme: origin.snackBarTheme.copyWith(
+        backgroundColor: colorScheme.surfaceVariant,
+        contentTextStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+        behavior: SnackBarBehavior.floating,
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.only(
+        //     topLeft: Radius.circular(11),
+        //     topRight: Radius.circular(11),
+        //   ),
+        // ),
+        //backgroundColor: colorScheme.primaryContainer,
+        //contentTextStyle: TextStyle(color: colorScheme.onPrimaryContainer),
+      ),
+      listTileTheme: origin.listTileTheme.copyWith(
+        minVerticalPadding: 12,
+        iconColor: colorScheme.onSurfaceVariant,
+      ),
+      // dropdownMenuTheme: origin.dropdownMenuTheme.copyWith(
+      //   inputDecorationTheme:
+      //       const InputDecorationTheme(border: OutlineInputBorder()),
+      //   //menuStyle: MenuStyle(),
+      // ),
+    );
+  }
+
+  ThemeData _createThemeDataMidnight(ColorScheme? scheme, bool useMonet) {
+    final origin = _createThemeData(scheme, Brightness.dark, useMonet);
+    return origin.copyWith(
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.black,
+        foregroundColor: origin.colorScheme.onSurface,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+      ),
+      primaryColor: Colors.black,
+      canvasColor: Colors.black,
+      scaffoldBackgroundColor: Colors.black,
+      drawerTheme: origin.drawerTheme.copyWith(
+        backgroundColor: Colors.black,
+      ),
+      colorScheme: origin.colorScheme.copyWith(
+        brightness: Brightness.dark,
+        background: Colors.black,
+        surface: origin.colorScheme.background,
+      ),
+      navigationRailTheme: origin.navigationRailTheme.copyWith(
+        backgroundColor: Colors.black,
+      ),
+      navigationBarTheme: origin.navigationBarTheme.copyWith(
+        elevation: 0,
+        backgroundColor: Colors.black,
+      ),
+    );
+  }
+
+  static const defaultAccent = Colors.orange;
+  //Color.fromARGB(255, 149, 30, 229);
+
+  static final defLightScheme = ColorScheme.fromSeed(
+    seedColor: defaultAccent,
+    brightness: Brightness.light,
+  );
+
+  static final defDarkScheme = ColorScheme.fromSeed(
+    seedColor: defaultAccent,
+    brightness: Brightness.dark,
+  );
+}

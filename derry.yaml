@@ -1,0 +1,15 @@
+sync:
+  - flutter clean
+  - flutter pub get
+gen:
+  - flutter pub run build_runner build --delete-conflicting-outputs
+test_build:
+  - $sync
+  - $gen
+  - flutter build apk --target-platform android-arm64
+  #- flutter pub run shikidev:rename_apk
+android_release:
+  - $sync
+  - $gen
+  - flutter build apk --target-platform android-arm64
+  - flutter pub run shikidev:rename_apk
