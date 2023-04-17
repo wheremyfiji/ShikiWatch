@@ -12,33 +12,14 @@ class RequestInterceptors extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     ConnectivityResult connectivity = await Connectivity().checkConnectivity();
-    if (connectivity == ConnectivityResult.none
-        //&&
-        //    options.extra[AppConfig.dioNeedToCacheKey] == false
-        ) {
+    if (connectivity == ConnectivityResult.none) {
       handler.reject(
         NoInternetConnectionException(options),
-        // DioError(
-        //     requestOptions: options,
-        //     message: 'No internet connection detected',
-        //     type: DioErrorType.connectionError),
       );
       return;
-      //throw NoInternetConnectionException(options);
     }
     super.onRequest(options, handler);
-    //return handler.next(options);
   }
-
-  // @override
-  // void onResponse(
-  //   Response<dynamic> response,
-  //   ResponseInterceptorHandler handler,
-  // ) {
-  //   final code = response.statusCode;
-  //   log('::onResponse -> code: $code');
-  //   return handler.next(response);
-  // }
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
@@ -85,7 +66,6 @@ class BadResponceErrorException extends DioError {
 
   @override
   String toString() {
-    // return 'Host or unknown error';
     return 'Код ошибки 422 (Bad Responce)';
   }
 }
@@ -95,7 +75,6 @@ class UnknownErrorException extends DioError {
 
   @override
   String toString() {
-    // return 'Host or unknown error';
     return 'Скорее всего Shikimori недоступен, попробуй позже';
   }
 }
@@ -141,7 +120,6 @@ class NotFoundException extends DioError {
 
   @override
   String toString() {
-    // return 'The requested information could not be found bebra';
     return 'Ошибка 404. Ничего не найдено';
   }
 }

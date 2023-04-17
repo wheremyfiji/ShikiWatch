@@ -38,12 +38,5 @@ class AppThemeBuilder extends ConsumerWidget {
         );
       },
     );
-    // final appTheme = ref.watch(appThemeDataProvider);
-    // return DynamicColorBuilder(
-    //   builder: (light, dark) => builder(
-    //     context,
-    //     appTheme.fillWith(light: light, dark: dark, useMonet: true),
-    //   ),
-    // );
   }
 }

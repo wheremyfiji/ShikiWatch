@@ -50,7 +50,6 @@ class DioHttpService implements HttpService {
     //     },
     //   ));
     // }
-    //dio.interceptors.add(DioNetworkLogger());
     dio.interceptors.add(RetryInterceptor(
       dio: dio,
       logPrint: log,
@@ -60,7 +59,6 @@ class DioHttpService implements HttpService {
       ],
     ));
 
-    //dio.interceptors.add(CustomInterceptors());
     dio.interceptors.add(CacheInterceptor(storageService));
     dio.interceptors.add(RefreshTokenInterceptor(dio));
     dio.interceptors.add(RequestInterceptors(dio));
@@ -84,15 +82,10 @@ class DioHttpService implements HttpService {
     //dio.addSentry();
   }
 
-  /// Storage service used for caching http responses
   final CacheStorageRepo storageService;
-
-  /// The Dio Http client
   late final Dio dio;
 
-  /// The Dio base options
   BaseOptions get baseOptions => BaseOptions(
-        //receiveDataWhenStatusError: true,
         baseUrl: baseUrl,
         headers: headers,
         connectTimeout: const Duration(seconds: 12),
@@ -104,19 +97,13 @@ class DioHttpService implements HttpService {
   @override
   String get baseUrl => AppConfig.baseUrl;
 
-  // Default headers
   @override
   Map<String, String> headers = {
-    //'User-Agent': 'Shikimori Flutter App',
-    //'User-Agent': 'Shikimori Flutter Windows App',
     'User-Agent': TargetP.instance.userAgent,
-    //'accept': 'application/json',
-    //'content-type': 'application/json'
   };
 
   /// GET method
   @override
-  // Future<Map<String, dynamic>> get(String endpoint,
   Future<dynamic> get(String endpoint,
       {Map<String, dynamic>? queryParameters,
       Options? options,
@@ -130,11 +117,6 @@ class DioHttpService implements HttpService {
         endpoint,
         queryParameters: queryParameters,
         options: options,
-        // options: Options(
-        //   headers: {
-        //     'Authorization': 'Bearer $token',
-        //   },
-        // ),
         cancelToken: cancelToken,
       );
       return response.data;
@@ -217,18 +199,6 @@ class DioHttpService implements HttpService {
         .delete(endpoint, options: options)
         .then((value) => value.statusCode?.clamp(200, 299) == value.statusCode)
         .onError((_, __) => false);
-    // try {
-    //   var response = await dio.delete(
-    //     endpoint,
-    //     data: data,
-    //     queryParameters: queryParameters,
-    //     options: options,
-    //     cancelToken: cancelToken,
-    //   );
-    //   return response.data;
-    // } catch (e) {
-    //   rethrow;
-    // }
   }
 }
 

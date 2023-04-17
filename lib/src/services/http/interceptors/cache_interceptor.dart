@@ -60,20 +60,20 @@ class CacheInterceptor implements Interceptor {
     );
 
     if (options.extra[AppConfig.dioNeedToCacheKey] == false) {
-      log('(onRequest) Does not need caching', name: 'CacheInterceptor');
+      //log('(onRequest) Does not need caching', name: 'CacheInterceptor');
       if (cacheStorageService.has(storageKey)) {
-        log('(onRequest) Delete responce from caching',
-            name: 'CacheInterceptor');
+        // log('(onRequest) Delete responce from caching',
+        //     name: 'CacheInterceptor');
         cacheStorageService.remove(storageKey);
       }
       return handler.next(options);
     }
 
     if (options.extra[AppConfig.dioCacheForceRefreshKey] == true) {
-      log('(onRequest) Cache Force Refresh', name: 'CacheInterceptor');
+      //log('(onRequest) Cache Force Refresh', name: 'CacheInterceptor');
       if (cacheStorageService.has(storageKey)) {
-        log('(onRequest) Delete responce from caching',
-            name: 'CacheInterceptor');
+        // log('(onRequest) Delete responce from caching',
+        //     name: 'CacheInterceptor');
         cacheStorageService.remove(storageKey);
       }
       return handler.next(options);
@@ -82,7 +82,7 @@ class CacheInterceptor implements Interceptor {
     if (cacheStorageService.has(storageKey)) {
       final cachedResponse = _getCachedResponse(storageKey);
       if (cachedResponse != null) {
-        log('(onRequest) Get response from cache', name: 'CacheInterceptor');
+        //log('(onRequest) Get response from cache', name: 'CacheInterceptor');
         final response = cachedResponse.buildResponse(options);
         return handler.resolve(response);
       }
@@ -118,7 +118,7 @@ class CacheInterceptor implements Interceptor {
     ResponseInterceptorHandler handler,
   ) {
     if (response.requestOptions.extra[AppConfig.dioNeedToCacheKey] == false) {
-      log('(onResponse) Does not need caching', name: 'CacheInterceptor');
+      //log('(onResponse) Does not need caching', name: 'CacheInterceptor');
       return handler.next(response);
     }
 
@@ -131,7 +131,7 @@ class CacheInterceptor implements Interceptor {
 
     if (response.requestOptions.extra[AppConfig.dioCacheForceRefreshKey] ==
         true) {
-      log('(onResponse) Cache Force Refresh', name: 'CacheInterceptor');
+      //log('(onResponse) Cache Force Refresh', name: 'CacheInterceptor');
       return handler.next(response);
     }
 
@@ -144,7 +144,7 @@ class CacheInterceptor implements Interceptor {
         age: DateTime.now(),
         statusCode: response.statusCode!,
       );
-      log('Save response to cache', name: 'CacheInterceptor');
+      //log('Save response to cache', name: 'CacheInterceptor');
       cacheStorageService.set(storageKey, cachedResponse.toJson());
     }
     return handler.next(response);
@@ -159,12 +159,12 @@ class CacheInterceptor implements Interceptor {
       if (cachedResponse.isValid) {
         return cachedResponse;
       } else {
-        log('Cache is outdated, deleting it...', name: 'CacheInterceptor');
+        //log('Cache is outdated, deleting it...', name: 'CacheInterceptor');
         cacheStorageService.remove(storageKey);
         return null;
       }
     } catch (e) {
-      log('Error retrieving response from cache', name: 'CacheInterceptor');
+      //log('Error retrieving response from cache', name: 'CacheInterceptor');
       log('e: $e');
       return null;
     }

@@ -19,7 +19,6 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
   LocalAnimeDatabaseImpl(this.isardb);
 
   static Future<LocalAnimeDatabaseImpl> initialization() async {
-    //final appDocDir = await path_prov.getApplicationDocumentsDirectory();
     final appDocDir = await path_prov.getApplicationSupportDirectory();
     return LocalAnimeDatabaseImpl(
       await Isar.open(
@@ -33,8 +32,6 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
 
   @override
   Stream<List<AnimeDatabase>> getLocalAnimes() {
-    // Query<AnimeDatabase> animeList =
-    //     isardb.animeDatabases.where(sort: Sort.asc).build();
     Query<AnimeDatabase> animeList =
         isardb.animeDatabases.where().sortByLastUpdateDesc().build();
     return animeList.watch(fireImmediately: true);

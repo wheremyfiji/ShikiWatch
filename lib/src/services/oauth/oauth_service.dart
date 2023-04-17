@@ -11,12 +11,7 @@ import '../secure_storage/secure_storage_service.dart';
 class OAuthService {
   static OAuthService instance = OAuthService();
 
-  // String userAgent = TargetP.instance.isDesktop
-  //     ? 'Shikimori Flutter Windows App'
-  //     : 'Shikimori Flutter App';
-
   Map<String, String> headers = {
-    //'User-Agent': 'Shikimori Flutter App',
     'User-Agent': TargetP.instance.isDesktop
         ? 'Shikimori Flutter Windows App'
         : 'Shikimori Flutter App',
@@ -72,8 +67,6 @@ class OAuthService {
         '/oauth/token',
         {
           'grant_type': 'refresh_token',
-          // 'client_id': kShikiClientId,
-          // 'client_secret': kShikiClientSecret,
           'client_id': TargetP.instance.isDesktop
               ? kShikiClientIdDesktop
               : kShikiClientId,
@@ -116,8 +109,6 @@ class OAuthService {
     final Uri userUrl = Uri.https('shikimori.me', 'api/users/whoami');
 
     final Map<String, String> headers = {
-      //'User-Agent': 'Shikimori Flutter App',
-      //'User-Agent': 'Shikimori Flutter Windows App',
       'User-Agent': TargetP.instance.isDesktop
           ? 'Shikimori Flutter Windows App'
           : 'Shikimori Flutter App',

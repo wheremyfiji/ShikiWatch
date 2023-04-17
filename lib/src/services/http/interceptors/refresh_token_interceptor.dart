@@ -18,7 +18,7 @@ class RefreshTokenInterceptor extends Interceptor {
       return handler.next(err);
     }
     if (err.response!.statusCode == 401) {
-      log('RefreshTokenInterceptor:: statusCode == 401');
+      //log('RefreshTokenInterceptor:: statusCode == 401');
       var res = await refreshToken();
       if (res != null) {
         await _retry(err.requestOptions, res);
@@ -29,49 +29,25 @@ class RefreshTokenInterceptor extends Interceptor {
         GoRouter.of(ctx!).go('/login');
       }
     }
-    //super.onError(err, handler);
     return handler.next(err);
   }
 
-  /// Api to get new token from refresh token
-  ///
   Future<String?> refreshToken() async {
-    log('RefreshTokenInterceptor:: refreshToken');
+    //log('RefreshTokenInterceptor:: refreshToken');
 
-    ///call your refesh token api here
     final token = await OAuthService.instance.refreshToken();
 
     return token;
-
-    // if (await OAuthService.instance.refreshToken()) {
-    //   return true;
-    // }
-    // return null;
   }
 
-  /// For retrying request with new token
-  ///
   Future<Response<dynamic>> _retry(
       RequestOptions requestOptions, String newToken) async {
     log('RefreshTokenInterceptor:: _retry');
-    // final options = Options(
-    //   method: requestOptions.method,
-    //   headers: requestOptions.headers,
-    // );
-
-    // final options = requestOptions.copyWith(
-    //   headers: {
-    //     'User-Agent': 'Shikimori Flutter App',
-    //     'Authorization': 'Bearer $newToken',
-    //   },
-    // );
 
     final options = Options(
       method: requestOptions.method,
       responseType: requestOptions.responseType,
       headers: {
-        //'User-Agent': 'Shikimori Flutter App',
-        //'User-Agent': 'Shikimori Flutter Windows App',
         'User-Agent': TargetP.instance.userAgent,
         'Authorization': 'Bearer $newToken',
       },
