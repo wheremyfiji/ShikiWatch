@@ -11,5 +11,5 @@ test_build:
 android_release:
   - $sync
   - $gen
-  - flutter build apk --target-platform android-arm64
+  - flutter build apk --split-per-abi
   - flutter pub run shikidev:rename_apk
