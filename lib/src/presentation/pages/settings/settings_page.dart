@@ -208,7 +208,6 @@ class SettingsPage extends ConsumerWidget {
                       context: context,
                       applicationName: 'Shiki!',
                       applicationVersion: 'v 0.0.1',
-                      //applicationLegalese: 'fdfdfds',
                       useRootNavigator: true,
                     );
                   },
@@ -349,7 +348,6 @@ class PlayerDiscordRpc extends StatelessWidget {
           value: b,
           onChanged: (value) {
             Hive.box(BoxType.settings.name).put(playerDiscordRpc, value);
-            //setState(() {});
           },
         );
       },
@@ -377,7 +375,6 @@ class OledModeWidget extends StatelessWidget {
           value: isOled,
           onChanged: (value) {
             Hive.box(BoxType.settings.name).put(oledModeKey, value);
-            //setState(() {});
           },
         );
       },
@@ -407,7 +404,6 @@ class DynamicColorsWidget extends StatelessWidget {
           value: isDynamic,
           onChanged: (value) {
             Hive.box(BoxType.settings.name).put(dynamicThemeKey, value);
-            //setState(() {});
           },
         );
       },
@@ -439,11 +435,6 @@ class _VersionWidgetState extends State<VersionWidget> {
   @override
   Widget build(BuildContext context) {
     if (packageInfo == null) {
-      // return const SettingsOption(
-      //   //icon: MdiIcons.numeric0Box,
-      //   icon: Icons.sentiment_very_dissatisfied_outlined,
-      //   title: 'Версия',
-      // );
       return const SettingsOption(
         title: 'Версия',
         subtitle: 'Ошибка получения версии',

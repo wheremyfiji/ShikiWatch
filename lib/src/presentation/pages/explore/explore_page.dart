@@ -110,73 +110,7 @@ class ExplorePage extends ConsumerWidget {
             ],
           ),
         ),
-        // body: controller.animes.when(
-        //   data: (data) => RefreshIndicator(
-        //     onRefresh: controller.fetch,
-        //     child: NotificationListener<ScrollNotification>(
-        //       onNotification: (scrollState) {
-        //         if (scrollState is ScrollEndNotification &&
-        //             scrollState.metrics.extentAfter < 100) {
-        //           controller.onLoadMore();
-        //         }
-        //         return false;
-        //       },
-        //       child: CustomScrollView(
-        //         key: const PageStorageKey<String>('ExplorePage'),
-        //         slivers: [
-        //           SliverPadding(
-        //             padding: const EdgeInsets.all(8.0),
-        //             sliver: SliverGrid(
-        //               delegate: SliverChildBuilderDelegate(
-        //                 (context, index) {
-        //                   // if (index >= data.length) {
-        //                   //   return const Padding(
-        //                   //     padding: EdgeInsets.all(16.0),
-        //                   //     child: Center(child: CircularProgressIndicator()),
-        //                   //   );
-        //                   // }
-
-        //                   final model = data[index];
-
-        //                   return Padding(
-        //                     padding: const EdgeInsets.all(4.0),
-        //                     child: AnimeTileExp(model),
-        //                   );
-        //                 },
-        //                 //childCount: data.length + 1,
-        //                 childCount: data.length,
-        //               ),
-        //               gridDelegate:
-        //                   const SliverGridDelegateWithMaxCrossAxisExtent(
-        //                 maxCrossAxisExtent: 150,
-        //                 mainAxisExtent: 220,
-        //               ),
-        //             ),
-        //           ),
-        //           if (controller.hasMore) ...[
-        //             SliverToBoxAdapter(
-        //               child: Center(
-        //                 child: Padding(
-        //                   padding: const EdgeInsets.all(16.0),
-        //                   child: ConstrainedBox(
-        //                       constraints: const BoxConstraints(maxHeight: 130),
-        //                       child: const CircularProgressIndicator()),
-        //                 ),
-        //               ),
-        //             ),
-        //           ],
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        //   loading: () => const Center(child: CircularProgressIndicator()),
-        //   error: (err, stack) => CustomErrorWidget(
-        //     err.toString(),
-        //     () => controller.fetch(),
-        //   ),
-        // ),
       ),
-      //),
     );
   }
 }
@@ -198,7 +132,6 @@ class AnimeTileExp extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       shadowColor: Colors.transparent,
-      //margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: InkWell(
         onTap: () => context.push('/explore/${data.id!}', extra: data),
         child: Column(
@@ -243,7 +176,6 @@ class AnimeTileExp extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  //data.score ?? '',
                   '${getKind(data.kind ?? '')} • ${data.score}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

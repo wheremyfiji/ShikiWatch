@@ -733,37 +733,6 @@ class AnimeVideosWidget extends StatelessWidget {
             );
           },
         ),
-        // Expanded(
-        //   flex: 1,
-        //   child: AspectRatio(
-        //     aspectRatio: 16 / 9,
-        //     child: ClipRRect(
-        //       borderRadius: BorderRadius.circular(12),
-        //       child: Image.network(
-        //         'https://shikimori.one/system/screenshots/original/4784d94f2fd4c2315facb321a34a3816fca95255.JPG?1680714773',
-        //         //height: 300,
-        //         fit: BoxFit.cover,
-        //       ),
-        //     ),
-        //   ),
-        // ),
-        // const SizedBox(
-        //   width: 8,
-        // ),
-        // Expanded(
-        //   flex: 1,
-        //   child: AspectRatio(
-        //     aspectRatio: 16 / 9,
-        //     child: ClipRRect(
-        //       borderRadius: BorderRadius.circular(12),
-        //       child: Image.network(
-        //         'https://shikimori.one/system/screenshots/original/bc5e3a16f7dee5a09783fbf55666b7bccbe851d9.JPG?1680714773',
-        //         //width: 300,
-        //         fit: BoxFit.cover,
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
 

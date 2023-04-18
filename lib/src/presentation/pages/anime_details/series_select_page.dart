@@ -45,7 +45,6 @@ class SeriesSelectPage extends ConsumerWidget {
   final String imageUrl;
   final String studioName;
   final String studioType;
-  //final String animePic;
 
   const SeriesSelectPage({
     super.key,
@@ -57,14 +56,12 @@ class SeriesSelectPage extends ConsumerWidget {
     required this.imageUrl,
     required this.studioName,
     required this.studioType,
-    //required this.animePic,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final anime = ref.watch(isAnimeInDataBaseProvider(shikimoriId));
 
-    /// add selected episode to viewedEpisodes
     void addEpisode(int? episode) async {
       if (episode != null) {
         ref
@@ -80,14 +77,12 @@ class SeriesSelectPage extends ConsumerWidget {
                 episodeNumber: episode,
                 complete: true)
             .then((value) {
-          //showSnackBar(context, 'Серия $episode добавлена');
           showSnackBar(ctx: context, msg: 'Серия $episode добавлена');
           return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
         });
       }
     }
 
-    /// remove selected episode from viewedEpisodes
     void removeEpisode(int? episode) async {
       if (episode != null) {
         ref
@@ -97,7 +92,6 @@ class SeriesSelectPage extends ConsumerWidget {
                 studioId: studioId,
                 episodeNumber: episode)
             .then((value) {
-          //showSnackBar(context, 'Серия $episode удалена');
           showSnackBar(ctx: context, msg: 'Серия $episode удалена');
           return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
         });
@@ -122,24 +116,6 @@ class SeriesSelectPage extends ConsumerWidget {
           orElse: () => null,
         );
 
-    // Episode? ep(int index) {
-    //   if (index == -1) {
-    //     return null;
-    //   }
-    //   return episodesList();
-    // }
-
-    //int getEpNumber() {}
-
-    // bool isEpisodeInDb(int episodeNumber) => anime.maybeWhen(
-    //       //data: (data) => data?.viewedEpisodes.contains(episodeNumber) ?? false,
-    //       data: (data) {
-    //         data?.studios?[0].episodes?[0];
-    //         return true;
-    //       },
-    //       orElse: () => false,
-    //     );
-
     void setSortType(EpisodeSortType type) async {
       ref.read(episodeSortTypeProvider.notifier).update((state) => type);
       context.pop();
@@ -147,14 +123,10 @@ class SeriesSelectPage extends ConsumerWidget {
 
     watchRouteChange() async {
       if (!GoRouter.of(context).location.contains('/player')) {
-        // Here you check for some changes in your route that indicate you are no longer on the page you have pushed before
-        // do something
-
         await Future.delayed(const Duration(milliseconds: 500));
 
         ref.invalidate(isAnimeInDataBaseProvider);
         if (context.mounted) {
-          // remove listener
           GoRouter.of(context).removeListener(watchRouteChange);
         }
       }
@@ -226,9 +198,7 @@ class SeriesSelectPage extends ConsumerWidget {
                     }
 
                     final int seriaNum = int.parse(seria.number ?? '0');
-                    //print(seriaNum);
 
-                    //final isComp = reversedIndex < episodeWatched;
                     final isComp = seriaNum <= episodeWatched;
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
@@ -245,23 +215,10 @@ class SeriesSelectPage extends ConsumerWidget {
                                 builder: (context) => const ContinueDialog(),
                               );
 
-                              //print(dialogValue);
-
                               if (dialogValue ?? false) {
                                 sp = episode?.position ?? '';
-                                //print(sp);
                               }
-                            } //else {}
-
-                            //return;
-                            // context.pushNamed(
-                            //   'player',
-                            //   params: {
-                            //     'link': seria.link ?? '',
-                            //     'name': widget.animeName ?? '',
-                            //     //'ep': widget.epWatched!.toString(),
-                            //     'ep': '${reversedIndex + 1}'
-                            //   },
+                            }
                             AnimePlayerPageExtra data = AnimePlayerPageExtra(
                               studioId: studioId,
                               shikimoriId: shikimoriId,
@@ -280,7 +237,6 @@ class SeriesSelectPage extends ConsumerWidget {
                             GoRouter.of(context)
                                 .pushNamed('player', extra: data);
                             GoRouter.of(context).addListener(watchRouteChange);
-                            //ref.invalidate(isAnimeInDataBaseProvider);
                           }, //запись в бд
                           //title: Text("Серия ${reversedIndex + 1}"),
                           //title: Text("Серия ${seria!.name}"),

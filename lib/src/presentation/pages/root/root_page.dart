@@ -93,22 +93,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                               shellState.goBranch(index: tappedIndex);
                             }
                           },
-                          //onDestinationSelected: (int tappedIndex) =>
-                          //    shellState.goBranch(index: tappedIndex),
                         ),
-                        // const Positioned(
-                        //   bottom: 0,
-                        //   left: 0,
-                        //   right: 0,
-                        //   child: Padding(
-                        //     padding: EdgeInsets.all(8.0),
-                        //     child: Text('sdsdsd'),
-                        //   ),
-                        //   // child: Container(
-                        //   //   color: Colors.amber,
-                        //   //   height: 100,
-                        //   // ),
-                        // )
                       ],
                     ),
                     //const VerticalDivider(thickness: 1, width: 1),
@@ -122,7 +107,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
           : Scaffold(
               body: body,
               bottomNavigationBar: NavigationBar(
-                //destinations: _allDestinations,
                 destinations: const [
                   NavigationDestination(
                     icon: Icon(Icons.book_outlined),
@@ -155,8 +139,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
                     shellState.goBranch(index: tappedIndex);
                   }
                 },
-                //onDestinationSelected: (int tappedIndex) =>
-                //    shellState.goBranch(index: tappedIndex),
               ),
             ),
     );

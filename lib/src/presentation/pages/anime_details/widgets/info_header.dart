@@ -174,13 +174,11 @@ class AnimeInfoHeader extends StatelessWidget {
                         height: 2,
                       ),
                       Text(
-                          //'${getStatus(data.status!)} • ${getKind(data.kind!)} • $rating • ${data.score}\u2b50', //★ U+2B50	⭐
                           '${getStatus(data.status!)} • ${getKind(data.kind!)} • $rating',
                           textAlign: TextAlign.start),
                       const SizedBox(
                         height: 2,
                       ),
-
                       if (data.episodes != null && data.episodesAired != null
                       //&&
                       //data.duration != null
@@ -197,13 +195,6 @@ class AnimeInfoHeader extends StatelessWidget {
                       const SizedBox(
                         height: 2,
                       ),
-                      //Text('Оценка: ${data.score}', textAlign: TextAlign.start),
-                      //AppDimens.sizedBoxH5,
-                      // const SizedBox(
-                      //   height: 4,
-                      // ),
-                      // const Text('Статус: Приходит',
-                      //     textAlign: TextAlign.start),
                       nextEp != ''
                           ? Text('След. серия в $nextEp',
                               textAlign: TextAlign.start)
