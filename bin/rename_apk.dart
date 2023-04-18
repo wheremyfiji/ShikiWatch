@@ -70,7 +70,7 @@ void main(List<String> args) async {
 
   await Future.wait([
     ...variants.map((arch) => renameOutputApks(outputDir,
-        from: 'app-$arch-release.apk',
-        to: '$kAppName-$appVersionName($appVersionCode)-$arch-alpha.apk'))
+        from: 'app-$arch-prod-release.apk',
+        to: '$kAppName-$appVersionName-$arch-alpha.apk'))
   ]);
 }
