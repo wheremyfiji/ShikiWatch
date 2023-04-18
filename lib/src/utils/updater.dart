@@ -45,7 +45,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     }
 
     final response = await http.get(Uri.parse(
-        'https://raw.githubusercontent.com/wheremyfiji/ShikiDev/updater/updater.json'));
+        'https://raw.githubusercontent.com/wheremyfiji/ShikiDev/master/updater.json'));
 
     if (response.statusCode != 200) {
       return;
@@ -89,11 +89,11 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
           title: const Text('Доступна новая версия'),
           content: Text(content),
           actions: [
-            OutlinedButton(
+            TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Позже'),
             ),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () {
                 launchUrlString(
                   'https://github.com/wheremyfiji/ShikiDev/releases/latest',
