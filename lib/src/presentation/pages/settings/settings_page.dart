@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:git_info/git_info.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -200,6 +201,7 @@ class SettingsPage extends ConsumerWidget {
                 //     showSnackBar(context, 'Обновлений не найдено');
                 //   },
                 // ),
+                const GitCommitWidget(),
                 SettingsOption(
                   title: 'Лицензии',
                   subtitle: 'Лицензии с открытым исходным кодом',
@@ -460,6 +462,42 @@ class _VersionWidgetState extends State<VersionWidget> {
       //     },
       //   );
       // },
+    );
+  }
+}
+
+class GitCommitWidget extends StatelessWidget {
+  const GitCommitWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<GitInformation>(
+      future: GitInfo.get(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final commitBranch = snapshot.data?.branch ?? '';
+          final commitHash = snapshot.data?.hash;
+
+          if (commitHash == null) {
+            return const SizedBox.shrink();
+          }
+
+          return SettingsOption(
+            title: 'Открыть коммит',
+            subtitle: '$commitBranch | ${commitHash.substring(0, 7)}',
+            onTap: commitHash == ''
+                ? null
+                : () {
+                    launchUrlString(
+                      'https://github.com/wheremyfiji/ShikiDev/commit/$commitHash',
+                      //mode: LaunchMode.externalApplication,
+                    );
+                  },
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 }

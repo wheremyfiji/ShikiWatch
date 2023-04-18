@@ -1,3 +1,5 @@
+import org.apache.tools.ant.DirectoryScanner
+
 include ':app'
 
 def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
@@ -9,3 +11,6 @@ localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
 def flutterSdkPath = properties.getProperty("flutter.sdk")
 assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
 apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+
+DirectoryScanner.removeDefaultExclude('**/.git')
+DirectoryScanner.removeDefaultExclude('**/.git/**')
