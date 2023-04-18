@@ -61,6 +61,21 @@ android {
         versionName flutterVersionName
     }
 
+    flavorDimensions "default"
+
+    productFlavors {
+        dev {
+            dimension "default"
+            versionNameSuffix "-dev"
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "Shiki-Dev"
+        }
+        prod {
+            dimension "default"
+            resValue "string", "app_name", "Shiki!"
+        }
+    }
+
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
