@@ -20,6 +20,7 @@ import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 
 import 'target_platform.dart';
+import 'updater.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -210,7 +211,8 @@ final GoRouter router = GoRouter(
       ],
       builder:
           (BuildContext context, StatefulShellRouteState state, Widget child) {
-        return ScaffoldWithNavBar(shellState: state, body: child);
+        return UpdaterWidget(
+            child: ScaffoldWithNavBar(shellState: state, body: child));
       },
     ),
   ],
