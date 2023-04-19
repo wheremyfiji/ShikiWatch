@@ -63,10 +63,12 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     Version latestVersion = Version.parse(latest.version!);
 
     final crit = latest.critical!;
+    final url = latest.url;
 
     if (crit && !d) {
       _showCriticalDialog(
         content: latest.description!,
+        url: url,
       );
 
       return;
@@ -75,11 +77,12 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     if (latestVersion > currentVersion && !d) {
       _showNormalDialog(
         content: latest.description!,
+        url: url,
       );
     }
   }
 
-  _showNormalDialog({required String content}) {
+  _showNormalDialog({required String content, String? url}) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -96,7 +99,8 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
             OutlinedButton(
               onPressed: () {
                 launchUrlString(
-                  'https://github.com/wheremyfiji/ShikiDev/releases/latest',
+                  url ??
+                      'https://github.com/wheremyfiji/ShikiDev/releases/latest',
                   mode: LaunchMode.externalApplication,
                 );
               },
@@ -108,7 +112,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     );
   }
 
-  _showCriticalDialog({required String content}) {
+  _showCriticalDialog({required String content, String? url}) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -121,7 +125,8 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
             ElevatedButton(
               onPressed: () {
                 launchUrlString(
-                  'https://github.com/wheremyfiji/ShikiDev/releases/latest',
+                  url ??
+                      'https://github.com/wheremyfiji/ShikiDev/releases/latest',
                   mode: LaunchMode.externalApplication,
                 );
               },
