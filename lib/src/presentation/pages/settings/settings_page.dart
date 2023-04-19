@@ -147,7 +147,7 @@ class SettingsPage extends ConsumerWidget {
                   title: 'Github',
                   subtitle: 'Ссылка на гитхаб приложения',
                   onTap: () => launchUrlString(
-                    'https://github.com/wheremyfiji',
+                    'https://github.com/wheremyfiji/ShikiDev',
                     //'https://github.com/NozhkiBaal',
                     mode: LaunchMode.externalApplication,
                   ),
@@ -209,7 +209,7 @@ class SettingsPage extends ConsumerWidget {
                     showLicensePage(
                       context: context,
                       applicationName: 'Shiki!',
-                      applicationVersion: 'v 0.0.1',
+                      applicationVersion: 'v1.3.3.7',
                       useRootNavigator: true,
                     );
                   },
