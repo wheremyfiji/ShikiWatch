@@ -46,12 +46,12 @@ Color getStatElementColorUserProfile(
 
     case 3:
       return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.red.shade300
-          : Colors.red.shade400;
-    case 4:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
           ? Colors.blue.shade300
           : Colors.blue.shade400;
+    case 4:
+      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
+          ? Colors.red.shade300
+          : Colors.red.shade400;
 
     default:
       return Colors.white;

@@ -7,8 +7,8 @@ const List<String> mangaNames = [
   'В планах',
   'Читаю / Перечитываю',
   'Прочитано',
-  'Брошено',
-  'Отложено'
+  'Отложено',
+  'Брошено'
 ];
 
 class UserMangaStatsWidget extends StatelessWidget {

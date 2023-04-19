@@ -7,8 +7,8 @@ const List<String> animeNames = [
   'В планах',
   'Смотрю / Пересматриваю',
   'Просмотрено',
-  'Брошено',
-  'Отложено'
+  'Отложено',
+  'Брошено'
 ];
 
 class UserAnimeStatsWidget extends StatelessWidget {
