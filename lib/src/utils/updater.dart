@@ -77,20 +77,51 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     if (latestVersion > currentVersion && !d) {
       _showNormalDialog(
         content: latest.description!,
+        currVer: currentVersion.toString(),
+        newVer: latestVersion.toString(),
         url: url,
       );
     }
   }
 
-  _showNormalDialog({required String content, String? url}) {
+  _showNormalDialog({
+    required String content,
+    required String? currVer,
+    required String? newVer,
+    String? url,
+  }) {
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           scrollable: true,
-          title: const Text('Доступна новая версия'),
-          content: Text(content),
+          title: const Text('Доступно обновление'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Текущая версия: $currVer'),
+              const SizedBox(
+                height: 2,
+              ),
+              Text('Новая версия: $newVer'),
+              const SizedBox(
+                height: 8,
+              ),
+              const Text(
+                'Что нового',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(content),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
