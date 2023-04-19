@@ -76,7 +76,7 @@ runMain() async {
     AppMetrica.activate(const AppMetricaConfig(
       kAppMetricaApiKey,
       logs: true,
-      appVersion: '0.0.1',
+      appVersion: '0.0.2',
       crashReporting: true,
       nativeCrashReporting: true, // ??
     ));
