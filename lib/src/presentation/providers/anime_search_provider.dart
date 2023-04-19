@@ -19,6 +19,7 @@ final animeSearchProvider = ChangeNotifierProvider.autoDispose((ref) {
   ref.onDispose(() {
     c.textEditingController.dispose();
     c.pageController.dispose();
+    c.focusNode.dispose();
     c.debouncer.dispose();
   });
   return c;
@@ -80,6 +81,8 @@ class AnimeSearchController extends flutter.ChangeNotifier {
   final PagingController<int, Animes> _pagingController =
       PagingController(firstPageKey: 1);
 
+  late flutter.FocusNode _focusNode;
+
   List<String> searchHistory = [];
   static const _limit = 25;
 
@@ -98,7 +101,11 @@ class AnimeSearchController extends flutter.ChangeNotifier {
 
   PagingController<int, Animes> get pageController => _pagingController;
 
+  flutter.FocusNode get focusNode => _focusNode;
+
   void initState() {
+    _focusNode = flutter.FocusNode();
+    _focusNode.requestFocus();
     _pagingController.addPageRequestListener((pageKey) {
       _fetch(pageKey);
     });
@@ -116,7 +123,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       filterCount.remove('status');
       selectedStatus = null;
     }
-    print('selectedStatus: $selectedStatus');
+    //print('selectedStatus: $selectedStatus');
     notifyListeners();
   }
 
@@ -140,7 +147,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       filterCount.remove('kind');
       selectedKind = null;
     }
-    print('selectedKind: $selectedKind');
+    //print('selectedKind: $selectedKind');
     notifyListeners();
   }
 
@@ -164,7 +171,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       filterCount.remove('list');
       selectedMyList = null;
     }
-    print('selectedMyList: $selectedMyList');
+    //print('selectedMyList: $selectedMyList');
     notifyListeners();
   }
 
@@ -188,7 +195,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       filterCount.remove('ep_dur');
       selectedEpDuration = null;
     }
-    print('selectedEpDuration: $selectedEpDuration');
+    //print('selectedEpDuration: $selectedEpDuration');
     notifyListeners();
   }
 
@@ -212,7 +219,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       filterCount.remove('sort');
       selectedSortType = null;
     }
-    print('selectedSortType: $selectedSortType');
+    //print('selectedSortType: $selectedSortType');
     notifyListeners();
   }
 

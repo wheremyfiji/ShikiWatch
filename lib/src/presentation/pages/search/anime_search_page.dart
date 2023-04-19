@@ -30,6 +30,7 @@ class AnimeSearchPage extends ConsumerWidget {
         title: TextField(
           controller: controller.textEditingController,
           //autofocus: true,
+          focusNode: controller.focusNode,
           onChanged: controller.onSearchChanged,
           onSubmitted: (value) {
             controller.onSearchSubmitted(value);
