@@ -3,6 +3,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/user.dart';
+import '../../../../services/secure_storage/secure_storage_service.dart';
 
 class UserFriendsWidget extends StatelessWidget {
   final List<User> data;
@@ -48,8 +49,11 @@ class UserFriendsWidget extends StatelessWidget {
                 shadowColor: Colors.transparent,
                 child: InkWell(
                   //onTap: () {},
-                  onTap: () =>
-                      context.push('/profile/${friend.id!}', extra: friend),
+                  onTap: friend.id.toString() ==
+                          SecureStorageService.instance.userId
+                      ? null
+                      : () =>
+                          context.push('/profile/${friend.id!}', extra: friend),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: Column(
