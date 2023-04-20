@@ -110,14 +110,6 @@ class AnimeSearchPage extends ConsumerWidget {
                             controller.pageController.retryLastFailedRequest(),
                       );
                     },
-                    // noMoreItemsIndicatorBuilder: (context) {
-                    //   return const Center(
-                    //     child: Padding(
-                    //       padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-                    //       child: Text('Конец списка'),
-                    //     ),
-                    //   );
-                    // },
                     noItemsFoundIndicatorBuilder: (context) {
                       return Center(
                         child: Padding(
@@ -141,11 +133,6 @@ class AnimeSearchPage extends ConsumerWidget {
                           ),
                         ),
                       );
-
-                      return const Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 16),
-                        child: Text('Ничего не найдено'),
-                      );
                     },
                   ),
                 ),
@@ -156,101 +143,6 @@ class AnimeSearchPage extends ConsumerWidget {
         },
       ),
     );
-
-    // return Scaffold(
-    //   floatingActionButton: FloatingActionButton.extended(
-    //     //onPressed: null,
-    //     onPressed: () => context.pushNamed('search_filters'),
-    //     icon: const Icon(Icons.tune), //tune  filter_list  done_all
-    //     label: const Text('Фильтры'),
-    //   ),
-    //   appBar: AppBar(
-    //     title: TextField(
-    //       controller: controller.textEditingController,
-    //       autofocus: true,
-    //       onChanged: controller.onSearchChanged,
-    //       onSubmitted: (value) {
-    //         controller.onSearchSubmitted(value);
-    //       },
-    //       decoration: InputDecoration(
-    //         filled: false,
-    //         //contentPadding: EdgeInsets.zero,
-    //         border: InputBorder.none,
-    //         hintText: 'Поиск аниме',
-    //         suffixIcon: controller.textEditingController.text.isNotEmpty
-    //             ? GestureDetector(
-    //                 child: const Icon(Icons.close),
-    //                 onTap: () {
-    //                   controller.clearQuery();
-    //                 },
-    //               )
-    //             : null,
-    //       ),
-    //     ),
-    //   ),
-    //   body: controller.titles.when(
-    //       data: (data) {
-    //         if (controller.textEditingController.text.isEmpty) {
-    //           return AnimeSearchHistory(
-    //             history: controller.searchHistory,
-    //             search: (p0) {
-    //               FocusScope.of(context).unfocus();
-    //               controller.onHistoryTap(p0);
-    //             },
-    //             clear: () => controller.clearHistory(),
-    //           );
-    //         }
-
-    //         return !controller.titles.isLoading &&
-    //                 controller.textEditingController.text.isNotEmpty &&
-    //                 data.isEmpty
-    //             ? const NothingFound()
-    //             : CustomScrollView(
-    //                 key: const PageStorageKey<String>('SearchPageResult'),
-    //                 slivers: [
-    //                   SliverPadding(
-    //                     padding: const EdgeInsets.all(8.0),
-    //                     sliver: SliverGrid(
-    //                       delegate: SliverChildBuilderDelegate(
-    //                         (context, index) {
-    //                           // if (index >= data.length) {
-    //                           //   return const Padding(
-    //                           //     padding: EdgeInsets.all(16.0),
-    //                           //     child: Center(child: CircularProgressIndicator()),
-    //                           //   );
-    //                           // }
-
-    //                           final model = data[index];
-
-    //                           return Padding(
-    //                             padding: const EdgeInsets.all(4.0),
-    //                             child: SearchTile(model),
-    //                           );
-    //                         },
-    //                         //childCount: data.length + 1,
-    //                         childCount: data.length,
-    //                       ),
-    //                       gridDelegate:
-    //                           const SliverGridDelegateWithMaxCrossAxisExtent(
-    //                         maxCrossAxisExtent: 150,
-    //                         mainAxisExtent: 220,
-    //                       ),
-    //                     ),
-    //                   ),
-    //                   const SliverToBoxAdapter(child: SizedBox(height: 60)),
-    //                 ],
-    //               );
-    //         // ListView.builder(
-    //         //     keyboardDismissBehavior:
-    //         //         ScrollViewKeyboardDismissBehavior.onDrag,
-    //         //     itemBuilder: (context, index) =>
-    //         //         data.isEmpty ? Container() : SearchTile(data[index]),
-    //         //     itemCount: data.length,
-    //         //   );
-    //       },
-    //       loading: () => const Center(child: CircularProgressIndicator()),
-    //       error: (err, stack) => Center(child: Text(err.toString()))),
-    // );
   }
 }
 
