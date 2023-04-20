@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../domain/models/user_friend.dart';
+import '../../domain/models/user.dart';
 import '../repositories/profile_repo.dart';
 import '../repositories/http_service.dart';
 import '../../domain/models/user_profile.dart';
@@ -35,7 +35,7 @@ class ProfileDataSource implements ProfileRepository {
   }
 
   @override
-  Future<Iterable<UserFriend>> getUserFriends({
+  Future<Iterable<User>> getUserFriends({
     required String? id,
     CancelToken? cancelToken,
   }) async {
@@ -44,6 +44,6 @@ class ProfileDataSource implements ProfileRepository {
       cancelToken: cancelToken,
     );
 
-    return [for (final e in response) UserFriend.fromJson(e)];
+    return [for (final e in response) User.fromJson(e)];
   }
 }

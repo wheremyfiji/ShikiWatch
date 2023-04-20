@@ -1,27 +1,27 @@
 import 'user_image.dart';
 
 class User {
-  final int? id;
-  final String? nickname;
-  final String? avatar;
-  final UserImages? image;
-  final String? lastOnlineAt;
-  final String? url;
+  int? id;
+  String? nickname;
+  String? avatar;
+  UserImages? image;
+  String? lastOnlineAt;
+  String? url;
 
   User(
-      {required this.id,
-      required this.nickname,
-      required this.avatar,
-      required this.image,
-      required this.lastOnlineAt,
-      required this.url});
+      {this.id,
+      this.nickname,
+      this.avatar,
+      this.image,
+      this.lastOnlineAt,
+      this.url});
 
-  User.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        nickname = json['nickname'],
-        avatar = json['avatar'],
-        image =
-            json['image'] == null ? null : UserImages.fromJson(json['image']),
-        lastOnlineAt = json['last_online_at'],
-        url = json['url'];
+  User.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    nickname = json['nickname'];
+    avatar = json['avatar'];
+    image = json['image'] != null ? UserImages.fromJson(json['image']) : null;
+    lastOnlineAt = json['last_online_at'];
+    url = json['url'];
+  }
 }

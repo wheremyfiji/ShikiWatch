@@ -4,13 +4,15 @@ import 'package:go_router/go_router.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
 import '../domain/models/animes.dart';
+import '../domain/models/user.dart';
 
 import '../presentation/pages/anime_details/anime_details_desktop_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/login/login_desktop_page.dart';
-import '../presentation/pages/my_profile/my_profile_page.dart';
+import '../presentation/pages/profile/my_profile_page.dart';
 import '../presentation/pages/player/anime_player_desktop_page.dart';
 import '../presentation/pages/player/anime_player_page.dart';
+import '../presentation/pages/profile/user_profile_page.dart';
 import '../presentation/pages/root/root_page.dart';
 import '../presentation/pages/search/anime_filter_page.dart';
 import '../presentation/pages/search/anime_search_page.dart';
@@ -187,10 +189,24 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(
           routes: <RouteBase>[
             GoRoute(
-              path: '/my_profile',
+              path: '/profile',
               builder: (BuildContext context, GoRouterState state) =>
                   const MyProfilePage(),
               routes: <RouteBase>[
+                GoRoute(
+                  path: r':id(\d+)',
+                  pageBuilder: (context, state) {
+                    User data = state.extra as User;
+                    return CustomTransitionPage(
+                      child: UserProfilePage(data: data),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
                 GoRoute(
                   path: 'settings',
                   pageBuilder: (context, state) {

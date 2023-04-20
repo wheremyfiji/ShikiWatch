@@ -7,6 +7,7 @@ class SecureStorageService extends SecureStorageValues {
   static const _keyToken = 'access_token';
   static const _keyRefreshToken = 'refresh_token';
   static const _userId = 'user_id';
+  static const _userNickname = 'user_nickname';
   static const _userProfileImage = 'user_profile_image';
 
   late FlutterSecureStorage storage;
@@ -42,6 +43,15 @@ class SecureStorageService extends SecureStorageValues {
     refreshToken = await readRefreshToken() ?? '';
     userId = await readUserId() ?? '';
     userProfileImage = await readUserImage() ?? '';
+    userNickname = await readUserNickname() ?? '';
+  }
+
+  Future<String?> readUserNickname() async {
+    return await storage.read(key: _userNickname);
+  }
+
+  Future<void> writeUserNickname(String string) async {
+    return await storage.write(key: _userNickname, value: string);
   }
 
   Future<String?> readUserId() async {
@@ -90,4 +100,5 @@ class SecureStorageValues {
   late String refreshToken;
   late String userId;
   late String userProfileImage;
+  late String userNickname;
 }

@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:network_logger/network_logger.dart';
-import 'package:shikidev/src/presentation/pages/my_profile/widgets/user_friends.dart';
-import 'package:shikidev/src/presentation/pages/my_profile/widgets/user_profile_header.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../providers/my_profile_page_provider.dart';
+import '../../providers/user_profile_provider.dart';
 import '../../widgets/error_widget.dart';
+
 import 'widgets/user_anime_stats.dart';
+import 'widgets/user_friends.dart';
 import 'widgets/user_manga_stats.dart';
+import 'widgets/user_profile_header.dart';
 
 const double kDividerHeight = 16;
 
@@ -29,7 +30,9 @@ class MyProfilePage extends ConsumerWidget {
           ];
         },
         body: RefreshIndicator(
-          onRefresh: () async => await controller.fetch(),
+          //onRefresh: () async => await controller.fetch(),
+          onRefresh: () async => ref.refresh(
+              userProfileProvider(SecureStorageService.instance.userId)),
           child: CustomScrollView(
             slivers: [
               ...controller.profile.when(
@@ -37,11 +40,11 @@ class MyProfilePage extends ConsumerWidget {
                   return [
                     SliverFillRemaining(
                       child: CustomErrorWidget(
-                        error.toString(), () => controller.fetch(),
-                        // ref.refresh(titleInfoPageProvider(
-                        //     TitleInfoPageParameters(
-                        //         id: data.id!, fullRefresh: true)))
-                      ),
+                          error.toString(),
+                          () => ref.refresh(userProfileProvider(
+                              SecureStorageService.instance.userId))
+                          //controller.fetch(),
+                          ),
                     ),
                   ];
                 },
@@ -56,7 +59,6 @@ class MyProfilePage extends ConsumerWidget {
                 },
                 data: (data) => [
                   SliverPadding(
-                    // padding: const EdgeInsets.all(16),
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
@@ -70,7 +72,6 @@ class MyProfilePage extends ConsumerWidget {
                     SliverPadding(
                       padding:
                           const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                      //padding: const EdgeInsets.fromLTRB(8, 0, 8, kDividerHeight),
                       sliver: SliverToBoxAdapter(
                         child: UserFriendsWidget(
                           data: controller.friends.asData?.value ?? [],
@@ -118,6 +119,7 @@ class _ProfilePageAppBar extends StatelessWidget {
     return SliverAppBar.large(
       title: const Text('Мой профиль'),
       actions: [
+        // дебаг для деда
         if (SecureStorageService.instance.userId == '384889' ||
             SecureStorageService.instance.userId == '1161605') ...[
           IconButton(
@@ -125,9 +127,19 @@ class _ProfilePageAppBar extends StatelessWidget {
             icon: const Icon(Icons.travel_explore),
           ),
         ],
-        IconButton(
-          onPressed: () => context.push('/my_profile/settings'),
-          icon: const Icon(Icons.settings_outlined),
+        const Tooltip(
+          message: 'Искать пользователя',
+          child: IconButton(
+            onPressed: null,
+            icon: Icon(Icons.person_search),
+          ),
+        ),
+        Tooltip(
+          message: 'Настройки',
+          child: IconButton(
+            onPressed: () => context.push('/profile/settings'),
+            icon: const Icon(Icons.settings_outlined),
+          ),
         ),
       ],
     );

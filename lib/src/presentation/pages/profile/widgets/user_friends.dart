@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../domain/models/user_friend.dart';
+import '../../../../domain/models/user.dart';
+import '../../../../services/secure_storage/secure_storage_service.dart';
 
 class UserFriendsWidget extends StatelessWidget {
-  final List<UserFriend> data;
+  final List<User> data;
   const UserFriendsWidget({super.key, required this.data});
 
   @override
@@ -46,7 +48,12 @@ class UserFriendsWidget extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 shadowColor: Colors.transparent,
                 child: InkWell(
-                  onTap: () {},
+                  //onTap: () {},
+                  onTap: friend.id.toString() ==
+                          SecureStorageService.instance.userId
+                      ? null
+                      : () =>
+                          context.push('/profile/${friend.id!}', extra: friend),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: Column(
