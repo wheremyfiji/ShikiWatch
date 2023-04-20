@@ -4,9 +4,10 @@ import 'package:shikidev/src/constants/config.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../../domain/models/anime.dart';
+import '../../../../domain/models/genre.dart';
 
 class AnimeChipsWidget extends StatelessWidget {
-  final List<Genres>? genres;
+  final List<Genre>? genres;
   final List<Studios>? studios;
   final String? score;
 

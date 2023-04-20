@@ -1,3 +1,5 @@
+import 'package:shikidev/src/domain/models/genre.dart';
+
 class Anime {
   int? id;
   String? name;
@@ -34,7 +36,7 @@ class Anime {
   List<String>? fansubbers;
   List<String>? fandubbers;
   //List<Null>? licensors;
-  List<Genres>? genres;
+  List<Genre>? genres;
   List<Studios>? studios;
   List<Videos>? videos;
   List<Screenshots>? screenshots;
@@ -134,9 +136,9 @@ class Anime {
     //   });
     // }
     if (json['genres'] != null) {
-      genres = <Genres>[];
+      genres = <Genre>[];
       json['genres'].forEach((v) {
-        genres!.add(Genres.fromJson(v));
+        genres!.add(Genre.fromJson(v));
       });
     }
     if (json['studios'] != null) {
@@ -199,22 +201,6 @@ class RatesStatusesStats {
   RatesStatusesStats.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     value = json['value'];
-  }
-}
-
-class Genres {
-  int? id;
-  String? name;
-  String? russian;
-  String? kind;
-
-  Genres({this.id, this.name, this.russian, this.kind});
-
-  Genres.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    russian = json['russian'];
-    kind = json['kind'];
   }
 }
 
