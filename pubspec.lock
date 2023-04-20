@@ -656,14 +656,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.0"
-  lint:
-    dependency: transitive
-    description:
-      name: lint
-      sha256: "3e9343b1cededcfb1e8b40d0dbd3592b7a1c6c0121545663a991433390c2bc97"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   lints:
     dependency: transitive
     description:
@@ -744,14 +736,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  multiple_search_selection:
-    dependency: "direct main"
-    description:
-      name: multiple_search_selection
-      sha256: "4f8007b875d6487102d2f4b38e364a9efc598f6dd1bcec1a49e9d9cbb19730e4"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.5"
   network_logger:
     dependency: "direct main"
     description:
