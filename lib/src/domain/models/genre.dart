@@ -12,4 +12,7 @@ class Genre {
     russian = json['russian'];
     kind = json['kind'];
   }
+
+  @override
+  String toString() => '$russian';
 }

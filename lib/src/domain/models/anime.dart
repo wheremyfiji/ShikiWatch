@@ -1,4 +1,5 @@
 import 'package:shikidev/src/domain/models/genre.dart';
+import 'package:shikidev/src/domain/models/studio.dart';
 
 class Anime {
   int? id;
@@ -37,7 +38,7 @@ class Anime {
   List<String>? fandubbers;
   //List<Null>? licensors;
   List<Genre>? genres;
-  List<Studios>? studios;
+  List<Studio>? studios;
   List<Videos>? videos;
   List<Screenshots>? screenshots;
   UserRate? userRate;
@@ -142,9 +143,9 @@ class Anime {
       });
     }
     if (json['studios'] != null) {
-      studios = <Studios>[];
+      studios = <Studio>[];
       json['studios'].forEach((v) {
-        studios!.add(Studios.fromJson(v));
+        studios!.add(Studio.fromJson(v));
       });
     }
     if (json['videos'] != null) {
@@ -201,24 +202,6 @@ class RatesStatusesStats {
   RatesStatusesStats.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     value = json['value'];
-  }
-}
-
-class Studios {
-  int? id;
-  String? name;
-  String? filteredName;
-  bool? real;
-  String? image;
-
-  Studios({this.id, this.name, this.filteredName, this.real, this.image});
-
-  Studios.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    filteredName = json['filtered_name'];
-    real = json['real'];
-    image = json['image'];
   }
 }
 

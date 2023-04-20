@@ -42,6 +42,8 @@ abstract class AnimeRepository {
     int? score,
     String? duration,
     String? rating,
+    String? genre,
+    String? studio,
     String? mylist,
     String? censored,
     String? search,

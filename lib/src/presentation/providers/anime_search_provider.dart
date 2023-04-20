@@ -1,4 +1,5 @@
 //import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,6 +10,7 @@ import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime_filter.dart';
 import '../../domain/models/animes.dart';
+import '../../domain/models/genre.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 import '../../services/shared_pref/shared_preferences_provider.dart';
 import '../../utils/debouncer.dart';
@@ -103,7 +105,38 @@ class AnimeSearchController extends flutter.ChangeNotifier {
   String? selectedEpDuration;
   String? selectedSortType;
 
+  int minimalScore = 0;
+
   Set<String> filterCount = {};
+
+  Set<Genre>? selectedGenres;
+
+  addGenre(Genre g) {
+    if (selectedGenres == null) {
+      selectedGenres = {g};
+    } else {
+      selectedGenres!.add(g);
+    }
+    filterCount.add('genre');
+    //log('count: ${selectedGenres?.length}', name: 'genre');
+    notifyListeners();
+  }
+
+  removeGenre(Genre g) {
+    selectedGenres?.remove(g);
+
+    if (selectedGenres?.isEmpty ?? false) {
+      filterCount.remove('genre');
+    }
+    //log('count: ${selectedGenres?.length}', name: 'genre');
+    notifyListeners();
+  }
+
+  clearSelectedGenres() {
+    filterCount.remove('genre');
+    selectedGenres = null;
+    notifyListeners();
+  }
 
   PagingController<int, Animes> get pageController => _pagingController;
 
@@ -255,6 +288,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     selectedMyList = null;
     selectedEpDuration = null;
     selectedSortType = null;
+    selectedGenres = null;
     isFilterApplied = false;
     showHistory = true;
     filterCount.clear();
@@ -317,6 +351,28 @@ class AnimeSearchController extends flutter.ChangeNotifier {
   }
 
   Future<void> _fetch(int pageKey) async {
+    List<String>? g;
+    List<String>? s;
+    if (selectedGenres != null) {
+      List<String> t = List<String>.generate(
+        selectedGenres!.length,
+        (index) {
+          final list = selectedGenres!.toList();
+          final id = list[index].id;
+          return id.toString();
+        },
+      );
+      g = t;
+    }
+
+    int? score;
+
+    minimalScore = 0;
+
+    if (minimalScore > 0) {
+      score = minimalScore;
+    }
+
     try {
       final data = await animeRepository.getAnimes(
         page: pageKey,
@@ -324,12 +380,13 @@ class AnimeSearchController extends flutter.ChangeNotifier {
         order: selectedSortType,
         kind: selectedKind,
         status: selectedStatus,
+        score: score,
         duration: selectedEpDuration,
         //rating: ,
+        genre: g?.join(','),
+        studio: s?.join(','),
         mylist: selectedMyList,
-
         censored: 'true',
-        //score: 1,
         search: textEditingController.text != ''
             ? textEditingController.text
             : null,

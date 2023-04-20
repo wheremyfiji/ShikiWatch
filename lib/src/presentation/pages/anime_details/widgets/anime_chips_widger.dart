@@ -3,12 +3,12 @@ import 'package:extended_image/extended_image.dart';
 import 'package:shikidev/src/constants/config.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
-import '../../../../domain/models/anime.dart';
+import '../../../../domain/models/studio.dart';
 import '../../../../domain/models/genre.dart';
 
 class AnimeChipsWidget extends StatelessWidget {
   final List<Genre>? genres;
-  final List<Studios>? studios;
+  final List<Studio>? studios;
   final String? score;
 
   const AnimeChipsWidget({
