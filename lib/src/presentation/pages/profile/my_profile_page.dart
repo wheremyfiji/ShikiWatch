@@ -30,7 +30,9 @@ class MyProfilePage extends ConsumerWidget {
           ];
         },
         body: RefreshIndicator(
-          onRefresh: () async => await controller.fetch(),
+          //onRefresh: () async => await controller.fetch(),
+          onRefresh: () async => ref.refresh(
+              userProfileProvider(SecureStorageService.instance.userId)),
           child: CustomScrollView(
             slivers: [
               ...controller.profile.when(
@@ -38,11 +40,11 @@ class MyProfilePage extends ConsumerWidget {
                   return [
                     SliverFillRemaining(
                       child: CustomErrorWidget(
-                        error.toString(), () => controller.fetch(),
-                        // ref.refresh(titleInfoPageProvider(
-                        //     TitleInfoPageParameters(
-                        //         id: data.id!, fullRefresh: true)))
-                      ),
+                          error.toString(),
+                          () => ref.refresh(userProfileProvider(
+                              SecureStorageService.instance.userId))
+                          //controller.fetch(),
+                          ),
                     ),
                   ];
                 },
@@ -57,7 +59,6 @@ class MyProfilePage extends ConsumerWidget {
                 },
                 data: (data) => [
                   SliverPadding(
-                    // padding: const EdgeInsets.all(16),
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
@@ -71,7 +72,6 @@ class MyProfilePage extends ConsumerWidget {
                     SliverPadding(
                       padding:
                           const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                      //padding: const EdgeInsets.fromLTRB(8, 0, 8, kDividerHeight),
                       sliver: SliverToBoxAdapter(
                         child: UserFriendsWidget(
                           data: controller.friends.asData?.value ?? [],
