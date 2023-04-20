@@ -19,128 +19,136 @@ class AnimeSearchPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(animeSearchProvider);
 
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        //onPressed: null,
-        onPressed: () => context.pushNamed('search_filters'),
-        icon: const Icon(Icons.tune), //tune  filter_list  done_all
-        label: const Text('Фильтры'),
-      ),
-      appBar: AppBar(
-        title: TextField(
-          controller: controller.textEditingController,
-          //autofocus: true,
-          focusNode: controller.focusNode,
-          onChanged: controller.onSearchChanged,
-          onSubmitted: (value) {
-            controller.onSearchSubmitted(value);
-          },
-          decoration: InputDecoration(
-            filled: false,
-            //contentPadding: EdgeInsets.zero,
-            border: InputBorder.none,
-            hintText: 'Поиск аниме',
-            suffixIcon: controller.textEditingController.text.isNotEmpty
-                ? GestureDetector(
-                    child: const Icon(Icons.close),
-                    onTap: () {
-                      controller.clearQuery();
-                    },
-                  )
-                : null,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      onPanDown: (_) {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          //onPressed: null,
+          onPressed: () => context.pushNamed('search_filters'),
+          icon: const Icon(Icons.tune), //tune  filter_list  done_all
+          label: const Text('Фильтры'),
+        ),
+        appBar: AppBar(
+          title: TextField(
+            controller: controller.textEditingController,
+            //autofocus: true,
+            focusNode: controller.focusNode,
+            onChanged: controller.onSearchChanged,
+            onSubmitted: (value) {
+              controller.onSearchSubmitted(value);
+            },
+            decoration: InputDecoration(
+              filled: false,
+              //contentPadding: EdgeInsets.zero,
+              border: InputBorder.none,
+              hintText: 'Поиск аниме',
+              suffixIcon: controller.textEditingController.text.isNotEmpty
+                  ? GestureDetector(
+                      child: const Icon(Icons.close),
+                      onTap: () {
+                        controller.clearQuery();
+                      },
+                    )
+                  : null,
+            ),
           ),
         ),
-      ),
-      body: Builder(
-        builder: (context) {
-          if (controller.textEditingController.text.isEmpty &&
-              controller.showHistory) {
-            return AnimeSearchHistory(
-              history: controller.searchHistory,
-              search: (p0) {
-                FocusScope.of(context).unfocus();
-                controller.onHistoryTap(p0);
-              },
-              clear: () => controller.clearHistory(),
-            );
-          }
-          return CustomScrollView(
-            key: const PageStorageKey<String>('SearchPageResult'),
-            slivers: [
-              if (controller.filterCount.isNotEmpty)
+        body: Builder(
+          builder: (context) {
+            if (controller.textEditingController.text.isEmpty &&
+                controller.showHistory) {
+              return AnimeSearchHistory(
+                history: controller.searchHistory,
+                search: (p0) {
+                  FocusScope.of(context).unfocus();
+                  controller.onHistoryTap(p0);
+                },
+                clear: () => controller.clearHistory(),
+              );
+            }
+            return CustomScrollView(
+              key: const PageStorageKey<String>('SearchPageResult'),
+              slivers: [
+                if (controller.filterCount.isNotEmpty)
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        'Кол-во фильтров: ${controller.filterCount.length}',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              fontSize: 14,
+                            ),
+                      ),
+                    ),
+                  ),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      'Кол-во фильтров: ${controller.filterCount.length}',
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            fontSize: 14,
+                  padding: const EdgeInsets.all(8.0),
+                  sliver: PagedSliverGrid<int, Animes>(
+                    addAutomaticKeepAlives: true,
+                    showNewPageErrorIndicatorAsGridChild: false,
+                    //showNoMoreItemsIndicatorAsGridChild: false,
+                    pagingController: controller.pageController,
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 150,
+                      mainAxisExtent: 220,
+                    ),
+                    builderDelegate: PagedChildBuilderDelegate<Animes>(
+                      itemBuilder: (context, item, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: SearchTile(item),
+                        );
+                      },
+                      firstPageErrorIndicatorBuilder: (context) {
+                        return CustomErrorWidget(
+                          controller.pageController.error.toString(),
+                          () => controller.pageController.refresh(),
+                        );
+                      },
+                      newPageErrorIndicatorBuilder: (context) {
+                        return CustomErrorWidget(
+                          controller.pageController.error.toString(),
+                          () => controller.pageController
+                              .retryLastFailedRequest(),
+                        );
+                      },
+                      noItemsFoundIndicatorBuilder: (context) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 32, horizontal: 16),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Ничего не найдено',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                const Text(
+                                  'Попробуй поискать что-то другое',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
+                        );
+                      },
                     ),
                   ),
                 ),
-              SliverPadding(
-                padding: const EdgeInsets.all(8.0),
-                sliver: PagedSliverGrid<int, Animes>(
-                  addAutomaticKeepAlives: true,
-                  showNewPageErrorIndicatorAsGridChild: false,
-                  //showNoMoreItemsIndicatorAsGridChild: false,
-                  pagingController: controller.pageController,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150,
-                    mainAxisExtent: 220,
-                  ),
-                  builderDelegate: PagedChildBuilderDelegate<Animes>(
-                    itemBuilder: (context, item, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: SearchTile(item),
-                      );
-                    },
-                    firstPageErrorIndicatorBuilder: (context) {
-                      return CustomErrorWidget(
-                        controller.pageController.error.toString(),
-                        () => controller.pageController.refresh(),
-                      );
-                    },
-                    newPageErrorIndicatorBuilder: (context) {
-                      return CustomErrorWidget(
-                        controller.pageController.error.toString(),
-                        () =>
-                            controller.pageController.retryLastFailedRequest(),
-                      );
-                    },
-                    noItemsFoundIndicatorBuilder: (context) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 32, horizontal: 16),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Ничего не найдено',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              const Text(
-                                'Попробуй поискать что-то другое',
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 60)),
-            ],
-          );
-        },
+                const SliverToBoxAdapter(child: SizedBox(height: 60)),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

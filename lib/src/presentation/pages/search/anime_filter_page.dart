@@ -1,7 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+
+import '../../../domain/models/genre.dart';
+import '../../../domain/models/studio.dart';
 import '../../providers/anime_search_provider.dart';
 
 class FilterChipWidget extends StatelessWidget {
@@ -76,6 +85,108 @@ class AnimeFilterPage extends ConsumerWidget {
             ],
           ),
 
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            sliver: SliverToBoxAdapter(
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Text(
+                  'Жанр',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                title: (c.selectedGenres?.isEmpty ?? true)
+                    ? null
+                    : Text(
+                        c.selectedGenres!.join(', '),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                trailing: IconButton(
+                  onPressed: () {
+                    showFlexibleBottomSheet(
+                      decoration: BoxDecoration(
+                        color: context.theme.colorScheme.background,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16.0),
+                          topRight: Radius.circular(16.0),
+                        ),
+                      ),
+                      //bottomSheetColor: context.theme.colorScheme.background,
+                      bottomSheetColor: Colors.transparent,
+                      minHeight: 0,
+                      initHeight: 0.5,
+                      maxHeight: 1,
+                      context: context,
+                      anchors: [0, 0.5, 1],
+                      isSafeArea: true,
+                      duration: const Duration(milliseconds: 250),
+                      builder: (context, scrollController, bottomSheetOffset) {
+                        return GenresBottomSheet(
+                          scrollController: scrollController,
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                ),
+              ),
+            ),
+          ),
+
+          // SliverPadding(
+          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          //   sliver: SliverToBoxAdapter(
+          //     child: ListTile(
+          //       contentPadding: EdgeInsets.zero,
+          //       leading: Text(
+          //         'Студия',
+          //         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+          //               fontSize: 16,
+          //               fontWeight: FontWeight.w500,
+          //             ),
+          //       ),
+          //       title: Text(
+          //         '8 bit',
+          //         maxLines: 2,
+          //         overflow: TextOverflow.ellipsis,
+          //         style: Theme.of(context).textTheme.bodySmall,
+          //       ),
+          //       trailing: IconButton(
+          //         onPressed: () {
+          //           showFlexibleBottomSheet(
+          //             decoration: BoxDecoration(
+          //               color: context.theme.colorScheme.background,
+          //               borderRadius: const BorderRadius.only(
+          //                 topLeft: Radius.circular(16.0),
+          //                 topRight: Radius.circular(16.0),
+          //               ),
+          //             ),
+          //             //bottomSheetColor: context.theme.colorScheme.background,
+          //             bottomSheetColor: Colors.transparent,
+          //             minHeight: 0,
+          //             initHeight: 0.5,
+          //             maxHeight: 1,
+          //             context: context,
+          //             anchors: [0, 0.5, 1],
+          //             isSafeArea: true,
+          //             duration: const Duration(milliseconds: 250),
+          //             builder: (context, scrollController, bottomSheetOffset) {
+          //               return StudiosBottomSheet(
+          //                 scrollController: scrollController,
+          //               );
+          //             },
+          //           );
+          //         },
+          //         icon: const Icon(Icons.add),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+
           // SliverPadding(
           //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           //   sliver: SliverToBoxAdapter(
@@ -83,149 +194,6 @@ class AnimeFilterPage extends ConsumerWidget {
           //       color: Colors.red,
           //       height: 60,
           //     ),
-          //   ),
-          // ),
-          // SliverPadding(
-          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          //   sliver: SliverToBoxAdapter(
-          //     child: MultipleSearchSelection<Genre>(
-          //       caseSensitiveSearch: false,
-          //       fuzzySearch: FuzzySearch.none,
-          //       itemsVisibility: ShowedItemsVisibility.onType,
-          //       maximumShowItemsHeight: 200,
-          //       searchFieldBoxDecoration:
-          //           const BoxDecoration(color: Colors.transparent),
-          //       hintText: 'Начни писать для поиска',
-          //       title: Padding(
-          //         padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-          //         child: Text(
-          //           'Жанры',
-          //           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          //                 fontSize: 16,
-          //                 fontWeight: FontWeight.w500,
-          //               ),
-          //         ),
-          //       ),
-          //       onItemAdded: (c) {
-          //         print('onItemAdded: ${c.id}');
-          //       },
-          //       showClearSearchFieldButton: true,
-          //       items: animeGenres,
-          //       fieldToCheck: (c) {
-          //         return c.russian;
-          //       },
-          //       itemBuilder: (genre, index) {
-          //         return Card(
-          //           margin: const EdgeInsets.all(4.0),
-          //           child: Padding(
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 16.0,
-          //               horizontal: 8.0,
-          //             ),
-          //             child: Text(genre.russian),
-          //           ),
-          //         );
-
-          //         return Padding(
-          //           padding: const EdgeInsets.all(0.0),
-          //           child: Padding(
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 16.0,
-          //               horizontal: 8.0,
-          //             ),
-          //             child: Text(genre.russian),
-          //           ),
-          //         );
-          //       },
-          //       // itemBuilder: (country, index) {
-          //       //   return Padding(
-          //       //     padding: const EdgeInsets.all(6.0),
-          //       //     child: Container(
-          //       //       decoration: BoxDecoration(
-          //       //         borderRadius: BorderRadius.circular(6),
-          //       //         color: Colors.white,
-          //       //       ),
-          //       //       child: Padding(
-          //       //         padding: const EdgeInsets.symmetric(
-          //       //           vertical: 20.0,
-          //       //           horizontal: 12,
-          //       //         ),
-          //       //         child: Text(country.name),
-          //       //       ),
-          //       //     ),
-          //       //   );
-          //       // },
-          //       pickedItemBuilder: (genre) {
-          //         return Chip(
-          //           padding: const EdgeInsets.all(0),
-          //           shadowColor: Colors.transparent,
-          //           elevation: 0,
-          //           side: const BorderSide(width: 0, color: Colors.transparent),
-          //           labelStyle: context.theme.textTheme.bodyMedium?.copyWith(
-          //               color: context.theme.colorScheme.onSecondaryContainer),
-          //           backgroundColor:
-          //               context.theme.colorScheme.secondaryContainer,
-          //           label: Text(genre.russian),
-          //         );
-          //         return Padding(
-          //           padding: const EdgeInsets.all(8),
-          //           child: Text(genre.russian),
-          //         );
-          //       },
-          //       sortShowedItems: true,
-          //       sortPickedItems: true,
-          //       showSelectAllButton: false,
-          //       // selectAllButton: ElevatedButton(
-          //       //   onPressed: () {},
-          //       //   child: const Text(
-          //       //     'Выбрать всё',
-          //       //   ),
-          //       // ),
-          //       showClearAllButton: true,
-          //       clearAllButton: ElevatedButton(
-          //         onPressed: () {},
-          //         child: const Text(
-          //           'Очистить',
-          //         ),
-          //       ),
-          //       // selectAllButton: Padding(
-          //       //   padding: const EdgeInsets.all(12.0),
-          //       //   child: DecoratedBox(
-          //       //     decoration: BoxDecoration(
-          //       //       border: Border.all(color: Colors.blue),
-          //       //     ),
-          //       //     child: const Padding(
-          //       //       padding: EdgeInsets.all(8.0),
-          //       //       child: Text(
-          //       //         'Выбрать всё',
-          //       //         //style: kStyleDefault,
-          //       //       ),
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //       // onTapClearAll: () {
-          //       //   print('object');
-          //       // },
-          //       noResultsWidget: const Padding(
-          //         padding: EdgeInsets.all(4.0),
-          //         child: Text('Ничего не найдено'),
-          //       ),
-          //       // Padding(
-          //       //   padding: const EdgeInsets.all(12.0),
-          //       //   child: DecoratedBox(
-          //       //     decoration: BoxDecoration(
-          //       //       border: Border.all(color: Colors.red),
-          //       //     ),
-          //       //     child: const Padding(
-          //       //       padding: EdgeInsets.all(8.0),
-          //       //       child: Text(
-          //       //         'Очистить',
-          //       //         //style: kStyleDefault,
-          //       //       ),
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //     ), // This tr
           //   ),
           // ),
 
@@ -533,80 +501,400 @@ class CustomFilterChip extends StatelessWidget {
   }
 }
 
-// TextStyle kStyleDefault = const TextStyle(
-//   color: Colors.black,
-//   fontSize: 16,
-//   fontWeight: FontWeight.bold,
-// );
+final studiosListProvider = FutureProvider<List<Studio>>((ref) async {
+  String data =
+      await rootBundle.loadString('assets/shiki-studios-filtered-sorted.json');
 
-List<String> animeGenreRussianNames = [
-  'Безумие',
-  'Боевые искусства',
-  'Вампиры',
-  'Военное',
-  'Гарем',
-  'Гурман',
-  'Демоны',
-  'Детектив',
-  'Детское',
-  'Дзёсей',
-  'Драма',
-  'Игры',
-  'Исторический',
-  'Комедия',
-  'Космос',
-  'Магия',
-  'Машины',
-  'Меха',
-  'Музыка',
-  'Пародия',
-  'Повседневность',
-  'Полиция',
-  'Приключения',
-  'Психологическое',
-  'Работа',
-  'Романтика',
-  'Самураи',
-  'Сверхъестественное',
-  'Спорт',
-  'Супер сила',
-  'Сэйнэн',
-  'Сёдзё',
-  'Сёдзё-ай',
-  'Сёнен',
-  'Сёнен-ай',
-  'Триллер',
-  'Ужасы',
-  'Фантастика',
-  'Фэнтези',
-  'Хентай?',
-  'Школа',
-  'Экшен',
-  'Эротика?',
-  'Этти',
-  'Юри',
-  'Яой', // для милых дам
-];
+  final jsonResult = json.decode(data);
 
-List<Genre> animeGenres = List<Genre>.generate(
-  animeGenreRussianNames.length,
-  (index) => Genre(
-    id: index,
-    kind: 'anime',
-    name: '',
-    russian: animeGenreRussianNames[index],
-  ),
-);
+  return [for (final e in jsonResult) Studio.fromJson(e)];
+});
 
-class Genre {
-  final int id;
-  final String kind;
-  final String name;
-  final String russian;
+class StudiosBottomSheet extends ConsumerWidget {
+  final ScrollController scrollController;
 
-  const Genre(
-      {required this.id,
-      required this.kind,
-      required this.name,
-      required this.russian});
+  const StudiosBottomSheet({super.key, required this.scrollController});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = ref.watch(animeSearchProvider);
+    final studiosList = ref.watch(studiosListProvider);
+
+    return Material(
+      color: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Студии',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const Spacer(),
+                  const Tooltip(
+                    message: 'Очистить всё',
+                    child: IconButton(
+                      onPressed: null,
+                      // (c.selectedGenres?.isEmpty ?? true)
+                      //     ? null
+                      //     : () {
+                      //         ref
+                      //             .read(animeSearchProvider)
+                      //             .clearSelectedGenres();
+                      //       },
+                      icon: Icon(Icons.clear_all),
+                    ),
+                  ),
+                ],
+              ),
+              ...[
+                studiosList.when(
+                  error: (error, stackTrace) {
+                    return const Center(child: Text('data'));
+                  },
+                  loading: () {
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                  data: (data) {
+                    return Card(
+                      clipBehavior: Clip.antiAlias,
+                      shadowColor: Colors.transparent,
+                      margin: EdgeInsets.zero,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                        physics: const ClampingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          final studio = data[index];
+
+                          const isSelected = false;
+
+                          // final isSelected =
+                          //     c.selectedGenres?.contains(genre) ?? false;
+
+                          return ListTile(
+                            //selected: isSelected,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              studio.filteredName!,
+                            ),
+                            trailing: isSelected
+                                ? IconButton(
+                                    onPressed: () {
+                                      // ref
+                                      //     .read(animeSearchProvider)
+                                      //     .removeGenre(genre);
+                                    },
+                                    icon: const Icon(Icons.remove_circle),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      // ref
+                                      //     .read(animeSearchProvider)
+                                      //     .addGenre(genre);
+                                    },
+                                    icon: const Icon(Icons.add_circle),
+                                  ),
+                            //onTap: () => Navigator.pop(context),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
+
+class GenresBottomSheet extends ConsumerWidget {
+  final ScrollController scrollController;
+
+  const GenresBottomSheet({super.key, required this.scrollController});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = ref.watch(animeSearchProvider);
+    return Material(
+      color: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Жанры',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const Spacer(),
+                  Tooltip(
+                    message: 'Очистить всё',
+                    child: IconButton(
+                      onPressed: (c.selectedGenres?.isEmpty ?? true)
+                          ? null
+                          : () {
+                              ref
+                                  .read(animeSearchProvider)
+                                  .clearSelectedGenres();
+                            },
+                      icon: const Icon(Icons.clear_all),
+                    ),
+                  ),
+                ],
+              ),
+              Card(
+                clipBehavior: Clip.antiAlias,
+                shadowColor: Colors.transparent,
+                margin: EdgeInsets.zero,
+                child: ListView.builder(
+                  //padding: EdgeInsets.zero,
+                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: animeGenres.length,
+                  itemBuilder: (context, index) {
+                    final genre = animeGenres[index];
+                    // ребилдит весь список, что плохо
+                    final isSelected =
+                        c.selectedGenres?.contains(genre) ?? false;
+                    return ListTile(
+                      selected: isSelected,
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        genre.russian!,
+                      ),
+                      trailing: isSelected
+                          ? IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(animeSearchProvider)
+                                    .removeGenre(genre);
+                              },
+                              icon: const Icon(Icons.remove_circle),
+                            )
+                          : IconButton(
+                              onPressed: () {
+                                ref.read(animeSearchProvider).addGenre(genre);
+                              },
+                              icon: const Icon(Icons.add_circle),
+                            ),
+                      //onTap: () => Navigator.pop(context),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+List<Genre> animeGenres = [
+  Genre(
+    id: 5,
+    russian: 'Безумие',
+  ),
+  Genre(
+    id: 17,
+    russian: 'Боевые искусства',
+  ),
+  Genre(
+    id: 32,
+    russian: 'Вампиры',
+  ),
+  Genre(
+    id: 38,
+    russian: 'Военное',
+  ),
+  Genre(
+    id: 35,
+    russian: 'Гарем',
+  ),
+  Genre(
+    id: 543,
+    russian: 'Гурман',
+  ),
+  Genre(
+    id: 6,
+    russian: 'Демоны',
+  ),
+  Genre(
+    id: 7,
+    russian: 'Детектив',
+  ),
+  Genre(
+    id: 15,
+    russian: 'Детское',
+  ),
+  Genre(
+    id: 43,
+    russian: 'Дзёсей',
+  ),
+  Genre(
+    id: 8,
+    russian: 'Драма',
+  ),
+  Genre(
+    id: 11,
+    russian: 'Игры',
+  ),
+  Genre(
+    id: 13,
+    russian: 'Исторический',
+  ),
+  Genre(
+    id: 4,
+    russian: 'Комедия',
+  ),
+  Genre(
+    id: 29,
+    russian: 'Космос',
+  ),
+
+  Genre(
+    id: 16,
+    russian: 'Магия',
+  ),
+  Genre(
+    id: 3,
+    russian: 'Машины',
+  ),
+  Genre(
+    id: 18,
+    russian: 'Меха',
+  ),
+  Genre(
+    id: 19,
+    russian: 'Музыка',
+  ),
+  Genre(
+    id: 20,
+    russian: 'Пародия',
+  ),
+  Genre(
+    id: 36,
+    russian: 'Повседневность',
+  ),
+  Genre(
+    id: 39,
+    russian: 'Полиция',
+  ),
+  Genre(
+    id: 2,
+    russian: 'Приключения',
+  ),
+  Genre(
+    id: 40,
+    russian: 'Психологическое',
+  ),
+  Genre(
+    id: 541,
+    russian: 'Работа',
+  ),
+  Genre(
+    id: 22,
+    russian: 'Романтика',
+  ),
+  Genre(
+    id: 21,
+    russian: 'Самураи',
+  ),
+  Genre(
+    id: 37,
+    russian: 'Сверхъестественное',
+  ),
+  Genre(
+    id: 30,
+    russian: 'Спорт',
+  ),
+  Genre(
+    id: 31,
+    russian: 'Супер сила',
+  ),
+  Genre(
+    id: 42,
+    russian: 'Сэйнэн',
+  ),
+  Genre(
+    id: 25,
+    russian: 'Сёдзё',
+  ),
+  Genre(
+    id: 26,
+    russian: 'Сёдзё-ай',
+  ),
+  Genre(
+    id: 27,
+    russian: 'Сёнен',
+  ),
+  Genre(
+    id: 28,
+    russian: 'Сёнен-ай',
+  ),
+  Genre(
+    id: 41,
+    russian: 'Триллер',
+  ),
+  Genre(
+    id: 14,
+    russian: 'Ужасы',
+  ),
+  Genre(
+    id: 24,
+    russian: 'Фантастика',
+  ),
+  Genre(
+    id: 10,
+    russian: 'Фэнтези',
+  ),
+  // Genre(
+  //   id: 12,
+  //   russian: 'Хентай',
+  // ),
+  Genre(
+    id: 23,
+    russian: 'Школа',
+  ),
+  Genre(
+    id: 1,
+    russian: 'Экшен',
+  ),
+  // Genre(
+  //   id: 539,
+  //   russian: 'Эротика',
+  // ),
+  // Genre(
+  //   id: 9,
+  //   russian: 'Этти',
+  // ),
+  // Genre(
+  //   id: 34,
+  //   russian: 'Юри',
+  // ),
+  // Genre(
+  //   id: 33,
+  //   russian: 'Яой',
+  // ),
+];
