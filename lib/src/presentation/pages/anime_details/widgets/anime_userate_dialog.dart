@@ -525,6 +525,28 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
     return AlertDialog(
       scrollable: true,
       actions: [
+        if (widget.data.userRate != null && widget.data.userRate?.id != null)
+          IconButton(
+            onPressed: isLoading
+                ? null
+                : () async {
+                    final result = await deleteRate();
+                    if (result) {
+                      ref
+                          .read(titleInfoPageProvider(widget.data.id!))
+                          .deleteRate();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    } else {
+                      if (mounted) {
+                        Navigator.pop(context);
+                        //showSnackBar(context, 'Ошибка удаления');
+                        showSnackBar(ctx: context, msg: 'Ошибка удаления');
+                      }
+                    }
+                  },
+            icon: const Icon(Icons.delete),
+          ),
         ElevatedButton(
           onPressed: isLoading
               ? null
@@ -548,38 +570,6 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                 },
           child: const Text('Сохранить'),
         ),
-        if (widget.data.userRate != null && widget.data.userRate?.id != null)
-          IconButton(
-            onPressed: isLoading
-                ? null
-                : () async {
-                    // setState(() {
-                    //   isLoading = true;
-                    // });
-                    // final resp = await ref.read(animeDataSourceProvider).deleteUserRate(
-                    //     token: SecureStorageService.instance.token,
-                    //     rateId: widget.data.userRate!.id!);
-                    final result = await deleteRate();
-                    if (result) {
-                      // ref
-                      //     .read(titleInfoPageProvider(widget.data.id!))
-                      //     .fetch(true);
-
-                      // ignore: use_build_context_synchronously
-                      ref
-                          .read(titleInfoPageProvider(widget.data.id!))
-                          .deleteRate();
-                      Navigator.pop(context);
-                    } else {
-                      if (mounted) {
-                        Navigator.pop(context);
-                        //showSnackBar(context, 'Ошибка удаления');
-                        showSnackBar(ctx: context, msg: 'Ошибка удаления');
-                      }
-                    }
-                  },
-            icon: const Icon(Icons.delete),
-          ),
       ],
       title: ConstrainedBox(
         constraints: const BoxConstraints(

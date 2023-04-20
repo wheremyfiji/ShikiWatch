@@ -23,8 +23,8 @@ class AnimeDataSource implements AnimeRepository {
   //Future<UserProfile> getUserProfile() async {
   Future<Anime> getAnime({
     required int? id,
+    required CancelToken cancelToken,
     String? token,
-    CancelToken? cancelToken,
     bool forceRefresh = false,
     bool needToCache = false,
   }) async {
@@ -78,29 +78,36 @@ class AnimeDataSource implements AnimeRepository {
   @override
   Future<Franchise> getAnimeFranchise({
     required int? id,
+    CancelToken? cancelToken,
   }) async {
-    final response = await dio.get('animes/$id/franchise');
+    final response = await dio.get(
+      'animes/$id/franchise',
+      cancelToken: cancelToken,
+    );
 
     return Franchise.fromJson(response);
   }
 
   @override
-  Future<Iterable<Animes>> getAnimes(
-      {int? page,
-      int? limit,
-      String? order,
-      String? kind,
-      String? status,
-      String? season,
-      int? score,
-      String? duration,
-      String? rating,
-      String? mylist,
-      String? censored,
-      String? search,
-      String? userToken}) async {
+  Future<Iterable<Animes>> getAnimes({
+    int? page,
+    int? limit,
+    String? order,
+    String? kind,
+    String? status,
+    String? season,
+    int? score,
+    String? duration,
+    String? rating,
+    String? mylist,
+    String? censored,
+    String? search,
+    String? userToken,
+    CancelToken? cancelToken,
+  }) async {
     final response = await dio.get(
       'animes',
+      cancelToken: cancelToken,
       queryParameters: {
         if (page != null) 'page': page.toString(),
         if (limit != null) 'limit': limit.toString(),
@@ -126,14 +133,17 @@ class AnimeDataSource implements AnimeRepository {
   }
 
   @override
-  Future<Iterable<UserAnimeRates>> getUserAnimeRates(
-      {required String? id,
-      required String? token,
-      int? page,
-      int? limit,
-      String? status,
-      String? censored}) async {
+  Future<Iterable<UserAnimeRates>> getUserAnimeRates({
+    required String? id,
+    required String? token,
+    int? page,
+    int? limit,
+    String? status,
+    String? censored,
+    CancelToken? cancelToken,
+  }) async {
     final response = await dio.get('users/$id/anime_rates',
+        cancelToken: cancelToken,
         queryParameters: {
           if (page != null) 'page': page.toString(),
           if (limit != null) 'limit': limit.toString(),

@@ -14,8 +14,8 @@ abstract class AnimeRepository {
 
   Future<Anime> getAnime({
     required int? id,
+    required CancelToken cancelToken,
     String? token,
-    CancelToken? cancelToken,
     bool forceRefresh = false,
     bool needToCache = false,
   });
@@ -24,6 +24,7 @@ abstract class AnimeRepository {
 
   Future<Franchise> getAnimeFranchise({
     required int? id,
+    CancelToken? cancelToken,
   });
 
   Future<Iterable<RelatedTitle>> getRelatedTitlesAnime({
@@ -31,28 +32,32 @@ abstract class AnimeRepository {
     required CancelToken cancelToken,
   });
 
-  Future<Iterable<Animes>> getAnimes(
-      {int? page,
-      int? limit,
-      String? order,
-      String? kind,
-      String? status,
-      String? season,
-      int? score,
-      String? duration,
-      String? rating,
-      String? mylist,
-      String? censored,
-      String? search,
-      String? userToken});
+  Future<Iterable<Animes>> getAnimes({
+    int? page,
+    int? limit,
+    String? order,
+    String? kind,
+    String? status,
+    String? season,
+    int? score,
+    String? duration,
+    String? rating,
+    String? mylist,
+    String? censored,
+    String? search,
+    String? userToken,
+    CancelToken? cancelToken,
+  });
 
-  Future<Iterable<UserAnimeRates>> getUserAnimeRates(
-      {required String? id,
-      required String? token,
-      int? page,
-      int? limit,
-      String? status,
-      String? censored});
+  Future<Iterable<UserAnimeRates>> getUserAnimeRates({
+    required String? id,
+    required String? token,
+    int? page,
+    int? limit,
+    String? status,
+    String? censored,
+    CancelToken? cancelToken,
+  });
 
   Future<UserRateResp> createUserRate({
     required String token,

@@ -19,9 +19,11 @@ class ProfileDataSource implements ProfileRepository {
   Future<UserProfile> getUserProfile({
     required String? id,
     String? userToken,
+    CancelToken? cancelToken,
   }) async {
     final response = await dio.get(
       'users/$id',
+      cancelToken: cancelToken,
       options: Options(
         headers: {
           'Authorization': 'Bearer $userToken',
@@ -33,8 +35,14 @@ class ProfileDataSource implements ProfileRepository {
   }
 
   @override
-  Future<Iterable<UserFriend>> getUserFriends({required String? id}) async {
-    final response = await dio.get('users/$id/friends');
+  Future<Iterable<UserFriend>> getUserFriends({
+    required String? id,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      'users/$id/friends',
+      cancelToken: cancelToken,
+    );
 
     return [for (final e in response) UserFriend.fromJson(e)];
   }

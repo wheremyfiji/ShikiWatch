@@ -1,7 +1,9 @@
 //import 'dart:async';
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
 import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
@@ -14,7 +16,10 @@ import '../../utils/debouncer.dart';
 const String animeSearchHistoryKey = 'anime_search_history';
 
 final animeSearchProvider = ChangeNotifierProvider.autoDispose((ref) {
-  final c = AnimeSearchController(ref, ref.read(animeDataSourceProvider));
+  final cancelToken = ref.cancelToken();
+
+  final c = AnimeSearchController(
+      ref, ref.read(animeDataSourceProvider), cancelToken);
   c.initState();
   ref.onDispose(() {
     c.textEditingController.dispose();
@@ -68,11 +73,12 @@ List<AnimeFilter> animeKindList = [
 ];
 
 class AnimeSearchController extends flutter.ChangeNotifier {
-  AnimeSearchController(this._ref, this.animeRepository)
+  AnimeSearchController(this._ref, this.animeRepository, this.cancelToken)
       : textEditingController = flutter.TextEditingController(),
         debouncer = Debouncer(delay: const Duration(milliseconds: 800));
 
   final Ref _ref;
+  final CancelToken cancelToken;
   final Debouncer debouncer;
   final AnimeRepository animeRepository;
 
@@ -321,12 +327,14 @@ class AnimeSearchController extends flutter.ChangeNotifier {
         duration: selectedEpDuration,
         //rating: ,
         mylist: selectedMyList,
+
         censored: 'true',
         //score: 1,
         search: textEditingController.text != ''
             ? textEditingController.text
             : null,
         userToken: SecureStorageService.instance.token,
+        cancelToken: cancelToken,
       );
       final animes = data.toList();
       final isLastPage = animes.length < _limit;

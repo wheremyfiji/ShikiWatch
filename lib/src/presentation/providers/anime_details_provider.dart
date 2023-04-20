@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
 import '../../services/secure_storage/secure_storage_service.dart';
 import '../../data/data_sources/anime_data_src.dart';
@@ -11,16 +12,20 @@ import '../../domain/models/related_title.dart';
 
 final relatedTitlesAnimeProvider = FutureProvider.autoDispose
     .family<Iterable<RelatedTitle>, int>((ref, id) async {
-  final cancelToken = CancelToken();
-  ref.onDispose(() {
-    cancelToken.cancel();
-  });
+  // final cancelToken = CancelToken();
+  // ref.onDispose(() {
+  //   cancelToken.cancel();
+  // });
+
+  ref.cacheFor();
+
+  final token = ref.cancelToken();
+
   await Future.delayed(const Duration(milliseconds: 250));
 
-  //return ref.watch(shikimoriRepositoryProvider).getSimilarAnimes(id: id);
   return ref
       .read(animeDataSourceProvider)
-      .getRelatedTitlesAnime(id: id, cancelToken: cancelToken);
+      .getRelatedTitlesAnime(id: id, cancelToken: token);
 }, name: 'relatedTitlesAnimeProvider');
 
 // final similarAnimesProvider =
@@ -37,38 +42,27 @@ final relatedTitlesAnimeProvider = FutureProvider.autoDispose
 //   return ref.watch(shikimoriRepositoryProvider).getAnimeFranchise(id: id);
 // }, name: 'franchiseProvider');
 
-// final titleInfoPageProvider = ChangeNotifierProvider.autoDispose
-//     .family<TitleInfoPageController, int>((ref, id) {
-//   final cancelToken = CancelToken();
-//   //ref.onDispose(() => cancelToken.cancel());
-//   ref.onDispose(() {
-//     cancelToken.cancel();
-//   });
-//   final c = TitleInfoPageController(
-//     id,
-//     ref.read(animeDataSourceProvider),
-//     cancelToken
-//   );
-//   return c;
-// }, name: 'titleInfoPageProvider');
-
 final titleInfoPageProvider = ChangeNotifierProvider.autoDispose
-    // .family<TitleInfoPageController, TitleInfoPageParameters>((ref, param) {
     .family<TitleInfoPageController, int>((ref, id) {
-  final cancelToken = CancelToken();
-  //ref.onDispose(() => cancelToken.cancel());
-  ref.onDispose(() {
-    cancelToken.cancel();
-  });
+  // final cancelToken = CancelToken();
+  // ////ref.onDispose(() => cancelToken.cancel());
+  // ref.onDispose(() {
+  //   cancelToken.cancel();
+  // });
+
+  ref.cacheFor();
+
+  final cancelToken = ref.cancelToken();
+
   final c = TitleInfoPageController(
       id, ref.read(animeDataSourceProvider), cancelToken);
+
   return c;
 }, name: 'titleInfoPageProvider');
 
 class TitleInfoPageController extends ChangeNotifier {
   final int id;
   final AnimeRepository animeRepository;
-  //final bool fullRefresh;
   final CancelToken cancelToken;
   AsyncValue<Anime> title;
 
@@ -85,7 +79,7 @@ class TitleInfoPageController extends ChangeNotifier {
 
   TitleInfoPageController(this.id, this.animeRepository, this.cancelToken)
       : title = const AsyncValue.loading() {
-    fetch(false);
+    fetch();
   }
 
   int allScores = 0;
@@ -329,7 +323,7 @@ class TitleInfoPageController extends ChangeNotifier {
     }
   }
 
-  Future<void> fetch(bool force) async {
+  Future<void> fetch() async {
     // title = await AsyncValue.guard(
     //   () =>
     //       //_ref.read(shikimoriRepositoryProvider).getAnime(id: id, token: token),
@@ -340,10 +334,6 @@ class TitleInfoPageController extends ChangeNotifier {
     //     needToCache: true,
     //   ),
     // );
-    if (force) {
-      title = const AsyncValue.loading();
-      notifyListeners();
-    }
     title = await AsyncValue.guard(
       () async {
         final updates = await animeRepository.getAnime(
@@ -351,7 +341,6 @@ class TitleInfoPageController extends ChangeNotifier {
           token: SecureStorageService.instance.token,
           cancelToken: cancelToken,
           needToCache: true,
-          forceRefresh: force,
         );
         return updates;
       },

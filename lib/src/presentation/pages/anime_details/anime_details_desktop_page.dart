@@ -498,10 +498,8 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                   ),
                 ],
                 error: (error, stackTrace) => [
-                  CustomErrorWidget(
-                    error.toString(),
-                    () => titleInfo.fetch(true),
-                  ),
+                  CustomErrorWidget(error.toString(),
+                      () => ref.refresh(titleInfoPageProvider(animeData.id!))),
                 ],
               ),
 

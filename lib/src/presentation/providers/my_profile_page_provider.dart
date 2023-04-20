@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' as fl;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
 import '../../data/data_sources/profile_data_src.dart';
 import '../../data/repositories/profile_repo.dart';
@@ -22,18 +24,28 @@ import '../../services/secure_storage/secure_storage_service.dart';
 
 final userProfileProvider = ChangeNotifierProvider.autoDispose
     .family<UserProfileController, String>((ref, userId) {
-  final c = UserProfileController(userId, ref.read(profileDataSourceProvider));
+  ref.cacheFor();
+
+  final cancelToken = ref.cancelToken();
+
+  final c = UserProfileController(
+    userId,
+    ref.read(profileDataSourceProvider),
+    cancelToken,
+  );
+
   return c;
 }, name: 'userProfileProvider');
 
 class UserProfileController extends fl.ChangeNotifier {
   final String userId;
   final ProfileRepository profileRepository;
+  final CancelToken cancelToken;
 
   AsyncValue<UserProfile> profile;
   AsyncValue<List<UserFriend>> friends;
 
-  UserProfileController(this.userId, this.profileRepository)
+  UserProfileController(this.userId, this.profileRepository, this.cancelToken)
       : profile = const AsyncValue.loading(),
         friends = const AsyncValue.loading() {
     fetch();
@@ -91,12 +103,16 @@ class UserProfileController extends fl.ChangeNotifier {
       mangaRanobeStat = [];
     }
 
-    profile.whenData((value) async {
-      fillAnimeStat(value);
-      fillMangaRanobeStat(value);
-      await SecureStorageService.instance
-          .writeUserImage(value.image!.x160 ?? '');
-    });
+    profile.whenData(
+      (value) async {
+        fillAnimeStat(value);
+        fillMangaRanobeStat(value);
+        if (userId == SecureStorageService.instance.userId) {
+          await SecureStorageService.instance
+              .writeUserImage(value.image!.x160 ?? '');
+        }
+      },
+    );
 
     notifyListeners();
   }
