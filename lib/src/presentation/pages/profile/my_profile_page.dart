@@ -119,6 +119,7 @@ class _ProfilePageAppBar extends StatelessWidget {
     return SliverAppBar.large(
       title: const Text('Мой профиль'),
       actions: [
+        // дебаг для деда
         if (SecureStorageService.instance.userId == '384889' ||
             SecureStorageService.instance.userId == '1161605') ...[
           IconButton(
@@ -126,9 +127,19 @@ class _ProfilePageAppBar extends StatelessWidget {
             icon: const Icon(Icons.travel_explore),
           ),
         ],
-        IconButton(
-          onPressed: () => context.push('/profile/settings'),
-          icon: const Icon(Icons.settings_outlined),
+        const Tooltip(
+          message: 'Искать пользователя',
+          child: IconButton(
+            onPressed: null,
+            icon: Icon(Icons.person_search),
+          ),
+        ),
+        Tooltip(
+          message: 'Настройки',
+          child: IconButton(
+            onPressed: () => context.push('/profile/settings'),
+            icon: const Icon(Icons.settings_outlined),
+          ),
         ),
       ],
     );
