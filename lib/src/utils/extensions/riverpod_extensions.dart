@@ -13,7 +13,7 @@ extension CancelTokenExtension on AutoDisposeRef {
 }
 
 extension CacheExtension on AutoDisposeRef {
-  KeepAliveLink cacheFor([Duration duration = const Duration(seconds: 3)]) {
+  KeepAliveLink cacheFor([Duration duration = const Duration(seconds: 4)]) {
     Timer? timer;
     // prevents being disposed
     final link = keepAlive();
