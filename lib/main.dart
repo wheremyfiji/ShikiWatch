@@ -45,15 +45,6 @@ Future<void> main() async {
 
   TargetP.init();
 
-  if (Platform.isWindows) {
-    await windowManager.ensureInitialized();
-    DiscordRPC.initialize();
-  }
-
-  if (Platform.isAndroid) {
-    await FlutterDisplayMode.setHighRefreshRate();
-  }
-
   Loggy.initLoggy(
     logPrinter: const PrettyPrinter(),
   );
@@ -63,10 +54,18 @@ Future<void> main() async {
   if (!TargetP.instance.isDesktop) {
     AppMetrica.runZoneGuarded(
       () async {
+        if (Platform.isAndroid) {
+          await setOptimalDisplayMode();
+          //await FlutterDisplayMode.setHighRefreshRate();
+        }
         await runMain();
       },
     );
   } else {
+    if (Platform.isWindows) {
+      await windowManager.ensureInitialized();
+      DiscordRPC.initialize();
+    }
     await runMain();
   }
 }
@@ -137,7 +136,6 @@ runMain() async {
         cacheStorageServiceProvider
             .overrideWithValue(initializedStorageService),
       ],
-      //child: const ShikiApp(),
       child: WindowWatcher(
         child: const ShikiApp(),
         onClose: () {},
@@ -207,4 +205,7 @@ Future<void> setOptimalDisplayMode() async {
       sameResolution.isNotEmpty ? sameResolution.first : active;
 
   await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
+
+  final t = await FlutterDisplayMode.preferred;
+  print('refresh rate: ${t.refreshRate}');
 }
