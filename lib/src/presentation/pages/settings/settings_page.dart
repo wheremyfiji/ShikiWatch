@@ -250,7 +250,8 @@ class ClearCacheWidget extends ConsumerWidget {
     final storage = ref.read(cacheStorageServiceProvider);
     return SettingsOption(
       title: 'Очистить кэш',
-      subtitle: 'Удалить кэш API и изображений',
+      subtitle:
+          'Удалить кэшированные изображения', //Удалить кэш API и изображений
       onTap: () async {
         context.scaffoldMessenger.showSnackBar(const SnackBar(
           content: Text('Очистка..'),
