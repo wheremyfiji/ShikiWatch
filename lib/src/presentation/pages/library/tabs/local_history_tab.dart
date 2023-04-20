@@ -4,6 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../constants/config.dart';
+import '../../../../services/anime_database/anime_database_provider.dart';
+import '../../../../utils/utils.dart';
 import '../../../providers/library_local_history_provider.dart';
 import '../../../widgets/error_widget.dart';
 
@@ -80,6 +82,8 @@ class LocalHistoryTab extends ConsumerWidget {
                             studioName: studio.name ?? '',
                             episode: episode,
                             timeStamp: ts,
+                            shikimoriId: anime.shikimoriId,
+                            studioId: studio.id ?? 0,
                           ),
                         );
                       },
@@ -97,28 +101,15 @@ class LocalHistoryTab extends ConsumerWidget {
   }
 }
 
-// List months = [
-//   'янв.',
-//   'февр.',
-//   'мар.',
-//   'апр.',
-//   'мая',
-//   'июн.',
-//   'июл.',
-//   'авг.',
-//   'сент.',
-//   'окт.',
-//   'нояб.',
-//   'дек.'
-// ];
-
-class HistoryItem extends StatelessWidget {
+class HistoryItem extends ConsumerWidget {
   final String animeName;
   final String image;
   final DateTime update;
   final String studioName;
   final int? episode;
   final String? timeStamp;
+  final int shikimoriId;
+  final int studioId;
 
   const HistoryItem({
     super.key,
@@ -128,79 +119,98 @@ class HistoryItem extends StatelessWidget {
     required this.studioName,
     required this.episode,
     required this.timeStamp,
+    required this.shikimoriId,
+    required this.studioId,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     //String formattedDate = DateFormat('yyyy-MM-dd в kk:mm').format(update);
     //final current_mon = update.month;
     //final day = update.day;
     //final monthName = months[update.month - 1];
-    final time =
-        //update.hour;
-        DateFormat('HH:mm').format(update); //kk
+    final time = DateFormat('HH:mm').format(update); //kk
     final date = DateFormat.MMMd().format(update); //MMMEd  MMMMd
-    return
-        //InkWell(
-        //  onTap: () {},
-        //  child:
-        Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      alignment: Alignment.bottomRight,
       children: [
-        SizedBox(
-          width: 120,
-          child: AspectRatio(
-            aspectRatio: 0.703,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: ExtendedImage.network(
-                AppConfig.staticUrl + image,
-                fit: BoxFit.cover,
-                cache: true,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 120,
+              child: AspectRatio(
+                aspectRatio: 0.703,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: ExtendedImage.network(
+                    AppConfig.staticUrl + image,
+                    fit: BoxFit.cover,
+                    cache: true,
+                  ),
+                ),
               ),
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    animeName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Text('$episode серия • $studioName'),
+
+                  if (timeStamp != null) ...[
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    Text(timeStamp!)
+                  ],
+                  const SizedBox(
+                    height: 2,
+                  ),
+                  Text('$date в $time'),
+                  //Text('$day $monthName в $time'),
+                  // Text('Студия: $studioName'),
+                  // Text('Последний эпизод: $episode'),
+                  // Text('Обновлено $formattedDate'),
+                ],
+              ),
+            ),
+          ],
+          // ),
+        ),
+        Positioned(
+          child: Tooltip(
+            message: 'Удалить эпизод',
+            child: IconButton(
+              onPressed: () {
+                ref
+                    .read(animeDatabaseProvider)
+                    .deleteEpisode(
+                        shikimoriId: shikimoriId,
+                        studioId: studioId,
+                        episodeNumber: episode!)
+                    .then((value) => showSnackBar(
+                        ctx: context, msg: 'Серия $episode удалена'));
+              },
+              icon: const Icon(Icons.delete),
             ),
           ),
         ),
-        const SizedBox(
-          width: 16,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                animeName,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text('$episode серия • $studioName'),
-
-              if (timeStamp != null) ...[
-                const SizedBox(
-                  height: 2,
-                ),
-                Text(timeStamp!)
-              ],
-              const SizedBox(
-                height: 2,
-              ),
-              Text('$date в $time'),
-              //Text('$day $monthName в $time'),
-              // Text('Студия: $studioName'),
-              // Text('Последний эпизод: $episode'),
-              // Text('Обновлено $formattedDate'),
-            ],
-          ),
-        ),
       ],
-      // ),
     );
   }
 }
