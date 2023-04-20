@@ -156,18 +156,6 @@ class AnimeCard2 extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: const SizedBox.shrink(),
-              // CachedNetworkImage(
-              //   imageUrl:
-              //       'https://shikimori.one/system/animes/original/44204.jpg',
-              //   height: height! - 56, //85
-              //   width: width,
-              //   fit: BoxFit.cover,
-              //   progressIndicatorBuilder: ((context, url, dwprogress) => Center(
-              //       child:
-              //           CircularProgressIndicator(value: dwprogress.progress))),
-              //   fadeOutDuration: const Duration(milliseconds: 300),
-              //   fadeInDuration: const Duration(milliseconds: 300),
-              // ),
             ),
             Padding(
               padding: const EdgeInsets.all(8),

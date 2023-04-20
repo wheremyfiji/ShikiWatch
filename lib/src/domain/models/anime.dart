@@ -1,3 +1,6 @@
+import 'package:shikidev/src/domain/models/genre.dart';
+import 'package:shikidev/src/domain/models/studio.dart';
+
 class Anime {
   int? id;
   String? name;
@@ -34,8 +37,8 @@ class Anime {
   List<String>? fansubbers;
   List<String>? fandubbers;
   //List<Null>? licensors;
-  List<Genres>? genres;
-  List<Studios>? studios;
+  List<Genre>? genres;
+  List<Studio>? studios;
   List<Videos>? videos;
   List<Screenshots>? screenshots;
   UserRate? userRate;
@@ -134,15 +137,15 @@ class Anime {
     //   });
     // }
     if (json['genres'] != null) {
-      genres = <Genres>[];
+      genres = <Genre>[];
       json['genres'].forEach((v) {
-        genres!.add(Genres.fromJson(v));
+        genres!.add(Genre.fromJson(v));
       });
     }
     if (json['studios'] != null) {
-      studios = <Studios>[];
+      studios = <Studio>[];
       json['studios'].forEach((v) {
-        studios!.add(Studios.fromJson(v));
+        studios!.add(Studio.fromJson(v));
       });
     }
     if (json['videos'] != null) {
@@ -199,40 +202,6 @@ class RatesStatusesStats {
   RatesStatusesStats.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     value = json['value'];
-  }
-}
-
-class Genres {
-  int? id;
-  String? name;
-  String? russian;
-  String? kind;
-
-  Genres({this.id, this.name, this.russian, this.kind});
-
-  Genres.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    russian = json['russian'];
-    kind = json['kind'];
-  }
-}
-
-class Studios {
-  int? id;
-  String? name;
-  String? filteredName;
-  bool? real;
-  String? image;
-
-  Studios({this.id, this.name, this.filteredName, this.real, this.image});
-
-  Studios.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    filteredName = json['filtered_name'];
-    real = json['real'];
-    image = json['image'];
   }
 }
 
