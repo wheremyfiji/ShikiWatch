@@ -58,23 +58,42 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
               color: context.theme.colorScheme.onBackground),
         ),
         actions: [
-          IconButton(
-            tooltip: 'Открыть в браузере',
-            onPressed: () {
-              launchUrlString('https://shikimori.one/animes/${animeData.id}');
+          PopupMenuButton(
+            tooltip: '',
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem<int>(
+                  value: 0,
+                  child: Text("Добавить в избранное"),
+                ),
+                const PopupMenuItem<int>(
+                  value: 1,
+                  child: Text("Открыть в браузере"),
+                ),
+                const PopupMenuItem<int>(
+                  value: 2,
+                  child: Text("Скопировать ссылку"),
+                ),
+              ];
             },
-            icon: const Icon(Icons.open_in_browser),
-          ),
-          IconButton(
-            tooltip: 'Скопировать ссылку на аниме',
-            onPressed: animeData.url == null // как тут вообще может быть null
-                ? null
-                : () async {
-                    await Clipboard.setData(
-                      ClipboardData(
-                        text: AppConfig.staticUrl + (animeData.url ?? ''),
-                      ),
-                    );
+            onSelected: (value) {
+              if (value == 0) {
+                showSnackBar(
+                  ctx: context,
+                  msg: 'че тут',
+                );
+              } else if (value == 1) {
+                launchUrlString(
+                  '${AppConfig.staticUrl}/animes/${animeData.id}',
+                  mode: LaunchMode.externalApplication,
+                );
+              } else if (value == 2) {
+                Clipboard.setData(
+                  ClipboardData(
+                    text: AppConfig.staticUrl + (animeData.url ?? ''),
+                  ),
+                ).whenComplete(
+                  () {
                     if (context.mounted) {
                       showSnackBar(
                         ctx: context,
@@ -82,8 +101,35 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                       );
                     }
                   },
-            icon: const Icon(Icons.share),
+                );
+              }
+            },
           ),
+          // IconButton(
+          //   tooltip: 'Открыть в браузере',
+          //   onPressed: () {
+          //   },
+          //   icon: const Icon(Icons.open_in_browser),
+          // ),
+          // IconButton(
+          //   tooltip: 'Скопировать ссылку на аниме',
+          //   onPressed: animeData.url == null // как тут вообще может быть null
+          //       ? null
+          //       : () async {
+          //           await Clipboard.setData(
+          //             ClipboardData(
+          //               text: AppConfig.staticUrl + (animeData.url ?? ''),
+          //             ),
+          //           );
+          //           if (context.mounted) {
+          //             showSnackBar(
+          //               ctx: context,
+          //               msg: 'Ссылка скопирована в буфер обмена',
+          //             );
+          //           }
+          //         },
+          //   icon: const Icon(Icons.share),
+          // ),
         ],
       ),
       body: SingleChildScrollView(

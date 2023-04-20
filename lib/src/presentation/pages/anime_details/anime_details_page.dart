@@ -136,22 +136,47 @@ class AnimeDetailsPage extends ConsumerWidget {
                 text: animeData.russian ?? animeData.name ?? '[Без навзвания]',
               ),
               actions: [
-                IconButton(
-                  tooltip: 'Открыть в браузере',
-                  onPressed: () {
-                    launchUrlString(
-                      'https://shikimori.me/animes/${animeData.id}',
-                      mode: LaunchMode.externalApplication,
-                    );
+                PopupMenuButton(
+                  tooltip: '',
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Открыть в браузере"),
+                      ),
+                      const PopupMenuItem<int>(
+                        value: 1,
+                        child: Text("Поделиться"),
+                      ),
+                    ];
                   },
-                  icon: const Icon(Icons.open_in_browser),
+                  onSelected: (value) {
+                    if (value == 0) {
+                      launchUrlString(
+                        '${AppConfig.staticUrl}/animes/${animeData.id}',
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } else if (value == 1) {
+                      Share.share(AppConfig.staticUrl + (animeData.url ?? ''));
+                    }
+                  },
                 ),
-                IconButton(
-                  tooltip: 'Поделиться',
-                  onPressed: () =>
-                      Share.share(AppConfig.staticUrl + (animeData.url ?? '')),
-                  icon: const Icon(Icons.share),
-                ),
+                // IconButton(
+                //   tooltip: 'Открыть в браузере',
+                //   onPressed: () {
+                //     launchUrlString(
+                //       'https://shikimori.me/animes/${animeData.id}',
+                //       mode: LaunchMode.externalApplication,
+                //     );
+                //   },
+                //   icon: const Icon(Icons.open_in_browser),
+                // ),
+                // IconButton(
+                //   tooltip: 'Поделиться',
+                //   onPressed: () =>
+                //       Share.share(AppConfig.staticUrl + (animeData.url ?? '')),
+                //   icon: const Icon(Icons.share),
+                // ),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.pin,

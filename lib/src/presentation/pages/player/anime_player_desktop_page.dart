@@ -104,11 +104,10 @@ class _AnimePlayerDesktopPageState
         state: 'Серия ${widget.data!.episodeNumber}',
         //startTimeStamp: DateTime.now().millisecondsSinceEpoch,
         //largeImageKey: 'large_image',
-        //largeImageKey: 'https://shikimori.one/system/animes/original/52034.jpg',
         largeImageKey: AppConfig.staticUrl + widget.data!.imageUrl,
         largeImageText: 'гайки хавать будешь?',
         button1Label: 'Открыть',
-        button1Url: 'https://shikimori.me/animes/${widget.data!.shikimoriId}',
+        button1Url: '${AppConfig.staticUrl}/animes/${widget.data!.shikimoriId}',
         //smallImageKey: 'small_image',
         //smallImageText: 'This text describes the small image.',
       ),
@@ -767,11 +766,6 @@ class _PlayerControlsState extends State<PlayerControls> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(4.0),
-                // child: Image.network(
-                //   //'https://shikimori.one/system/animes/original/51815.jpg',
-                //   AppConfig.staticUrl + widget.animePic,
-                //   height: 60,
-                // ),
                 child: ExtendedImage.network(
                   AppConfig.staticUrl + widget.animePic,
                   height: 60,
