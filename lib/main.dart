@@ -207,5 +207,5 @@ Future<void> setOptimalDisplayMode() async {
   await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
 
   final t = await FlutterDisplayMode.preferred;
-  print('refresh rate: ${t.refreshRate}');
+  debugPrint('refresh rate: ${t.refreshRate}');
 }

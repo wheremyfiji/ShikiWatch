@@ -45,7 +45,8 @@ class FilterChipWidget extends StatelessWidget {
               ? IconButton(
                   padding: EdgeInsets.zero,
                   onPressed: onClearAll ?? () {},
-                  icon: const Icon(Icons.clear_all_outlined))
+                  icon: const Icon(Icons.clear_all_outlined),
+                )
               : const SizedBox.shrink(),
         ),
         Padding(

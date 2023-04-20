@@ -352,7 +352,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
 
   Future<void> _fetch(int pageKey) async {
     List<String>? g;
-    List<String>? s;
+
     if (selectedGenres != null) {
       List<String> t = List<String>.generate(
         selectedGenres!.length,
@@ -384,7 +384,6 @@ class AnimeSearchController extends flutter.ChangeNotifier {
         duration: selectedEpDuration,
         //rating: ,
         genre: g?.join(','),
-        studio: s?.join(','),
         mylist: selectedMyList,
         censored: 'true',
         search: textEditingController.text != ''
