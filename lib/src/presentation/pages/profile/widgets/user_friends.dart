@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/user_friend.dart';
 
@@ -46,7 +47,9 @@ class UserFriendsWidget extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 shadowColor: Colors.transparent,
                 child: InkWell(
-                  onTap: () {},
+                  //onTap: () {},
+                  onTap: () =>
+                      context.push('/profile/${friend.id!}', extra: friend),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                     child: Column(

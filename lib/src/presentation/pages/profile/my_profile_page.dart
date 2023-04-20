@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:network_logger/network_logger.dart';
-import 'package:shikidev/src/presentation/pages/my_profile/widgets/user_friends.dart';
-import 'package:shikidev/src/presentation/pages/my_profile/widgets/user_profile_header.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../providers/my_profile_page_provider.dart';
+import '../../providers/user_profile_provider.dart';
 import '../../widgets/error_widget.dart';
+
 import 'widgets/user_anime_stats.dart';
+import 'widgets/user_friends.dart';
 import 'widgets/user_manga_stats.dart';
+import 'widgets/user_profile_header.dart';
 
 const double kDividerHeight = 16;
 
@@ -126,7 +127,7 @@ class _ProfilePageAppBar extends StatelessWidget {
           ),
         ],
         IconButton(
-          onPressed: () => context.push('/my_profile/settings'),
+          onPressed: () => context.push('/profile/settings'),
           icon: const Icon(Icons.settings_outlined),
         ),
       ],
