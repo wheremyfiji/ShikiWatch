@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../domain/models/user_friend.dart';
+import '../../../../domain/models/user.dart';
 
 class UserFriendsWidget extends StatelessWidget {
-  final List<UserFriend> data;
+  final List<User> data;
   const UserFriendsWidget({super.key, required this.data});
 
   @override

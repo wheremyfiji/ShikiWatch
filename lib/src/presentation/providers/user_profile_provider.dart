@@ -5,22 +5,11 @@ import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
 import '../../data/data_sources/profile_data_src.dart';
 import '../../data/repositories/profile_repo.dart';
-import '../../domain/models/user_friend.dart';
+import '../../domain/models/user.dart';
 import '../../domain/models/user_profile.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 
-// final userProfileProvider = FutureProvider<UserProfile>((ref) async {
-//   final ProfileRepository profileRepository;
-//   return await profileRepository.getUserProfile(id: id);
-//   // return ref
-//   //     .watch(shikimoriRepositoryProvider)
-//   //     .getUserProfile(userId: userId, token: token);
-// }, name: 'userProfileProvider');
-
-// final userProfileProvider =
-//     ChangeNotifierProvider<UserProfileController>((ref) {
-//   return;
-// });
+//https://shikimori.me/api/users?page=1&limit=10&search=ya_sel
 
 final userProfileProvider = ChangeNotifierProvider.autoDispose
     .family<UserProfileController, String>((ref, userId) {
@@ -43,7 +32,7 @@ class UserProfileController extends fl.ChangeNotifier {
   final CancelToken cancelToken;
 
   AsyncValue<UserProfile> profile;
-  AsyncValue<List<UserFriend>> friends;
+  AsyncValue<List<User>> friends;
 
   UserProfileController(this.userId, this.profileRepository, this.cancelToken)
       : profile = const AsyncValue.loading(),
@@ -82,6 +71,7 @@ class UserProfileController extends fl.ChangeNotifier {
         final data = await profileRepository.getUserProfile(
           id: userId, //1297442 userId
           userToken: SecureStorageService.instance.token,
+          cancelToken: cancelToken,
         );
         return data;
       },
@@ -90,6 +80,7 @@ class UserProfileController extends fl.ChangeNotifier {
       () async {
         final data = await profileRepository.getUserFriends(
           id: userId,
+          cancelToken: cancelToken,
         );
         return data.toList();
       },
@@ -108,8 +99,14 @@ class UserProfileController extends fl.ChangeNotifier {
         fillAnimeStat(value);
         fillMangaRanobeStat(value);
         if (userId == SecureStorageService.instance.userId) {
+          SecureStorageService.instance.userNickname = value.nickname ?? '';
           await SecureStorageService.instance
-              .writeUserImage(value.image!.x160 ?? '');
+              .writeUserNickname(value.nickname ?? '');
+
+          SecureStorageService.instance.userProfileImage =
+              value.image!.x160 ?? '';
+          await SecureStorageService.instance
+              .writeUserImage(value.image?.x160 ?? '');
         }
       },
     );

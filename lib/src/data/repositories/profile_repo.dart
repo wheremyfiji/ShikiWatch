@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../../domain/models/user_friend.dart';
+import '../../domain/models/user.dart';
 import '../../domain/models/user_profile.dart';
 
 abstract class ProfileRepository {
@@ -12,7 +12,7 @@ abstract class ProfileRepository {
     CancelToken? cancelToken,
   });
 
-  Future<Iterable<UserFriend>> getUserFriends({
+  Future<Iterable<User>> getUserFriends({
     required String? id,
     CancelToken? cancelToken,
   });
