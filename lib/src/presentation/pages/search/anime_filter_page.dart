@@ -65,25 +65,25 @@ class AnimeFilterPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.watch(animeSearchProvider);
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.pop();
-          ref.read(animeSearchProvider).applyFilter();
-        },
-        label: const Text('Применить'),
-        icon: const Icon(Icons.done_all),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     context.pop();
+      //     ref.read(animeSearchProvider).applyFilter();
+      //   },
+      //   label: const Text('Применить'),
+      //   icon: const Icon(Icons.done_all),
+      // ),
       body: CustomScrollView(
         slivers: [
           SliverAppBar.large(
             title: const Text('Фильтры'),
-            actions: [
-              IconButton(
-                onPressed: () => ref.read(animeSearchProvider).clearFilter(),
-                tooltip: "Сбросить",
-                icon: const Icon(Icons.refresh), //restart_alt_outlined  refresh
-              ),
-            ],
+            // actions: [
+            //   IconButton(
+            //     onPressed: () => ref.read(animeSearchProvider).clearFilter(),
+            //     tooltip: "Сбросить",
+            //     icon: const Icon(Icons.refresh), //restart_alt_outlined  refresh
+            //   ),
+            // ],
           ),
 
           SliverPadding(
@@ -106,33 +106,37 @@ class AnimeFilterPage extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                trailing: IconButton(
-                  onPressed: () {
-                    showFlexibleBottomSheet(
-                      decoration: BoxDecoration(
-                        color: context.theme.colorScheme.background,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16.0),
-                          topRight: Radius.circular(16.0),
+                trailing: Tooltip(
+                  message: 'Выбрать жанры',
+                  child: IconButton(
+                    onPressed: () {
+                      showFlexibleBottomSheet(
+                        decoration: BoxDecoration(
+                          color: context.theme.colorScheme.background,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(16.0),
+                            topRight: Radius.circular(16.0),
+                          ),
                         ),
-                      ),
-                      //bottomSheetColor: context.theme.colorScheme.background,
-                      bottomSheetColor: Colors.transparent,
-                      minHeight: 0,
-                      initHeight: 0.5,
-                      maxHeight: 1,
-                      context: context,
-                      anchors: [0, 0.5, 1],
-                      isSafeArea: true,
-                      duration: const Duration(milliseconds: 250),
-                      builder: (context, scrollController, bottomSheetOffset) {
-                        return GenresBottomSheet(
-                          scrollController: scrollController,
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add),
+                        //bottomSheetColor: context.theme.colorScheme.background,
+                        bottomSheetColor: Colors.transparent,
+                        minHeight: 0,
+                        initHeight: 0.5,
+                        maxHeight: 1,
+                        context: context,
+                        anchors: [0, 0.5, 1],
+                        isSafeArea: true,
+                        duration: const Duration(milliseconds: 250),
+                        builder:
+                            (context, scrollController, bottomSheetOffset) {
+                          return GenresBottomSheet(
+                            scrollController: scrollController,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                  ),
                 ),
               ),
             ),
@@ -184,16 +188,6 @@ class AnimeFilterPage extends ConsumerWidget {
           //         },
           //         icon: const Icon(Icons.add),
           //       ),
-          //     ),
-          //   ),
-          // ),
-
-          // SliverPadding(
-          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          //   sliver: SliverToBoxAdapter(
-          //     child: Container(
-          //       color: Colors.red,
-          //       height: 60,
           //     ),
           //   ),
           // ),
@@ -440,34 +434,34 @@ class AnimeFilterPage extends ConsumerWidget {
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 60)),
+          //const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
-      // bottomNavigationBar: BottomAppBar(
-      //   color: context.theme.colorScheme.background,
-      //   elevation: 0,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //     children: [
-      //       ElevatedButton.icon(
-      //         onPressed: () {
-      //           //context.pop();
-      //           ref.read(animeSearchProvider).clearFilter();
-      //         },
-      //         icon: const Icon(Icons.refresh), //restart_alt_outlined  refresh
-      //         label: const Text('Сбросить'),
-      //       ),
-      //       ElevatedButton.icon(
-      //         onPressed: () {
-      //           context.pop();
-      //           ref.read(animeSearchProvider).applyFilter();
-      //         },
-      //         icon: const Icon(Icons.done_all),
-      //         label: const Text('Применить'),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+      bottomNavigationBar: BottomAppBar(
+        color: context.theme.colorScheme.background,
+        elevation: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {
+                //context.pop();
+                ref.read(animeSearchProvider).clearFilter();
+              },
+              icon: const Icon(Icons.refresh), //restart_alt_outlined  refresh
+              label: const Text('Сбросить'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.pop();
+                ref.read(animeSearchProvider).applyFilter();
+              },
+              icon: const Icon(Icons.done_all),
+              label: const Text('Применить'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
