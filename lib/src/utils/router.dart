@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 //import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
@@ -31,10 +32,9 @@ final GlobalKey<NavigatorState> _tabANavigatorKey =
 
 final GoRouter router = GoRouter(
   debugLogDiagnostics: true,
-  // observers: [
-  //   //HeroController(),
-  //   //SentryNavigatorObserver(),
-  // ],
+  observers: [
+    SentryNavigatorObserver(),
+  ],
   navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
     GoRoute(
@@ -79,6 +79,7 @@ final GoRouter router = GoRouter(
     ),
 
     GoRoute(
+      name: 'login',
       path: '/login',
       //parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => TargetP.instance.isDesktop
@@ -86,6 +87,7 @@ final GoRouter router = GoRouter(
           : const LoginPage(),
       routes: [
         GoRoute(
+          name: 'login_settings',
           path: 'settings',
           builder: (context, state) => const SettingsPage(),
         ),
@@ -96,16 +98,20 @@ final GoRouter router = GoRouter(
       branches: <StatefulShellBranch>[
         /// library screen
         StatefulShellBranch(
+          observers: [
+            SentryNavigatorObserver(),
+          ],
           navigatorKey: _tabANavigatorKey,
           routes: <RouteBase>[
             GoRoute(
+              name: 'library',
               path: '/library',
               builder: (BuildContext context, GoRouterState state) =>
                   const LibraryPage(),
               routes: <RouteBase>[
                 GoRoute(
                   path: r':id(\d+)',
-                  //name: 'sample',
+                  name: 'library_id',
                   pageBuilder: (context, state) {
                     Animes data = state.extra as Animes;
                     return CustomTransitionPage(
@@ -129,6 +135,9 @@ final GoRouter router = GoRouter(
 
         /// explore screen
         StatefulShellBranch(
+          observers: [
+            SentryNavigatorObserver(),
+          ],
           routes: <RouteBase>[
             GoRoute(
               name: 'explore',
@@ -187,13 +196,18 @@ final GoRouter router = GoRouter(
 
         /// my_profile screen
         StatefulShellBranch(
+          observers: [
+            SentryNavigatorObserver(),
+          ],
           routes: <RouteBase>[
             GoRoute(
+              name: 'profile',
               path: '/profile',
               builder: (BuildContext context, GoRouterState state) =>
                   const MyProfilePage(),
               routes: <RouteBase>[
                 GoRoute(
+                  name: 'profile_id',
                   path: r':id(\d+)',
                   pageBuilder: (context, state) {
                     User data = state.extra as User;
@@ -208,6 +222,7 @@ final GoRouter router = GoRouter(
                   },
                 ),
                 GoRoute(
+                  name: 'profile_settings',
                   path: 'settings',
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
@@ -228,7 +243,8 @@ final GoRouter router = GoRouter(
       builder:
           (BuildContext context, StatefulShellRouteState state, Widget child) {
         return UpdaterWidget(
-            child: ScaffoldWithNavBar(shellState: state, body: child));
+          child: ScaffoldWithNavBar(shellState: state, body: child),
+        );
       },
     ),
   ],

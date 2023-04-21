@@ -1,6 +1,6 @@
-import 'package:appmetrica_plugin/appmetrica_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'package:loggy/loggy.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'dart:convert' as convert;
 
 import '../../../secret.dart';
@@ -132,11 +132,32 @@ class OAuthService {
       SecureStorageService.instance.userId = data.id.toString();
       SecureStorageService.instance.userProfileImage = data.image!.x160 ?? '';
 
-      AppMetrica.reportEvent('[NORMAL] User log-in)');
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(
+            id: data.id.toString(),
+          ),
+        ),
+      );
+
+      Sentry.captureMessage('Normal user log-in');
+
+      //Sentry.captureEvent(SentryEvent());
+
+      //AppMetrica.reportEvent('[NORMAL] User log-in)');
 
       return true;
     } else {
       var statusCode = userGetResponse.statusCode;
+      await Sentry.captureException(
+        'Failed to get USER response',
+        withScope: (scope) {
+          scope.setExtra('code', statusCode);
+          //scope.setTag('my-tag', 'my value');
+          scope.level = SentryLevel.error;
+          //scope.setContexts('episode link', episodeLink);
+        },
+      );
       logError('Failed to get USER response');
       throw Exception('Failed to get USER response. Status code = $statusCode');
     }

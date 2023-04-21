@@ -6,6 +6,7 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:network_logger/network_logger.dart';
 //import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:sentry_dio/sentry_dio.dart';
 //import 'package:sentry_dio/sentry_dio.dart';
 
 import '../../constants/config.dart';
@@ -79,7 +80,7 @@ class DioHttpService implements HttpService {
     }
     dio.interceptors.add(DioNetworkLogger());
     //dio.interceptors.add(nirikshak.getDioInterceptor());
-    //dio.addSentry();
+    dio.addSentry();
   }
 
   final CacheStorageRepo storageService;

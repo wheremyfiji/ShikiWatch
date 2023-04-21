@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import 'package:tinycolor2/tinycolor2.dart';
 import '../../../../secret.dart';
@@ -26,6 +27,13 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     if (SecureStorageService.instance.token != '') {
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(
+            id: SecureStorageService.instance.userId,
+          ),
+        ),
+      );
       SchedulerBinding.instance.addPostFrameCallback((_) {
         goToHome();
       });
@@ -68,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
         });
         _showSnackbar('Ошибка авторизации', 4);
       }
-    } on Exception catch (e) {
+    } on Exception catch (e, s) {
       final expString = e.toString();
       setState(() {
         isLoading = false;
@@ -77,6 +85,13 @@ class _LoginPageState extends State<LoginPage> {
       if (expString.contains('CANCELED')) {
         _showSnackbar('Пользователь отменил вход', 4);
       } else {
+        await Sentry.captureException(
+          e,
+          stackTrace: s,
+          withScope: (scope) {
+            scope.level = SentryLevel.fatal;
+          },
+        );
         // _showSnackbar('Unhandled exception', 4);
         _showSnackbar('Ошибка авторизации', 4);
         //_status = 'Got error: $expString';

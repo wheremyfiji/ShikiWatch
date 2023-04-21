@@ -92,9 +92,9 @@ dependencies:
 
   #copy_with_extension: ^5.0.2
 
-  #sentry_flutter: ^7.0.0
-  #sentry_dio: ^7.0.0
-  appmetrica_plugin: ^1.1.0
+  #appmetrica_plugin: ^1.1.0
+  sentry_flutter: ^7.4.2
+    sentry_dio: ^7.4.2
   loggy: ^2.0.3
 
 dev_dependencies:

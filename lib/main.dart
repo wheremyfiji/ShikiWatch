@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:appmetrica_plugin/appmetrica_plugin.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,6 +14,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'secret.dart';
 import 'src/constants/box_types.dart';
@@ -31,6 +32,21 @@ import 'src/services/shared_pref/shared_preferences_provider.dart';
 import 'src/utils/target_platform.dart';
 
 Future<void> main() async {
+  if (kReleaseMode) {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = sentryDsn;
+        options.tracesSampleRate = 1.0;
+        options.captureFailedRequests = true;
+      },
+      appRunner: () => initApp(),
+    );
+  } else {
+    initApp();
+  }
+}
+
+void initApp() async {
   try {
     debugPrint(Platform.operatingSystemVersion);
   } catch (exception, stacktrace) {
@@ -51,35 +67,125 @@ Future<void> main() async {
 
   Paint.enableDithering = true;
 
-  if (!TargetP.instance.isDesktop) {
-    AppMetrica.runZoneGuarded(
-      () async {
-        if (Platform.isAndroid) {
-          await setOptimalDisplayMode();
-          //await FlutterDisplayMode.setHighRefreshRate();
-        }
-        await runMain();
-      },
-    );
-  } else {
-    if (Platform.isWindows) {
-      await windowManager.ensureInitialized();
-      DiscordRPC.initialize();
-    }
-    await runMain();
+  if (Platform.isAndroid) {
+    await setOptimalDisplayMode();
   }
+
+  if (Platform.isWindows) {
+    await windowManager.ensureInitialized();
+    DiscordRPC.initialize();
+  }
+
+  await SecureStorageService.initialize();
+
+  if (Platform.isWindows) {
+    WindowOptions windowOptions = const WindowOptions(
+      //size: Size(1200, 1200 / (16 / 9)),
+      size: Size(1200, 800),
+      // minimumSize: Size(900, 500),
+      minimumSize: Size(900, 900 / (16 / 9)),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.normal,
+      title: 'Shiki!',
+      //alwaysOnTop: true,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
+
+  final hiveDir = await path_prov.getApplicationSupportDirectory();
+
+  await Hive.initFlutter(hiveDir.path);
+  await Hive.openBox<dynamic>(BoxType.settings.name);
+
+  final CacheStorageRepo initializedStorageService = CacheStorageImpl();
+  await initializedStorageService.init();
+
+  final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
+  await animeDatabase.migration();
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      observers: const [
+        if (kDebugMode) ProviderLogger(),
+      ],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        animeDatabaseProvider.overrideWithValue(animeDatabase),
+        cacheStorageServiceProvider
+            .overrideWithValue(initializedStorageService),
+      ],
+      child: WindowWatcher(
+        child: const ShikiApp(),
+        onClose: () {},
+      ),
+    ),
+  );
 }
 
+// Future<void> main() async {
+//   try {
+//     debugPrint(Platform.operatingSystemVersion);
+//   } catch (exception, stacktrace) {
+//     debugPrint(exception.toString());
+//     debugPrint(stacktrace.toString());
+//   }
+
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   Intl.defaultLocale = 'ru_RU';
+//   initializeDateFormatting("ru_RU", null);
+
+//   TargetP.init();
+
+//   Loggy.initLoggy(
+//     logPrinter: const PrettyPrinter(),
+//   );
+
+//   Paint.enableDithering = true;
+
+//   runZonedGuarded(
+//     () async {
+//       await SentryFlutter.init(
+//         (options) {
+//           options.dsn = sentryDsn;
+//           options.tracesSampleRate = 1.0;
+//         },
+//       );
+
+//       if (Platform.isAndroid) {
+//         await setOptimalDisplayMode();
+//       }
+
+//       if (Platform.isWindows) {
+//         await windowManager.ensureInitialized();
+//         DiscordRPC.initialize();
+//       }
+
+//       await runMain();
+//     },
+//     (exception, stackTrace) async {
+//       await Sentry.captureException(exception, stackTrace: stackTrace);
+//     },
+//   );
+// }
+
 runMain() async {
-  if (!kDebugMode && !TargetP.instance.isDesktop) {
-    AppMetrica.activate(const AppMetricaConfig(
-      kAppMetricaApiKey,
-      logs: true,
-      appVersion: '0.0.2',
-      crashReporting: true,
-      nativeCrashReporting: true, // ??
-    ));
-  }
+  // if (!kDebugMode && !TargetP.instance.isDesktop) {
+  //   AppMetrica.activate(const AppMetricaConfig(
+  //     kAppMetricaApiKey,
+  //     logs: true,
+  //     appVersion: '0.0.2',
+  //     crashReporting: true,
+  //     nativeCrashReporting: true, // ??
+  //   ));
+  // }
 
   // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
   //   statusBarColor: Colors.transparent,
@@ -209,3 +315,43 @@ Future<void> setOptimalDisplayMode() async {
   final t = await FlutterDisplayMode.preferred;
   debugPrint('refresh rate: ${t.refreshRate}');
 }
+
+// Future<void> main() async {
+//   try {
+//     debugPrint(Platform.operatingSystemVersion);
+//   } catch (exception, stacktrace) {
+//     debugPrint(exception.toString());
+//     debugPrint(stacktrace.toString());
+//   }
+
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   Intl.defaultLocale = 'ru_RU';
+//   initializeDateFormatting("ru_RU", null);
+
+//   TargetP.init();
+
+//   Loggy.initLoggy(
+//     logPrinter: const PrettyPrinter(),
+//   );
+
+//   Paint.enableDithering = true;
+
+//   if (!TargetP.instance.isDesktop) {
+//     AppMetrica.runZoneGuarded(
+//       () async {
+//         if (Platform.isAndroid) {
+//           await setOptimalDisplayMode();
+//           //await FlutterDisplayMode.setHighRefreshRate();
+//         }
+//         await runMain();
+//       },
+//     );
+//   } else {
+//     if (Platform.isWindows) {
+//       await windowManager.ensureInitialized();
+//       DiscordRPC.initialize();
+//     }
+//     await runMain();
+//   }
+// }

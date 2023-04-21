@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart' as flutter;
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:video_player/video_player.dart';
 import 'package:wakelock/wakelock.dart';
@@ -171,7 +172,29 @@ class PlayerController extends flutter.ChangeNotifier {
     );
 
     streamAsync.whenOrNull(
-      error: (error, stackTrace) => notifyListeners(),
+      error: (error, stackTrace) {
+        Sentry.captureException(
+          error,
+          stackTrace: stackTrace,
+          withScope: (scope) {
+            scope.setContexts(
+              'context',
+              {
+                'shikimoriId': shikimoriId,
+                'shikimoriName': animeName,
+                'studioId': studioId,
+                'studioName': studioName,
+                'episodeNumber': episodeNumber,
+                'episodeAdditInfo': episodeAdditInfo,
+                'episodeLink': episodeLink,
+              },
+            );
+            //scope.setTag('my-tag', 'my value');
+            scope.level = SentryLevel.error;
+          },
+        );
+        notifyListeners();
+      },
     );
 
     streamAsync.whenData((value) async {

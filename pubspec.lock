@@ -17,14 +17,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.7.1"
-  appmetrica_plugin:
-    dependency: "direct main"
-    description:
-      name: appmetrica_plugin
-      sha256: f2538497a8dbaafe398ad7999b2091767df18967c4fc480a9ca866aded2e2448
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   args:
     dependency: transitive
     description:
@@ -274,14 +266,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
-  decimal:
-    dependency: transitive
-    description:
-      name: decimal
-      sha256: eece91944f523657c75a3a008a90ec7f7eb3986191153a78570c7d0ac8ef3d01
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.2"
   dio:
     dependency: "direct main"
     description:
@@ -913,14 +897,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.2"
-  rational:
-    dependency: transitive
-    description:
-      name: rational
-      sha256: ba58e9e18df9abde280e8b10051e4bce85091e41e8e7e411b6cde2e738d357cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.2"
   riverpod:
     dependency: transitive
     description:
@@ -945,6 +921,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.6"
+  sentry:
+    dependency: transitive
+    description:
+      name: sentry
+      sha256: "9b005f502dfd84ca085dfa660dd4f16f7891c1b4b6300fda7c340330e61525d6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.4.2"
+  sentry_dio:
+    dependency: "direct main"
+    description:
+      name: sentry_dio
+      sha256: "3cb2c07d0852527b980a9ad2e39f997ab2a2ea34b309f726a3025181369854c1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.4.2"
+  sentry_flutter:
+    dependency: "direct main"
+    description:
+      name: sentry_flutter
+      sha256: bb537f6fedbe4c634aaf1a430d5efce8329e355b57dc2e0c224d8a2a3e54c4ac
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.4.2"
   share_plus:
     dependency: "direct main"
     description:

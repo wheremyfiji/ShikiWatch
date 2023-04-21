@@ -125,6 +125,9 @@ class StudioSelectPage extends ConsumerWidget {
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
+                                    settings: const RouteSettings(
+                                      name: 'series select page',
+                                    ),
                                     pageBuilder:
                                         (context, animation1, animation2) =>
                                             SeriesSelectPage(
