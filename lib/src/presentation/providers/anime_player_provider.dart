@@ -161,12 +161,6 @@ class PlayerController extends flutter.ChangeNotifier {
   }
 
   Future<void> initState() async {
-    // streamAsync = await AsyncValue.guard(
-    //   () async {
-    //     final links = await getHLSLink(episodeLink);
-    //     return links;
-    //   },
-    // );
     streamAsync = await AsyncValue.guard(
       () async {
         final links = await _ref
@@ -174,6 +168,10 @@ class PlayerController extends flutter.ChangeNotifier {
             .getHLSLink(episodeLink: episodeLink);
         return links;
       },
+    );
+
+    streamAsync.whenOrNull(
+      error: (error, stackTrace) => notifyListeners(),
     );
 
     streamAsync.whenData((value) async {
@@ -201,7 +199,9 @@ class PlayerController extends flutter.ChangeNotifier {
       //   if (playerController.value.isBuffering) {}
       // });
 
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.immersiveSticky,
+      );
 
       playerController.initialize().then((_) async {
         if (playPos.isNotEmpty) {
@@ -222,55 +222,108 @@ class PlayerController extends flutter.ChangeNotifier {
   Future<void> disposeState() async {
     _disposed = true;
 
-    final currentPosDuration = playerController.value.position;
-    final duration = playerController.value.duration.inSeconds;
+    streamAsync.whenData((value) async {
+      final currentPosDuration = playerController.value.position;
+      final duration = playerController.value.duration.inSeconds;
 
-    log('Current pos: ${currentPosDuration.inSeconds}',
-        name: 'PlayerController');
-    log('duration: $duration', name: 'PlayerController');
+      log('Current pos: ${currentPosDuration.inSeconds}',
+          name: 'PlayerController');
+      log('duration: $duration', name: 'PlayerController');
 
-    bool isCompl = false;
-    String timeStamp = 'Просмотрено до ${formatDuration(currentPosDuration)}';
+      bool isCompl = false;
+      String timeStamp = 'Просмотрено до ${formatDuration(currentPosDuration)}';
 
-    log('time stamp: ${formatDuration(currentPosDuration)}',
-        name: 'PlayerController');
+      log('time stamp: ${formatDuration(currentPosDuration)}',
+          name: 'PlayerController');
 
-    if (duration / currentPosDuration.inSeconds < 1.2) {
-      //1.3
-      //1.03
-      log('completed', name: 'PlayerController');
-      isCompl = true;
-      timeStamp = 'Просмотрено полностью';
-    }
+      if (duration / currentPosDuration.inSeconds < 1.2) {
+        //1.3
+        //1.03
+        log('completed', name: 'PlayerController');
+        isCompl = true;
+        timeStamp = 'Просмотрено полностью';
+      }
 
-    await _ref.read(animeDatabaseProvider).updateEpisode(
-          complete: isCompl,
-          shikimoriId: shikimoriId,
-          animeName: animeName,
-          imageUrl: imageUrl,
-          timeStamp: timeStamp,
-          studioId: studioId,
-          studioName: studioName,
-          studioType: studioType,
-          episodeNumber: episodeNumber,
-          position: playerController.value.position.toString(),
-        );
+      await _ref.read(animeDatabaseProvider).updateEpisode(
+            complete: isCompl,
+            shikimoriId: shikimoriId,
+            animeName: animeName,
+            imageUrl: imageUrl,
+            timeStamp: timeStamp,
+            studioId: studioId,
+            studioName: studioName,
+            studioType: studioType,
+            episodeNumber: episodeNumber,
+            position: playerController.value.position.toString(),
+          );
+
+      // await SystemChrome.setEnabledSystemUIMode(
+      //   SystemUiMode.manual,
+      //   overlays: SystemUiOverlay.values,
+      // );
+
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.edgeToEdge,
+        overlays: [SystemUiOverlay.top],
+      );
+
+      await Wakelock.disable();
+
+      playerController.pause().then((value) {
+        playerController.dispose();
+        log('PlayerController disposed!', name: 'PlayerController');
+      });
+    });
+
+    // final currentPosDuration = playerController.value.position;
+    // final duration = playerController.value.duration.inSeconds;
+
+    // log('Current pos: ${currentPosDuration.inSeconds}',
+    //     name: 'PlayerController');
+    // log('duration: $duration', name: 'PlayerController');
+
+    // bool isCompl = false;
+    // String timeStamp = 'Просмотрено до ${formatDuration(currentPosDuration)}';
+
+    // log('time stamp: ${formatDuration(currentPosDuration)}',
+    //     name: 'PlayerController');
+
+    // if (duration / currentPosDuration.inSeconds < 1.2) {
+    //   //1.3
+    //   //1.03
+    //   log('completed', name: 'PlayerController');
+    //   isCompl = true;
+    //   timeStamp = 'Просмотрено полностью';
+    // }
+
+    // await _ref.read(animeDatabaseProvider).updateEpisode(
+    //       complete: isCompl,
+    //       shikimoriId: shikimoriId,
+    //       animeName: animeName,
+    //       imageUrl: imageUrl,
+    //       timeStamp: timeStamp,
+    //       studioId: studioId,
+    //       studioName: studioName,
+    //       studioType: studioType,
+    //       episodeNumber: episodeNumber,
+    //       position: playerController.value.position.toString(),
+    //     );
+
+    // // await SystemChrome.setEnabledSystemUIMode(
+    // //   SystemUiMode.manual,
+    // //   overlays: SystemUiOverlay.values,
+    // // );
 
     // await SystemChrome.setEnabledSystemUIMode(
-    //   SystemUiMode.manual,
-    //   overlays: SystemUiOverlay.values,
+    //   SystemUiMode.edgeToEdge,
+    //   overlays: [SystemUiOverlay.top],
     // );
+    // await Wakelock.disable();
 
-    await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.edgeToEdge,
-      overlays: [SystemUiOverlay.top],
-    );
-    await Wakelock.disable();
-
-    playerController.pause().then((value) {
-      playerController.dispose();
-      log('PlayerController disposed!', name: 'PlayerController');
-    });
+    // playerController.pause().then((value) {
+    //   playerController.dispose();
+    //   log('PlayerController disposed!', name: 'PlayerController');
+    // });
   }
 
   Future<void> hideCallback() async {

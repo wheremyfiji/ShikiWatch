@@ -36,7 +36,6 @@ class AnimePlayerPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final controller = ref.watch(playerControllerProvider(link!));
     final controller =
         ref.watch(playerControllerProvider(PlayerProviderParameters(
       studioId: data!.studioId,
@@ -53,36 +52,34 @@ class AnimePlayerPage extends HookConsumerWidget {
     //final statusBarHeight = MediaQuery.of(context).padding.top;
     //ui.window.padding.top;
 
-    // useEffect(() {
-    //   log('called', name: 'useEffect');
-    //   return () async {
-    //     log('dispose?', name: 'useEffect');
-    //     await ref.read(animeDatabaseProvider).updateEpisode(
-    //         shikimoriId: 11,
-    //         animeName: 'animeName',
-    //         timeStamp: 'timeStamp',
-    //         studioId: 1,
-    //         studioName: 'studioName',
-    //         studioType: 'studioType',
-    //         episodeNumber: 1);
-    //   };
-    // }, const []);
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: controller.streamAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //Text('Error: $err'),
-            Text('$err'),
-            ElevatedButton(
-                onPressed: () => context.pop(), child: const Text('Назад')),
-          ],
-        )),
-        data: (config) {
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$err',
+                softWrap: true,
+              ),
+              // Text(
+              //   '$stack',
+              //   softWrap: true,
+              //   maxLines: 4,
+              // ),
+              const SizedBox(
+                height: 8,
+              ),
+              ElevatedButton(
+                onPressed: () => context.pop(),
+                child: const Text('Назад'),
+              ),
+            ],
+          ),
+        ),
+        data: (video) {
           return SafeArea(
             top: false,
             bottom: false,
@@ -96,10 +93,11 @@ class AnimePlayerPage extends HookConsumerWidget {
                   child: Align(
                     child: controller.playerController.value.isInitialized
                         ? AspectRatio(
-                            //aspectRatio: 16 / 9,
                             aspectRatio:
                                 controller.playerController.value.aspectRatio,
-                            child: VideoPlayer(controller.playerController),
+                            child: VideoPlayer(
+                              controller.playerController,
+                            ),
                           )
                         : Container(),
                   ),
@@ -217,9 +215,10 @@ class AnimePlayerPage extends HookConsumerWidget {
                             ],
                             if (controller.isError == true) ...[
                               ElevatedButton.icon(
-                                  onPressed: controller.retryPlay,
-                                  icon: const Icon(Icons.refresh),
-                                  label: const Text('Ошибка\nвоспроизведения')),
+                                onPressed: controller.retryPlay,
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('Ошибка\nвоспроизведения'),
+                              ),
                             ],
                           ],
                         ),
@@ -231,22 +230,22 @@ class AnimePlayerPage extends HookConsumerWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              // if (showSkip) ...[
-                              //   Align(
-                              //     alignment: Alignment.bottomRight,
-                              //     child: ElevatedButton(
-                              //       child: const Text('Пропустить опенинг'),
-                              //       onPressed: () {
-                              //         controller.seekTo(
-                              //           Duration(
-                              //             seconds: info.skips!.opening!.stop,
-                              //           ),
-                              //         );
-                              //       },
-                              //     ),
+                              // Align(
+                              //   alignment: Alignment.bottomRight,
+                              //   child: TextButton(
+                              //     child: const Text('+90'),
+                              //     onPressed: () {
+                              //       // controller.seekTo(
+                              //       //   Duration(
+                              //       //     seconds: info.skips!.opening!.stop,
+                              //       //   ),
+                              //       // );
+                              //     },
                               //   ),
-                              //   BlankSpace.bottom(8),
-                              // ],
+                              // ),
+                              // const SizedBox(
+                              //   height: 8,
+                              // ),
                               ProgressBar(
                                 progress:
                                     controller.playerController.value.position,
