@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../constants/config.dart';
 import '../../data/repositories/anime_database_repo.dart';
@@ -259,37 +260,54 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
 
   @override
   Future<void> migration() async {
-    final prefs = await SharedPreferences.getInstance();
-    final currentVersion = prefs.getInt(AppConfig.databaseVersionKey);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final currentVersion = prefs.getInt(AppConfig.databaseVersionKey);
 
-    if (currentVersion == null) {
+      if (currentVersion == null) {
+        await prefs.setInt(
+            AppConfig.databaseVersionKey, AppConfig.databaseVersion);
+
+        return;
+      }
+
+      if (currentVersion == AppConfig.databaseVersion) {
+        log('No need to migrate', name: 'isar');
+        return;
+      }
+
+      Future<void> migrate<T>(IsarCollection<T> collection) async {
+        await isardb.writeTxn(() async {
+          final count = await collection.count();
+          for (var i = 0; i < count; i += 50) {
+            final data = await collection.where().offset(i).limit(50).findAll();
+            await collection.putAll(data);
+          }
+        });
+      }
+
+      log('migrate database', name: 'isar');
+
+      await Future.wait([migrate<AnimeDatabase>(isardb.animeDatabases)]);
+
+      // Update version
       await prefs.setInt(
           AppConfig.databaseVersionKey, AppConfig.databaseVersion);
-
-      return;
+    } catch (e, s) {
+      await Sentry.captureException(
+        e,
+        stackTrace: s,
+        withScope: (scope) {
+          scope.setContexts(
+            'context',
+            {
+              'databaseVersion': AppConfig.databaseVersion,
+            },
+          );
+          scope.level = SentryLevel.error;
+        },
+      );
     }
-
-    if (currentVersion == AppConfig.databaseVersion) {
-      log('No need to migrate', name: 'isar');
-      return;
-    }
-
-    Future<void> migrate<T>(IsarCollection<T> collection) async {
-      await isardb.writeTxn(() async {
-        final count = await collection.count();
-        for (var i = 0; i < count; i += 50) {
-          final data = await collection.where().offset(i).limit(50).findAll();
-          await collection.putAll(data);
-        }
-      });
-    }
-
-    log('migrate database', name: 'isar');
-
-    await Future.wait([migrate<AnimeDatabase>(isardb.animeDatabases)]);
-
-    // Update version
-    await prefs.setInt(AppConfig.databaseVersionKey, AppConfig.databaseVersion);
   }
 
   @override
