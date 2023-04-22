@@ -13,3 +13,10 @@ android_release:
   - $gen
   - flutter build apk --flavor prod --split-per-abi
   - flutter pub run shikidev:rename_apk
+
+build:
+  android:
+    - $sync
+    - $gen
+    - flutter build apk --flavor prod --split-per-abi
+    - flutter pub run shikidev:rename_apk
