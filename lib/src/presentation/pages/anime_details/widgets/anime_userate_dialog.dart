@@ -547,7 +547,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                   },
             icon: const Icon(Icons.delete),
           ),
-        ElevatedButton(
+        OutlinedButton(
           onPressed: isLoading
               ? null
               : () {
@@ -555,7 +555,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                 },
           child: const Text('Отмена'),
         ),
-        ElevatedButton(
+        FilledButton.tonal(
           onPressed: isLoading || selectedStatus == null
               ? null
               : () async {

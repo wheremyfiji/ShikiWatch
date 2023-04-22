@@ -31,7 +31,12 @@ class StudioSelectPage extends ConsumerWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar.large(
-              title: const Text('Студия'),
+              title: Text(
+                animeName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              //title: const Text('Студия'),
               //title: Text('$animeName • Студия'),
             ),
             // SliverPinnedHeader(

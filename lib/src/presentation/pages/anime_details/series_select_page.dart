@@ -133,6 +133,7 @@ class SeriesSelectPage extends ConsumerWidget {
     }
 
     final sortedSeriesList = ref.watch(seriesSortProvider(seriesList!));
+    final currentSort = ref.watch(episodeSortTypeProvider);
 
     return Scaffold(
       // floatingActionButton: FloatingActionButton.large(onPressed: () {
@@ -145,27 +146,39 @@ class SeriesSelectPage extends ConsumerWidget {
           slivers: [
             SliverAppBar.large(
               actions: [
-                IconButton(
-                  onPressed: () {
-                    _sortBottomSheet(context, setSortType);
-                  },
-                  //onPressed: null,
-                  icon: const Icon(Icons.filter_list),
+                Tooltip(
+                  message: 'Сортировка серий',
+                  child: IconButton(
+                    onPressed: () {
+                      _sortBottomSheet(context, setSortType, currentSort);
+                    },
+                    //onPressed: null,
+                    icon: const Icon(Icons.filter_list),
+                  ),
                 ),
               ],
-              title: const Text('Серия'),
+              //title: const Text('Серия'),
               //title: Text(widget.stud ?? 'Серия'),
-              //title: Text('${widget.animeName} • ${widget.stud}'),
+              title: Text(
+                '$animeName • $studioName',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             // SliverPinnedHeader(
             //   child: Padding(
             //     padding: const EdgeInsets.all(8.0),
             //     child: Card(
+            //       //color: Colors.transparent,
             //       shadowColor: Colors.transparent,
             //       child: Padding(
             //         padding: const EdgeInsets.all(16.0),
             //         child: Column(
-            //           children: [Text('${widget.animeName} • ${widget.stud}')],
+            //           mainAxisSize: MainAxisSize.min,
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Text('$animeName • $studioName'),
+            //           ],
             //         ),
             //       ),
             //     ),
@@ -330,11 +343,10 @@ class SeriesSelectPage extends ConsumerWidget {
     );
   }
 
-  _sortBottomSheet(
-      BuildContext context, Function(EpisodeSortType type) setSortType) {
+  _sortBottomSheet(BuildContext context,
+      Function(EpisodeSortType type) setSortType, EpisodeSortType currentSort) {
     return showModalBottomSheet(
       useRootNavigator: true,
-      //isDismissible: false,
       context: context,
       builder: (context) {
         return Padding(
@@ -345,40 +357,39 @@ class SeriesSelectPage extends ConsumerWidget {
               //crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                //const Text('Выбор сортировки списка'),
-                // ListTile(
-                //   title: Text(
-                //     'Сортировка списка серий',
-                //     style: TextStyle(
-                //       color: Theme.of(context).colorScheme.primary,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                //   onTap: () {
-                //     context.pop();
-                //   },
-                // ),
-                ListTile(
+                RadioListTile<EpisodeSortType>(
                   title: const Text(
                     'По старым',
-                    style: TextStyle(
-                      fontWeight: FontWeight.normal,
-                    ),
                   ),
-                  // onTap: () {
-                  //   context.pop();
-                  // },
-                  //trailing: const Icon(Icons.check),
-                  onTap: () => setSortType(EpisodeSortType.oldest),
+                  value: EpisodeSortType.oldest,
+                  groupValue: currentSort,
+                  onChanged: (value) {
+                    setSortType(EpisodeSortType.oldest);
+                  },
                 ),
-                ListTile(
-                  //selected: true,
-                  title: const Text('По новым'), // От старых к новым
-                  // onTap: () {
-                  //   context.pop();
-                  // },
-                  onTap: () => setSortType(EpisodeSortType.newest),
+                RadioListTile<EpisodeSortType>(
+                  title: const Text(
+                    'По новым',
+                  ),
+                  value: EpisodeSortType.newest,
+                  groupValue: currentSort,
+                  onChanged: (value) {
+                    setSortType(EpisodeSortType.newest);
+                  },
                 ),
+                // ListTile(
+                //   title: const Text(
+                //     'По старым',
+                //     style: TextStyle(
+                //       fontWeight: FontWeight.normal,
+                //     ),
+                //   ),
+                //   onTap: () => setSortType(EpisodeSortType.oldest),
+                // ),
+                // ListTile(
+                //   title: const Text('По новым'),
+                //   onTap: () => setSortType(EpisodeSortType.newest),
+                // ),
               ],
             ),
           ),
