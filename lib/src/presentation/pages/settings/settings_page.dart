@@ -147,7 +147,7 @@ class SettingsPage extends ConsumerWidget {
                   title: 'Github',
                   subtitle: 'Ссылка на гитхаб приложения',
                   onTap: () => launchUrlString(
-                    'https://github.com/wheremyfiji/ShikiDev',
+                    'https://github.com/wheremyfiji/ShikiWatch',
                     //'https://github.com/NozhkiBaal',
                     mode: LaunchMode.externalApplication,
                   ),
@@ -490,7 +490,7 @@ class GitCommitWidget extends StatelessWidget {
                 ? null
                 : () {
                     launchUrlString(
-                      'https://github.com/wheremyfiji/ShikiDev/commit/$commitHash',
+                      'https://github.com/wheremyfiji/ShikiWatch/commit/$commitHash',
                       //mode: LaunchMode.externalApplication,
                     );
                   },

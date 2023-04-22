@@ -1,4 +1,4 @@
-# ShikiDev
+# ShikiWatch
 
 Неофициальное приложение для [Shikimori](https://shikimori.me/) с возможносью онлайн просмотра аниме.
 
@@ -6,11 +6,11 @@
 
 ## Как использовать приложение
 
-1. Скачайте готовый билд из вкладки [Releases](https://github.com/wheremyfiji/ShikiDev/releases)
+1. Скачайте готовый билд из вкладки [Releases](https://github.com/wheremyfiji/ShikiWatch/releases)
 2. Запустите приложение и войдите в свой аккаунт **Shikimori**
 3. Наслаждайтесь **онлайн просмотром**, а также удобным доступом к **любимому аниме**
 
-### Скриншоты [Ещё](https://github.com/wheremyfiji/ShikiDev/tree/master/screenshots)
+### Скриншоты [Ещё](https://github.com/wheremyfiji/ShikiWatch/tree/master/screenshots)
 
 #### Android
 

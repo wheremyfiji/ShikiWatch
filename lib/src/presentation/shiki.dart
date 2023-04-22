@@ -28,7 +28,7 @@ class ShikiApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               theme: appTheme.day,
               darkTheme: isOled ? appTheme.midnight : appTheme.night,
-              title: 'Shiki!',
+              title: 'ShikiWatch',
               themeMode: ThemeMode.system,
               routerConfig: router,
             ),

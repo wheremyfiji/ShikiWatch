@@ -45,7 +45,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     }
 
     final response = await http.get(Uri.parse(
-        'https://raw.githubusercontent.com/wheremyfiji/ShikiDev/master/updater.json'));
+        'https://raw.githubusercontent.com/wheremyfiji/ShikiWatch/master/updater.json'));
 
     if (response.statusCode != 200) {
       return;
@@ -131,7 +131,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
               onPressed: () {
                 launchUrlString(
                   url ??
-                      'https://github.com/wheremyfiji/ShikiDev/releases/latest',
+                      'https://github.com/wheremyfiji/ShikiWatch/releases/latest',
                   mode: LaunchMode.externalApplication,
                 );
               },
@@ -157,7 +157,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
               onPressed: () {
                 launchUrlString(
                   url ??
-                      'https://github.com/wheremyfiji/ShikiDev/releases/latest',
+                      'https://github.com/wheremyfiji/ShikiWatch/releases/latest',
                   mode: LaunchMode.externalApplication,
                 );
               },
