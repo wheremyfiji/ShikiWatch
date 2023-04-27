@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.transparent,
         // appBar: AppBar(
         //   backgroundColor: Colors.transparent,
-        //   title: const Text('Shiki!'),
+        //   title: const Text('ShikiWatch'),
         // ),
         extendBody: true,
         body:

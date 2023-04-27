@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "dev.wheremyfiji" "\0"
-            VALUE "FileDescription", "Shiki!" "\0"
+            VALUE "FileDescription", "ShikiWatch" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "Shiki!" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 dev.wheremyfiji. All rights not reserved." "\0"
+            VALUE "InternalName", "ShikiWatch" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 Wheremyfiji. All rights not reserved." "\0"
             VALUE "OriginalFilename", "shikidev_windows.exe" "\0"
-            VALUE "ProductName", "Shiki!" "\0"
+            VALUE "ProductName", "ShikiWatch" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

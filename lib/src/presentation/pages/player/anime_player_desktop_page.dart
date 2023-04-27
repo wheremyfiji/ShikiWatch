@@ -57,7 +57,7 @@ class _AnimePlayerDesktopPageState
 
   final Player player = Player(
     configuration: const PlayerConfiguration(
-      title: 'Shiki!',
+      title: 'ShikiWatch',
       logLevel: MPVLogLevel.warn,
     ),
   );

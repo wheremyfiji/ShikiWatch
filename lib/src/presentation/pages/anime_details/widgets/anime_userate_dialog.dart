@@ -555,7 +555,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                 },
           child: const Text('Отмена'),
         ),
-        FilledButton.tonal(
+        FilledButton(
           onPressed: isLoading || selectedStatus == null
               ? null
               : () async {

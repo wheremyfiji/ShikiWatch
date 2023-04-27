@@ -188,7 +188,7 @@ class SettingsPage extends ConsumerWidget {
               title: 'О приложении',
               options: [
                 const SettingsOption(
-                  title: 'Shiki!',
+                  title: 'ShikiWatch',
                   subtitle:
                       'Неофициальное приложения для сайта shikimori.me с возможностью онлайн просмотра anime',
                   onTap: null,
@@ -208,7 +208,7 @@ class SettingsPage extends ConsumerWidget {
                   onTap: () {
                     showLicensePage(
                       context: context,
-                      applicationName: 'Shiki!',
+                      applicationName: 'ShikiWatch',
                       applicationVersion: 'v1.3.3.7',
                       useRootNavigator: true,
                     );

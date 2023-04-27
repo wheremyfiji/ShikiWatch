@@ -88,7 +88,7 @@ void initApp() async {
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
-      title: 'Shiki!',
+      title: 'ShikiWatch',
       //alwaysOnTop: true,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -209,7 +209,7 @@ runMain() async {
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.normal,
-      title: 'Shiki!',
+      title: 'ShikiWatch',
       //alwaysOnTop: true,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
