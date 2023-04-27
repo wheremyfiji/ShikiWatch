@@ -287,7 +287,7 @@ class PlayerController extends flutter.ChangeNotifier {
 
       await SystemChrome.setEnabledSystemUIMode(
         SystemUiMode.edgeToEdge,
-        overlays: [SystemUiOverlay.top],
+        //overlays: [SystemUiOverlay.top],
       );
 
       await Wakelock.disable();
