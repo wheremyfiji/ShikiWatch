@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
@@ -11,13 +12,16 @@ import 'package:loggy/loggy.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shikidev/src/presentation/providers/environment_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'secret.dart';
 import 'src/constants/box_types.dart';
+import 'src/data/data_sources/environment_data_src.dart';
 import 'src/presentation/shiki.dart';
 import 'src/presentation/widgets/window_watcher.dart';
 import 'src/services/secure_storage/secure_storage_service.dart';
@@ -48,6 +52,7 @@ Future<void> main() async {
 
 void initApp() async {
   try {
+    debugPrint(Platform.version);
     debugPrint(Platform.operatingSystemVersion);
   } catch (exception, stacktrace) {
     debugPrint(exception.toString());
@@ -110,126 +115,18 @@ void initApp() async {
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  runApp(
-    ProviderScope(
-      observers: const [
-        if (kDebugMode) ProviderLogger(),
-      ],
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-        animeDatabaseProvider.overrideWithValue(animeDatabase),
-        cacheStorageServiceProvider
-            .overrideWithValue(initializedStorageService),
-      ],
-      child: WindowWatcher(
-        child: const ShikiApp(),
-        onClose: () {},
-      ),
-    ),
-  );
-}
+  final packageInfo = await PackageInfo.fromPlatform();
 
-// Future<void> main() async {
-//   try {
-//     debugPrint(Platform.operatingSystemVersion);
-//   } catch (exception, stacktrace) {
-//     debugPrint(exception.toString());
-//     debugPrint(stacktrace.toString());
-//   }
+  AndroidDeviceInfo? androidInfo;
+  WindowsDeviceInfo? windowsInfo;
 
-//   WidgetsFlutterBinding.ensureInitialized();
-
-//   Intl.defaultLocale = 'ru_RU';
-//   initializeDateFormatting("ru_RU", null);
-
-//   TargetP.init();
-
-//   Loggy.initLoggy(
-//     logPrinter: const PrettyPrinter(),
-//   );
-
-//   Paint.enableDithering = true;
-
-//   runZonedGuarded(
-//     () async {
-//       await SentryFlutter.init(
-//         (options) {
-//           options.dsn = sentryDsn;
-//           options.tracesSampleRate = 1.0;
-//         },
-//       );
-
-//       if (Platform.isAndroid) {
-//         await setOptimalDisplayMode();
-//       }
-
-//       if (Platform.isWindows) {
-//         await windowManager.ensureInitialized();
-//         DiscordRPC.initialize();
-//       }
-
-//       await runMain();
-//     },
-//     (exception, stackTrace) async {
-//       await Sentry.captureException(exception, stackTrace: stackTrace);
-//     },
-//   );
-// }
-
-runMain() async {
-  // if (!kDebugMode && !TargetP.instance.isDesktop) {
-  //   AppMetrica.activate(const AppMetricaConfig(
-  //     kAppMetricaApiKey,
-  //     logs: true,
-  //     appVersion: '0.0.2',
-  //     crashReporting: true,
-  //     nativeCrashReporting: true, // ??
-  //   ));
-  // }
-
-  // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-  //   statusBarColor: Colors.transparent,
-  //   systemNavigationBarColor: Colors.transparent,
-  // ));
-
-  // await SystemChrome.setEnabledSystemUIMode(
-  //   SystemUiMode.edgeToEdge,
-  //   overlays: [SystemUiOverlay.top],
-  // );
-
-  await SecureStorageService.initialize();
-
-  if (Platform.isWindows) {
-    WindowOptions windowOptions = const WindowOptions(
-      //size: Size(1200, 1200 / (16 / 9)),
-      size: Size(1200, 800),
-      // minimumSize: Size(900, 500),
-      minimumSize: Size(900, 900 / (16 / 9)),
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
-      title: 'ShikiWatch',
-      //alwaysOnTop: true,
-    );
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
+  if (Platform.isAndroid) {
+    androidInfo = await DeviceInfoPlugin().androidInfo;
   }
 
-  final hiveDir = await path_prov.getApplicationSupportDirectory();
-
-  await Hive.initFlutter(hiveDir.path);
-  await Hive.openBox<dynamic>(BoxType.settings.name);
-
-  final CacheStorageRepo initializedStorageService = CacheStorageImpl();
-  await initializedStorageService.init();
-
-  final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
-  await animeDatabase.migration();
-
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (Platform.isWindows) {
+    windowsInfo = await DeviceInfoPlugin().windowsInfo;
+  }
 
   runApp(
     ProviderScope(
@@ -237,6 +134,13 @@ runMain() async {
         if (kDebugMode) ProviderLogger(),
       ],
       overrides: [
+        environmentProvider.overrideWithValue(
+          EnvironmentDataSource(
+            packageInfo: packageInfo,
+            androidInfo: androidInfo,
+            windowsInfo: windowsInfo,
+          ),
+        ),
         sharedPreferencesProvider.overrideWithValue(prefs),
         animeDatabaseProvider.overrideWithValue(animeDatabase),
         cacheStorageServiceProvider

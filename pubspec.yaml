@@ -84,6 +84,7 @@ dependencies:
   html: ^0.15.2
   extended_image: ^7.0.2
   package_info_plus: ^3.0.3
+  device_info_plus: ^8.2.1
   share_plus: ^6.3.2
 
   video_player: ^2.6.0
