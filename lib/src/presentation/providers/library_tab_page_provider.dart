@@ -160,8 +160,6 @@ class LibraryTabPageController with ChangeNotifier {
   }
 
   Future<void> fetch() async {
-    //String userId = (await MySecureStorage.readUserId())!;
-    //String token = (await MySecureStorage.readToken())!;
     animes = await AsyncValue.guard(
       () async {
         final updates = await animeRepository.getUserAnimeRates(

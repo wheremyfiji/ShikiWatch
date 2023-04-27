@@ -92,9 +92,7 @@ class _LoginPageState extends State<LoginPage> {
             scope.level = SentryLevel.fatal;
           },
         );
-        // _showSnackbar('Unhandled exception', 4);
         _showSnackbar('Ошибка авторизации', 4);
-        //_status = 'Got error: $expString';
       }
     }
   }
@@ -105,10 +103,8 @@ class _LoginPageState extends State<LoginPage> {
       behavior: SnackBarBehavior.floating,
       dismissDirection: DismissDirection.horizontal,
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 48),
-      //padding: const EdgeInsets.all(8),
       duration: Duration(seconds: dur),
       showCloseIcon: true,
-      //backgroundColor: Theme.of(context).colorScheme.onSurface,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

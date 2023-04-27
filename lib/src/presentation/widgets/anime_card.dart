@@ -99,7 +99,6 @@ class AnimeCard extends StatelessWidget {
                             ),
                           )
                         : Text(
-                            //'${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп / Выходит',
                             '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп.',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -110,18 +109,6 @@ class AnimeCard extends StatelessWidget {
                                   Theme.of(context).textTheme.bodySmall!.color,
                             ),
                           ),
-
-                    // Text(
-                    //   '8 из 12 эп, Выходит',
-                    //   //.toUpperCase(),
-                    //   maxLines: 1,
-                    //   overflow: TextOverflow.ellipsis,
-                    //   textAlign: TextAlign.center,
-                    //   style: TextStyle(
-                    //     fontSize: 10,
-                    //     color: Theme.of(context).textTheme.bodySmall!.color,
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -129,81 +116,6 @@ class AnimeCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class AnimeCard2 extends StatelessWidget {
-  const AnimeCard2({
-    Key? key,
-    // this.height = 360,
-    // this.width = 240,
-    this.height = 200,
-    this.width = 100,
-  }) : super(key: key);
-
-  final double? height;
-  final double? width;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: const SizedBox.shrink(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  //FittedBox(
-                  //  child:
-                  const Text(
-                    'Ложные выводы 2 Ложные выводы 2 Ложные выводы 2 Ложные выводы 2 Ложные выводы 2 Ложные выводы 2',
-                    maxLines: 2,
-                    //textAlign: TextAlign.start,
-                    overflow: TextOverflow.ellipsis,
-                    //style: Theme.of(context).textTheme.titleSmall,
-                    style: TextStyle(
-                      //letterSpacing: 0.0,
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  //),
-                  const SizedBox(height: 5),
-                  //FittedBox(
-                  //  child:
-                  Text(
-                    //"EP ${anime.totalEpisodes ?? "?"}, ${anime.status ?? ""}"
-                    '8 из 12 эп, Выходит',
-                    //.toUpperCase(),
-                    maxLines: 1,
-                    //textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Theme.of(context).textTheme.bodySmall!.color,
-                    ),
-                    // style: Theme.of(context)
-                    //     .textTheme
-                    //     .labelSmall
-                    //     ?.copyWith(fontWeight: FontWeight.w300),
-                  ),
-                  //),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

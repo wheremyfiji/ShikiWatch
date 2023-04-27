@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+//import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:go_router/go_router.dart';
@@ -13,22 +13,68 @@ import '../../../domain/models/genre.dart';
 import '../../../domain/models/studio.dart';
 import '../../providers/anime_search_provider.dart';
 
+// ClipRRect(
+//   borderRadius: BorderRadius.circular(50),
+//   child: Material(
+//     child: InkWell(
+//       child: const Padding(
+//         padding: EdgeInsets.all(4),
+//         child: Icon(
+//           Icons.clear_all_outlined,
+//         ),
+//       ),
+//       onTap: () {},
+//     ),
+//   ),
+// ),
+
 class FilterChipWidget extends StatelessWidget {
   const FilterChipWidget({
     Key? key,
     required this.title,
-    required this.onClearAll,
-    required this.options,
+    required this.chips,
+    this.onClear,
     this.canClear = false,
   }) : super(key: key);
 
   final String title;
-  final Widget options;
-  final Function()? onClearAll;
+  final Widget chips;
+  final Function()? onClear;
   final bool canClear;
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            if (canClear)
+              Tooltip(
+                message: 'Очистить',
+                child: IconButton(
+                  onPressed: onClear,
+                  icon: const Icon(Icons.clear_all_outlined),
+                ),
+              ),
+          ],
+        ),
+        if (!canClear)
+          const SizedBox(
+            height: 8,
+          ),
+        chips,
+      ],
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,16 +88,16 @@ class FilterChipWidget extends StatelessWidget {
           ),
           isThreeLine: false,
           trailing: canClear
-              ? IconButton(
+              ? const IconButton(
                   padding: EdgeInsets.zero,
-                  onPressed: onClearAll ?? () {},
-                  icon: const Icon(Icons.clear_all_outlined),
+                  onPressed: null,
+                  icon: Icon(Icons.clear_all_outlined),
                 )
-              : const SizedBox.shrink(),
+              : null,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: options,
+          child: chips,
         )
       ],
     );
@@ -90,6 +136,7 @@ class AnimeFilterPage extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             sliver: SliverToBoxAdapter(
               child: ListTile(
+                horizontalTitleGap: 8, //def = 16?
                 contentPadding: EdgeInsets.zero,
                 leading: Text(
                   'Жанр',
@@ -105,6 +152,7 @@ class AnimeFilterPage extends ConsumerWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall,
+                        //textAlign: TextAlign.start,
                       ),
                 trailing: Tooltip(
                   message: 'Выбрать жанры',
@@ -195,38 +243,28 @@ class AnimeFilterPage extends ConsumerWidget {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Тип',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      ...List.generate(
-                        animeKindList.length,
-                        (index) {
-                          final kind = animeKindList[index];
-                          return CustomFilterChip(
-                            label: kind.russian,
-                            selected: c.isKindSelected(kind),
-                            onSelected: (b) => ref
-                                .read(animeSearchProvider)
-                                .toggleKind(k: kind, t: b),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+              child: FilterChipWidget(
+                canClear: true,
+                onClear: () => c.cleanKind(),
+                title: 'Тип',
+                chips: Wrap(
+                  spacing: 8,
+                  children: [
+                    ...List.generate(
+                      animeKindList.length,
+                      (index) {
+                        final kind = animeKindList[index];
+                        return CustomFilterChip(
+                          label: kind.russian,
+                          selected: c.isKindSelected(kind),
+                          onSelected: (b) => ref
+                              .read(animeSearchProvider)
+                              .toggleKind(k: kind, t: b),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -443,7 +481,7 @@ class AnimeFilterPage extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            ElevatedButton.icon(
+            OutlinedButton.icon(
               onPressed: () {
                 //context.pop();
                 ref.read(animeSearchProvider).clearFilter();
@@ -451,10 +489,10 @@ class AnimeFilterPage extends ConsumerWidget {
               icon: const Icon(Icons.refresh), //restart_alt_outlined  refresh
               label: const Text('Сбросить'),
             ),
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: () {
-                context.pop();
                 ref.read(animeSearchProvider).applyFilter();
+                context.pop();
               },
               icon: const Icon(Icons.done_all),
               label: const Text('Применить'),
@@ -497,8 +535,8 @@ class CustomFilterChip extends StatelessWidget {
 }
 
 final studiosListProvider = FutureProvider<List<Studio>>((ref) async {
-  String data =
-      await rootBundle.loadString('assets/shiki-studios-filtered-sorted.json');
+  String data = '';
+  //await rootBundle.loadString('assets/shiki-studios-filtered-sorted.json');
 
   final jsonResult = json.decode(data);
 
@@ -512,7 +550,7 @@ class StudiosBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final c = ref.watch(animeSearchProvider);
+    //final c = ref.watch(animeSearchProvider);
     final studiosList = ref.watch(studiosListProvider);
 
     return Material(
@@ -669,7 +707,6 @@ class GenresBottomSheet extends ConsumerWidget {
                   itemCount: animeGenres.length,
                   itemBuilder: (context, index) {
                     final genre = animeGenres[index];
-                    // ребилдит весь список, что плохо
                     final isSelected =
                         c.selectedGenres?.contains(genre) ?? false;
                     return ListTile(

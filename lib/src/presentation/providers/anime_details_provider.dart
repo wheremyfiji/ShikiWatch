@@ -327,16 +327,6 @@ class TitleInfoPageController extends ChangeNotifier {
   }
 
   Future<void> fetch() async {
-    // title = await AsyncValue.guard(
-    //   () =>
-    //       //_ref.read(shikimoriRepositoryProvider).getAnime(id: id, token: token),
-    //       animeRepository.getAnime(
-    //     id: 0,
-    //     token: SecureStorageService.instance.token,
-    //     cancelToken: cancelToken,
-    //     needToCache: true,
-    //   ),
-    // );
     title = await AsyncValue.guard(
       () async {
         final updates = await animeRepository.getAnime(

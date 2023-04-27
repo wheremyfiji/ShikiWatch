@@ -202,6 +202,12 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     return false;
   }
 
+  cleanKind() {
+    selectedKind = null;
+    filterCount.remove('kind');
+    notifyListeners();
+  }
+
   toggleMyList({required AnimeFilter l, required bool t}) {
     if (t) {
       filterCount.add('list');

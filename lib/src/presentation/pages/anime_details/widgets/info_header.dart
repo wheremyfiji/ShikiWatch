@@ -106,9 +106,6 @@ class AnimeInfoHeader extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      //Hero(
-                      //  tag: data.id ?? 0,
-                      //  child:
                       ExtendedImage.network(
                         AppConfig.staticUrl +
                             (data.image?.original ?? data.image?.preview ?? ''),
@@ -117,13 +114,12 @@ class AnimeInfoHeader extends StatelessWidget {
                         fit: BoxFit.cover,
                         cache: true,
                       ),
-                      //),
                       if (favoured) ...[
                         const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Icon(
-                            Icons.favorite,
-                            color: Colors.red,
+                            Icons.star,
+                            color: Colors.yellow,
                           ),
                         ),
                       ],
@@ -139,10 +135,7 @@ class AnimeInfoHeader extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        data.russian ??
-                            data.name ??
-                            //model.names!.en ??
-                            '[Без навзвания]',
+                        data.russian ?? data.name ?? '[Без навзвания]',
                         maxLines: 3,
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,

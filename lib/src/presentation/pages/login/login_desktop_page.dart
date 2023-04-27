@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:tinycolor2/tinycolor2.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,8 +67,15 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
         });
         _showSnackbar('Ошибка авторизации', 3);
       }
-    } catch (e) {
+    } catch (e, s) {
       final expString = e.toString();
+      await Sentry.captureException(
+        e,
+        stackTrace: s,
+        withScope: (scope) {
+          scope.level = SentryLevel.fatal;
+        },
+      );
       _controller.clear();
       setState(() {
         isLoading = false;
@@ -82,6 +90,13 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
     super.initState();
     _controller = TextEditingController();
     if (SecureStorageService.instance.token != '') {
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(
+            id: SecureStorageService.instance.userId,
+          ),
+        ),
+      );
       SchedulerBinding.instance.addPostFrameCallback((_) {
         goToHome();
       });

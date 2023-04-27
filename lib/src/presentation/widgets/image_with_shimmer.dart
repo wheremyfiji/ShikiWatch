@@ -35,34 +35,6 @@ class ImageWithShimmerWidget extends StatelessWidget {
                 color: Colors.black,
               ),
             );
-
-          // return Shimmer(
-          //   gradient: LinearGradient(
-          //     begin: Alignment.centerLeft,
-          //     end: Alignment.centerRight,
-          //     colors: [
-          //       Theme.of(context).colorScheme.onInverseSurface.withOpacity(0),
-          //       Theme.of(context)
-          //           .colorScheme
-          //           .onInverseSurface
-          //           .withOpacity(0.5),
-          //       Theme.of(context).colorScheme.onInverseSurface.withOpacity(0),
-          //       //context.colorScheme.primary.withOpacity(0),
-          //       // context.colorScheme.primary.withOpacity(0.5),
-          //       // context.colorScheme.primary.withOpacity(0),
-          //     ],
-          //     stops: const <double>[
-          //       0.35,
-          //       0.5,
-          //       0.65,
-          //     ],
-          //   ),
-          //   //period: const Duration(milliseconds: 700),
-          //   child: const LinearProgressIndicator(
-          //     value: 0,
-          //     minHeight: 16,
-          //   ),
-          // );
           case LoadState.completed:
             return state.completedWidget;
           case LoadState.failed:

@@ -20,7 +20,6 @@ class AnimeDataSource implements AnimeRepository {
   AnimeDataSource(this.dio);
 
   @override
-  //Future<UserProfile> getUserProfile() async {
   Future<Anime> getAnime({
     required int? id,
     required CancelToken cancelToken,
@@ -52,9 +51,6 @@ class AnimeDataSource implements AnimeRepository {
 
       return Anime.fromJson(response);
     }
-
-    //final response = await dio.get('animes/$id');
-    // return Anime.fromJson(response);
   }
 
   @override

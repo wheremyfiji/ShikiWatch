@@ -50,7 +50,6 @@ final GoRouter router = GoRouter(
     // ),
 
     GoRoute(
-      //path: '/player/:link/:name/:ep',
       path: '/player',
       name: 'player',
       parentNavigatorKey: _rootNavigatorKey,
@@ -66,16 +65,6 @@ final GoRouter router = GoRouter(
           reverseTransitionDuration: const Duration(milliseconds: 0),
         );
       },
-      // builder: (context, state) {
-      //   AnimePlayerPageExtra data = state.extra as AnimePlayerPageExtra;
-      //   //return AnimePlayerPage(data: data);
-      //   return PlayerPageWindows(data: data);
-      // },
-      // builder: (BuildContext context, GoRouterState state) => AnimePlayerPage(
-      //   link: state.params['link'],
-      //   name: state.params['name'],
-      //   ep: state.params['ep'],
-      // ),
     ),
 
     GoRoute(

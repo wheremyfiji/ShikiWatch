@@ -4,33 +4,6 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:tinycolor2/tinycolor2.dart';
 
-//part 'app_theme.g.dart';
-// @riverpod
-// AppThemeDataNotifier appThemeData(AppThemeDataRef ref) {
-//   return AppThemeDataNotifier();
-// }
-
-class NoTransitions extends PageTransitionsTheme {
-  @override
-  Widget buildTransitions<T>(
-    route,
-    context,
-    animation,
-    secondaryAnimation,
-    child,
-  ) {
-    return child;
-
-    return super.buildTransitions(
-      route,
-      context,
-      animation,
-      secondaryAnimation,
-      child,
-    );
-  }
-}
-
 final appThemeDataProvider = Provider.autoDispose<AppThemeDataNotifier>((ref) {
   return AppThemeDataNotifier();
 });

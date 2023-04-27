@@ -58,14 +58,10 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
               color: context.theme.colorScheme.onBackground),
         ),
         actions: [
-          PopupMenuButton(
+          PopupMenuButton<int>(
             tooltip: '',
             itemBuilder: (context) {
               return [
-                const PopupMenuItem<int>(
-                  value: 0,
-                  child: Text("Добавить в избранное"),
-                ),
                 const PopupMenuItem<int>(
                   value: 1,
                   child: Text("Открыть в браузере"),
@@ -74,14 +70,31 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                   value: 2,
                   child: Text("Скопировать ссылку"),
                 ),
+                const PopupMenuDivider(),
+                (titleInfo.isFavor)
+                    ? const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Удалить из избранного"),
+                      )
+                    : const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Добавить в избранное"),
+                      ),
               ];
             },
             onSelected: (value) {
               if (value == 0) {
-                showSnackBar(
-                  ctx: context,
-                  msg: 'че тут',
-                );
+                if (titleInfo.isFavor) {
+                  showSnackBar(
+                    ctx: context,
+                    msg: 'типа удалил',
+                  );
+                } else {
+                  showSnackBar(
+                    ctx: context,
+                    msg: 'типа добавил',
+                  );
+                }
               } else if (value == 1) {
                 launchUrlString(
                   '${AppConfig.staticUrl}/animes/${animeData.id}',
@@ -105,31 +118,6 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
               }
             },
           ),
-          // IconButton(
-          //   tooltip: 'Открыть в браузере',
-          //   onPressed: () {
-          //   },
-          //   icon: const Icon(Icons.open_in_browser),
-          // ),
-          // IconButton(
-          //   tooltip: 'Скопировать ссылку на аниме',
-          //   onPressed: animeData.url == null // как тут вообще может быть null
-          //       ? null
-          //       : () async {
-          //           await Clipboard.setData(
-          //             ClipboardData(
-          //               text: AppConfig.staticUrl + (animeData.url ?? ''),
-          //             ),
-          //           );
-          //           if (context.mounted) {
-          //             showSnackBar(
-          //               ctx: context,
-          //               msg: 'Ссылка скопирована в буфер обмена',
-          //             );
-          //           }
-          //         },
-          //   icon: const Icon(Icons.share),
-          // ),
         ],
       ),
       body: SingleChildScrollView(
@@ -154,13 +142,30 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                               //  child:
                               ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: ExtendedImage.network(
-                              AppConfig.staticUrl +
-                                  (animeData.image?.original ??
-                                      animeData.image?.preview ??
-                                      ''),
-                              fit: BoxFit.cover,
-                              cache: true,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ExtendedImage.network(
+                                  AppConfig.staticUrl +
+                                      (animeData.image?.original ??
+                                          animeData.image?.preview ??
+                                          ''),
+                                  fit: BoxFit.cover,
+                                  cache: true,
+                                ),
+                                if (titleInfo.isFavor) ...[
+                                  const Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.favorite,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ),
@@ -250,7 +255,6 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                       children: [
                         Tooltip(
                           message: titleInfo.nameEng,
-                          //'KonoSuba: An Explosion on This Wonderful World!',
                           child: Text(
                             animeData.russian ??
                                 animeData.name ??
@@ -280,10 +284,11 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                         const SizedBox(
                           height: 8,
                         ),
-                        Text(
-                          'Сезон: $year • $season',
-                          textAlign: TextAlign.start,
-                        ),
+                        if (titleInfo.title.asData?.value.airedOn != null)
+                          Text(
+                            'Сезон: $year • $season',
+                            textAlign: TextAlign.start,
+                          ),
                         Text(
                           'Статус: ${getStatus(animeData.status!)} • ${getKind(animeData.kind!)}',
                           textAlign: TextAlign.start,
@@ -411,7 +416,9 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                             height: 8,
                           ),
                           TitleDescription(
-                              titleInfo.title.asData!.value.descriptionHtml!),
+                            titleInfo.title.asData!.value.descriptionHtml ??
+                                titleInfo.title.asData!.value.description!,
+                          ),
                         ],
                         if (titleInfo.title.asData?.value.description == null &&
                             !titleInfo.title.isLoading) ...[
@@ -528,12 +535,15 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                       height: 16,
                     ),
                     AnimeRatesStatusesWidget(
-                        statsValues: titleInfo.statsValues),
+                      statsValues: titleInfo.statsValues,
+                    ),
                   ],
                   const SizedBox(
                     height: 16,
                   ),
-                  AnimeRelatedTitlesWidget(animeId: animeData.id!),
+                  AnimeRelatedTitlesWidget(
+                    animeId: animeData.id!,
+                  ),
                   const SizedBox(
                     height: 70,
                   ),
@@ -1004,7 +1014,8 @@ class AnimeRelatedTitlesWidget extends ConsumerWidget {
         // );
       },
       error: ((error, stackTrace) => Center(child: Text(error.toString()))),
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () =>
+          const Center(child: CircularProgressIndicator()), //add loading skelet
     );
     //loading: () => const Center(child: CircularProgressIndicator()));
   }
