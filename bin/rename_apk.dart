@@ -11,7 +11,7 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
-const String kAppName = 'ShikiDev';
+const String kAppName = 'ShikiWatch';
 
 final variants = {
   'arm64-v8a',
