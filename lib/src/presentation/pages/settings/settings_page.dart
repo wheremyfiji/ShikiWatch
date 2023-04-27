@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:git_info/git_info.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:extended_image/extended_image.dart' as extended_image;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,6 +15,7 @@ import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
 import '../../../utils/target_platform.dart';
+import '../../providers/environment_provider.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 
@@ -385,11 +385,17 @@ class OledModeWidget extends StatelessWidget {
   }
 }
 
-class DynamicColorsWidget extends StatelessWidget {
+class DynamicColorsWidget extends ConsumerWidget {
   const DynamicColorsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final environment = ref.watch(environmentProvider);
+
+    if ((environment.sdkVersion ?? 0) < 31 && !TargetP.instance.isDesktop) {
+      return const SizedBox.shrink();
+    }
+
     return ValueListenableBuilder<Box<dynamic>>(
       valueListenable: Hive.box(BoxType.settings.name).listenable(
         keys: [dynamicThemeKey],
@@ -403,7 +409,7 @@ class DynamicColorsWidget extends StatelessWidget {
           title: const Text('Динамические цвета'),
           subtitle: TargetP.instance.isDesktop
               ? null
-              : const Text('Только для Android 12 и выше'),
+              : const Text('Динамические цвета на основе обоев телефона'),
           value: isDynamic,
           onChanged: (value) {
             Hive.box(BoxType.settings.name).put(dynamicThemeKey, value);
@@ -414,38 +420,17 @@ class DynamicColorsWidget extends StatelessWidget {
   }
 }
 
-class VersionWidget extends StatefulWidget {
-  const VersionWidget({Key? key}) : super(key: key);
+class VersionWidget extends ConsumerWidget {
+  const VersionWidget({super.key});
 
   @override
-  State<VersionWidget> createState() => _VersionWidgetState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final environment = ref.watch(environmentProvider);
 
-class _VersionWidgetState extends State<VersionWidget> {
-  PackageInfo? packageInfo;
+    final version = environment.packageInfo.version;
+    final build = environment.packageInfo.buildNumber;
+    final appname = environment.packageInfo.packageName;
 
-  @override
-  void initState() {
-    super.initState();
-    fetchDeviceInfo();
-  }
-
-  fetchDeviceInfo() async {
-    packageInfo = await PackageInfo.fromPlatform();
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (packageInfo == null) {
-      return const SettingsOption(
-        title: 'Версия',
-        subtitle: 'Ошибка получения версии',
-      );
-    }
-    final version = packageInfo?.version ?? '';
-    final build = packageInfo?.buildNumber ?? '';
-    final appname = packageInfo?.packageName ?? '';
     return SettingsOption(
       title: 'Версия: $version ($build)',
       subtitle: appname,
