@@ -68,7 +68,7 @@ class WatchingTab extends ConsumerWidget {
                       ),
                     ],
                     SliverPadding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(0.0),
                       sliver: SliverGrid(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
