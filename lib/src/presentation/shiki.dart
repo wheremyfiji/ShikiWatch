@@ -9,7 +9,6 @@ import '../constants/hive_keys.dart';
 import '../utils/router.dart';
 import 'providers/environment_provider.dart';
 import 'widgets/app_theme_builder.dart';
-import 'widgets/shiki_annotate_region_widget.dart';
 
 // const _appMainColor = Colors.orange;
 // bool monetUI = true;
@@ -27,26 +26,24 @@ class ShikiApp extends ConsumerWidget {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
 
-    return ShikiAnnotatedRegionWidget(
-      child: ValueListenableBuilder<Box>(
-        valueListenable: Hive.box(BoxType.settings.name).listenable(
-          keys: [oledModeKey],
-        ),
-        builder: (context, value, child) {
-          final bool isOled = value.get(oledModeKey, defaultValue: false);
-          return AppThemeBuilder(
-            builder: (context, appTheme) => MaterialApp.router(
-              //useInheritedMediaQuery: true,
-              debugShowCheckedModeBanner: false,
-              theme: appTheme.day,
-              darkTheme: isOled ? appTheme.midnight : appTheme.night,
-              title: appTitle,
-              themeMode: ThemeMode.system,
-              routerConfig: router,
-            ),
-          );
-        },
+    return ValueListenableBuilder<Box>(
+      valueListenable: Hive.box(BoxType.settings.name).listenable(
+        keys: [oledModeKey],
       ),
+      builder: (context, value, child) {
+        final bool isOled = value.get(oledModeKey, defaultValue: false);
+        return AppThemeBuilder(
+          builder: (context, appTheme) => MaterialApp.router(
+            //useInheritedMediaQuery: true,
+            debugShowCheckedModeBanner: false,
+            theme: appTheme.day,
+            darkTheme: isOled ? appTheme.midnight : appTheme.night,
+            title: appTitle,
+            themeMode: ThemeMode.system,
+            routerConfig: router,
+          ),
+        );
+      },
     );
   }
 }

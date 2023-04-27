@@ -22,6 +22,7 @@ import '../presentation/pages/library/library_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 
+import '../presentation/widgets/shiki_annotate_region_widget.dart';
 import 'target_platform.dart';
 import 'updater.dart';
 
@@ -232,7 +233,9 @@ final GoRouter router = GoRouter(
       builder:
           (BuildContext context, StatefulShellRouteState state, Widget child) {
         return UpdaterWidget(
-          child: ScaffoldWithNavBar(shellState: state, body: child),
+          child: ShikiAnnotatedRegionWidget(
+            child: ScaffoldWithNavBar(shellState: state, body: child),
+          ),
         );
       },
     ),
