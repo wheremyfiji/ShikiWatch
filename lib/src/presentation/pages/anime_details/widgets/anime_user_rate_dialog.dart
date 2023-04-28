@@ -620,6 +620,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                           value: statusForUser,
                           icon: const Icon(Icons.arrow_drop_down),
                           hint: const Text('Выбор списка'),
+                          borderRadius: BorderRadius.circular(10),
                           iconSize: 36,
                           //elevation: 16,
                           //style: const TextStyle(color: Colors.deepPurple),
