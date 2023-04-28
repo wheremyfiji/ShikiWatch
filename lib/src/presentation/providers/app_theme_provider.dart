@@ -25,6 +25,9 @@ class AppThemeDataNotifier {
 
   AppThemeData get data => _data;
 
+  static const Color backgroundReducedSmearingColor =
+      Color.fromRGBO(5, 5, 5, 1.0);
+
   AppThemeData fillWith(
       {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {
     _data = _createAppThemeData(light: light, dark: dark, useMonet: useMonet);
@@ -70,7 +73,7 @@ class AppThemeDataNotifier {
         backgroundColor: colorScheme.surface,
       ),
       cardTheme: origin.cardTheme.copyWith(
-        elevation: 0,
+        //elevation: 0,
         shadowColor: Colors.transparent,
       ),
       snackBarTheme: origin.snackBarTheme.copyWith(
@@ -102,30 +105,43 @@ class AppThemeDataNotifier {
     final origin = _createThemeData(scheme, Brightness.dark, useMonet);
     return origin.copyWith(
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.black,
+        //backgroundColor: Colors.black,
+        backgroundColor: backgroundReducedSmearingColor,
         foregroundColor: origin.colorScheme.onSurface,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
-      primaryColor: Colors.black,
-      canvasColor: Colors.black,
-      scaffoldBackgroundColor: Colors.black,
+      // primaryColor: Colors.black,
+      // canvasColor: Colors.black,
+      // scaffoldBackgroundColor: Colors.black,
+      primaryColor: backgroundReducedSmearingColor,
+      canvasColor: backgroundReducedSmearingColor,
+      scaffoldBackgroundColor: backgroundReducedSmearingColor,
       drawerTheme: origin.drawerTheme.copyWith(
-        backgroundColor: Colors.black,
+          // backgroundColor: Colors.black,
+          backgroundColor: backgroundReducedSmearingColor),
+      cardTheme: origin.cardTheme.copyWith(
+        elevation: 1,
+      ),
+      bottomSheetTheme: origin.bottomSheetTheme.copyWith(
+        // backgroundColor: Colors.black,
+        backgroundColor: backgroundReducedSmearingColor,
+        elevation: 0,
       ),
       colorScheme: origin.colorScheme.copyWith(
         brightness: Brightness.dark,
-        background: Colors.black,
+        //background: Colors.black,
+        background: backgroundReducedSmearingColor,
         surface: origin.colorScheme.background,
       ),
       navigationRailTheme: origin.navigationRailTheme.copyWith(
-        backgroundColor: Colors.black,
-      ),
+          //backgroundColor: Colors.black,
+          backgroundColor: backgroundReducedSmearingColor),
       navigationBarTheme: origin.navigationBarTheme.copyWith(
-        elevation: 0,
-        backgroundColor: Colors.black,
-      ),
+          elevation: 0,
+          //backgroundColor: Colors.black,
+          backgroundColor: backgroundReducedSmearingColor),
     );
   }
 
