@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -40,6 +41,10 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
   checkLatestVersion() async {
     //await Future.delayed(const Duration(seconds: 5));
 
+    if (kDebugMode) {
+      return;
+    }
+
     if (d) {
       return;
     }
@@ -65,7 +70,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
     final crit = latest.critical!;
     final url = latest.url;
 
-    if (crit && !d) {
+    if (latestVersion > currentVersion && crit && !d) {
       _showCriticalDialog(
         content: latest.description!,
         url: url,
@@ -148,22 +153,27 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          scrollable: true,
-          title: const Text('Критическое обновление'),
-          content: Text(content),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                launchUrlString(
-                  url ??
-                      'https://github.com/wheremyfiji/ShikiWatch/releases/latest',
-                  mode: LaunchMode.externalApplication,
-                );
-              },
-              child: const Text('Обновить'),
-            ),
-          ],
+        return WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: AlertDialog(
+            scrollable: true,
+            title: const Text('Критическое обновление'),
+            content: Text(content),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  launchUrlString(
+                    url ??
+                        'https://github.com/wheremyfiji/ShikiWatch/releases/latest',
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                child: const Text('Обновить'),
+              ),
+            ],
+          ),
         );
       },
     );
