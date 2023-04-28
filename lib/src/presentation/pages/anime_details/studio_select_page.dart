@@ -30,7 +30,7 @@ class StudioSelectPage extends ConsumerWidget {
         onRefresh: () async => ref.refresh(kodikAnimeProvider(shikimoriId)),
         child: CustomScrollView(
           slivers: [
-            SliverAppBar.large(
+            SliverAppBar.medium(
               title: Text(
                 animeName,
                 maxLines: 1,

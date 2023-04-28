@@ -144,7 +144,7 @@ class SeriesSelectPage extends ConsumerWidget {
             ref.refresh(isAnimeInDataBaseProvider(shikimoriId)),
         child: CustomScrollView(
           slivers: [
-            SliverAppBar.large(
+            SliverAppBar.medium(
               actions: [
                 Tooltip(
                   message: 'Сортировка серий',
@@ -189,15 +189,8 @@ class SeriesSelectPage extends ConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
-                    //int itemCount = seriesList?.length ?? 0;
-                    //int reversedIndex = itemCount - 1 - index;
-                    int reversedIndex = index;
-                    //final seria = seriesList?[reversedIndex]; sortedSeriesList
-                    final seria = sortedSeriesList[reversedIndex];
+                    final seria = sortedSeriesList[index];
                     final epList = episodesList(studioId);
-
-                    // final episodeIndex = episodesList(studioId)?.indexWhere(
-                    //     (e) => e.nubmer == int.parse(seria?.number ?? ''));
 
                     final epIndex = epList?.indexWhere(
                         (e) => e.nubmer == int.parse(seria.number ?? ''));
@@ -347,6 +340,10 @@ class SeriesSelectPage extends ConsumerWidget {
       Function(EpisodeSortType type) setSortType, EpisodeSortType currentSort) {
     return showModalBottomSheet(
       useRootNavigator: true,
+      constraints: BoxConstraints(
+        maxWidth:
+            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+      ),
       context: context,
       builder: (context) {
         return Padding(

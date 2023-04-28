@@ -74,6 +74,8 @@ void initApp() async {
 
   if (Platform.isAndroid) {
     await setOptimalDisplayMode();
+    // https://stackoverflow.com/a/64184001
+    //GestureBinding.instance.resamplingEnabled = true;
   }
 
   if (Platform.isWindows) {
