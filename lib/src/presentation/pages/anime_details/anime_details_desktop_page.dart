@@ -18,7 +18,7 @@ import '../../widgets/image_with_shimmer.dart';
 
 import 'rating_dialog.dart';
 import 'studio_select_page.dart';
-import 'widgets/anime_userate_dialog.dart';
+import 'widgets/anime_user_rate_dialog.dart';
 import 'widgets/rates_statuses_widget.dart';
 import 'widgets/title_description.dart';
 

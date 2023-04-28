@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import 'package:shikidev/src/utils/utils.dart';
 
 import '../../../../data/data_sources/anime_data_src.dart';
+import '../../../../data/repositories/anime_repo.dart';
 import '../../../../domain/models/anime.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../providers/library_tab_page_provider.dart';
-import 'anime_userate_dialog.dart';
+import '../../../widgets/material_you_chip.dart';
 
 class UserAnimeRateWidget extends HookConsumerWidget {
   final Animes anime;
@@ -336,11 +336,31 @@ class UserAnimeRateWidget extends HookConsumerWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  showDialog(
-                    barrierDismissible: false,
+                  // showDialog(
+                  //   barrierDismissible: false,
+                  //   context: context,
+                  //   builder: (context) {
+                  //     return AnimeUserRateDialog(anime: anime, data: data);
+                  //   },
+                  // );
+
+                  showModalBottomSheet<void>(
                     context: context,
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width >= 700
+                          ? 700
+                          : double.infinity,
+                    ),
+                    useRootNavigator: true,
+                    isScrollControlled: true,
+                    enableDrag: false,
+                    useSafeArea: true,
+                    elevation: 0,
                     builder: (context) {
-                      return AnimeUserRateDialog(anime: anime, data: data);
+                      return AnimeUserRateBottomSheet(
+                        data: data,
+                        anime: anime,
+                      );
                     },
                   );
                 },
@@ -380,81 +400,557 @@ class UserAnimeRateWidget extends HookConsumerWidget {
   }
 }
 
-const List<String> statusList = <String>[
-  'Смотрю',
-  'В планах',
-  'Просмотрено',
-  'Пересматриваю',
-  'Отложено',
-  'Брошено'
-];
+// enum UserList { watching, planned, completed, rewatching, onHold, dropped }
 
-class AnimeUserRateDialog2 extends ConsumerStatefulWidget {
-  final Animes anime;
+// extension UserListName on UserList {
+//   String get name {
+//     switch (this) {
+//       case UserList.watching:
+//         return 'Смотрю';
+//       case UserList.planned:
+//         return 'В планах';
+//       case UserList.completed:
+//         return 'Просмотрено';
+//       case UserList.rewatching:
+//         return 'Пересматриваю';
+//       case UserList.onHold:
+//         return 'Отложено';
+//       case UserList.dropped:
+//         return 'Брошено';
+//     }
+//   }
+// }
+
+final updateAnimeRateButtonProvider = StateNotifierProvider.autoDispose<
+    UpdateAnimeRateNotifier, AsyncValue<void>>((ref) {
+  return UpdateAnimeRateNotifier(
+    ref: ref,
+    animeRepository: ref.read(animeDataSourceProvider),
+  );
+}, name: 'updateAnimeRateButtonProvider');
+
+class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
+  UpdateAnimeRateNotifier({required this.ref, required this.animeRepository})
+      : super(const AsyncValue.data(null));
+
+  final Ref ref;
+  final AnimeRepository animeRepository;
+
+  Future<void> createRate({
+    required String selectedStatus,
+    required int currentScore,
+    required int progress,
+    int? rewatches,
+    String? text,
+    required Animes anime,
+    required VoidCallback onFinally,
+  }) async {
+    try {
+      state = const AsyncValue.loading();
+
+      final rate = await ref.read(animeDataSourceProvider).createUserRate(
+            token: SecureStorageService.instance.token,
+            userId: int.parse(SecureStorageService.instance.userId),
+            targetId: anime.id!,
+            status: selectedStatus,
+            score: currentScore,
+            episodes: progress,
+            rewatches: rewatches,
+            text: text,
+          );
+
+      switch (rate.status) {
+        case 'watching':
+          {
+            ref.read(watchingTabPageProvider).addAnime(
+                  animeId: anime.id!,
+                  anime: anime,
+                  rateId: rate.id!,
+                  createdAt: rate.createdAt!,
+                  updatedAt: rate.updatedAt!,
+                  score: rate.score,
+                  episodes: rate.episodes,
+                  rewatches: rate.rewatches,
+                  status: rate.status,
+                );
+          }
+          break;
+        case 'planned':
+          {
+            ref.read(plannedTabPageProvider).addAnime(
+                  animeId: anime.id!,
+                  anime: anime,
+                  rateId: rate.id!,
+                  createdAt: rate.createdAt!,
+                  updatedAt: rate.updatedAt!,
+                  score: rate.score,
+                  episodes: rate.episodes,
+                  rewatches: rate.rewatches,
+                  status: rate.status,
+                );
+            break;
+          }
+        case 'completed':
+          {
+            ref.read(completedTabPageProvider).addAnime(
+                  animeId: anime.id!,
+                  anime: anime,
+                  rateId: rate.id!,
+                  createdAt: rate.createdAt!,
+                  updatedAt: rate.updatedAt!,
+                  score: rate.score,
+                  episodes: rate.episodes,
+                  rewatches: rate.rewatches,
+                  status: rate.status,
+                );
+          }
+          break;
+        case 'rewatching':
+          {
+            ref.read(rewatchingTabPageProvider).addAnime(
+                  animeId: anime.id!,
+                  anime: anime,
+                  rateId: rate.id!,
+                  createdAt: rate.createdAt!,
+                  updatedAt: rate.updatedAt!,
+                  score: rate.score,
+                  episodes: rate.episodes,
+                  rewatches: rate.rewatches,
+                  status: rate.status,
+                );
+          }
+          break;
+        case 'on_hold':
+          {
+            ref.read(onHoldTabPageProvider).addAnime(
+                  animeId: anime.id!,
+                  anime: anime,
+                  rateId: rate.id!,
+                  createdAt: rate.createdAt!,
+                  updatedAt: rate.updatedAt!,
+                  score: rate.score,
+                  episodes: rate.episodes,
+                  rewatches: rate.rewatches,
+                  status: rate.status,
+                );
+          }
+          break;
+        case 'dropped':
+          {
+            ref.read(droppedTabPageProvider).addAnime(
+                  animeId: anime.id!,
+                  anime: anime,
+                  rateId: rate.id!,
+                  createdAt: rate.createdAt!,
+                  updatedAt: rate.updatedAt!,
+                  score: rate.score,
+                  episodes: rate.episodes,
+                  rewatches: rate.rewatches,
+                  status: rate.status,
+                );
+          }
+          break;
+        default:
+      }
+
+      ref.read(titleInfoPageProvider(anime.id!)).addRate(
+            rateId: rate.id!,
+            updatedAt: rate.updatedAt!,
+            status: rate.status!,
+            score: rate.score,
+            episodes: rate.episodes,
+            rewatches: rate.rewatches,
+            text: rate.text,
+            textHtml: rate.textHtml,
+            createdAt: rate.createdAt,
+          );
+
+      onFinally();
+    } catch (e, s) {
+      state = AsyncValue.error('Ошибка создания отметки', s);
+    } finally {
+      state = const AsyncValue.data(null);
+      //onFinally();
+    }
+  }
+
+  Future<void> updateRate({
+    required int rateId,
+    required int animeId,
+    required String selectedStatus,
+    required String initStatus,
+    int? currentScore,
+    required int progress,
+    int? rewatches,
+    String? text,
+    required Animes anime,
+    required VoidCallback onFinally,
+  }) async {
+    try {
+      state = const AsyncValue.loading();
+
+      final rate = await ref.read(animeDataSourceProvider).updateUserRate(
+            token: SecureStorageService.instance.token,
+            rateId: rateId,
+            status: selectedStatus,
+            score: currentScore,
+            episodes: progress,
+            rewatches: rewatches,
+            text: text,
+          );
+
+      if (rate.status != initStatus) {
+        switch (initStatus) {
+          case 'watching':
+            {
+              ref.read(watchingTabPageProvider).deleteAnime(animeId);
+            }
+            break;
+          case 'planned':
+            {
+              ref.read(plannedTabPageProvider).deleteAnime(animeId);
+              break;
+            }
+          case 'completed':
+            {
+              ref.read(completedTabPageProvider).deleteAnime(animeId);
+            }
+            break;
+          case 'rewatching':
+            {
+              ref.read(rewatchingTabPageProvider).deleteAnime(animeId);
+            }
+            break;
+          case 'on_hold':
+            {
+              ref.read(onHoldTabPageProvider).deleteAnime(animeId);
+            }
+            break;
+          case 'dropped':
+            {
+              ref.read(droppedTabPageProvider).deleteAnime(animeId);
+            }
+            break;
+          default:
+        }
+        switch (rate.status) {
+          case 'watching':
+            {
+              ref.read(watchingTabPageProvider).addAnime(
+                    animeId: animeId,
+                    anime: anime,
+                    rateId: rate.id!,
+                    createdAt: rate.createdAt!,
+                    updatedAt: rate.updatedAt!,
+                    score: rate.score,
+                    episodes: rate.episodes,
+                    rewatches: rate.rewatches,
+                    status: rate.status,
+                  );
+            }
+            break;
+          case 'planned':
+            {
+              ref.read(plannedTabPageProvider).addAnime(
+                    animeId: animeId,
+                    anime: anime,
+                    rateId: rate.id!,
+                    createdAt: rate.createdAt!,
+                    updatedAt: rate.updatedAt!,
+                    score: rate.score,
+                    episodes: rate.episodes,
+                    rewatches: rate.rewatches,
+                    status: rate.status,
+                  );
+              break;
+            }
+          case 'completed':
+            {
+              ref.read(completedTabPageProvider).addAnime(
+                    animeId: animeId,
+                    anime: anime,
+                    rateId: rate.id!,
+                    createdAt: rate.createdAt!,
+                    updatedAt: rate.updatedAt!,
+                    score: rate.score,
+                    episodes: rate.episodes,
+                    rewatches: rate.rewatches,
+                    status: rate.status,
+                  );
+            }
+            break;
+          case 'rewatching':
+            {
+              ref.read(rewatchingTabPageProvider).addAnime(
+                    animeId: animeId,
+                    anime: anime,
+                    rateId: rate.id!,
+                    createdAt: rate.createdAt!,
+                    updatedAt: rate.updatedAt!,
+                    score: rate.score,
+                    episodes: rate.episodes,
+                    rewatches: rate.rewatches,
+                    status: rate.status,
+                  );
+            }
+            break;
+          case 'on_hold':
+            {
+              ref.read(onHoldTabPageProvider).addAnime(
+                    animeId: animeId,
+                    anime: anime,
+                    rateId: rate.id!,
+                    createdAt: rate.createdAt!,
+                    updatedAt: rate.updatedAt!,
+                    score: rate.score,
+                    episodes: rate.episodes,
+                    rewatches: rate.rewatches,
+                    status: rate.status,
+                  );
+            }
+            break;
+          case 'dropped':
+            {
+              ref.read(droppedTabPageProvider).addAnime(
+                    animeId: animeId,
+                    anime: anime,
+                    rateId: rate.id!,
+                    createdAt: rate.createdAt!,
+                    updatedAt: rate.updatedAt!,
+                    score: rate.score,
+                    episodes: rate.episodes,
+                    rewatches: rate.rewatches,
+                    status: rate.status,
+                  );
+            }
+            break;
+          default:
+        }
+        ref.read(titleInfoPageProvider(animeId)).updateRate(
+              rateId: rate.id!,
+              updatedAt: rate.updatedAt!,
+              status: rate.status!,
+              score: rate.score,
+              episodes: rate.episodes,
+              rewatches: rate.rewatches,
+              text: rate.text,
+              textHtml: rate.textHtml,
+              createdAt: rate.createdAt,
+            );
+
+        onFinally();
+
+        return;
+      }
+      //switch (selectedStatus ?? initStatus) {
+      switch (rate.status) {
+        case 'watching':
+          ref.read(watchingTabPageProvider).updateAnime(
+                animeId: animeId,
+                updatedAt: rate.updatedAt!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+              );
+          break;
+        case 'planned':
+          ref.read(plannedTabPageProvider).updateAnime(
+                animeId: animeId,
+                updatedAt: rate.updatedAt!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+              );
+          break;
+        case 'completed':
+          ref.read(completedTabPageProvider).updateAnime(
+                animeId: animeId,
+                updatedAt: rate.updatedAt!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+              );
+          break;
+        case 'rewatching':
+          ref.read(rewatchingTabPageProvider).updateAnime(
+                animeId: animeId,
+                updatedAt: rate.updatedAt!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+              );
+          break;
+        case 'on_hold':
+          ref.read(onHoldTabPageProvider).updateAnime(
+                animeId: animeId,
+                updatedAt: rate.updatedAt!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+              );
+          break;
+        case 'dropped':
+          ref.read(droppedTabPageProvider).updateAnime(
+                animeId: animeId,
+                updatedAt: rate.updatedAt!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+              );
+          break;
+        default:
+      }
+      ref.read(titleInfoPageProvider(animeId)).updateRate(
+            rateId: rate.id!,
+            updatedAt: rate.updatedAt!,
+            status: rate.status!,
+            score: rate.score,
+            episodes: rate.episodes,
+            rewatches: rate.rewatches,
+            text: rate.text,
+            textHtml: rate.textHtml,
+            createdAt: rate.createdAt,
+          );
+      onFinally();
+    } catch (e, s) {
+      state = AsyncValue.error('Ошибка обновления отметки', s);
+    } finally {
+      state = const AsyncValue.data(null);
+      //onFinally();
+    }
+  }
+
+  Future<void> deleteRate({
+    required int rateId,
+    required int animeId,
+    required String status,
+    required VoidCallback onFinally,
+  }) async {
+    try {
+      state = const AsyncValue.loading();
+
+      await ref.read(animeDataSourceProvider).deleteUserRate(
+            token: SecureStorageService.instance.token,
+            rateId: rateId,
+          );
+
+      switch (status) {
+        case 'watching':
+          ref.read(watchingTabPageProvider).deleteAnime(animeId);
+          break;
+        case 'planned':
+          ref.read(plannedTabPageProvider).deleteAnime(animeId);
+          break;
+        case 'completed':
+          ref.read(completedTabPageProvider).deleteAnime(animeId);
+          break;
+        case 'rewatching':
+          ref.read(rewatchingTabPageProvider).deleteAnime(animeId);
+          break;
+        case 'on_hold':
+          ref.read(onHoldTabPageProvider).deleteAnime(animeId);
+          break;
+        case 'dropped':
+          ref.read(droppedTabPageProvider).deleteAnime(animeId);
+          break;
+        default:
+      }
+
+      ref.read(titleInfoPageProvider(animeId)).deleteRate();
+
+      onFinally();
+    } catch (e, s) {
+      state = AsyncValue.error('Ошибка удаления отметки', s);
+    } finally {
+      state = const AsyncValue.data(null);
+      // onFinally();
+    }
+  }
+}
+
+class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
   final Anime data;
-  final String imageUrl;
+  final Animes anime;
 
-  const AnimeUserRateDialog2(
-      {super.key,
-      required this.anime,
-      required this.data,
-      required this.imageUrl});
+  const AnimeUserRateBottomSheet({
+    super.key,
+    required this.data,
+    required this.anime,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _AnimeUserRateDialogState();
+      _AnimeUserRateBottomSheetState();
 }
 
-class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog2> {
-  //String dropdownValue = statusList.first;
-
-  late TextEditingController _controller;
-
-  bool isLoading = false;
-
-  String? statusForUser;
-  String? initStatus;
-  String? selectedStatus;
-  int? currentScore;
-  int rewatches = 0;
-  int progress = 0;
-  int epCount = 0;
-  String userRateText = '';
-
-  String? convertStatus(String? value) {
-    String? status;
-
-    if (value == null) {
-      return null;
+class _AnimeUserRateBottomSheetState
+    extends ConsumerState<AnimeUserRateBottomSheet> {
+  IconData getChipIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icons.remove_red_eye;
+      case 1:
+        return Icons.event_available;
+      case 2:
+        return Icons.done_all;
+      case 3:
+        return Icons.refresh;
+      case 4:
+        return Icons.pause;
+      case 5:
+        return Icons.close;
+      default:
+        return Icons.error;
     }
+  }
+
+  String getChipLabel(int value) {
+    String label;
 
     const map = {
-      'watching': 'Смотрю',
-      'planned': 'В планах',
-      'completed': 'Просмотрено',
-      'rewatching': 'Пересматриваю',
-      'on_hold': 'Отложено',
-      'dropped': 'Брошено'
+      0: 'Смотрю',
+      1: 'В планах',
+      2: 'Просмотрено',
+      3: 'Пересматриваю',
+      4: 'Отложено',
+      5: 'Брошено'
     };
 
-    status = map[value];
+    label = map[value] ?? '?';
+
+    return label;
+  }
+
+  int convertStatusStringToInt(String? value) {
+    int status;
+
+    const map = {
+      'watching': 0,
+      'planned': 1,
+      'completed': 2,
+      'rewatching': 3,
+      'on_hold': 4,
+      'dropped': 5,
+    };
+
+    status = map[value] ?? -1;
 
     return status;
   }
 
-  String? convertStatusMirror(String? value) {
-    String? status;
+  String convertStatusIntToString(int value) {
+    String status;
 
     const map = {
-      'Смотрю': 'watching',
-      'В планах': 'planned',
-      'Просмотрено': 'completed',
-      'Пересматриваю': 'rewatching',
-      'Отложено': 'on_hold',
-      'Брошено': 'dropped'
+      0: 'watching',
+      1: 'planned',
+      2: 'completed',
+      3: 'rewatching',
+      4: 'on_hold',
+      5: 'dropped',
     };
 
-    status = map[value];
+    status = map[value] ?? '';
 
     return status;
   }
@@ -481,400 +977,33 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog2> {
     return text;
   }
 
-  Future<void> createRate() async {
-    setState(() {
-      isLoading = true;
-    });
-    //await Future.delayed(const Duration(seconds: 3));
-    final rate = await ref.read(animeDataSourceProvider).createUserRate(
-          token: SecureStorageService.instance.token,
-          userId: int.parse(SecureStorageService.instance.userId),
-          targetId: widget.data.id!,
-          status: selectedStatus ?? '',
-          score: currentScore ?? 0,
-          episodes: progress,
-          rewatches: rewatches,
-          text: _controller.text,
-        );
-    switch (rate.status) {
-      case 'watching':
-        {
-          //ref.read(watchingTabPageProvider).deleteAnime(widget.data.id!);
-          ref.read(watchingTabPageProvider).addAnime(
-                animeId: widget.data.id!,
-                anime: widget.anime,
-                rateId: rate.id!,
-                createdAt: rate.createdAt!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                status: rate.status,
-              );
-        }
-        break;
-      case 'planned':
-        {
-          ref.read(plannedTabPageProvider).addAnime(
-                animeId: widget.data.id!,
-                anime: widget.anime,
-                rateId: rate.id!,
-                createdAt: rate.createdAt!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                status: rate.status,
-              );
-          break;
-        }
-      case 'completed':
-        {
-          ref.read(completedTabPageProvider).addAnime(
-                animeId: widget.data.id!,
-                anime: widget.anime,
-                rateId: rate.id!,
-                createdAt: rate.createdAt!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                status: rate.status,
-              );
-        }
-        break;
-      case 'rewatching':
-        {
-          ref.read(rewatchingTabPageProvider).addAnime(
-                animeId: widget.data.id!,
-                anime: widget.anime,
-                rateId: rate.id!,
-                createdAt: rate.createdAt!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                status: rate.status,
-              );
-        }
-        break;
-      case 'on_hold':
-        {
-          ref.read(onHoldTabPageProvider).addAnime(
-                animeId: widget.data.id!,
-                anime: widget.anime,
-                rateId: rate.id!,
-                createdAt: rate.createdAt!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                status: rate.status,
-              );
-        }
-        break;
-      case 'dropped':
-        {
-          ref.read(droppedTabPageProvider).addAnime(
-                animeId: widget.data.id!,
-                anime: widget.anime,
-                rateId: rate.id!,
-                createdAt: rate.createdAt!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                status: rate.status,
-              );
-        }
-        break;
-      default:
-    }
-    ref.read(titleInfoPageProvider(widget.data.id!)).addRate(
-          rateId: rate.id!,
-          updatedAt: rate.updatedAt!,
-          status: rate.status!,
-          score: rate.score,
-          episodes: rate.episodes,
-          rewatches: rate.rewatches,
-          text: rate.text,
-          textHtml: rate.textHtml,
-          createdAt: rate.createdAt,
-        );
-  }
+  late TextEditingController _controller;
 
-  Future<void> updateRate() async {
-    setState(() {
-      isLoading = true;
-    });
-    //await Future.delayed(const Duration(seconds: 3));
-    final rate = await ref.read(animeDataSourceProvider).updateUserRate(
-          token: SecureStorageService.instance.token,
-          rateId: widget.data.userRate!.id!,
-          status: selectedStatus,
-          score: currentScore,
-          episodes: progress,
-          rewatches: rewatches,
-          text: _controller.text,
-        );
-    if (rate.status != initStatus) {
-      switch (initStatus) {
-        case 'watching':
-          {
-            ref.read(watchingTabPageProvider).deleteAnime(widget.data.id!);
-          }
-          break;
-        case 'planned':
-          {
-            ref.read(plannedTabPageProvider).deleteAnime(widget.data.id!);
-            break;
-          }
-        case 'completed':
-          {
-            ref.read(completedTabPageProvider).deleteAnime(widget.data.id!);
-          }
-          break;
-        case 'rewatching':
-          {
-            ref.read(rewatchingTabPageProvider).deleteAnime(widget.data.id!);
-          }
-          break;
-        case 'on_hold':
-          {
-            ref.read(onHoldTabPageProvider).deleteAnime(widget.data.id!);
-          }
-          break;
-        case 'dropped':
-          {
-            ref.read(droppedTabPageProvider).deleteAnime(widget.data.id!);
-          }
-          break;
-        default:
-      }
-      switch (rate.status) {
-        case 'watching':
-          {
-            ref.read(watchingTabPageProvider).addAnime(
-                  animeId: widget.data.id!,
-                  anime: widget.anime,
-                  rateId: rate.id!,
-                  createdAt: rate.createdAt!,
-                  updatedAt: rate.updatedAt!,
-                  score: rate.score,
-                  episodes: rate.episodes,
-                  rewatches: rate.rewatches,
-                  status: rate.status,
-                );
-          }
-          break;
-        case 'planned':
-          {
-            ref.read(plannedTabPageProvider).addAnime(
-                  animeId: widget.data.id!,
-                  anime: widget.anime,
-                  rateId: rate.id!,
-                  createdAt: rate.createdAt!,
-                  updatedAt: rate.updatedAt!,
-                  score: rate.score,
-                  episodes: rate.episodes,
-                  rewatches: rate.rewatches,
-                  status: rate.status,
-                );
-            break;
-          }
-        case 'completed':
-          {
-            ref.read(completedTabPageProvider).addAnime(
-                  animeId: widget.data.id!,
-                  anime: widget.anime,
-                  rateId: rate.id!,
-                  createdAt: rate.createdAt!,
-                  updatedAt: rate.updatedAt!,
-                  score: rate.score,
-                  episodes: rate.episodes,
-                  rewatches: rate.rewatches,
-                  status: rate.status,
-                );
-          }
-          break;
-        case 'rewatching':
-          {
-            ref.read(rewatchingTabPageProvider).addAnime(
-                  animeId: widget.data.id!,
-                  anime: widget.anime,
-                  rateId: rate.id!,
-                  createdAt: rate.createdAt!,
-                  updatedAt: rate.updatedAt!,
-                  score: rate.score,
-                  episodes: rate.episodes,
-                  rewatches: rate.rewatches,
-                  status: rate.status,
-                );
-          }
-          break;
-        case 'on_hold':
-          {
-            ref.read(onHoldTabPageProvider).addAnime(
-                  animeId: widget.data.id!,
-                  anime: widget.anime,
-                  rateId: rate.id!,
-                  createdAt: rate.createdAt!,
-                  updatedAt: rate.updatedAt!,
-                  score: rate.score,
-                  episodes: rate.episodes,
-                  rewatches: rate.rewatches,
-                  status: rate.status,
-                );
-          }
-          break;
-        case 'dropped':
-          {
-            ref.read(droppedTabPageProvider).addAnime(
-                  animeId: widget.data.id!,
-                  anime: widget.anime,
-                  rateId: rate.id!,
-                  createdAt: rate.createdAt!,
-                  updatedAt: rate.updatedAt!,
-                  score: rate.score,
-                  episodes: rate.episodes,
-                  rewatches: rate.rewatches,
-                  status: rate.status,
-                );
-          }
-          break;
-        default:
-      }
-      ref.read(titleInfoPageProvider(widget.data.id!)).updateRate(
-            rateId: rate.id!,
-            updatedAt: rate.updatedAt!,
-            status: rate.status!,
-            score: rate.score,
-            episodes: rate.episodes,
-            rewatches: rate.rewatches,
-            text: rate.text,
-            textHtml: rate.textHtml,
-            createdAt: rate.createdAt,
-          );
-      return;
-    }
-    //switch (selectedStatus ?? initStatus) {
-    switch (rate.status) {
-      case 'watching':
-        ref.read(watchingTabPageProvider).updateAnime(
-              animeId: widget.data.id!,
-              updatedAt: rate.updatedAt!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-            );
-        break;
-      case 'planned':
-        ref.read(plannedTabPageProvider).updateAnime(
-              animeId: widget.data.id!,
-              updatedAt: rate.updatedAt!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-            );
-        break;
-      case 'completed':
-        ref.read(completedTabPageProvider).updateAnime(
-              animeId: widget.data.id!,
-              updatedAt: rate.updatedAt!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-            );
-        break;
-      case 'rewatching':
-        ref.read(rewatchingTabPageProvider).updateAnime(
-              animeId: widget.data.id!,
-              updatedAt: rate.updatedAt!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-            );
-        break;
-      case 'on_hold':
-        ref.read(onHoldTabPageProvider).updateAnime(
-              animeId: widget.data.id!,
-              updatedAt: rate.updatedAt!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-            );
-        break;
-      case 'dropped':
-        ref.read(droppedTabPageProvider).updateAnime(
-              animeId: widget.data.id!,
-              updatedAt: rate.updatedAt!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-            );
-        break;
-      default:
-    }
-    ref.read(titleInfoPageProvider(widget.data.id!)).updateRate(
-          rateId: rate.id!,
-          updatedAt: rate.updatedAt!,
-          status: rate.status!,
-          score: rate.score,
-          episodes: rate.episodes,
-          rewatches: rate.rewatches,
-          text: rate.text,
-          textHtml: rate.textHtml,
-          createdAt: rate.createdAt,
-        );
-  }
+  String? initStatus;
+  int? selectedStatus;
 
-  Future<bool> deleteRate() async {
-    setState(() {
-      isLoading = true;
-    });
-    final resp = await ref.read(animeDataSourceProvider).deleteUserRate(
-          token: SecureStorageService.instance.token,
-          rateId: widget.data.userRate!.id!,
-        );
-    switch (selectedStatus ?? initStatus) {
-      case 'watching':
-        ref.read(watchingTabPageProvider).deleteAnime(widget.data.id!);
-        break;
-      case 'planned':
-        ref.read(plannedTabPageProvider).deleteAnime(widget.data.id!);
-        break;
-      case 'completed':
-        ref.read(completedTabPageProvider).deleteAnime(widget.data.id!);
-        break;
-      case 'rewatching':
-        ref.read(rewatchingTabPageProvider).deleteAnime(widget.data.id!);
-        break;
-      case 'on_hold':
-        ref.read(onHoldTabPageProvider).deleteAnime(widget.data.id!);
-        break;
-      case 'dropped':
-        ref.read(droppedTabPageProvider).deleteAnime(widget.data.id!);
-        break;
-      default:
-    }
-
-    return resp;
-  }
+  int? currentScore;
+  int rewatches = 0;
+  int progress = 0;
+  int epCount = 0;
+  String userRateText = '';
 
   @override
   void initState() {
-    statusForUser = convertStatus(widget.data.userRate?.status);
     initStatus = widget.data.userRate?.status;
-    selectedStatus = widget.data.userRate?.status;
+
+    selectedStatus = convertStatusStringToInt(widget.data.userRate?.status);
+
     currentScore = widget.data.userRate?.score;
     rewatches = widget.data.userRate?.rewatches ?? 0;
     progress = widget.data.userRate?.episodes ?? 0;
+
     if (widget.data.status == 'released') {
       epCount = widget.data.episodes ?? 0;
     } else {
       epCount = widget.data.episodesAired ?? 0;
     }
-    //epCount = widget.data.episodes ?? 0;
+
     userRateText = widget.data.userRate?.text ?? '';
     _controller = TextEditingController();
     _controller.text = userRateText;
@@ -882,347 +1011,415 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog2> {
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      scrollable: true,
-      actions: [
-        ElevatedButton(
-          onPressed: isLoading
-              ? null
-              : () {
-                  Navigator.pop(context);
-                },
-          child: const Text('Отмена'),
-        ),
-        ElevatedButton(
-          onPressed: isLoading || selectedStatus == null
-              ? null
-              : () async {
-                  if (widget.data.userRate == null) {
-                    await createRate();
-                  } else {
-                    await updateRate();
-                  }
-
-                  //ref.read(titleInfoPageProvider(widget.data.id!)).fetch(true);
-                  Navigator.pop(context);
-                },
-          child: const Text('Сохранить'),
-        ),
-        if (widget.data.userRate != null && widget.data.userRate?.id != null)
-          IconButton(
-            onPressed: isLoading
-                ? null
-                : () async {
-                    // setState(() {
-                    //   isLoading = true;
-                    // });
-                    // final resp = await ref.read(animeDataSourceProvider).deleteUserRate(
-                    //     token: SecureStorageService.instance.token,
-                    //     rateId: widget.data.userRate!.id!);
-                    final result = await deleteRate();
-                    if (result) {
-                      // ref
-                      //     .read(titleInfoPageProvider(widget.data.id!))
-                      //     .fetch(true);
-
-                      // ignore: use_build_context_synchronously
-                      ref
-                          .read(titleInfoPageProvider(widget.data.id!))
-                          .deleteRate();
-                      Navigator.pop(context);
-                    } else {
-                      if (mounted) {
-                        Navigator.pop(context);
-                        //showSnackBar(context, 'Ошибка удаления');
-                        showSnackBar(ctx: context, msg: 'Ошибка удаления');
-                      }
-                    }
-                  },
-            icon: const Icon(Icons.delete),
-          ),
-      ],
-      title: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: 500,
-          minWidth: 500,
-        ),
-        // CircleAvatar(
-        //   foregroundImage: ExtendedNetworkImageProvider(
-        //       AppConfig.staticUrl + widget.data.image!.original!,
-        //       cache: true),
-        // ),
-        // const SizedBox(
-        //   width: 16,
-        // ),
-        child: Text(
-          widget.data.russian ?? widget.data.name ?? '[Без навзвания]',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          //softWrap: true,
-        ),
+    ref.listen<AsyncValue<void>>(
+      updateAnimeRateButtonProvider,
+      (_, state) => state.whenOrNull(
+        error: (error, stackTrace) {
+          Navigator.of(context).pop();
+          showErrorSnackBar(
+            ctx: context,
+            msg: error.toString(),
+            // dur: const Duration(
+            //   seconds: 4,
+            // ),
+          );
+        },
       ),
-      content: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Список:'),
-                    const SizedBox(
-                      width: 16,
-                    ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                            color: context.theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: DropdownButton<String>(
-                          underline: const SizedBox(),
-                          isExpanded: true,
-                          value: statusForUser,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          hint: const Text('Выбор списка'),
-                          iconSize: 36,
-                          //elevation: 16,
-                          //style: const TextStyle(color: Colors.deepPurple),
-                          onChanged: (String? value) {
-                            setState(() {
-                              statusForUser = value!;
-                              selectedStatus = convertStatusMirror(value);
-                              //print(statusForUser);
-                              //print(selectedStatus);
-                            });
-                          },
-                          items: statusList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+    );
+
+    final rateState = ref.watch(updateAnimeRateButtonProvider);
+    final isLoading = rateState is AsyncLoading<void>;
+
+    return WillPopScope(
+      onWillPop: () async {
+        //return true;
+        return !isLoading;
+      },
+      child: SingleChildScrollView(
+        child: Padding(
+          padding:
+              MediaQuery.of(context).viewInsets + const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Center(
+              //   child: LayoutBuilder(
+              //     builder: (ctx, constraints) {
+              //       return Container(
+              //         height: 4,
+              //         width: constraints.maxWidth / 6,
+              //         decoration: BoxDecoration(
+              //           color: context.theme.colorScheme.onBackground,
+              //           borderRadius: const BorderRadius.all(
+              //             Radius.circular(8),
+              //           ),
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 8,
+              // ),
+              Row(
+                children: [
+                  // CircleAvatar(
+                  //   backgroundImage: ExtendedNetworkImageProvider(
+                  //     AppConfig.staticUrl + widget.anime.image!.original!,
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   width: 8,
+                  // ),
+                  Text(
+                    widget.data.russian ??
+                        widget.data.name ??
+                        '[Без навзвания]',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (widget.data.userRate != null) ...[
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Card(
-                    clipBehavior: Clip.antiAlias,
-                    shadowColor: Colors.transparent,
-                    margin: EdgeInsets.zero,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Wrap(
-                            children: [
-                              const Text('Эпизоды:'),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                '$progress/${epCount.toString()}',
-                              ),
-                            ],
-                          ),
-                          Wrap(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  if (progress == 0) {
-                                    return;
-                                  }
-                                  setState(() {
-                                    progress = progress - 1;
-                                  });
-                                },
-                                icon: const Icon(Icons.remove),
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  if (progress >= epCount) {
-                                    return;
-                                  }
-                                  setState(() {
-                                    progress = progress + 1;
-                                  });
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Card(
-                    clipBehavior: Clip.antiAlias,
-                    shadowColor: Colors.transparent,
-                    margin: EdgeInsets.zero,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Wrap(
-                            children: [
-                              const Text('Повторения:'),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text(rewatches.toString()),
-                            ],
-                          ),
-                          Wrap(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  if (rewatches == 0) {
-                                    return;
-                                  }
-                                  setState(() {
-                                    rewatches--;
-                                  });
-                                },
-                                icon: const Icon(Icons.remove),
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    rewatches++;
-                                  });
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Card(
-                    clipBehavior: Clip.antiAlias,
-                    shadowColor: Colors.transparent,
-                    margin: EdgeInsets.zero,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Wrap(
-                            children: [
-                              const Text('Оценка:'),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text('${currentScore ?? 0}'),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              if (currentScore != null)
-                                Text(
-                                  '(${getScorePrefix(currentScore)})',
-                                  //style: TextStyle(fontSize: 12),
-                                ),
-                            ],
-                          ),
-                          Wrap(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  if (currentScore == null) {
-                                    //currentScore = 1;
-                                    return;
-                                  }
-                                  if (currentScore == 1) {
-                                    return;
-                                  }
-                                  setState(() {
-                                    currentScore = currentScore! - 1;
-                                  });
-                                },
-                                icon: const Icon(Icons.remove),
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  if (currentScore == 10) {
-                                    return;
-                                  }
-                                  setState(() {
-                                    if (currentScore == null) {
-                                      currentScore = 1;
-                                      return;
-                                    }
-                                    currentScore = currentScore! + 1;
-                                  });
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      // labelText: 'Добавить заметку',
-                      //border: InputBorder.none,
-                      hintText: 'Добавить заметку',
-                    ),
-                    maxLines: 3,
                   ),
                 ],
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Wrap(
+                  children: List<Widget>.generate(
+                    6,
+                    (int index) {
+                      return MaterialYouChip(
+                        title: getChipLabel(index),
+                        icon: getChipIcon(index),
+                        onPressed: () {
+                          setState(() {
+                            selectedStatus = index;
+                          });
+                        },
+                        isSelected: selectedStatus == index,
+                      );
+                    },
+                  ).toList(),
+                ),
+              ),
+              if (widget.data.userRate != null) ...[
+                const SizedBox(
+                  height: 16,
+                ),
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  shadowColor: Colors.transparent,
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Wrap(
+                          children: [
+                            const Text('Прогресс:'),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              '$progress/${epCount.toString()}',
+                            ),
+                          ],
+                        ),
+                        Wrap(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (progress == 0) {
+                                  return;
+                                }
+                                setState(() {
+                                  progress = progress - 1;
+                                });
+                              },
+                              icon: const Icon(Icons.remove),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                if (progress >= epCount) {
+                                  return;
+                                }
+                                setState(() {
+                                  progress = progress + 1;
+                                });
+                              },
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  shadowColor: Colors.transparent,
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Wrap(
+                          children: [
+                            const Text('Повторения:'),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Text(rewatches.toString()),
+                          ],
+                        ),
+                        Wrap(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (rewatches == 0) {
+                                  return;
+                                }
+                                setState(() {
+                                  rewatches--;
+                                });
+                              },
+                              icon: const Icon(Icons.remove),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  rewatches++;
+                                });
+                              },
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Card(
+                  clipBehavior: Clip.antiAlias,
+                  shadowColor: Colors.transparent,
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Wrap(
+                          children: [
+                            const Text('Оценка:'),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            if (currentScore != null && currentScore != 0)
+                              Text('$currentScore'),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            if (currentScore != null)
+                              Text(
+                                '(${getScorePrefix(currentScore)})',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .copyWith(fontSize: 14),
+                              ),
+                          ],
+                        ),
+                        Wrap(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (currentScore == null) {
+                                  return;
+                                }
+                                if (currentScore! <= 1) {
+                                  return;
+                                }
+                                setState(() {
+                                  currentScore = currentScore! - 1;
+                                });
+                              },
+                              icon: const Icon(Icons.remove),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                if (currentScore == 10) {
+                                  return;
+                                }
+                                setState(() {
+                                  if (currentScore == null) {
+                                    currentScore = 1;
+                                    return;
+                                  }
+                                  currentScore = currentScore! + 1;
+                                });
+                              },
+                              icon: const Icon(Icons.add),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  controller: _controller,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Добавить заметку',
+                  ),
+                  maxLines: 3,
+                ),
               ],
-            ),
+              const SizedBox(
+                height: 16,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: FilledButton.tonal(
+                      // style: FilledButton.styleFrom(
+                      //   padding: const EdgeInsets.all(12.0),
+                      // ),
+                      onPressed: isLoading || selectedStatus == -1
+                          ? null
+                          : () {
+                              if (widget.data.userRate == null) {
+                                ref
+                                    .read(
+                                        updateAnimeRateButtonProvider.notifier)
+                                    .createRate(
+                                      anime: widget.anime,
+                                      selectedStatus: convertStatusIntToString(
+                                          selectedStatus!),
+                                      currentScore: currentScore ?? 0,
+                                      progress: progress,
+                                      rewatches: rewatches,
+                                      text: _controller.text,
+                                      onFinally: () {
+                                        Navigator.of(context).pop();
+
+                                        showSnackBar(
+                                          ctx: context,
+                                          msg: 'Отметка создана',
+                                          dur: const Duration(seconds: 3),
+                                        );
+                                      },
+                                    );
+                              } else {
+                                ref
+                                    .read(
+                                        updateAnimeRateButtonProvider.notifier)
+                                    .updateRate(
+                                      rateId: widget.data.userRate!.id!,
+                                      animeId: widget.data.id!,
+                                      anime: widget.anime,
+                                      selectedStatus: convertStatusIntToString(
+                                          selectedStatus!),
+                                      initStatus: initStatus!,
+                                      currentScore: currentScore,
+                                      progress: progress,
+                                      rewatches: rewatches,
+                                      text: _controller.text,
+                                      onFinally: () {
+                                        Navigator.of(context).pop();
+
+                                        showSnackBar(
+                                          ctx: context,
+                                          msg: 'Отметка обновлена',
+                                          dur: const Duration(seconds: 3),
+                                        );
+                                      },
+                                    );
+                              }
+                            },
+                      child: isLoading
+                          ? const SizedBox.square(
+                              dimension: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : Text(
+                              widget.data.userRate == null
+                                  ? 'Добавить'
+                                  : 'Сохранить',
+                            ),
+                    ),
+                  ),
+                  if (widget.data.userRate != null &&
+                      widget.data.userRate?.id != null &&
+                      !isLoading)
+                    IconButton(
+                      tooltip: 'Удалить отметку',
+                      onPressed: () {
+                        ref
+                            .read(updateAnimeRateButtonProvider.notifier)
+                            .deleteRate(
+                              rateId: widget.data.userRate!.id!,
+                              animeId: widget.data.id!,
+                              status: initStatus ?? '',
+                              onFinally: () {
+                                Navigator.of(context).pop();
+
+                                showSnackBar(
+                                  ctx: context,
+                                  msg: 'Отметка удалена',
+                                  dur: const Duration(seconds: 3),
+                                );
+                              },
+                            );
+                      },
+                      icon: const Icon(Icons.delete),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
