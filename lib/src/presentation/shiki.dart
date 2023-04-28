@@ -28,10 +28,16 @@ class ShikiApp extends ConsumerWidget {
 
     return ValueListenableBuilder<Box>(
       valueListenable: Hive.box(BoxType.settings.name).listenable(
-        keys: [oledModeKey],
+        keys: [oledModeKey, themeModeKey],
       ),
       builder: (context, value, child) {
         final bool isOled = value.get(oledModeKey, defaultValue: false);
+
+        final ThemeMode themeMode = ThemeMode.values[value.get(
+          themeModeKey,
+          defaultValue: 0,
+        )];
+
         return AppThemeBuilder(
           builder: (context, appTheme) => MaterialApp.router(
             //useInheritedMediaQuery: true,
@@ -39,7 +45,7 @@ class ShikiApp extends ConsumerWidget {
             theme: appTheme.day,
             darkTheme: isOled ? appTheme.midnight : appTheme.night,
             title: appTitle,
-            themeMode: ThemeMode.system,
+            themeMode: themeMode,
             routerConfig: router,
           ),
         );

@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:extended_image/extended_image.dart' as extended_image;
 import 'package:path_provider/path_provider.dart';
+import 'package:shikidev/src/utils/extensions/theme_mode.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -16,6 +17,7 @@ import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
 import '../../../utils/target_platform.dart';
 import '../../providers/environment_provider.dart';
+import 'widgets/current_theme.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 
@@ -29,7 +31,7 @@ class SettingsPage extends ConsumerWidget {
       if (context.mounted) {
         context.scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text('Успешно!'),
+            content: Text('Локальные отметки очищены'),
             duration: Duration(milliseconds: 1500),
           ),
         );
@@ -41,7 +43,7 @@ class SettingsPage extends ConsumerWidget {
       if (t && context.mounted) {
         context.scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text('Успешно!'),
+            content: Text('Успешно'),
             duration: Duration(milliseconds: 1500),
           ),
         );
@@ -62,13 +64,59 @@ class SettingsPage extends ConsumerWidget {
           //     options: [ExitProfileWidget()],
           //   ),
           // ),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: SettingsGroup(
               title: 'Внешний вид',
               options: [
                 //SettingsOption(title: ''),
-                DynamicColorsWidget(),
-                OledModeWidget(),
+                ValueListenableBuilder(
+                  valueListenable: Hive.box(BoxType.settings.name).listenable(
+                    keys: [themeModeKey],
+                  ),
+                  builder: (context, value, child) {
+                    final currentTheme = ThemeMode
+                        .values[value.get(themeModeKey, defaultValue: 0)];
+
+                    return SettingsOption(
+                      title: 'Тема приложения',
+                      subtitle: currentTheme.themeName,
+                      onTap: () {
+                        showModalBottomSheet(
+                          useRootNavigator: true,
+                          context: context,
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width >= 700
+                                ? 700
+                                : double.infinity,
+                          ),
+                          builder: (context) => CurrentThemeWidget(
+                            currentTheme: currentTheme,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                // SettingsOption(
+                //   title: 'Тема приложения',
+                //   subtitle: ThemeMode.values[0].themeName,
+                //   onTap: () {
+                //     showModalBottomSheet(
+                //       useRootNavigator: true,
+                //       context: context,
+                //       constraints: BoxConstraints(
+                //         maxWidth: MediaQuery.of(context).size.width >= 700
+                //             ? 700
+                //             : double.infinity,
+                //       ),
+                //       builder: (context) => CurrentThemeWidget(
+                //         currentTheme: currentTheme,
+                //       ),
+                //     );
+                //   },
+                // ),
+                const DynamicColorsWidget(),
+                const OledModeWidget(),
               ],
             ),
           ),
@@ -129,7 +177,7 @@ class SettingsPage extends ConsumerWidget {
                     if (context.mounted) {
                       context.scaffoldMessenger.showSnackBar(
                         const SnackBar(
-                          content: Text('Успешно!'),
+                          content: Text('Настройки сброшены'),
                           duration: Duration(milliseconds: 1500),
                         ),
                       );
@@ -194,6 +242,7 @@ class SettingsPage extends ConsumerWidget {
                   onTap: null,
                 ),
                 const VersionWidget(),
+                if (TargetP.instance.isDesktop) const WindowsDeviceInfoWidget(),
                 // SettingsOption(
                 //   title: 'Проверить обновления',
                 //   subtitle: 'Проверить наличие обновлений приложения',
@@ -263,7 +312,7 @@ class ClearCacheWidget extends ConsumerWidget {
         if (context.mounted) {
           context.scaffoldMessenger.showSnackBar(
             const SnackBar(
-              content: Text('Кэш очищен!'),
+              content: Text('Кэш успешно очищен'),
               duration: Duration(milliseconds: 1200),
             ),
           );
@@ -484,6 +533,26 @@ class GitCommitWidget extends StatelessWidget {
           return const SizedBox.shrink();
         }
       },
+    );
+  }
+}
+
+class WindowsDeviceInfoWidget extends ConsumerWidget {
+  const WindowsDeviceInfoWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final environment = ref.watch(environmentProvider);
+
+    final productName = environment.windowsInfo?.productName.toString() ?? '';
+    final buildNumber = environment.windowsInfo?.buildNumber.toString() ?? '';
+    final displayVersion =
+        environment.windowsInfo?.displayVersion.toString() ?? '';
+
+    return SettingsOption(
+      title: 'Информация об устройстве',
+      subtitle: '$productName $displayVersion ($buildNumber)',
+      onTap: null,
     );
   }
 }
