@@ -3,8 +3,8 @@ import 'package:flutter/material.dart' as fl;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
-import '../../data/data_sources/profile_data_src.dart';
-import '../../data/repositories/profile_repo.dart';
+import '../../data/data_sources/user_data_src.dart';
+import '../../data/repositories/user_repo.dart';
 import '../../domain/models/user.dart';
 import '../../domain/models/user_profile.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
@@ -19,7 +19,7 @@ final userProfileProvider = ChangeNotifierProvider.autoDispose
 
   final c = UserProfileController(
     userId,
-    ref.read(profileDataSourceProvider),
+    ref.read(userDataSourceProvider),
     cancelToken,
   );
 
@@ -28,7 +28,7 @@ final userProfileProvider = ChangeNotifierProvider.autoDispose
 
 class UserProfileController extends fl.ChangeNotifier {
   final String userId;
-  final ProfileRepository profileRepository;
+  final UserRepository profileRepository;
   final CancelToken cancelToken;
 
   AsyncValue<UserProfile> profile;

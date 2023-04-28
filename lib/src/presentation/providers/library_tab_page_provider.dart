@@ -1,15 +1,15 @@
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../data/data_sources/anime_data_src.dart';
-import '../../data/repositories/anime_repo.dart';
+import '../../data/data_sources/user_data_src.dart';
+import '../../data/repositories/user_repo.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 
 final watchingTabPageProvider = ChangeNotifierProvider((ref) {
   final c =
-      LibraryTabPageController(ref.read(animeDataSourceProvider), 'watching');
+      LibraryTabPageController(ref.read(userDataSourceProvider), 'watching');
   ref.onDispose(() {
     c.textEditingController.dispose();
   });
@@ -18,7 +18,7 @@ final watchingTabPageProvider = ChangeNotifierProvider((ref) {
 
 final completedTabPageProvider = ChangeNotifierProvider((ref) {
   final c =
-      LibraryTabPageController(ref.read(animeDataSourceProvider), 'completed');
+      LibraryTabPageController(ref.read(userDataSourceProvider), 'completed');
   ref.onDispose(() {
     c.textEditingController.dispose();
   });
@@ -27,7 +27,7 @@ final completedTabPageProvider = ChangeNotifierProvider((ref) {
 
 final droppedTabPageProvider = ChangeNotifierProvider((ref) {
   final c =
-      LibraryTabPageController(ref.read(animeDataSourceProvider), 'dropped');
+      LibraryTabPageController(ref.read(userDataSourceProvider), 'dropped');
   ref.onDispose(() {
     c.textEditingController.dispose();
   });
@@ -36,7 +36,7 @@ final droppedTabPageProvider = ChangeNotifierProvider((ref) {
 
 final onHoldTabPageProvider = ChangeNotifierProvider((ref) {
   final c =
-      LibraryTabPageController(ref.read(animeDataSourceProvider), 'on_hold');
+      LibraryTabPageController(ref.read(userDataSourceProvider), 'on_hold');
   ref.onDispose(() {
     c.textEditingController.dispose();
   });
@@ -45,7 +45,7 @@ final onHoldTabPageProvider = ChangeNotifierProvider((ref) {
 
 final plannedTabPageProvider = ChangeNotifierProvider((ref) {
   final c =
-      LibraryTabPageController(ref.read(animeDataSourceProvider), 'planned');
+      LibraryTabPageController(ref.read(userDataSourceProvider), 'planned');
   ref.onDispose(() {
     c.textEditingController.dispose();
   });
@@ -54,7 +54,7 @@ final plannedTabPageProvider = ChangeNotifierProvider((ref) {
 
 final rewatchingTabPageProvider = ChangeNotifierProvider((ref) {
   final c =
-      LibraryTabPageController(ref.read(animeDataSourceProvider), 'rewatching');
+      LibraryTabPageController(ref.read(userDataSourceProvider), 'rewatching');
   ref.onDispose(() {
     c.textEditingController.dispose();
   });
@@ -62,14 +62,14 @@ final rewatchingTabPageProvider = ChangeNotifierProvider((ref) {
 }, name: 'rewatchingTabPageProvider');
 
 class LibraryTabPageController with ChangeNotifier {
-  final AnimeRepository animeRepository;
+  final UserRepository userRepository;
   AsyncValue<List<UserAnimeRates>> animes;
   final String status;
 
   List<UserAnimeRates> searchAnimes;
   final TextEditingController textEditingController;
 
-  LibraryTabPageController(this.animeRepository, this.status)
+  LibraryTabPageController(this.userRepository, this.status)
       : animes = const AsyncValue.loading(),
         textEditingController = TextEditingController(),
         searchAnimes = [] {
@@ -162,7 +162,7 @@ class LibraryTabPageController with ChangeNotifier {
   Future<void> fetch() async {
     animes = await AsyncValue.guard(
       () async {
-        final updates = await animeRepository.getUserAnimeRates(
+        final updates = await userRepository.getUserAnimeRates(
           //id: '384889',
           id: SecureStorageService.instance.userId,
           token: SecureStorageService.instance.token,

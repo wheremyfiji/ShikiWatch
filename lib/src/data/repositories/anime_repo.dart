@@ -4,8 +4,6 @@ import '../../domain/models/anime.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/models/franchise.dart';
 import '../../domain/models/related_title.dart';
-import '../../domain/models/user_anime_rates.dart';
-import '../../domain/models/user_rate_resp.dart';
 
 abstract class AnimeRepository {
   //final AnimeRepository _animeRepository;
@@ -49,46 +47,5 @@ abstract class AnimeRepository {
     String? search,
     String? userToken,
     CancelToken? cancelToken,
-  });
-
-  Future<Iterable<UserAnimeRates>> getUserAnimeRates({
-    required String? id,
-    required String? token,
-    int? page,
-    int? limit,
-    String? status,
-    String? censored,
-    CancelToken? cancelToken,
-  });
-
-  Future<UserRateResp> createUserRate({
-    required String token,
-    required int userId,
-    required int targetId,
-    required String status,
-    required int score,
-    required int episodes,
-    int? rewatches,
-    String? text,
-  });
-
-  Future<UserRateResp> updateUserRate({
-    required String token,
-    required int rateId,
-    String? status,
-    int? score,
-    int? episodes,
-    int? rewatches,
-    String? text,
-  });
-
-  Future<UserRateResp> incrementUserRate({
-    required String token,
-    required int rateId,
-  });
-
-  Future<bool> deleteUserRate({
-    required String token,
-    required int rateId,
   });
 }

@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/utils/utils.dart';
 
 import '../../../../data/data_sources/anime_data_src.dart';
+import '../../../../data/data_sources/user_data_src.dart';
 import '../../../../data/repositories/anime_repo.dart';
 import '../../../../domain/models/anime.dart';
 import '../../../../domain/models/animes.dart';
@@ -41,7 +42,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
     final isLoading = useState(false);
 
     Future<void> incRate() async {
-      final rate = await ref.read(animeDataSourceProvider).incrementUserRate(
+      final rate = await ref.read(userDataSourceProvider).incrementUserRate(
           token: SecureStorageService.instance.token,
           rateId: data.userRate!.id!);
 
@@ -448,7 +449,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
     try {
       state = const AsyncValue.loading();
 
-      final rate = await ref.read(animeDataSourceProvider).createUserRate(
+      final rate = await ref.read(userDataSourceProvider).createUserRate(
             token: SecureStorageService.instance.token,
             userId: int.parse(SecureStorageService.instance.userId),
             targetId: anime.id!,
@@ -589,7 +590,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
     try {
       state = const AsyncValue.loading();
 
-      final rate = await ref.read(animeDataSourceProvider).updateUserRate(
+      final rate = await ref.read(userDataSourceProvider).updateUserRate(
             token: SecureStorageService.instance.token,
             rateId: rateId,
             status: selectedStatus,
@@ -829,7 +830,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
     try {
       state = const AsyncValue.loading();
 
-      await ref.read(animeDataSourceProvider).deleteUserRate(
+      await ref.read(userDataSourceProvider).deleteUserRate(
             token: SecureStorageService.instance.token,
             rateId: rateId,
           );

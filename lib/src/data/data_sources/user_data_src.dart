@@ -1,0 +1,178 @@
+import 'package:dio/dio.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../../domain/models/user.dart';
+import '../../domain/models/user_anime_rates.dart';
+import '../../domain/models/user_rate_resp.dart';
+import '../repositories/user_repo.dart';
+import '../repositories/http_service.dart';
+import '../../domain/models/user_profile.dart';
+import '../../services/http/http_service_provider.dart';
+
+final userDataSourceProvider = Provider<UserDataSource>(
+    (ref) => UserDataSource(ref.read(httpServiceProvider)),
+    name: 'userDataSourceProvider');
+
+class UserDataSource implements UserRepository {
+  final HttpService dio;
+  UserDataSource(this.dio);
+
+  @override
+  Future<UserProfile> getUserProfile({
+    required String? id,
+    String? userToken,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      'users/$id',
+      cancelToken: cancelToken,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
+    );
+
+    return UserProfile.fromJson(response);
+  }
+
+  @override
+  Future<Iterable<User>> getUserFriends({
+    required String? id,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      'users/$id/friends',
+      cancelToken: cancelToken,
+    );
+
+    return [for (final e in response) User.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<UserAnimeRates>> getUserAnimeRates({
+    required String? id,
+    required String? token,
+    int? page,
+    int? limit,
+    String? status,
+    String? censored,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get('users/$id/anime_rates',
+        cancelToken: cancelToken,
+        queryParameters: {
+          if (page != null) 'page': page.toString(),
+          if (limit != null) 'limit': limit.toString(),
+          if (status != null) 'status': status,
+          if (censored != null) 'censored': censored,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ));
+
+    return [for (final e in response) UserAnimeRates.fromJson(e)];
+  }
+
+  @override
+  Future<UserRateResp> createUserRate({
+    required String token,
+    required int userId,
+    required int targetId,
+    required String status,
+    required int score,
+    required int episodes,
+    int? rewatches,
+    String? text,
+  }) async {
+    final response = await dio.post(
+      'v2/user_rates',
+      data: {
+        'user_rate': {
+          'user_id': userId,
+          'target_id': targetId,
+          'target_type': 'Anime',
+          'status': status,
+          'score': score,
+          'episodes': episodes,
+          'rewatches': rewatches,
+          'text': text,
+        },
+      },
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return UserRateResp.fromJson(response);
+  }
+
+  @override
+  Future<UserRateResp> updateUserRate({
+    required String token,
+    required int rateId,
+    String? status,
+    int? score,
+    int? episodes,
+    int? rewatches,
+    String? text,
+  }) async {
+    final response = await dio.path(
+      'v2/user_rates/$rateId',
+      data: {
+        'user_rate': {
+          if (status != null) 'status': status,
+          if (score != null) 'score': score,
+          if (episodes != null) 'episodes': episodes,
+          if (rewatches != null) 'rewatches': rewatches,
+          if (text != null) 'text': text,
+        },
+      },
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return UserRateResp.fromJson(response);
+  }
+
+  @override
+  Future<UserRateResp> incrementUserRate({
+    required String token,
+    required int rateId,
+  }) async {
+    final response = await dio.post(
+      'v2/user_rates/$rateId/increment',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return UserRateResp.fromJson(response);
+  }
+
+  @override
+  Future<bool> deleteUserRate({
+    required String token,
+    required int rateId,
+  }) async {
+    final response = await dio.delete(
+      'v2/user_rates/$rateId',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return response;
+  }
+}

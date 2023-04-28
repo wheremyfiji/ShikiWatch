@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../data/data_sources/anime_data_src.dart';
+import '../../../../data/data_sources/user_data_src.dart';
 import '../../../../domain/models/anime.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
@@ -119,7 +119,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
       isLoading = true;
     });
     //await Future.delayed(const Duration(seconds: 3));
-    final rate = await ref.read(animeDataSourceProvider).createUserRate(
+    final rate = await ref.read(userDataSourceProvider).createUserRate(
           token: SecureStorageService.instance.token,
           userId: int.parse(SecureStorageService.instance.userId),
           targetId: widget.data.id!,
@@ -241,7 +241,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
       isLoading = true;
     });
     //await Future.delayed(const Duration(seconds: 3));
-    final rate = await ref.read(animeDataSourceProvider).updateUserRate(
+    final rate = await ref.read(userDataSourceProvider).updateUserRate(
           token: SecureStorageService.instance.token,
           rateId: widget.data.userRate!.id!,
           status: selectedStatus,
@@ -465,7 +465,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
     setState(() {
       isLoading = true;
     });
-    final resp = await ref.read(animeDataSourceProvider).deleteUserRate(
+    final resp = await ref.read(userDataSourceProvider).deleteUserRate(
           token: SecureStorageService.instance.token,
           rateId: widget.data.userRate!.id!,
         );
