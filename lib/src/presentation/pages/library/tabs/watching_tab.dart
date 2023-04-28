@@ -18,21 +18,13 @@ class WatchingTab extends ConsumerWidget {
     return controller.animes.when(
       data: (data) => data.isEmpty
           ? RefreshIndicator(
-              //onRefresh: controller.fetch,
-              //onRefresh: ref.refresh(watchingTabPageProvider),
-              onRefresh: () async {
-                // Replace this delay with the code to be executed during refresh
-                // and return a Future when code finishs execution.
-                return ref.refresh(watchingTabPageProvider);
-                //return Future<void>.delayed(const Duration(seconds: 3));
-              },
-              //child: const EmptyList(),
+              onRefresh: () async => ref.refresh(watchingTabPageProvider),
               child: Stack(
                 children: <Widget>[ListView(), const EmptyList()],
               ),
             )
           : RefreshIndicator(
-              onRefresh: controller.fetch,
+              onRefresh: () async => ref.refresh(watchingTabPageProvider),
               child: NotificationListener<ScrollNotification>(
                 onNotification: (scrollState) {
                   // if (scrollState is ScrollEndNotification &&

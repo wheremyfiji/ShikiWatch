@@ -73,7 +73,7 @@ class AppThemeDataNotifier {
         backgroundColor: colorScheme.surface,
       ),
       cardTheme: origin.cardTheme.copyWith(
-        //elevation: 0,
+        elevation: 8,
         shadowColor: Colors.transparent,
       ),
       snackBarTheme: origin.snackBarTheme.copyWith(

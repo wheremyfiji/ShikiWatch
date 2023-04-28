@@ -17,13 +17,13 @@ class DroppedTab extends ConsumerWidget {
     return controller.animes.when(
       data: (data) => data.isEmpty
           ? RefreshIndicator(
-              onRefresh: controller.fetch,
+              onRefresh: () async => ref.refresh(droppedTabPageProvider),
               child: Stack(
                 children: <Widget>[ListView(), const EmptyList()],
               ),
             )
           : RefreshIndicator(
-              onRefresh: controller.fetch,
+              onRefresh: () async => ref.refresh(droppedTabPageProvider),
               child: NotificationListener<ScrollNotification>(
                 onNotification: (scrollState) {
                   return false;

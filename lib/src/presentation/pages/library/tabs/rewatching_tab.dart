@@ -17,13 +17,13 @@ class RewatchingTab extends ConsumerWidget {
     return controller.animes.when(
       data: (data) => data.isEmpty
           ? RefreshIndicator(
-              onRefresh: controller.fetch,
+              onRefresh: () async => ref.refresh(rewatchingTabPageProvider),
               child: Stack(
                 children: <Widget>[ListView(), const EmptyList()],
               ),
             )
           : RefreshIndicator(
-              onRefresh: controller.fetch,
+              onRefresh: () async => ref.refresh(rewatchingTabPageProvider),
               child: NotificationListener<ScrollNotification>(
                 onNotification: (scrollState) {
                   return false;
