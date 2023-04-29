@@ -146,9 +146,9 @@ class LibraryMangaTabController with ChangeNotifier {
   // }
 
   void onSearchChanged(String query) {
-    searchResult = manga.value!.where((anime) {
-      final rusNameLower = anime.anime?.russian?.toLowerCase();
-      final nameLower = anime.anime?.name?.toLowerCase();
+    searchResult = manga.value!.where((title) {
+      final rusNameLower = title.manga?.russian?.toLowerCase();
+      final nameLower = title.manga?.name?.toLowerCase();
       final searchLower = query.toLowerCase();
 
       return rusNameLower!.contains(searchLower) ||
