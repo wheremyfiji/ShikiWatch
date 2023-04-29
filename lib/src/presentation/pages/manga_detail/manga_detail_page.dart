@@ -27,17 +27,16 @@ class MangaDetailPage extends ConsumerWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      floatingActionButton: mangaDetails.title.isLoading ||
-              mangaDetails.title.value?.userRate == null
-          ? FloatingActionButton.extended(
-              onPressed: () {},
-              label: const Text('Добавить в список'),
-              icon: const Icon(Icons.add),
-            )
+      floatingActionButton: mangaDetails.title.isLoading
+          ? null
           : FloatingActionButton.extended(
               onPressed: () {},
-              label: const Text('Изменить'),
-              icon: const Icon(Icons.edit),
+              label: mangaDetails.title.value?.userRate == null
+                  ? const Text('Добавить в список')
+                  : const Text('Изменить'),
+              icon: mangaDetails.title.value?.userRate == null
+                  ? const Icon(Icons.add)
+                  : const Icon(Icons.edit),
             ),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(mangaDetailsPageProvider(manga.id!)),

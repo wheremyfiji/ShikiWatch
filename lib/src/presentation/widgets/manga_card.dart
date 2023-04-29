@@ -64,7 +64,11 @@ class MangaCardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      data.manga?.russian ?? data.manga?.name ?? '',
+                      (data.manga?.russian == ''
+                              ? data.manga?.name
+                              : data.manga?.russian) ??
+                          '',
+                      //data.manga?.russian ?? data.manga?.name ?? '',
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
