@@ -77,6 +77,33 @@ class UserDataSource implements UserRepository {
   }
 
   @override
+  Future<Iterable<UserAnimeRates>> getUserMangaRates({
+    required String? id,
+    required String? token,
+    int? page,
+    int? limit,
+    String? status,
+    String? censored,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get('users/$id/manga_rates',
+        cancelToken: cancelToken,
+        queryParameters: {
+          if (page != null) 'page': page.toString(),
+          if (limit != null) 'limit': limit.toString(),
+          if (status != null) 'status': status,
+          if (censored != null) 'censored': censored,
+        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ));
+
+    return [for (final e in response) UserAnimeRates.fromJson(e)];
+  }
+
+  @override
   Future<UserRateResp> createUserRate({
     required String token,
     required int userId,

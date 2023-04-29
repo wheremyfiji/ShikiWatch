@@ -17,7 +17,7 @@ import 'widgets/anime_videos_widget.dart';
 import 'widgets/details_screenshots.dart';
 import 'widgets/info_header.dart';
 import 'widgets/rates_statuses_widget.dart';
-import 'widgets/title_description.dart';
+import '../../widgets/title_description.dart';
 import 'widgets/user_anime_rate.dart';
 
 const double dividerHeight = 16;
@@ -161,22 +161,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                     }
                   },
                 ),
-                // IconButton(
-                //   tooltip: 'Открыть в браузере',
-                //   onPressed: () {
-                //     launchUrlString(
-                //       'https://shikimori.me/animes/${animeData.id}',
-                //       mode: LaunchMode.externalApplication,
-                //     );
-                //   },
-                //   icon: const Icon(Icons.open_in_browser),
-                // ),
-                // IconButton(
-                //   tooltip: 'Поделиться',
-                //   onPressed: () =>
-                //       Share.share(AppConfig.staticUrl + (animeData.url ?? '')),
-                //   icon: const Icon(Icons.share),
-                // ),
               ],
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.pin,
@@ -190,9 +174,6 @@ class AnimeDetailsPage extends ConsumerWidget {
               ),
             ),
             ...titleInfo.title.when(
-              //skipLoadingOnReload: true,
-              //skipError: true,
-              //skipLoadingOnRefresh: false,
               data: (data) => [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
@@ -204,7 +185,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-
                 if (data.description != null) ...[
                   SliverPadding(
                     padding:
@@ -214,20 +194,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                     ),
                   ),
                 ],
-                // if (data.description == null) ...[
-                //   SliverPadding(
-                //     padding:
-                //         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                //     sliver: SliverToBoxAdapter(
-                //       child: Text('Описание отсутствует.',
-                //           style:
-                //               Theme.of(context).textTheme.bodyLarge!.copyWith(
-                //                     //fontSize: 15,
-                //                     fontWeight: FontWeight.bold,
-                //                   )),
-                //     ),
-                //   ),
-                // ],
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                   sliver: SliverToBoxAdapter(
@@ -264,27 +230,25 @@ class AnimeDetailsPage extends ConsumerWidget {
                     ),
                   ),
                 ],
-
                 const SliverToBoxAdapter(child: SizedBox(height: 70)),
               ],
               error: (err, stack) => [
                 SliverFillRemaining(
-                  child: CustomErrorWidget(
-                      err.toString(),
-                      () =>
-                          //titleInfo.fetch(true)
-                          ref.refresh(titleInfoPageProvider(animeData.id!))),
+                  child: CustomErrorWidget(err.toString(),
+                      () => ref.refresh(titleInfoPageProvider(animeData.id!))),
                 ),
               ],
               loading: () => [
                 SliverToBoxAdapter(
-                    child: Center(
-                        child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 130),
-                      child: const CircularProgressIndicator()),
-                )))
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 130),
+                          child: const CircularProgressIndicator()),
+                    ),
+                  ),
+                )
               ],
             ),
           ],

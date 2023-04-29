@@ -15,12 +15,12 @@ import '../../../utils/utils.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../widgets/error_widget.dart';
 import '../../widgets/image_with_shimmer.dart';
+import '../../widgets/title_description.dart';
 
 import 'rating_dialog.dart';
 import 'studio_select_page.dart';
 import 'widgets/anime_user_rate_dialog.dart';
 import 'widgets/rates_statuses_widget.dart';
-import 'widgets/title_description.dart';
 
 //desktop
 class AnimeDetailsDesktopPage extends ConsumerWidget {

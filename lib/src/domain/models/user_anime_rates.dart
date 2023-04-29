@@ -1,4 +1,5 @@
 import 'animes.dart';
+import 'manga_short.dart';
 import 'user.dart';
 
 class UserAnimeRates {
@@ -15,7 +16,7 @@ class UserAnimeRates {
   String? updatedAt;
   User? user;
   Animes? anime;
-  //Null? manga;
+  MangaShort? manga;
 
   UserAnimeRates(
       {required this.id,
@@ -30,9 +31,8 @@ class UserAnimeRates {
       required this.createdAt,
       required this.updatedAt,
       this.user,
-      required this.anime
-      //this.manga
-      });
+      required this.anime,
+      this.manga});
 
   UserAnimeRates.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -47,6 +47,7 @@ class UserAnimeRates {
         createdAt = json['created_at'],
         updatedAt = json['updated_at'],
         user = json['user'] == null ? null : User.fromJson(json['user']),
-        anime = json['anime'] == null ? null : Animes.fromJson(json['anime']);
-  //manga = json['manga'];
+        anime = json['anime'] == null ? null : Animes.fromJson(json['anime']),
+        manga =
+            json['manga'] == null ? null : MangaShort.fromJson(json['manga']);
 }

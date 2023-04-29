@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shikidev/src/domain/models/manga_short.dart';
 //import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
@@ -10,6 +11,7 @@ import '../domain/models/user.dart';
 import '../presentation/pages/anime_details/anime_details_desktop_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/login/login_desktop_page.dart';
+import '../presentation/pages/manga_detail/manga_detail_page.dart';
 import '../presentation/pages/profile/my_profile_page.dart';
 import '../presentation/pages/player/anime_player_desktop_page.dart';
 import '../presentation/pages/player/anime_player_page.dart';
@@ -100,8 +102,10 @@ final GoRouter router = GoRouter(
                   const LibraryPage(),
               routes: <RouteBase>[
                 GoRoute(
-                  path: r':id(\d+)',
-                  name: 'library_id',
+                  //path: r':id(\d+)',
+                  //name: 'library_id',
+                  name: 'library_anime',
+                  path: 'anime/:id',
                   pageBuilder: (context, state) {
                     Animes data = state.extra as Animes;
                     return CustomTransitionPage(
@@ -110,6 +114,50 @@ final GoRouter router = GoRouter(
                               animeData: data,
                             )
                           : AnimeDetailsPage(animeData: data),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  //path: r':id(\d+)',
+                  name: 'library_manga',
+                  path: 'manga/:id',
+                  pageBuilder: (context, state) {
+                    MangaShort data = state.extra as MangaShort;
+                    return CustomTransitionPage(
+                      child:
+                          // TargetP.instance.isDesktop
+                          //     ? AnimeDetailsDesktopPage(
+                          //         animeData: data,
+                          //       )
+                          //     :
+                          MangaDetailPage(manga: data),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  //path: r':id(\d+)',
+                  name: 'library_ranobe',
+                  path: 'ranobe/:id',
+                  pageBuilder: (context, state) {
+                    MangaShort data = state.extra as MangaShort;
+                    return CustomTransitionPage(
+                      child:
+                          // TargetP.instance.isDesktop
+                          //     ? AnimeDetailsDesktopPage(
+                          //         animeData: data,
+                          //       )
+                          //     :
+                          MangaDetailPage(manga: data),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),

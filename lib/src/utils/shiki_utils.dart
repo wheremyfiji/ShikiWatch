@@ -8,6 +8,16 @@ String getStatus(String value) {
   return status;
 }
 
+// String getMangaRanobeStatus(String value) {
+//   String status;
+
+//   const map = {'anons': 'Анонс', 'ongoing': 'Выходит', 'released': 'Издано'};
+
+//   status = map[value] ?? 'N/A';
+
+//   return status;
+// }
+
 // String getKind(String value) {
 //   String kind;
 

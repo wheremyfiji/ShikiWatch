@@ -1,94 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class LibraryPageAppBar extends StatelessWidget {
+import '../../../services/secure_storage/secure_storage_service.dart';
+
+enum LibraryState {
+  anime,
+  manga,
+}
+
+final libraryStateProvider = StateProvider<LibraryState>((ref) {
+  return LibraryState.anime;
+}, name: 'libraryProvider');
+
+class LibraryPageAppBar extends ConsumerWidget {
   final bool innerBoxIsScrolled;
+  final TabController tabController;
 
-  const LibraryPageAppBar(
-    this.innerBoxIsScrolled, {
+  const LibraryPageAppBar({
     Key? key,
+    required this.innerBoxIsScrolled,
+    required this.tabController,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(libraryStateProvider);
+
     return SliverAppBar(
       forceElevated: innerBoxIsScrolled,
       pinned: true,
       floating: true,
       snap: false,
-      title: const Text('Аниме'),
-      // actions: [
-      //   IconButton(
-      //     onPressed: () async {
-      //       // await extended_image.clearDiskCachedImages();
-      //       // extended_image.clearMemoryImageCache();
-
-      //       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      //       //   content: Text('Кеш очищен'),
-      //       //   duration: Duration(seconds: 3),
-      //       // ));
-      //     },
-      //     icon: const Icon(Icons.delete),
-      //   ),
-      // ],
-      // titleTextStyle: Theme.of(context)
-      //   .textTheme
-      //   .headline6
-      //   ?.copyWith(fontWeight: FontWeight.bold),
-      //actions: [
-      // controller.when(
-      //   error: (error, stackTrace) {
-      //     // return const Padding(
-      //     //   padding: EdgeInsets.all(16.0),
-      //     //   child: CircleAvatar(
-      //     //     child: Icon(Icons.no_accounts),
-      //     //   ),
-      //     // );
-      //     return const SizedBox.shrink();
-      //     // return IconButton(
-      //     //   onPressed: () => context.push('/my_animes/settings'),
-      //     //   icon: const Icon(Icons.settings_outlined),
-      //     // );
-      //   },
-      //   loading: () {
-      //     return const Padding(
-      //       padding: EdgeInsets.all(10.0),
-      //       child: CircleAvatar(),
-      //     );
-      //   },
-      //   data: (data) {
-      //     // return CircleAvatar(
-      //     //   child: CircularProgressIndicator(),
-      //     // );
-      //     return Padding(
-      //       padding: const EdgeInsets.all(8.0), //10
-      //       child: GestureDetector(
-      //         onTap: () => context.push('/my_animes/settings'),
-      //         child: CircleAvatar(
-      //           // child: CircularProgressIndicator(
-      //           //   strokeWidth: 3.0,
-      //           // ),
-      //           foregroundImage: CachedNetworkImageProvider(
-      //             data,
-      //           ),
-      //         ),
-      //       ),
-      //     );
-      //   },
-      // ),
-      //],
+      title: state == LibraryState.manga
+          ? const Text('Манга и ранобэ')
+          : const Text('Аниме'),
+      actions: [
+        PopupMenuButton<LibraryState>(
+          tooltip: 'Выбор списка',
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          color: Theme.of(context).colorScheme.onInverseSurface,
+          itemBuilder: (context) => const [
+            PopupMenuItem(
+              value: LibraryState.anime,
+              child: Text('Аниме'),
+            ),
+            PopupMenuItem(
+              value: LibraryState.manga,
+              child: Text('Манга и ранобэ'),
+            ),
+          ],
+          onSelected: (value) {
+            ref.read(libraryStateProvider.notifier).state = value;
+          },
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            foregroundImage: ExtendedNetworkImageProvider(
+              SecureStorageService.instance.userProfileImage,
+              cache: true,
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 8,
+        ),
+      ],
       bottom: TabBar(
+        controller: tabController,
         unselectedLabelColor: Theme.of(context).brightness == Brightness.dark
             ? Colors.white
             : Colors.black,
         isScrollable: true,
-        // indicator: BoxDecoration(
-        //     borderRadius: BorderRadius.circular(16), // Creates border
-        //     color: Theme.of(context).colorScheme.onSecondary),
         indicatorSize: TabBarIndicatorSize.label,
         indicatorWeight: 2,
         dividerColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,
-        //splashBorderRadius: BorderRadius.circular(16),
         overlayColor: MaterialStateProperty.resolveWith<Color?>(
           (Set<MaterialState> states) {
             return states.contains(MaterialState.focused)
@@ -96,30 +84,50 @@ class LibraryPageAppBar extends StatelessWidget {
                 : Colors.transparent;
           },
         ),
-        tabs: const [
-          Tab(
-            //text: 'Избранное',
-            text: 'История',
-          ),
-          Tab(
-            text: 'Смотрю',
-          ),
-          Tab(
-            text: 'В планах',
-          ),
-          Tab(
-            text: 'Просмотрено',
-          ),
-          Tab(
-            text: 'Пересматриваю',
-          ),
-          Tab(
-            text: 'Отложено',
-          ),
-          Tab(
-            text: 'Брошено',
-          ),
-        ],
+        tabs: state == LibraryState.manga
+            ? const [
+                Tab(
+                  text: 'Читаю',
+                ),
+                Tab(
+                  text: 'В планах',
+                ),
+                Tab(
+                  text: 'Прочитано',
+                ),
+                Tab(
+                  text: 'Перечитываю',
+                ),
+                Tab(
+                  text: 'Отложено',
+                ),
+                Tab(
+                  text: 'Брошено',
+                ),
+              ]
+            : const [
+                Tab(
+                  text: 'История',
+                ),
+                Tab(
+                  text: 'Смотрю',
+                ),
+                Tab(
+                  text: 'В планах',
+                ),
+                Tab(
+                  text: 'Просмотрено',
+                ),
+                Tab(
+                  text: 'Пересматриваю',
+                ),
+                Tab(
+                  text: 'Отложено',
+                ),
+                Tab(
+                  text: 'Брошено',
+                ),
+              ],
       ),
     );
   }

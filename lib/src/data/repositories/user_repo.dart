@@ -29,6 +29,16 @@ abstract class UserRepository {
     CancelToken? cancelToken,
   });
 
+  Future<Iterable<UserAnimeRates>> getUserMangaRates({
+    required String? id,
+    required String? token,
+    int? page,
+    int? limit,
+    String? status,
+    String? censored,
+    CancelToken? cancelToken,
+  });
+
   Future<UserRateResp> createUserRate({
     required String token,
     required int userId,

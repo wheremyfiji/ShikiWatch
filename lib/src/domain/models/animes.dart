@@ -1,9 +1,11 @@
+import 'shiki_image.dart';
+
 class Animes {
   final int? id;
   final String? name;
   final String? russian;
   final String? url;
-  final AnimeImages? image;
+  final ShikiImage? image;
   final String? kind;
   final String? score;
   final String? status;
@@ -32,7 +34,7 @@ class Animes {
         russian = json['russian'],
         url = json['url'],
         image =
-            json['image'] == null ? null : AnimeImages.fromJson(json['image']),
+            json['image'] == null ? null : ShikiImage.fromJson(json['image']),
         kind = json['kind'],
         score = json['score'],
         status = json['status'],
@@ -40,24 +42,4 @@ class Animes {
         episodesAired = json['episodes_aired'],
         airedOn = json['aired_on'],
         releasedOn = json['released_on'];
-}
-
-class AnimeImages {
-  final String? original;
-  final String? preview;
-  final String? x96;
-  final String? x48;
-
-  AnimeImages({
-    required this.original,
-    required this.preview,
-    required this.x96,
-    required this.x48,
-  });
-
-  AnimeImages.fromJson(Map<String, dynamic> json)
-      : original = json['original'],
-        preview = json['preview'],
-        x96 = json['x96'],
-        x48 = json['x48'];
 }
