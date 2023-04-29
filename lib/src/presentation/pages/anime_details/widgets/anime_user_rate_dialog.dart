@@ -612,7 +612,11 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                            color: context.theme.colorScheme.surface,
+                            color: context.isDarkThemed
+                                ? context.theme.colorScheme.primaryContainer
+                                : context.theme.colorScheme
+                                    .onPrimary, //surface  primaryContainer
+                            //color: context.theme.cardTheme.surfaceTintColor,
                             borderRadius: BorderRadius.circular(10)),
                         child: DropdownButton<String>(
                           underline: const SizedBox(),
@@ -622,7 +626,8 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                           hint: const Text('Выбор списка'),
                           borderRadius: BorderRadius.circular(10),
                           iconSize: 36,
-                          //elevation: 16,
+                          elevation: 8,
+                          focusColor: Colors.transparent,
                           //style: const TextStyle(color: Colors.deepPurple),
                           onChanged: (String? value) {
                             setState(() {
@@ -652,6 +657,10 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                     clipBehavior: Clip.antiAlias,
                     shadowColor: Colors.transparent,
                     margin: EdgeInsets.zero,
+                    color: context.isDarkThemed
+                        ? context.theme.colorScheme.primaryContainer
+                        : context.theme.colorScheme.onPrimary,
+                    elevation: 0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
@@ -714,6 +723,10 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                     clipBehavior: Clip.antiAlias,
                     shadowColor: Colors.transparent,
                     margin: EdgeInsets.zero,
+                    color: context.isDarkThemed
+                        ? context.theme.colorScheme.primaryContainer
+                        : context.theme.colorScheme.onPrimary,
+                    elevation: 0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
@@ -768,6 +781,10 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                     clipBehavior: Clip.antiAlias,
                     shadowColor: Colors.transparent,
                     margin: EdgeInsets.zero,
+                    color: context.isDarkThemed
+                        ? context.theme.colorScheme.primaryContainer
+                        : context.theme.colorScheme.onPrimary,
+                    elevation: 0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,

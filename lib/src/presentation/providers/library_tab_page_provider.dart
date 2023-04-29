@@ -163,13 +163,11 @@ class LibraryTabPageController with ChangeNotifier {
     animes = await AsyncValue.guard(
       () async {
         final updates = await userRepository.getUserAnimeRates(
-          //id: '384889',
           id: SecureStorageService.instance.userId,
           token: SecureStorageService.instance.token,
           page: 1,
           limit: 5000,
           status: status,
-          //status: 'watching',
         );
         return updates.toList();
       },

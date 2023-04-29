@@ -39,8 +39,14 @@ class AnimeCard extends StatelessWidget {
         child: InkWell(
           onTap: () {
             FocusScope.of(context).unfocus();
-            context.push('/library/${data.anime?.id!}', extra: data.anime);
-            //context.push('/library/${data.anime?.id!}', extra: data);
+            context.goNamed(
+              'library_anime',
+              params: <String, String>{
+                'id': (data.anime?.id!).toString(),
+              },
+              extra: data.anime,
+            );
+            //context.push('/library/${data.anime?.id!}', extra: data.anime);
           },
           //onLongPress: () => log('onLongPress'),
           child: Column(

@@ -8,12 +8,12 @@ import '../../../domain/models/animes.dart';
 import '../../../services/shared_pref/shared_preferences_provider.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../widgets/error_widget.dart';
+import '../../widgets/header_appbar_title.dart';
 
 import 'rating_dialog.dart';
 import 'studio_select_page.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
-import 'widgets/appbar_title.dart';
 import 'widgets/details_screenshots.dart';
 import 'widgets/info_header.dart';
 import 'widgets/rates_statuses_widget.dart';
@@ -132,7 +132,7 @@ class AnimeDetailsPage extends ConsumerWidget {
               pinned: true,
               floating: false,
               expandedHeight: 300,
-              title: AppbarTitle(
+              title: HeaderAppBarTitle(
                 text: animeData.russian ?? animeData.name ?? '[Без навзвания]',
               ),
               actions: [
