@@ -144,58 +144,5 @@ class UserFriendsWidget extends StatelessWidget {
         ),
       ],
     );
-
-    return Card(
-      color: Colors.transparent,
-      margin: const EdgeInsets.all(0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            child: Text(
-              'Друзья',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          ),
-          // const SizedBox(
-          //   height: 4,
-          // ),
-          Padding(
-            padding: const EdgeInsets.all(0.0),
-            //padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-            child: SizedBox(
-              height: 100,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                //shrinkWrap: true,
-                itemCount: data.length,
-                //itemCount: 12,
-                itemBuilder: (context, index) {
-                  final friend = data[index];
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    //padding: const EdgeInsets.all(0.0),
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: CircleAvatar(
-                        radius: 42,
-                        backgroundImage: ExtendedNetworkImageProvider(
-                          friend.image?.x160 ?? friend.avatar ?? '',
-                          cache: true,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
