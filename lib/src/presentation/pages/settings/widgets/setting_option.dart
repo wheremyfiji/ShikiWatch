@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 class SettingsOption extends StatelessWidget {
   const SettingsOption({
@@ -35,7 +36,8 @@ class SettingsOption extends StatelessWidget {
           ? Text(
               subtitle!,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
+                //color: Theme.of(context).colorScheme.onBackground,
+                color: context.textTheme.bodySmall?.color,
               ),
             )
           : null,
