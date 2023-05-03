@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../domain/models/anime.dart';
 import '../../domain/models/animes.dart';
+import '../../domain/models/external_link.dart';
 import '../../domain/models/franchise.dart';
 import '../../domain/models/related_title.dart';
 
@@ -18,7 +19,10 @@ abstract class AnimeRepository {
     bool needToCache = false,
   });
 
-  Future<Iterable<Animes>> getSimilarAnimes({required int? id});
+  Future<Iterable<Animes>> getSimilarAnimes({
+    required int? id,
+    required CancelToken cancelToken,
+  });
 
   Future<Franchise> getAnimeFranchise({
     required int? id,
@@ -26,6 +30,11 @@ abstract class AnimeRepository {
   });
 
   Future<Iterable<RelatedTitle>> getRelatedTitlesAnime({
+    required int? id,
+    required CancelToken cancelToken,
+  });
+
+  Future<Iterable<ExternalLink>> getExternalLinks({
     required int? id,
     required CancelToken cancelToken,
   });

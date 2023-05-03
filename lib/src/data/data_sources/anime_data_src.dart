@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../domain/models/anime.dart';
 import '../../domain/models/animes.dart';
+import '../../domain/models/external_link.dart';
 import '../../domain/models/franchise.dart';
 import '../../domain/models/related_title.dart';
 import '../repositories/anime_repo.dart';
@@ -52,7 +53,10 @@ class AnimeDataSource implements AnimeRepository {
   }
 
   @override
-  Future<Iterable<Animes>> getSimilarAnimes({required int? id}) async {
+  Future<Iterable<Animes>> getSimilarAnimes({
+    required int? id,
+    required CancelToken cancelToken,
+  }) async {
     final response = await dio.get('animes/$id/similar');
 
     return [for (final e in response) Animes.fromJson(e)];
@@ -67,6 +71,19 @@ class AnimeDataSource implements AnimeRepository {
         await dio.get('animes/$id/related', cancelToken: cancelToken);
 
     return [for (final e in response) RelatedTitle.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<ExternalLink>> getExternalLinks({
+    required int? id,
+    required CancelToken cancelToken,
+  }) async {
+    final response = await dio.get(
+      'animes/$id/external_links',
+      cancelToken: cancelToken,
+    );
+
+    return [for (final e in response) ExternalLink.fromJson(e)];
   }
 
   @override

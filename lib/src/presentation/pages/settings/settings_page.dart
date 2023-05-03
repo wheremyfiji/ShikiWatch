@@ -10,6 +10,7 @@ import 'package:shikidev/src/utils/extensions/theme_mode.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../domain/enums/library_state.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../services/http/cache_storage/cache_storage_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
@@ -18,6 +19,7 @@ import '../../../constants/hive_keys.dart';
 import '../../../utils/target_platform.dart';
 import '../../providers/environment_provider.dart';
 import 'widgets/current_theme.dart';
+import 'widgets/library_start_fragment.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 
@@ -58,10 +60,16 @@ class SettingsPage extends ConsumerWidget {
             stretch: true,
             title: const Text('Настройки'),
           ),
-          // const SliverToBoxAdapter(
+          // SliverToBoxAdapter(
           //   child: SettingsGroup(
-          //     title: 'Профиль',
-          //     options: [ExitProfileWidget()],
+          //     title: 'Аккаунт',
+          //     options: [
+          //       SettingsOption(
+          //         title: 'Выйти из аккаунта',
+          //         subtitle: 'Очистить текущую авторизацию',
+          //         onTap: () {},
+          //       ),
+          //     ],
           //   ),
           // ),
           SliverToBoxAdapter(
@@ -97,26 +105,19 @@ class SettingsPage extends ConsumerWidget {
                     );
                   },
                 ),
-                // SettingsOption(
-                //   title: 'Тема приложения',
-                //   subtitle: ThemeMode.values[0].themeName,
-                //   onTap: () {
-                //     showModalBottomSheet(
-                //       useRootNavigator: true,
-                //       context: context,
-                //       constraints: BoxConstraints(
-                //         maxWidth: MediaQuery.of(context).size.width >= 700
-                //             ? 700
-                //             : double.infinity,
-                //       ),
-                //       builder: (context) => CurrentThemeWidget(
-                //         currentTheme: currentTheme,
-                //       ),
-                //     );
-                //   },
-                // ),
                 const DynamicColorsWidget(),
                 const OledModeWidget(),
+                // if (!TargetP.instance.isDesktop)
+                //   SwitchListTile(
+                //     value: false,
+                //     onChanged: (value) {},
+                //     title: const Text(
+                //       'Прозрачный бар навигации',
+                //     ),
+                //     subtitle: const Text(
+                //       'Если поддерживается системой (необходим перезапуск)',
+                //     ),
+                //   ),
               ],
             ),
           ),
@@ -129,6 +130,40 @@ class SettingsPage extends ConsumerWidget {
                 ],
               ),
             ),
+          SliverToBoxAdapter(
+            child: SettingsGroup(
+              title: 'Библиотека',
+              options: [
+                ValueListenableBuilder(
+                  valueListenable: Hive.box(BoxType.settings.name).listenable(
+                    keys: [libraryStartFragmentKey],
+                  ),
+                  builder: (context, value, child) {
+                    final currentFragment = LibraryState.values[
+                        value.get(libraryStartFragmentKey, defaultValue: 0)];
+                    return SettingsOption(
+                      title: 'Раздел по умолчанию', // кого раздел то..
+                      subtitle: currentFragment.name,
+                      onTap: () {
+                        showModalBottomSheet(
+                          useRootNavigator: true,
+                          context: context,
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width >= 700
+                                ? 700
+                                : double.infinity,
+                          ),
+                          builder: (context) => LibraryStartFragment(
+                            fragment: currentFragment,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
           SliverToBoxAdapter(
             child: SettingsGroup(
               // Хранилище

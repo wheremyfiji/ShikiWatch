@@ -40,61 +40,46 @@ class AnimeScreenshots extends StatelessWidget {
             ),
           ],
         ),
-        ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxHeight: 120.0, //200 180
-          ),
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            itemCount: data.screenshots!.length,
-            itemBuilder: (BuildContext context, int index) {
-              final model = data.screenshots![index];
-
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: GestureDetector(
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => HeroPhotoViewRouteWrapper(
-                      //       imageProvider: CachedNetworkImageProvider(
-                      //         kStaticUrl.toString() + (model.original ?? ''),
-                      //       ),
-                      //       heroTag:
-                      //           kStaticUrl.toString() + (model.original ?? ''),
-                      //     ),
-                      //   ),
-                      // );
-                    },
-                    child: AspectRatio(
-                      aspectRatio: (16 / 9),
-                      child: Container(
-                        color: Colors.black,
-                        child: ImageWithShimmerWidget(
-                          fit: BoxFit.contain,
-                          imageUrl: AppConfig.staticUrl +
-                              (model.original ?? model.preview ?? ''),
+        LayoutBuilder(
+          builder: (ctx, constr) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: constr.maxWidth,
+                height: 180,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: data.screenshots!.length,
+                  itemBuilder: (context, index) {
+                    final screenShot = data.screenshots![index];
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: AspectRatio(
+                            aspectRatio: (16 / 9),
+                            child: Container(
+                              color: Colors.black,
+                              child: ImageWithShimmerWidget(
+                                fit: BoxFit.contain,
+                                imageUrl: AppConfig.staticUrl +
+                                    (screenShot.original ??
+                                        screenShot.preview ??
+                                        ''),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      //     Container(
-                      //   color: Colors.black,
-                      //   child: ExtendedImage.network(
-                      //     AppConfig.staticUrl +
-                      //         (model.original ?? model.preview ?? ''),
-                      //     fit: BoxFit.contain,
-                      //   ),
-                      // ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          //),
+              ),
+            );
+          },
         ),
       ],
     );

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shikidev/src/utils/extensions/string_ext.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../domain/models/manga_ranobe.dart';
 import '../../../domain/models/manga_short.dart';
 import '../../../constants/config.dart';
 import '../../providers/manga_details_provider.dart';
@@ -90,6 +92,27 @@ class MangaDetailPage extends ConsumerWidget {
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                   sliver: SliverToBoxAdapter(
+                    child: MangaActionsWidget(
+                      manga: manga,
+                      data: data,
+                    ),
+                  ),
+                ),
+                if (data.userRate != null) ...[
+                  SliverPadding(
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                    sliver: SliverToBoxAdapter(
+                      child: UserRateWidget(
+                        manga: manga,
+                        data: data,
+                      ),
+                    ),
+                  ),
+                ],
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  sliver: SliverToBoxAdapter(
                     child: MangaChipsWidget(
                       genres: data.genres,
                       publishers: data.publishers,
@@ -103,18 +126,6 @@ class MangaDetailPage extends ConsumerWidget {
                         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: TitleDescription(data.descriptionHtml!),
-                    ),
-                  ),
-                ],
-                if (data.userRate != null) ...[
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: UserRateWidget(
-                        manga: manga,
-                        data: data,
-                      ),
                     ),
                   ),
                 ],
@@ -151,6 +162,182 @@ class MangaDetailPage extends ConsumerWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class MangaActionsWidget extends StatelessWidget {
+  final MangaShort manga;
+  final MangaRanobe data;
+
+  const MangaActionsWidget({
+    super.key,
+    required this.manga,
+    required this.data,
+  });
+
+  String getRateStatus(String value) {
+    String status;
+
+    const map = {
+      'planned': 'В планах',
+      'watching': 'Читаю',
+      'rewatching': 'Перечитываю',
+      'completed': 'Прочитано',
+      'on_hold': 'Отложено',
+      'dropped': 'Брошено'
+    };
+
+    status = map[value] ?? '';
+
+    return status;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: null,
+                child: Column(
+                  children: const [
+                    Icon(Icons.join_inner),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text('Похожее'),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: null,
+                child: Column(
+                  children: const [
+                    Icon(Icons.topic), //chat
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      'Обсуждение',
+                      // style: TextStyle(
+                      //   color: context.textTheme.bodyMedium?.color,
+                      // ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  _openFullscreenDialog(context);
+                },
+                child: Column(
+                  children: const [
+                    Icon(Icons.link),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text('Ссылки'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openFullscreenDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      useRootNavigator: false,
+      useSafeArea: false,
+      builder: (context) => Dialog.fullscreen(
+        child: MangaExternalLinksWidget(
+          mangaId: manga.id!,
+        ),
+      ),
+    );
+  }
+}
+
+class MangaExternalLinksWidget extends ConsumerWidget {
+  final int mangaId;
+
+  const MangaExternalLinksWidget({super.key, required this.mangaId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final links = ref.watch(externalLinksMangaProvider(mangaId));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Ссылки'),
+        centerTitle: false,
+        // automaticallyImplyLeading: false,
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.close),
+        //     onPressed: () => Navigator.of(context).pop(),
+        //   ),
+        // ],
+      ),
+      body: links.when(
+        data: (data) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: data.length,
+                itemBuilder: (context, index) {
+                  final link = data.toList()[index];
+                  final enable = link.url != null;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Card(
+                      clipBehavior: Clip.hardEdge,
+                      margin: const EdgeInsets.all(0),
+                      child: ListTile(
+                        enabled: enable,
+                        title: Text(
+                          link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
+                        ),
+                        //subtitle: Text('${link.updatedAt}'),
+                        trailing: const Icon(
+                          Icons.open_in_browser,
+                        ),
+                        onTap: () {
+                          launchUrlString(
+                            link.url!,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+        error: (err, stack) => CustomErrorWidget(err.toString(),
+            () => ref.refresh(externalLinksMangaProvider(mangaId))),
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );

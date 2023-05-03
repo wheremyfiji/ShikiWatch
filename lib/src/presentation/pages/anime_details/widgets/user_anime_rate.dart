@@ -258,106 +258,97 @@ class UserAnimeRateWidget extends HookConsumerWidget {
           );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Отслеживание',
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(fontWeight: FontWeight.bold),
+    if (data.userRate == null) {
+      return SizedBox(
+        child: FilledButton(
+          onPressed: () {
+            showModalBottomSheet<void>(
+              context: context,
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width >= 700
+                    ? 700
+                    : double.infinity,
+              ),
+              useRootNavigator: true,
+              isScrollControlled: true,
+              enableDrag: false,
+              useSafeArea: true,
+              elevation: 0,
+              builder: (context) {
+                return AnimeUserRateBottomSheet(
+                  data: data,
+                  anime: anime,
+                );
+              },
+            );
+          },
+          child: const Text('Добавить в список'),
         ),
-        const SizedBox(
-          height: 8,
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Card(
-            margin: EdgeInsets.zero,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: data.userRate == null
-                  ? FilledButton(
-                      onPressed: () {
-                        showModalBottomSheet<void>(
-                          context: context,
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width >= 700
-                                ? 700
-                                : double.infinity,
-                          ),
-                          useRootNavigator: true,
-                          isScrollControlled: true,
-                          enableDrag: false,
-                          useSafeArea: true,
-                          elevation: 0,
-                          builder: (context) {
-                            return AnimeUserRateBottomSheet(
-                              data: data,
-                              anime: anime,
-                            );
-                          },
+      );
+    }
+
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        margin: EdgeInsets.zero,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                direction: Axis.horizontal,
+                alignment: WrapAlignment.start,
+                crossAxisAlignment: WrapCrossAlignment.start,
+                spacing: 8,
+                runSpacing: 0,
+                children: [
+                  CoolChip(
+                    label: getRateStatus(data.userRate!.status!),
+                  ),
+                  CoolChip(
+                    label: 'Эпизоды: ${data.userRate!.episodes.toString()}',
+                  ),
+                  CoolChip(
+                    label: 'Оценка: ${data.userRate!.score.toString()}',
+                  ),
+                  CoolChip(
+                    label:
+                        'Пересмотрено: ${data.userRate!.rewatches.toString()}',
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width >= 700
+                            ? 700
+                            : double.infinity,
+                      ),
+                      useRootNavigator: true,
+                      isScrollControlled: true,
+                      enableDrag: false,
+                      useSafeArea: true,
+                      elevation: 0,
+                      builder: (context) {
+                        return AnimeUserRateBottomSheet(
+                          data: data,
+                          anime: anime,
                         );
                       },
-                      child: const Text('Добавить в список'),
-                    )
-                  : Wrap(
-                      direction: Axis.horizontal,
-                      alignment: WrapAlignment.start,
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      spacing: 8,
-                      runSpacing: 0,
-                      children: [
-                        CoolChip(
-                          label:
-                              'Статус: ${getRateStatus(data.userRate!.status!)}',
-                        ),
-                        CoolChip(
-                          label:
-                              'Эпизоды: ${data.userRate!.episodes.toString()}',
-                        ),
-                        CoolChip(
-                          label: 'Оценка: ${data.userRate!.score.toString()}',
-                        ),
-                        CoolChip(
-                          label:
-                              'Пересмотрено: ${data.userRate!.rewatches.toString()}',
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: () {
-                              showModalBottomSheet<void>(
-                                context: context,
-                                constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width >= 700
-                                          ? 700
-                                          : double.infinity,
-                                ),
-                                useRootNavigator: true,
-                                isScrollControlled: true,
-                                enableDrag: false,
-                                useSafeArea: true,
-                                elevation: 0,
-                                builder: (context) {
-                                  return AnimeUserRateBottomSheet(
-                                    data: data,
-                                    anime: anime,
-                                  );
-                                },
-                              );
-                            },
-                            child: const Text('Изменить'),
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
+                    );
+                  },
+                  child: const Text('Изменить'),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
 
     return Column(

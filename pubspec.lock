@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  bbob_dart:
+    dependency: transitive
+    description:
+      name: bbob_dart
+      sha256: d754e0dfd800582a6f0a43ae4f12db8eb763e89f584674c334a36e0faaddb1f9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -375,6 +383,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bbcode:
+    dependency: "direct main"
+    description:
+      name: flutter_bbcode
+      sha256: "024cb7d3b32d8f7dd155251d09bb92f496aaccb19cfe7313caea2e85d491ac7f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   flutter_displaymode:
     dependency: "direct main"
     description:

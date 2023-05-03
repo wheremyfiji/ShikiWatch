@@ -12,6 +12,7 @@ import '../../widgets/header_appbar_title.dart';
 
 import 'rating_dialog.dart';
 import 'studio_select_page.dart';
+import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
 import 'widgets/details_screenshots.dart';
@@ -178,6 +179,21 @@ class AnimeDetailsPage extends ConsumerWidget {
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                   sliver: SliverToBoxAdapter(
+                    child: AnimeActionsWidget(
+                      anime: data,
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  sliver: SliverToBoxAdapter(
+                    child: UserAnimeRateWidget(
+                        animeData, data, titleInfo.userImage),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  sliver: SliverToBoxAdapter(
                     child: AnimeChipsWidget(
                       genres: data.genres,
                       studios: data.studios,
@@ -194,13 +210,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                     ),
                   ),
                 ],
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                  sliver: SliverToBoxAdapter(
-                    child: UserAnimeRateWidget(
-                        animeData, data, titleInfo.userImage),
-                  ),
-                ),
                 if (titleInfo.statsValues != []) ...[
                   SliverPadding(
                     padding:

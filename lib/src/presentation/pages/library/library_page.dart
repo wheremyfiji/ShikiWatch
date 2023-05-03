@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../domain/enums/library_state.dart';
 import 'manga_tabs/completed_manga_tab.dart';
 import 'manga_tabs/dropped_manga_tab.dart';
 import 'manga_tabs/on_hold_manga_tab.dart';

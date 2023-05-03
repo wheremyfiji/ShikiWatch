@@ -19,6 +19,7 @@ import '../../widgets/title_description.dart';
 
 import 'rating_dialog.dart';
 import 'studio_select_page.dart';
+import 'widgets/anime_actions.dart';
 import 'widgets/anime_user_rate_dialog.dart';
 import 'widgets/rates_statuses_widget.dart';
 
@@ -444,6 +445,12 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
               ),
               ...titleInfo.title.when(
                 data: (data) => [
+                  AnimeActionsWidget(
+                    anime: data,
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
                   if (data.screenshots != null || data.videos != null)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

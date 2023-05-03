@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../constants/box_types.dart';
+import '../../../constants/hive_keys.dart';
+import '../../../domain/enums/library_state.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
 
-enum LibraryState {
-  anime,
-  manga,
-}
-
 final libraryStateProvider = StateProvider<LibraryState>((ref) {
-  return LibraryState.anime;
+  int value = Hive.box(BoxType.settings.name).get(
+    libraryStartFragmentKey,
+    defaultValue: 0,
+  );
+
+  return LibraryState.values[value];
 }, name: 'libraryProvider');
 
 class LibraryPageAppBar extends ConsumerWidget {
@@ -41,6 +45,7 @@ class LibraryPageAppBar extends ConsumerWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
+          //initialValue: state,
           color: Theme.of(context).colorScheme.onInverseSurface,
           itemBuilder: (context) => const [
             PopupMenuItem(

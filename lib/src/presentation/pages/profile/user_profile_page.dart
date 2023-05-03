@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/constants/config.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../providers/user_profile_provider.dart';
 import '../../../domain/models/user.dart';
 import '../../widgets/error_widget.dart';
@@ -30,6 +28,27 @@ class UserProfilePage extends ConsumerWidget {
           return [
             SliverAppBar.large(
               title: Text(data.nickname ?? ''),
+              actions: [
+                PopupMenuButton(
+                  tooltip: '',
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Открыть в браузере"),
+                      ),
+                    ];
+                  },
+                  onSelected: (value) {
+                    if (value == 0) {
+                      launchUrlString(
+                        data.url!,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
           ];
         },
@@ -69,53 +88,52 @@ class UserProfilePage extends ConsumerWidget {
                       child: UserProfileHeader(data: data),
                     ),
                   ),
-                  SliverPadding(
-                    // padding: const EdgeInsets.all(16),
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Tooltip(
-                            message: 'Отправить сообщение',
-                            child: IconButton(
-                              onPressed: () {
-                                launchUrlString(
-                                  '${AppConfig.staticUrl}/${SecureStorageService.instance.userNickname}/dialogs/${data.nickname!}',
-                                  mode: LaunchMode.externalApplication,
-                                );
-                              },
-                              icon: const Icon(Icons.mail),
-                            ),
-                          ),
-                          data.inFriends ?? false
-                              ? const Tooltip(
-                                  message: 'Удалить из друзей',
-                                  child: IconButton(
-                                    onPressed: null,
-                                    icon: Icon(Icons.person_remove),
-                                  ),
-                                )
-                              : const Tooltip(
-                                  message: 'Добавить в друзья',
-                                  child: IconButton(
-                                    onPressed: null,
-                                    icon: Icon(Icons.person_add),
-                                  ),
-                                ),
-                          const Tooltip(
-                            message: 'Игнорировать пользователя',
-                            child: IconButton(
-                              //onPressed: () {},
-                              onPressed: null,
-                              icon: Icon(Icons.notifications_paused),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // SliverPadding(
+                  //   padding:
+                  //       const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                  //   sliver: SliverToBoxAdapter(
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //       children: [
+                  //         Tooltip(
+                  //           message: 'Отправить сообщение',
+                  //           child: IconButton(
+                  //             onPressed: () {
+                  //               launchUrlString(
+                  //                 '${AppConfig.staticUrl}/${SecureStorageService.instance.userNickname}/dialogs/${data.nickname!}',
+                  //                 mode: LaunchMode.externalApplication,
+                  //               );
+                  //             },
+                  //             icon: const Icon(Icons.mail),
+                  //           ),
+                  //         ),
+                  //         data.inFriends ?? false
+                  //             ? const Tooltip(
+                  //                 message: 'Удалить из друзей',
+                  //                 child: IconButton(
+                  //                   onPressed: null,
+                  //                   icon: Icon(Icons.person_remove),
+                  //                 ),
+                  //               )
+                  //             : const Tooltip(
+                  //                 message: 'Добавить в друзья',
+                  //                 child: IconButton(
+                  //                   onPressed: null,
+                  //                   icon: Icon(Icons.person_add),
+                  //                 ),
+                  //               ),
+                  //         const Tooltip(
+                  //           message: 'Игнорировать пользователя',
+                  //           child: IconButton(
+                  //             //onPressed: () {},
+                  //             onPressed: null,
+                  //             icon: Icon(Icons.notifications_paused),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   if (!p.friends.isLoading &&
                       !p.friends.hasError &&
                       p.friends.hasValue &&

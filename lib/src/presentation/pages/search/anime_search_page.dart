@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -12,12 +11,30 @@ import '../../../domain/models/animes.dart' as models;
 import '../../widgets/error_widget.dart';
 import '../../widgets/image_with_shimmer.dart';
 
+final searchTypeProvider = StateProvider<int>((ref) {
+  return 0;
+});
+
+// const List<String> searchTypeList = <String>[
+//   'Аниме',
+//   'Манга',
+//   'Ранобэ',
+// ];
+
+const List<String> searchHintList = <String>[
+  'Поиск аниме',
+  'Поиск манги',
+  'Поиск ранобэ',
+];
+
 class AnimeSearchPage extends ConsumerWidget {
   const AnimeSearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(animeSearchProvider);
+
+    final seatchTypeState = ref.watch(searchTypeProvider);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -45,7 +62,8 @@ class AnimeSearchPage extends ConsumerWidget {
               filled: false,
               //contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
-              hintText: 'Поиск аниме',
+              //hintText: 'Поиск аниме',
+              hintText: searchHintList[seatchTypeState],
               suffixIcon: controller.textEditingController.text.isNotEmpty
                   ? GestureDetector(
                       child: const Icon(Icons.close),
@@ -56,6 +74,12 @@ class AnimeSearchPage extends ConsumerWidget {
                   : null,
             ),
           ),
+          actions: const [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SearchTypeWidget(),
+            ),
+          ],
         ),
         body: Builder(
           builder: (context) {
@@ -154,6 +178,47 @@ class AnimeSearchPage extends ConsumerWidget {
   }
 }
 
+class SearchTypeWidget extends ConsumerWidget {
+  const SearchTypeWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(searchTypeProvider);
+    return PopupMenuButton<int>(
+      tooltip: 'Выбор поиска',
+      initialValue: state,
+      // child: Card(
+      //   child: Padding(
+      //     padding: const EdgeInsets.all(8.0),
+      //     child: Text(
+      //       searchTypeList[state],
+      //     ),
+      //   ),
+      // ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      itemBuilder: (context) => const [
+        PopupMenuItem(
+          value: 0,
+          child: Text('Аниме'),
+        ),
+        PopupMenuItem(
+          value: 1,
+          child: Text('Манга'),
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Text('Ранобэ'),
+        ),
+      ],
+      onSelected: (value) {
+        ref.read(searchTypeProvider.notifier).state = value;
+      },
+    );
+  }
+}
+
 class AnimeSearchHistory extends StatelessWidget {
   final List<String> history;
   final Function(String) search;
@@ -168,9 +233,10 @@ class AnimeSearchHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
@@ -181,12 +247,14 @@ class AnimeSearchHistory extends StatelessWidget {
                     ),
               ),
             ),
-
+            const Spacer(),
             TextButton(
               onPressed: history.isEmpty ? null : () => clear(),
               child: const Text('Очистить'),
             ),
-            //Text('Очистить'),
+            const SizedBox(
+              width: 16,
+            ),
           ],
         ),
         if (history.isNotEmpty)
@@ -273,7 +341,6 @@ class SearchTile extends StatelessWidget {
               // padding: const EdgeInsets.fromLTRB(6, 6, 6, 2),
               padding: const EdgeInsets.all(0),
               child: Text(
-                //data.russian ?? '',
                 data.russian ?? data.name ?? '',
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -293,7 +360,6 @@ class SearchTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  //data.score ?? '',
                   '${getKind(data.kind ?? '')} • ${data.score}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -310,49 +376,6 @@ class SearchTile extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SearchTileOld extends StatelessWidget {
-  final models.Animes model;
-  const SearchTileOld(this.model, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => context.push('/explore/${model.id!}', extra: model),
-      child: Container(
-        color: Theme.of(context).listTileTheme.tileColor,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 350 / 6,
-                height: 550 / 6,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: ExtendedImage.network(
-                    AppConfig.staticUrl.toString() +
-                        (model.image?.original ?? ''),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              Expanded(
-                child: Text(
-                  model.russian ?? model.name ?? '[Без навзвания]',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

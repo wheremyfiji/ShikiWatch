@@ -6,8 +6,25 @@ import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
 import '../../data/data_sources/manga_data_src.dart';
 import '../../data/repositories/manga_repo.dart';
+import '../../domain/models/external_link.dart';
 import '../../domain/models/manga_ranobe.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
+
+final externalLinksMangaProvider = FutureProvider.autoDispose
+    .family<Iterable<ExternalLink>, int>((ref, id) async {
+  if (ref.state.isRefreshing) {
+    await ref.debounce();
+  }
+
+  ref.cacheFor();
+
+  final token = ref.cancelToken();
+
+  return ref.read(mangaDataSourceProvider).getExternalLinks(
+        id: id,
+        cancelToken: token,
+      );
+}, name: 'externalLinksMangaProvider');
 
 final mangaDetailsPageProvider = ChangeNotifierProvider.autoDispose
     .family<MangaDetailsPageController, int>((ref, id) {

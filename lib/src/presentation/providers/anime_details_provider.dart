@@ -4,12 +4,30 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import '../../domain/models/animes.dart';
+import '../../domain/models/external_link.dart';
 import '../../domain/models/user_rate.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/related_title.dart';
+
+final similarTitlesAnimeProvider =
+    FutureProvider.autoDispose.family<Iterable<Animes>, int>((ref, id) async {
+  if (ref.state.isRefreshing) {
+    await ref.debounce();
+  }
+
+  ref.cacheFor();
+
+  final token = ref.cancelToken();
+
+  return ref.read(animeDataSourceProvider).getSimilarAnimes(
+        id: id,
+        cancelToken: token,
+      );
+}, name: 'similarTitlesAnimeProvider');
 
 final relatedTitlesAnimeProvider = FutureProvider.autoDispose
     .family<Iterable<RelatedTitle>, int>((ref, id) async {
@@ -32,6 +50,22 @@ final relatedTitlesAnimeProvider = FutureProvider.autoDispose
       .read(animeDataSourceProvider)
       .getRelatedTitlesAnime(id: id, cancelToken: token);
 }, name: 'relatedTitlesAnimeProvider');
+
+final externalLinksAnimeProvider = FutureProvider.autoDispose
+    .family<Iterable<ExternalLink>, int>((ref, id) async {
+  if (ref.state.isRefreshing) {
+    await ref.debounce();
+  }
+
+  ref.cacheFor();
+
+  final token = ref.cancelToken();
+
+  return ref.read(animeDataSourceProvider).getExternalLinks(
+        id: id,
+        cancelToken: token,
+      );
+}, name: 'externalLinksAnimeProvider');
 
 // final similarAnimesProvider =
 //     FutureProvider.autoDispose.family<Iterable<Animes>, int>((ref, id) async {
