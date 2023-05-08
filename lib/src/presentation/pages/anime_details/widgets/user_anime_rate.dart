@@ -262,25 +262,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
       return SizedBox(
         child: FilledButton(
           onPressed: () {
-            showModalBottomSheet<void>(
-              context: context,
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width >= 700
-                    ? 700
-                    : double.infinity,
-              ),
-              useRootNavigator: true,
-              isScrollControlled: true,
-              enableDrag: false,
-              useSafeArea: true,
-              elevation: 0,
-              builder: (context) {
-                return AnimeUserRateBottomSheet(
-                  data: data,
-                  anime: anime,
-                );
-              },
-            );
+            _openBottomSheet(context);
           },
           child: const Text('Добавить в список'),
         ),
@@ -304,7 +286,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
                 runSpacing: 0,
                 children: [
                   CoolChip(
-                    label: getRateStatus(data.userRate!.status!),
+                    label: getRateStatus(data.userRate!.status ?? ''),
                   ),
                   CoolChip(
                     label: 'Эпизоды: ${data.userRate!.episodes.toString()}',
@@ -322,25 +304,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () {
-                    showModalBottomSheet<void>(
-                      context: context,
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width >= 700
-                            ? 700
-                            : double.infinity,
-                      ),
-                      useRootNavigator: true,
-                      isScrollControlled: true,
-                      enableDrag: false,
-                      useSafeArea: true,
-                      elevation: 0,
-                      builder: (context) {
-                        return AnimeUserRateBottomSheet(
-                          data: data,
-                          anime: anime,
-                        );
-                      },
-                    );
+                    _openBottomSheet(context);
                   },
                   child: const Text('Изменить'),
                 ),
@@ -491,6 +455,27 @@ class UserAnimeRateWidget extends HookConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+
+  void _openBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth:
+            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+      ),
+      useRootNavigator: true,
+      isScrollControlled: true,
+      enableDrag: false,
+      useSafeArea: true,
+      elevation: 0,
+      builder: (context) {
+        return AnimeUserRateBottomSheet(
+          data: data,
+          anime: anime,
+        );
+      },
     );
   }
 }
@@ -1140,39 +1125,16 @@ class _AnimeUserRateBottomSheetState
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Center(
-              //   child: LayoutBuilder(
-              //     builder: (ctx, constraints) {
-              //       return Container(
-              //         height: 4,
-              //         width: constraints.maxWidth / 6,
-              //         decoration: BoxDecoration(
-              //           color: context.theme.colorScheme.onBackground,
-              //           borderRadius: const BorderRadius.all(
-              //             Radius.circular(8),
-              //           ),
-              //         ),
-              //       );
-              //     },
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 8,
-              // ),
               Row(
                 children: [
-                  // CircleAvatar(
-                  //   backgroundImage: ExtendedNetworkImageProvider(
-                  //     AppConfig.staticUrl + widget.anime.image!.original!,
-                  //   ),
-                  // ),
-                  // const SizedBox(
-                  //   width: 8,
-                  // ),
                   Text(
-                    widget.data.russian ??
-                        widget.data.name ??
-                        '[Без навзвания]',
+                    // widget.data.russian ??
+                    //     widget.data.name ??
+                    //     '[Без навзвания]',
+                    (widget.data.russian == ''
+                            ? widget.data.name
+                            : widget.data.russian) ??
+                        '',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -1195,9 +1157,11 @@ class _AnimeUserRateBottomSheetState
                         title: getChipLabel(index),
                         icon: getChipIcon(index),
                         onPressed: () {
-                          setState(() {
-                            selectedStatus = index;
-                          });
+                          setState(
+                            () {
+                              selectedStatus = index;
+                            },
+                          );
                         },
                         isSelected: selectedStatus == index,
                       );
@@ -1223,7 +1187,7 @@ class _AnimeUserRateBottomSheetState
                       children: [
                         Wrap(
                           children: [
-                            const Text('Прогресс:'),
+                            const Text('Эпизоды:'),
                             const SizedBox(
                               width: 4,
                             ),

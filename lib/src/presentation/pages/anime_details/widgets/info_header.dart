@@ -135,7 +135,8 @@ class AnimeInfoHeader extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        data.russian ?? data.name ?? '[Без навзвания]',
+                        //data.russian ?? data.name ?? '[Без навзвания]',
+                        (data.russian == '' ? data.name : data.russian) ?? '',
                         maxLines: 3,
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,

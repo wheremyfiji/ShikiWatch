@@ -69,7 +69,6 @@ class MangaCardWidget extends StatelessWidget {
                               ? data.manga?.name
                               : data.manga?.russian) ??
                           '',
-                      //data.manga?.russian ?? data.manga?.name ?? '',
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -125,7 +124,6 @@ class MangaCardEx extends StatelessWidget {
           },
           extra: data,
         ),
-        //context.push('/explore/${data.id!}', extra: data),
         child: Column(
           children: <Widget>[
             ClipRRect(
@@ -143,7 +141,6 @@ class MangaCardEx extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               child: Text(
                 (data.russian == '' ? data.name : data.russian) ?? '',
-                //data.russian ?? data.name ?? '',
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

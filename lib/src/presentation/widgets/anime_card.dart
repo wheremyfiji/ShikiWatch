@@ -48,7 +48,6 @@ class AnimeCard extends StatelessWidget {
               },
               extra: data.anime,
             );
-            //context.push('/library/${data.anime?.id!}', extra: data.anime);
           },
           child: Column(
             children: [
@@ -70,8 +69,6 @@ class AnimeCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    //FittedBox(
-                    //  child:
                     Text(
                       (data.anime?.russian == ''
                               ? data.anime?.name
@@ -82,18 +79,13 @@ class AnimeCard extends StatelessWidget {
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        //letterSpacing: 0.0,
                         fontSize: 12.0,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    //),
                     const SizedBox(height: 4),
-
                     data.anime?.status == 'released'
                         ? Text(
-                            //'${data.episodes.toString()} / ${data.anime?.episodes.toString()} эп, Вышло',
-                            //'${data.anime?.episodes.toString()} эп / Вышло',
                             '${data.episodes.toString()} из ${data.anime?.episodes.toString()} эп.',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -162,7 +154,6 @@ class AnimeTileExp extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               child: Text(
                 (data.russian == '' ? data.name : data.russian) ?? '',
-                //data.russian ?? data.name ?? '',
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

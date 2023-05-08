@@ -3,10 +3,12 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 class CoolChip extends StatelessWidget {
   final String label;
+  final Color? backgroundColor;
 
   const CoolChip({
     super.key,
     required this.label,
+    this.backgroundColor,
   });
 
   @override
@@ -18,7 +20,8 @@ class CoolChip extends StatelessWidget {
       side: const BorderSide(width: 0, color: Colors.transparent),
       labelStyle: context.theme.textTheme.bodyMedium
           ?.copyWith(color: context.theme.colorScheme.onSecondaryContainer),
-      backgroundColor: context.theme.colorScheme.secondaryContainer,
+      backgroundColor:
+          backgroundColor ?? context.theme.colorScheme.secondaryContainer,
       label: Text(label),
     );
   }

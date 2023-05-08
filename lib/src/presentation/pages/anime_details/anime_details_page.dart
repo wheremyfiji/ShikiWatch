@@ -194,7 +194,10 @@ class AnimeDetailsPage extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                   sliver: SliverToBoxAdapter(
                     child: UserAnimeRateWidget(
-                        animeData, data, titleInfo.userImage),
+                      animeData,
+                      data,
+                      titleInfo.userImage,
+                    ),
                   ),
                 ),
                 SliverPadding(

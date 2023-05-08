@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 class MaterialYouChip extends StatelessWidget {
   const MaterialYouChip({
     super.key,
     required this.title,
-    this.icon,
     required this.onPressed,
     required this.isSelected,
+    this.icon,
   });
 
   final String title;
@@ -19,11 +20,11 @@ class MaterialYouChip extends StatelessWidget {
     final borderRadius =
         isSelected ? BorderRadius.circular(28) : BorderRadius.circular(12);
     final colorPrimary = isSelected
-        ? Theme.of(context).colorScheme.primaryContainer
-        : Theme.of(context).colorScheme.surfaceVariant;
+        ? context.theme.colorScheme.primaryContainer
+        : context.theme.colorScheme.surfaceVariant;
     final colorOnPrimary = isSelected
-        ? Theme.of(context).colorScheme.onPrimaryContainer
-        : Theme.of(context).colorScheme.onSurfaceVariant;
+        ? context.theme.colorScheme.onPrimaryContainer
+        : context.theme.colorScheme.onSurfaceVariant;
 
     return GestureDetector(
       onTap: onPressed,
@@ -56,11 +57,8 @@ class MaterialYouChip extends StatelessWidget {
                 title,
                 style: TextStyle(
                   color: colorOnPrimary,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
-                // style: Theme.of(context).textTheme.subtitle1?.copyWith(
-                //       color: colorOnPrimary,
-                //       fontWeight: FontWeight.w600,
-                //     ),
               ),
             ],
           ),
