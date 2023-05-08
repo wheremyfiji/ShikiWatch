@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 
 import '../../domain/models/external_link.dart';
 import '../../domain/models/manga_ranobe.dart';
+import '../../domain/models/manga_short.dart';
+import '../../domain/models/related_title.dart';
 import '../../services/http/http_service_provider.dart';
 import '../repositories/http_service.dart';
 import '../repositories/manga_repo.dart';
@@ -50,5 +52,26 @@ class MangaDataSource implements MangaRepository {
     );
 
     return [for (final e in response) ExternalLink.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<RelatedTitle>> getRelatedTitles({
+    required int? id,
+    required CancelToken cancelToken,
+  }) async {
+    final response =
+        await dio.get('mangas/$id/related', cancelToken: cancelToken);
+
+    return [for (final e in response) RelatedTitle.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<MangaShort>> getSimilar({
+    required int? id,
+    required CancelToken cancelToken,
+  }) async {
+    final response = await dio.get('mangas/$id/similar');
+
+    return [for (final e in response) MangaShort.fromJson(e)];
   }
 }

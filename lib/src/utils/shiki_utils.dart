@@ -59,6 +59,24 @@ String getKind(String value) {
   return kind;
 }
 
+bool kindIsManga(String value) {
+  const kind = {
+    'manga',
+    'light_novel',
+    'novel',
+    'one_shot',
+    'doujin',
+    'manhwa',
+    'manhua',
+  };
+
+  if (kind.contains(value)) {
+    return true;
+  }
+
+  return false;
+}
+
 String getRateStatus(String value) {
   String status;
 

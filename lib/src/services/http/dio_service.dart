@@ -1,13 +1,11 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:network_logger/network_logger.dart';
 //import 'package:native_dio_adapter/native_dio_adapter.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sentry_dio/sentry_dio.dart';
-//import 'package:sentry_dio/sentry_dio.dart';
+//import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../constants/config.dart';
 import '../../data/repositories/http_service.dart';
@@ -64,20 +62,20 @@ class DioHttpService implements HttpService {
     dio.interceptors.add(RefreshTokenInterceptor(dio));
     dio.interceptors.add(RequestInterceptors(dio));
 
-    if (kDebugMode) {
-      dio.interceptors.add(PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: false,
-        responseHeader: true,
-        error: true,
-        compact: true,
-        maxWidth: 100,
-        logPrint: (object) {
-          log(object.toString(), name: 'Dio');
-        },
-      ));
-    }
+    // if (kDebugMode) {
+    //   dio.interceptors.add(PrettyDioLogger(
+    //     requestHeader: true,
+    //     requestBody: true,
+    //     responseBody: false,
+    //     responseHeader: true,
+    //     error: true,
+    //     compact: true,
+    //     maxWidth: 100,
+    //     logPrint: (object) {
+    //       log(object.toString(), name: 'Dio');
+    //     },
+    //   ));
+    // }
     dio.interceptors.add(DioNetworkLogger());
     //dio.interceptors.add(nirikshak.getDioInterceptor());
     dio.addSentry();

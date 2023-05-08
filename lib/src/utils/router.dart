@@ -102,8 +102,6 @@ final GoRouter router = GoRouter(
                   const LibraryPage(),
               routes: <RouteBase>[
                 GoRoute(
-                  //path: r':id(\d+)',
-                  //name: 'library_id',
                   name: 'library_anime',
                   path: 'anime/:id',
                   pageBuilder: (context, state) {
@@ -123,19 +121,12 @@ final GoRouter router = GoRouter(
                   },
                 ),
                 GoRoute(
-                  //path: r':id(\d+)',
                   name: 'library_manga',
                   path: 'manga/:id',
                   pageBuilder: (context, state) {
                     MangaShort data = state.extra as MangaShort;
                     return CustomTransitionPage(
-                      child:
-                          // TargetP.instance.isDesktop
-                          //     ? AnimeDetailsDesktopPage(
-                          //         animeData: data,
-                          //       )
-                          //     :
-                          MangaDetailPage(manga: data),
+                      child: MangaDetailPage(manga: data),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),
@@ -144,28 +135,27 @@ final GoRouter router = GoRouter(
                     );
                   },
                 ),
-                GoRoute(
-                  //path: r':id(\d+)',
-                  name: 'library_ranobe',
-                  path: 'ranobe/:id',
-                  pageBuilder: (context, state) {
-                    MangaShort data = state.extra as MangaShort;
-                    return CustomTransitionPage(
-                      child:
-                          // TargetP.instance.isDesktop
-                          //     ? AnimeDetailsDesktopPage(
-                          //         animeData: data,
-                          //       )
-                          //     :
-                          MangaDetailPage(manga: data),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
-                    );
-                  },
-                ),
+                // GoRoute(
+                //   name: 'library_ranobe',
+                //   path: 'ranobe/:id',
+                //   pageBuilder: (context, state) {
+                //     MangaShort data = state.extra as MangaShort;
+                //     return CustomTransitionPage(
+                //       child:
+                //           // TargetP.instance.isDesktop
+                //           //     ? AnimeDetailsDesktopPage(
+                //           //         animeData: data,
+                //           //       )
+                //           //     :
+                //           MangaDetailPage(manga: data),
+                //       transitionsBuilder: (_, animation, __, child) =>
+                //           FadeTransition(opacity: animation, child: child),
+                //       transitionDuration: const Duration(milliseconds: 150),
+                //       reverseTransitionDuration:
+                //           const Duration(milliseconds: 150),
+                //     );
+                //   },
+                // ),
               ],
             ),
           ],

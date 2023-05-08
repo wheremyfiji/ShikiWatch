@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../widgets/image_with_shimmer.dart';
@@ -18,16 +19,28 @@ class AnimeVideosMobileWidget extends StatelessWidget {
           children: [
             Text(
               'Видео',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    //fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: context.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const TextButton(
-              onPressed: null,
-              child: Text('Ещё'),
+            // const TextButton(
+            //   onPressed: null,
+            //   child: Text('Ещё'),
+            // ),
+            InkWell(
+              onTap: () {},
+              child: Text(
+                'Больше',
+                style: context.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.theme.colorScheme.primary,
+                ),
+              ),
             ),
           ],
+        ),
+        const SizedBox(
+          height: 8,
         ),
         LayoutBuilder(
           builder: (ctx, constr) {

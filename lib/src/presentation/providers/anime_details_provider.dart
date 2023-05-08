@@ -13,6 +13,13 @@ import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/related_title.dart';
 
+// final franchiseProvider =
+//     FutureProvider.autoDispose.family<Franchise, int>((ref, id) async {
+//   await Future.delayed(const Duration(milliseconds: 500));
+
+//   return ref.watch(shikimoriRepositoryProvider).getAnimeFranchise(id: id);
+// }, name: 'franchiseProvider');
+
 final similarTitlesAnimeProvider =
     FutureProvider.autoDispose.family<Iterable<Animes>, int>((ref, id) async {
   if (ref.state.isRefreshing) {
@@ -66,20 +73,6 @@ final externalLinksAnimeProvider = FutureProvider.autoDispose
         cancelToken: token,
       );
 }, name: 'externalLinksAnimeProvider');
-
-// final similarAnimesProvider =
-//     FutureProvider.autoDispose.family<Iterable<Animes>, int>((ref, id) async {
-//   await Future.delayed(const Duration(milliseconds: 250));
-
-//   return ref.watch(shikimoriRepositoryProvider).getSimilarAnimes(id: id);
-// }, name: 'similarAnimesProvider');
-
-// final franchiseProvider =
-//     FutureProvider.autoDispose.family<Franchise, int>((ref, id) async {
-//   await Future.delayed(const Duration(milliseconds: 500));
-
-//   return ref.watch(shikimoriRepositoryProvider).getAnimeFranchise(id: id);
-// }, name: 'franchiseProvider');
 
 final titleInfoPageProvider = ChangeNotifierProvider.autoDispose
     .family<TitleInfoPageController, int>((ref, id) {

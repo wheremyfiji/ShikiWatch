@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../../constants/config.dart';
 import '../../../../domain/models/anime.dart' as a;
@@ -24,8 +25,8 @@ class AnimeScreenshots extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            TextButton(
-              onPressed: () {
+            InkWell(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -36,9 +37,35 @@ class AnimeScreenshots extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Ещё'), // Показать все
+              child: Text(
+                'Больше',
+                style: context.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.theme.colorScheme.primary,
+                ),
+                // style: TextStyle(
+                //   color: context.theme.colorScheme.primary,
+                // ),
+              ),
             ),
+            // TextButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => AnimeMomentsPage(
+            //           id: data.id ?? 0,
+            //           name: data.russian ?? data.name ?? '',
+            //         ),
+            //       ),
+            //     );
+            //   },
+            //   child: const Text('Ещё'), // Показать все
+            // ),
           ],
+        ),
+        const SizedBox(
+          height: 8,
         ),
         LayoutBuilder(
           builder: (ctx, constr) {

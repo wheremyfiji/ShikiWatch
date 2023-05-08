@@ -8,18 +8,19 @@ import 'package:intl/intl.dart';
 import 'package:shikidev/src/utils/extensions/string_ext.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../../domain/models/anime.dart';
+//import '../../../domain/models/anime.dart';
 import '../../../domain/models/shiki_comment.dart';
 import '../../providers/comments_provider.dart';
 import '../../widgets/cool_chip.dart';
 
 class CommentsPage extends ConsumerWidget {
-  final Anime anime;
-  const CommentsPage({super.key, required this.anime});
+  //final Anime anime;
+  final int topicId;
+  const CommentsPage({super.key, required this.topicId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(commentsPageProvider(anime.topicId!));
+    final controller = ref.watch(commentsPageProvider(topicId));
 
     return Scaffold(
       body: NestedScrollView(
@@ -28,7 +29,7 @@ class CommentsPage extends ConsumerWidget {
             SliverAppBar.large(
               forceElevated: innerBoxIsScrolled,
               stretch: true,
-              title: const Text('Комментарии'),
+              title: const Text('Обсуждение'),
             ),
           ];
         },
@@ -39,7 +40,7 @@ class CommentsPage extends ConsumerWidget {
           child: CustomScrollView(
             slivers: [
               SliverPadding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 sliver: PagedSliverList<int, ShikiComment>(
                   pagingController: controller.pageController,
                   builderDelegate: PagedChildBuilderDelegate<ShikiComment>(

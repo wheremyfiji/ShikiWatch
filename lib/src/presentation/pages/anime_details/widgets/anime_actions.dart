@@ -12,6 +12,8 @@ class AnimeActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int? topicId = anime.topicId;
+
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -43,19 +45,21 @@ class AnimeActionsWidget extends StatelessWidget {
             ),
             Expanded(
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          CommentsPage(
-                        anime: anime,
-                      ),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
-                },
+                onPressed: (topicId == null || topicId == 0)
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                CommentsPage(
+                              topicId: topicId,
+                            ),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
+                          ),
+                        );
+                      },
                 child: Column(
                   children: const [
                     Icon(Icons.topic), //chat

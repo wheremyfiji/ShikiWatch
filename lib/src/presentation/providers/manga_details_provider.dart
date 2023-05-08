@@ -8,7 +8,22 @@ import '../../data/data_sources/manga_data_src.dart';
 import '../../data/repositories/manga_repo.dart';
 import '../../domain/models/external_link.dart';
 import '../../domain/models/manga_ranobe.dart';
+import '../../domain/models/manga_short.dart';
+import '../../domain/models/related_title.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
+
+final relatedTitlesMangaProvider = FutureProvider.autoDispose
+    .family<Iterable<RelatedTitle>, int>((ref, id) async {
+  ref.cacheFor();
+
+  final token = ref.cancelToken();
+
+  await Future.delayed(const Duration(milliseconds: 250));
+
+  return ref
+      .read(mangaDataSourceProvider)
+      .getRelatedTitles(id: id, cancelToken: token);
+}, name: 'relatedTitlesMangaProvider');
 
 final externalLinksMangaProvider = FutureProvider.autoDispose
     .family<Iterable<ExternalLink>, int>((ref, id) async {
@@ -25,6 +40,22 @@ final externalLinksMangaProvider = FutureProvider.autoDispose
         cancelToken: token,
       );
 }, name: 'externalLinksMangaProvider');
+
+final similarTitlesMangaProvider = FutureProvider.autoDispose
+    .family<Iterable<MangaShort>, int>((ref, id) async {
+  if (ref.state.isRefreshing) {
+    await ref.debounce();
+  }
+
+  ref.cacheFor();
+
+  final token = ref.cancelToken();
+
+  return ref.read(mangaDataSourceProvider).getSimilar(
+        id: id,
+        cancelToken: token,
+      );
+}, name: 'similarTitlesMangaProvider');
 
 final mangaDetailsPageProvider = ChangeNotifierProvider.autoDispose
     .family<MangaDetailsPageController, int>((ref, id) {

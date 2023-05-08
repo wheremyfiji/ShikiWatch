@@ -41,7 +41,7 @@ class AnimeCard extends StatelessWidget {
         child: InkWell(
           onTap: () {
             FocusScope.of(context).unfocus();
-            context.goNamed(
+            context.pushNamed(
               'library_anime',
               params: <String, String>{
                 'id': (data.anime?.id!).toString(),
@@ -50,10 +50,7 @@ class AnimeCard extends StatelessWidget {
             );
             //context.push('/library/${data.anime?.id!}', extra: data.anime);
           },
-          //onLongPress: () => log('onLongPress'),
           child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.stretch,
-            //mainAxisSize: MainAxisSize.min,
             children: [
               //Hero(
               //  tag: data.anime?.id ?? 0,
@@ -69,11 +66,9 @@ class AnimeCard extends StatelessWidget {
               ),
               //),
               Padding(
-                //padding: const EdgeInsets.fromLTRB(6, 6, 6, 8),
                 padding: const EdgeInsets.fromLTRB(6, 6, 6, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  //mainAxisSize: MainAxisSize.min,
                   children: [
                     //FittedBox(
                     //  child:
@@ -86,7 +81,6 @@ class AnimeCard extends StatelessWidget {
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      //style: Theme.of(context).textTheme.titleSmall,
                       style: const TextStyle(
                         //letterSpacing: 0.0,
                         fontSize: 12.0,

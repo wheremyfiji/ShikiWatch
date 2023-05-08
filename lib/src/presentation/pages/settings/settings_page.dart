@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:git_info/git_info.dart';
+//import 'package:git_info/git_info.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:extended_image/extended_image.dart' as extended_image;
 import 'package:path_provider/path_provider.dart';
+import 'package:shikidev/src/services/secure_storage/secure_storage_service.dart';
 import 'package:shikidev/src/utils/extensions/theme_mode.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -60,18 +61,52 @@ class SettingsPage extends ConsumerWidget {
             stretch: true,
             title: const Text('Настройки'),
           ),
-          // SliverToBoxAdapter(
-          //   child: SettingsGroup(
-          //     title: 'Аккаунт',
-          //     options: [
-          //       SettingsOption(
-          //         title: 'Выйти из аккаунта',
-          //         subtitle: 'Очистить текущую авторизацию',
-          //         onTap: () {},
-          //       ),
-          //     ],
-          //   ),
-          // ),
+          SliverToBoxAdapter(
+            child: SettingsGroup(
+              title: 'Аккаунт',
+              options: [
+                SettingsOption(
+                  title: 'Выйти из аккаунта',
+                  subtitle: 'Очистить текущую авторизацию',
+                  onTap: () async {
+                    bool? dialogValue = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Выйти из аккаунта?'),
+                        //content: const Text(''),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Отмена'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Выйти'),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (dialogValue == null || !dialogValue) {
+                      return;
+                    }
+
+                    await extended_image.clearDiskCachedImages();
+                    extended_image.clearMemoryImageCache();
+                    await SecureStorageService.instance.deleteAll();
+                    if (context.mounted) {
+                      context.scaffoldMessenger.showSnackBar(
+                        const SnackBar(
+                          content: Text('Перезапустите приложение'),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
           SliverToBoxAdapter(
             child: SettingsGroup(
               title: 'Внешний вид',
@@ -285,7 +320,9 @@ class SettingsPage extends ConsumerWidget {
                 //     showSnackBar(context, 'Обновлений не найдено');
                 //   },
                 // ),
-                const GitCommitWidget(),
+
+                //const GitCommitWidget(),
+
                 SettingsOption(
                   title: 'Лицензии',
                   subtitle: 'Лицензии с открытым исходным кодом',
@@ -536,41 +573,41 @@ class VersionWidget extends ConsumerWidget {
   }
 }
 
-class GitCommitWidget extends StatelessWidget {
-  const GitCommitWidget({super.key});
+// class GitCommitWidget extends StatelessWidget {
+//   const GitCommitWidget({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<GitInformation>(
-      future: GitInfo.get(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final commitBranch = snapshot.data?.branch ?? '';
-          final commitHash = snapshot.data?.hash;
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureBuilder<GitInformation>(
+//       future: GitInfo.get(),
+//       builder: (context, snapshot) {
+//         if (snapshot.hasData) {
+//           final commitBranch = snapshot.data?.branch ?? '';
+//           final commitHash = snapshot.data?.hash;
 
-          if (commitHash == null) {
-            return const SizedBox.shrink();
-          }
+//           if (commitHash == null) {
+//             return const SizedBox.shrink();
+//           }
 
-          return SettingsOption(
-            title: 'Открыть коммит',
-            subtitle: '$commitBranch | ${commitHash.substring(0, 7)}',
-            onTap: commitHash == ''
-                ? null
-                : () {
-                    launchUrlString(
-                      'https://github.com/wheremyfiji/ShikiWatch/commit/$commitHash',
-                      //mode: LaunchMode.externalApplication,
-                    );
-                  },
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
-  }
-}
+//           return SettingsOption(
+//             title: 'Открыть коммит',
+//             subtitle: '$commitBranch | ${commitHash.substring(0, 7)}',
+//             onTap: commitHash == ''
+//                 ? null
+//                 : () {
+//                     launchUrlString(
+//                       'https://github.com/wheremyfiji/ShikiWatch/commit/$commitHash',
+//                       //mode: LaunchMode.externalApplication,
+//                     );
+//                   },
+//           );
+//         } else {
+//           return const SizedBox.shrink();
+//         }
+//       },
+//     );
+//   }
+// }
 
 class WindowsDeviceInfoWidget extends ConsumerWidget {
   const WindowsDeviceInfoWidget({super.key});

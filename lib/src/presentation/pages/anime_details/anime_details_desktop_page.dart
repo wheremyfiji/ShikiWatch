@@ -918,37 +918,37 @@ class AnimeRelatedTitlesWidget extends ConsumerWidget {
                 //     ),
                 //   ),
                 // ),
-                title: Text(
-                  dataList[index].title?.russian ?? '',
-                ),
-                subtitle: Text(
-                    // '${dataList[index].relationRussian} • ${dataList[index].title?.kind} • ${dataList[index].title?.airedOn}'),
-                    '${dataList[index].relationRussian} • ${getKind(dataList[index].title?.kind ?? '')} • ${dataList[index].title?.airedOn}'),
+                // title: Text(
+                //   dataList[index].title?.russian ?? '',
+                // ),
+                // subtitle: Text(
+                //     // '${dataList[index].relationRussian} • ${dataList[index].title?.kind} • ${dataList[index].title?.airedOn}'),
+                //     '${dataList[index].relationRussian} • ${getKind(dataList[index].title?.kind ?? '')} • ${dataList[index].title?.airedOn}'),
               );
-              return Row(
-                children: [
-                  Text(dataList[index].title?.kind ?? ''),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(dataList[index].title?.airedOn ?? ''),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    dataList[index].title?.russian ?? '',
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(dataList[index].relationRussian ?? ''),
-                ],
-              );
-              return Text(
-                dataList[index].title?.russian ??
-                    dataList[index].relation ??
-                    '',
-              );
+              // return Row(
+              //   children: [
+              //     Text(dataList[index].title?.kind ?? ''),
+              //     const SizedBox(
+              //       width: 4,
+              //     ),
+              //     Text(dataList[index].title?.airedOn ?? ''),
+              //     const SizedBox(
+              //       width: 4,
+              //     ),
+              //     Text(
+              //       dataList[index].title?.russian ?? '',
+              //     ),
+              //     const SizedBox(
+              //       width: 4,
+              //     ),
+              //     Text(dataList[index].relationRussian ?? ''),
+              //   ],
+              // );
+              // return Text(
+              //   dataList[index].title?.russian ??
+              //       dataList[index].relation ??
+              //       '',
+              // );
               // return Text(
               //   dataList[index].relationRussian ?? dataList[index].relation ?? '',
               // );

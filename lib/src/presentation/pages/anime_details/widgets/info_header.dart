@@ -167,8 +167,9 @@ class AnimeInfoHeader extends StatelessWidget {
                         height: 2,
                       ),
                       Text(
-                          '${getStatus(data.status!)} • ${getKind(data.kind!)} • $rating',
-                          textAlign: TextAlign.start),
+                        '${getStatus(data.status!)} • ${getKind(data.kind!)} • $rating',
+                        textAlign: TextAlign.start,
+                      ),
                       const SizedBox(
                         height: 2,
                       ),

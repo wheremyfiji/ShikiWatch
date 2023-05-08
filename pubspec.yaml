@@ -25,7 +25,7 @@ dependencies:
 
   # new dep
   version: ^3.0.2
-  git_info: ^1.1.2
+  #git_info: ^1.1.2
   bottom_sheet: ^3.1.2
   infinite_scroll_pagination: ^3.2.0
   flutter_bbcode: ^1.4.0
@@ -110,10 +110,10 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  assets:
-  - assets/shiki-studios-filtered-sorted.json
-  - .git/
-  - .git/refs/heads/
+  # assets:
+  # - assets/shiki-studios-filtered-sorted.json
+  # - .git/
+  # - .git/refs/heads/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

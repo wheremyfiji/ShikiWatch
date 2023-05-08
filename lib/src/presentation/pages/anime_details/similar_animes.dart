@@ -94,7 +94,7 @@ class SimilarAnimesPage extends ConsumerWidget {
             );
           },
           error: (err, stack) => CustomErrorWidget(err.toString(),
-              () => ref.refresh(externalLinksAnimeProvider(animeId))),
+              () => ref.refresh(similarTitlesAnimeProvider(animeId))),
           loading: () => const Center(
             child: CircularProgressIndicator(),
           ),
