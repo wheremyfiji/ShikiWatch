@@ -12,7 +12,7 @@ class ContinueDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context, false),
           child: const Text("Нет"),
         ),
-        TextButton(
+        FilledButton(
           onPressed: () => Navigator.pop(context, true),
           child: const Text("Да"),
         ),

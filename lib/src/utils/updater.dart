@@ -132,7 +132,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
               onPressed: () => Navigator.pop(context),
               child: const Text('Позже'),
             ),
-            OutlinedButton(
+            FilledButton(
               onPressed: () {
                 launchUrlString(
                   url ??
@@ -162,7 +162,7 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
             title: const Text('Критическое обновление'),
             content: Text(content),
             actions: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () {
                   launchUrlString(
                     url ??

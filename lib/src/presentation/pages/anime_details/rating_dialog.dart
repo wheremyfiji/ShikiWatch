@@ -14,7 +14,7 @@ class RatingDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context, false),
           child: const Text('Назад'),
         ),
-        TextButton(
+        FilledButton(
           onPressed: () => Navigator.pop(context, true),
           child: const Text('Подтвердить'),
         ),

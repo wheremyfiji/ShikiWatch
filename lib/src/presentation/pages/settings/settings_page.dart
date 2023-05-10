@@ -80,7 +80,7 @@ class SettingsPage extends ConsumerWidget {
                               onPressed: () => Navigator.pop(context, false),
                               child: const Text('Отмена'),
                             ),
-                            TextButton(
+                            FilledButton(
                               onPressed: () => Navigator.pop(context, true),
                               child: const Text('Выйти'),
                             ),
@@ -99,7 +99,7 @@ class SettingsPage extends ConsumerWidget {
                         context.scaffoldMessenger.showSnackBar(
                           const SnackBar(
                             content: Text('Перезапустите приложение'),
-                            duration: Duration(seconds: 3),
+                            duration: Duration(seconds: 5),
                           ),
                         );
                       }
@@ -229,7 +229,7 @@ class SettingsPage extends ConsumerWidget {
                           TextButton(
                               onPressed: () => Navigator.pop(context),
                               child: const Text("Отмена")),
-                          TextButton(
+                          FilledButton(
                               onPressed: () => clearIsar()
                                   .then((_) => Navigator.pop(context)),
                               child: const Text("Удалить")),
