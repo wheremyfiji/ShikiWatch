@@ -61,52 +61,53 @@ class SettingsPage extends ConsumerWidget {
             stretch: true,
             title: const Text('Настройки'),
           ),
-          SliverToBoxAdapter(
-            child: SettingsGroup(
-              title: 'Аккаунт',
-              options: [
-                SettingsOption(
-                  title: 'Выйти из аккаунта',
-                  subtitle: 'Очистить текущую авторизацию',
-                  onTap: () async {
-                    bool? dialogValue = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Выйти из аккаунта?'),
-                        //content: const Text(''),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Отмена'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: const Text('Выйти'),
-                          ),
-                        ],
-                      ),
-                    );
-
-                    if (dialogValue == null || !dialogValue) {
-                      return;
-                    }
-
-                    await extended_image.clearDiskCachedImages();
-                    extended_image.clearMemoryImageCache();
-                    await SecureStorageService.instance.deleteAll();
-                    if (context.mounted) {
-                      context.scaffoldMessenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('Перезапустите приложение'),
-                          duration: Duration(seconds: 3),
+          if (SecureStorageService.instance.token != '')
+            SliverToBoxAdapter(
+              child: SettingsGroup(
+                title: 'Аккаунт',
+                options: [
+                  SettingsOption(
+                    title: 'Выйти из аккаунта',
+                    subtitle: 'Очистить текущую авторизацию',
+                    onTap: () async {
+                      bool? dialogValue = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Выйти из аккаунта?'),
+                          //content: const Text(''),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Отмена'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Выйти'),
+                            ),
+                          ],
                         ),
                       );
-                    }
-                  },
-                ),
-              ],
+
+                      if (dialogValue == null || !dialogValue) {
+                        return;
+                      }
+
+                      await extended_image.clearDiskCachedImages();
+                      extended_image.clearMemoryImageCache();
+                      await SecureStorageService.instance.deleteAll();
+                      if (context.mounted) {
+                        context.scaffoldMessenger.showSnackBar(
+                          const SnackBar(
+                            content: Text('Перезапустите приложение'),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
           SliverToBoxAdapter(
             child: SettingsGroup(
               title: 'Внешний вид',

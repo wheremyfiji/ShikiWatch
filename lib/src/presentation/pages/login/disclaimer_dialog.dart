@@ -8,13 +8,13 @@ class DisclaimerDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text('Дисклеймер'),
       content: const Text(
-          'Весь контент, представленный в приложении, предназначен для бесплатного домашнего ознакомительного просмотра.\n\nАвтор приложения никак не связан с размещением и распространением контента.'),
+          'Весь контент, представленный в приложении, предназначен для бесплатного, домашнего, ознакомительного просмотра.\n\nАвтор приложения никак не связан с размещением и распространением контента.'),
       actions: [
-        ElevatedButton(
+        TextButton(
           onPressed: () => Navigator.pop(context, false),
           child: const Text('Отмена'),
         ),
-        ElevatedButton(
+        FilledButton(
           onPressed: () => Navigator.pop(context, true),
           child: const Text('Продолжить'),
         ),
