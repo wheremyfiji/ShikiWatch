@@ -7,8 +7,8 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import '../../../domain/models/animes.dart';
 import '../../providers/explore_page_provider.dart';
 import '../../widgets/anime_card.dart';
-import '../../widgets/custom_card_button.dart';
 import '../../widgets/error_widget.dart';
+import 'widgets/explore_actions.dart';
 
 class ExplorePage extends ConsumerWidget {
   const ExplorePage({super.key});
@@ -37,62 +37,10 @@ class ExplorePage extends ConsumerWidget {
         body: CustomScrollView(
           key: const PageStorageKey<String>('HomePage'),
           slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            const SliverPadding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: CustomCardButton(
-                            label: 'Топ аниме',
-                            onTap: () {},
-                            icon: Icons.movie_rounded,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: CustomCardButton(
-                            label: 'Топ манги',
-                            onTap: () {},
-                            icon: Icons.menu_book_rounded,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: CustomCardButton(
-                            label: 'Случайное',
-                            onTap: () {},
-                            icon: Icons.shuffle_rounded,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: CustomCardButton(
-                            label: 'Календарь',
-                            onTap: () {},
-                            icon: Icons.calendar_month_rounded,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                child: ExploreActions(),
               ),
             ),
             SliverPadding(
