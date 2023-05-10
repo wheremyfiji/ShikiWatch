@@ -268,6 +268,18 @@ class _MangaUserRateBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(
+      updateMangaRateButtonProvider,
+      (_, state) => state.whenOrNull(
+        error: (error, stackTrace) {
+          Navigator.of(context).pop();
+          showErrorSnackBar(
+            ctx: context,
+            msg: error.toString(),
+          );
+        },
+      ),
+    );
     final rateState = ref.watch(updateMangaRateButtonProvider);
     final isLoading = rateState is AsyncLoading<void>;
 
@@ -1004,7 +1016,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка создания отметки', s);
+      state = AsyncValue.error('Ошибка обновления отметки', s);
     } finally {
       state = const AsyncValue.data(null);
     }
@@ -1050,7 +1062,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка создания отметки', s);
+      state = AsyncValue.error('Ошибка удаления отметки', s);
     } finally {
       state = const AsyncValue.data(null);
     }

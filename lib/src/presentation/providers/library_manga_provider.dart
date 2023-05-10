@@ -117,7 +117,7 @@ class LibraryMangaTabController with ChangeNotifier {
     }
 
     final itemIndex = manga.asData!.value
-        .indexWhere((element) => element.anime!.id == mangaId);
+        .indexWhere((element) => element.manga!.id == mangaId);
 
     if (itemIndex == -1) {
       return;
