@@ -12,7 +12,6 @@ import '../../data/repositories/http_service.dart';
 import '../../data/repositories/cache_storage_repo.dart';
 
 import '../../utils/target_platform.dart';
-import 'interceptors/cache_interceptor.dart';
 import 'interceptors/request_interceptor.dart';
 import 'interceptors/refresh_token_interceptor.dart';
 
@@ -58,7 +57,7 @@ class DioHttpService implements HttpService {
       ],
     ));
 
-    dio.interceptors.add(CacheInterceptor(storageService));
+    //dio.interceptors.add(CacheInterceptor(storageService));
     dio.interceptors.add(RefreshTokenInterceptor(dio));
     dio.interceptors.add(RequestInterceptors(dio));
 
