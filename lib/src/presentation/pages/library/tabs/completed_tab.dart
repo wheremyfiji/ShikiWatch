@@ -55,7 +55,8 @@ class CompletedTab extends ConsumerWidget {
                       ),
                     ],
                     SliverPadding(
-                      padding: const EdgeInsets.all(0.0),
+                      //padding: const EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
                       sliver: SliverGrid(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {

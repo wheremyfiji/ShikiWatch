@@ -52,12 +52,11 @@ class WatchingTab extends ConsumerWidget {
                     ),
                   ],
                   SliverPadding(
-                    padding: const EdgeInsets.all(0.0),
+                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
                     sliver: SliverGrid(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           data.sort((a, b) {
-                            // выбор типа сортировки через настройки
                             String adate = a.updatedAt!;
                             String bdate = b.updatedAt!;
                             return -adate.compareTo(bdate);

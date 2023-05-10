@@ -54,40 +54,45 @@ class RewatchingTab extends ConsumerWidget {
                         ),
                       ),
                     ],
-                    SliverGrid(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          data.sort((a, b) {
-                            String adate = a.updatedAt!;
-                            String bdate = b.updatedAt!;
-                            return -adate.compareTo(bdate);
-                          });
-                          final sortedData = controller.searchAnimes.isEmpty &&
-                                  controller.textEditingController.text.isEmpty
-                              ? data
-                              : controller.searchAnimes;
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            data.sort((a, b) {
+                              String adate = a.updatedAt!;
+                              String bdate = b.updatedAt!;
+                              return -adate.compareTo(bdate);
+                            });
+                            final sortedData =
+                                controller.searchAnimes.isEmpty &&
+                                        controller
+                                            .textEditingController.text.isEmpty
+                                    ? data
+                                    : controller.searchAnimes;
 
-                          if (sortedData.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
+                            if (sortedData.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
 
-                          final model = sortedData[index];
+                            final model = sortedData[index];
 
-                          return Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: AnimeCard(model),
-                          );
-                        },
-                        childCount: controller.searchAnimes.isEmpty
-                            ? data.length
-                            : controller.searchAnimes.length,
-                      ),
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        crossAxisSpacing: 0,
-                        mainAxisSpacing: 0,
-                        maxCrossAxisExtent: 150, //150
-                        mainAxisExtent: 220, //220
+                            return Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: AnimeCard(model),
+                            );
+                          },
+                          childCount: controller.searchAnimes.isEmpty
+                              ? data.length
+                              : controller.searchAnimes.length,
+                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          crossAxisSpacing: 0,
+                          mainAxisSpacing: 0,
+                          maxCrossAxisExtent: 150, //150
+                          mainAxisExtent: 220, //220
+                        ),
                       ),
                     ),
                   ],
