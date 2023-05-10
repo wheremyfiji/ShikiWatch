@@ -70,14 +70,15 @@ class SimilarAnimesPage extends ConsumerWidget {
               shrinkWrap: false,
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.all(8.0),
+                  //padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
                   sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final anime = data.toList()[index];
 
                         return Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                           child: AnimeTileExp(anime),
                         );
                       },
