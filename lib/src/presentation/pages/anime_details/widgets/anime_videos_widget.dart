@@ -23,20 +23,17 @@ class AnimeVideosMobileWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // const TextButton(
-            //   onPressed: null,
-            //   child: Text('Ещё'),
+
+            // InkWell(
+            //   onTap: () {},
+            //   child: Text(
+            //     'Больше',
+            //     style: context.textTheme.bodyLarge?.copyWith(
+            //       fontWeight: FontWeight.bold,
+            //       color: context.theme.colorScheme.primary,
+            //     ),
+            //   ),
             // ),
-            InkWell(
-              onTap: () {},
-              child: Text(
-                'Больше',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: context.theme.colorScheme.primary,
-                ),
-              ),
-            ),
           ],
         ),
         const SizedBox(
