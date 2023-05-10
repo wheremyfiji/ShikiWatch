@@ -77,10 +77,7 @@ class RewatchingTab extends ConsumerWidget {
 
                             final model = sortedData[index];
 
-                            return Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: AnimeCard(model),
-                            );
+                            return AnimeCard(model);
                           },
                           childCount: controller.searchAnimes.isEmpty
                               ? data.length

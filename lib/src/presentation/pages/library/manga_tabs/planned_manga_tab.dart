@@ -73,10 +73,7 @@ class PlannedMangaTab extends ConsumerWidget {
 
                           final model = sortedData[index];
 
-                          return Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: MangaCardWidget(model),
-                          );
+                          return MangaCardWidget(model);
                         },
                         childCount: controller.searchResult.isEmpty
                             ? data.length

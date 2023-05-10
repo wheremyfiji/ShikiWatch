@@ -24,99 +24,104 @@ class MangaCardWidget extends StatelessWidget {
     final updateDT = DateTime.parse(data.updatedAt!).toLocal();
     final createString = DateFormat('yyyy-MM-dd в HH:mm').format(createDT);
     final updateString = DateFormat('yyyy-MM-dd в HH:mm').format(updateDT);
-    return Material(
-      surfaceTintColor: Colors.transparent,
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      shadowColor: Colors.transparent,
-      child: Tooltip(
-        waitDuration: TargetP.instance.isDesktop
-            ? const Duration(seconds: 1)
-            : const Duration(milliseconds: 0),
-        message: 'Изменено: $updateString\nСоздано: $createString',
-        child: InkWell(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-            context.pushNamed(
-              'library_manga',
-              params: <String, String>{
-                'id': (data.manga?.id!).toString(),
-              },
-              extra: data.manga,
-            );
-          },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: ImageWithShimmerWidget(
-                  imageUrl:
-                      AppConfig.staticUrl + (data.manga?.image?.original ?? ''),
-                  width: 120,
-                  height: 150,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      child: Material(
+        surfaceTintColor: Colors.transparent,
+        color: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        clipBehavior: Clip.antiAlias,
+        shadowColor: Colors.transparent,
+        child: Tooltip(
+          waitDuration: TargetP.instance.isDesktop
+              ? const Duration(seconds: 1)
+              : const Duration(milliseconds: 0),
+          message: 'Изменено: $updateString\nСоздано: $createString',
+          child: InkWell(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              context.pushNamed(
+                'library_manga',
+                params: <String, String>{
+                  'id': (data.manga?.id!).toString(),
+                },
+                extra: data.manga,
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: ImageWithShimmerWidget(
+                      imageUrl: AppConfig.staticUrl +
+                          (data.manga?.image?.original ?? ''),
+                      width: 120,
+                      height: 150,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Text(
-                (data.manga?.russian == ''
-                        ? data.manga?.name
-                        : data.manga?.russian) ??
-                    '',
-                maxLines: 2,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(
+                  height: 4,
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                getKind(data.manga?.kind ?? ''),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Theme.of(context).textTheme.bodySmall!.color,
+                Text(
+                  (data.manga?.russian == ''
+                          ? data.manga?.name
+                          : data.manga?.russian) ??
+                      '',
+                  maxLines: 2,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              )
-              // Column(
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //     Text(
-              //       (data.manga?.russian == ''
-              //               ? data.manga?.name
-              //               : data.manga?.russian) ??
-              //           '',
-              //       maxLines: 2,
-              //       textAlign: TextAlign.center,
-              //       overflow: TextOverflow.ellipsis,
-              //       style: const TextStyle(
-              //         fontSize: 12.0,
-              //         fontWeight: FontWeight.w500,
-              //       ),
-              //     ),
-              //     const SizedBox(height: 4),
-              //     Text(
-              //       getKind(data.manga?.kind ?? ''),
-              //       maxLines: 1,
-              //       overflow: TextOverflow.ellipsis,
-              //       textAlign: TextAlign.center,
-              //       style: TextStyle(
-              //         fontSize: 10,
-              //         color: Theme.of(context).textTheme.bodySmall!.color,
-              //       ),
-              //     )
-              //   ],
-              // ),
-            ],
+                const SizedBox(height: 2),
+                Text(
+                  getKind(data.manga?.kind ?? ''),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Theme.of(context).textTheme.bodySmall!.color,
+                  ),
+                )
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   children: [
+                //     Text(
+                //       (data.manga?.russian == ''
+                //               ? data.manga?.name
+                //               : data.manga?.russian) ??
+                //           '',
+                //       maxLines: 2,
+                //       textAlign: TextAlign.center,
+                //       overflow: TextOverflow.ellipsis,
+                //       style: const TextStyle(
+                //         fontSize: 12.0,
+                //         fontWeight: FontWeight.w500,
+                //       ),
+                //     ),
+                //     const SizedBox(height: 4),
+                //     Text(
+                //       getKind(data.manga?.kind ?? ''),
+                //       maxLines: 1,
+                //       overflow: TextOverflow.ellipsis,
+                //       textAlign: TextAlign.center,
+                //       style: TextStyle(
+                //         fontSize: 10,
+                //         color: Theme.of(context).textTheme.bodySmall!.color,
+                //       ),
+                //     )
+                //   ],
+                // ),
+              ],
+            ),
           ),
         ),
       ),
@@ -134,73 +139,79 @@ class MangaCardEx extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      shadowColor: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.pushNamed(
-          'library_manga',
-          params: <String, String>{
-            'id': (data.id!).toString(),
-          },
-          extra: data,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      child: Material(
+        color: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: ImageWithShimmerWidget(
-                imageUrl: AppConfig.staticUrl + (data.image?.original ?? ''),
-                width: 120,
-                height: 150,
-              ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(0),
-              child: Text(
-                (data.russian == '' ? data.name : data.russian) ?? '',
-                textAlign: TextAlign.start,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${getKind(data.kind ?? '')} • ${data.score}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Theme.of(context).textTheme.bodySmall!.color,
+        clipBehavior: Clip.antiAlias,
+        shadowColor: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.pushNamed(
+            'library_manga',
+            params: <String, String>{
+              'id': (data.id!).toString(),
+            },
+            extra: data,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: ImageWithShimmerWidget(
+                    imageUrl:
+                        AppConfig.staticUrl + (data.image?.original ?? ''),
+                    width: 120,
+                    height: 150,
                   ),
                 ),
-                const Icon(
-                  Icons.star,
-                  size: 10,
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(0),
+                child: Text(
+                  (data.russian == '' ? data.name : data.russian) ?? '',
+                  textAlign: TextAlign.start,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${getKind(data.kind ?? '')} • ${data.score}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Theme.of(context).textTheme.bodySmall!.color,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.star,
+                    size: 10,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
