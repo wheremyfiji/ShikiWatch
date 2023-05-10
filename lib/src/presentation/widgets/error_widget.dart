@@ -6,7 +6,7 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 const errorFaces = [
   'Σ(ಠ_ಠ)',
   '(˘･_･˘)',
-  '＼（〇_ｏ）／',
+//'＼（〇_ｏ）／',
   '(┬┬﹏┬┬)',
   '(´･ω･`)?',
 ];
