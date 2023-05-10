@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
+import '../../../domain/enums/search_state.dart';
 import '../../../domain/models/animes.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../providers/anime_search_provider.dart';
@@ -11,21 +12,9 @@ import '../../../domain/models/animes.dart' as models;
 import '../../widgets/error_widget.dart';
 import '../../widgets/image_with_shimmer.dart';
 
-final searchTypeProvider = StateProvider<int>((ref) {
-  return 0;
-});
-
-// const List<String> searchTypeList = <String>[
-//   'Аниме',
-//   'Манга',
-//   'Ранобэ',
-// ];
-
-const List<String> searchHintList = <String>[
-  'Поиск аниме',
-  'Поиск манги',
-  'Поиск ранобэ',
-];
+final searchTypeProvider = StateProvider<SearchState>((ref) {
+  return SearchState.anime;
+}, name: 'searchTypeProvider');
 
 class AnimeSearchPage extends ConsumerWidget {
   const AnimeSearchPage({Key? key}) : super(key: key);
@@ -44,7 +33,6 @@ class AnimeSearchPage extends ConsumerWidget {
       },
       child: Scaffold(
         floatingActionButton: FloatingActionButton.extended(
-          //onPressed: null,
           onPressed: () => context.pushNamed('search_filters'),
           icon: const Icon(Icons.tune), //tune  filter_list  done_all
           label: const Text('Фильтры'),
@@ -62,8 +50,7 @@ class AnimeSearchPage extends ConsumerWidget {
               filled: false,
               //contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
-              //hintText: 'Поиск аниме',
-              hintText: searchHintList[seatchTypeState],
+              hintText: seatchTypeState.searchHintText,
               suffixIcon: controller.textEditingController.text.isNotEmpty
                   ? GestureDetector(
                       child: const Icon(Icons.close),
@@ -184,31 +171,23 @@ class SearchTypeWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(searchTypeProvider);
-    return PopupMenuButton<int>(
+    return PopupMenuButton<SearchState>(
       tooltip: 'Выбор поиска',
       initialValue: state,
-      // child: Card(
-      //   child: Padding(
-      //     padding: const EdgeInsets.all(8.0),
-      //     child: Text(
-      //       searchTypeList[state],
-      //     ),
-      //   ),
-      // ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       itemBuilder: (context) => const [
         PopupMenuItem(
-          value: 0,
+          value: SearchState.anime,
           child: Text('Аниме'),
         ),
         PopupMenuItem(
-          value: 1,
+          value: SearchState.manga,
           child: Text('Манга'),
         ),
         PopupMenuItem(
-          value: 2,
+          value: SearchState.ranobe,
           child: Text('Ранобэ'),
         ),
       ],
@@ -236,7 +215,6 @@ class AnimeSearchHistory extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
