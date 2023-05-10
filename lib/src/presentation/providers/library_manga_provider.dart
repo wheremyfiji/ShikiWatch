@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shikidev/src/domain/models/manga_short.dart';
 
 import '../../data/data_sources/user_data_src.dart';
 import '../../data/repositories/user_repo.dart';
@@ -75,75 +76,71 @@ class LibraryMangaTabController with ChangeNotifier {
     fetch();
   }
 
-  // void addAnime({
-  //   required int animeId,
-  //   required Animes anime,
-  //   int? score,
-  //   int? episodes,
-  //   int? rewatches,
-  //   String? status,
-  //   required int rateId,
-  //   required String createdAt,
-  //   required String updatedAt,
-  // }) {
-  //   if (animes.asData == null) {
-  //     return;
-  //   }
-  //   //UserAnimeRates rate = UserAnimeRates();
-  //   animes.asData!.value.add(
-  //     UserAnimeRates(
-  //       id: rateId,
-  //       score: score,
-  //       status: status,
-  //       episodes: episodes,
-  //       rewatches: rewatches,
-  //       createdAt: createdAt,
-  //       updatedAt: updatedAt,
-  //       anime: anime,
-  //     ),
-  //   );
-  //   notifyListeners();
-  // }
+  void addManga({
+    required MangaShort mangaInfo,
+    int? score,
+    int? chapters,
+    int? rewatches,
+    String? status,
+    required int rateId,
+    required String createdAt,
+    required String updatedAt,
+  }) {
+    if (manga.asData == null) {
+      return;
+    }
+    manga.asData!.value.add(
+      UserAnimeRates(
+          id: rateId,
+          score: score,
+          status: status,
+          episodes: null,
+          chapters: chapters,
+          rewatches: rewatches,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          manga: mangaInfo,
+          anime: null),
+    );
+    notifyListeners();
+  }
 
-  // void updateAnime({
-  //   required int animeId,
-  //   //required String? currentStatus,
-  //   required String updatedAt,
-  //   //String? status,
-  //   int? score,
-  //   int? episodes,
-  //   int? rewatches,
-  // }) {
-  //   if (animes.asData == null) {
-  //     return;
-  //   }
+  void updateManga({
+    required int mangaId,
+    required String updatedAt,
+    int? score,
+    int? chapters,
+    int? rewatches,
+  }) {
+    if (manga.asData == null) {
+      return;
+    }
 
-  //   final itemIndex = animes.asData!.value
-  //       .indexWhere((element) => element.anime!.id == animeId);
+    final itemIndex = manga.asData!.value
+        .indexWhere((element) => element.anime!.id == mangaId);
 
-  //   if (itemIndex == -1) {
-  //     return;
-  //   }
+    if (itemIndex == -1) {
+      return;
+    }
 
-  //   final item = animes.asData!.value[itemIndex];
-  //   item.updatedAt = updatedAt;
-  //   if (score != null) item.score = score;
-  //   if (episodes != null) item.episodes = episodes;
-  //   if (rewatches != null) item.rewatches = rewatches;
+    final item = manga.asData!.value[itemIndex];
+    item.updatedAt = updatedAt;
+    if (score != null) item.score = score;
+    if (chapters != null) item.chapters = chapters;
+    if (rewatches != null) item.rewatches = rewatches;
 
-  //   notifyListeners();
-  // }
+    notifyListeners();
+  }
 
-  // void deleteAnime(int animeId) {
-  //   if (animes.asData == null) {
-  //     return;
-  //   }
-  //   //animes = const AsyncValue.loading();
-  //   animes.asData!.value.removeWhere((element) {
-  //     return element.anime!.id == animeId;
-  //   });
-  //   notifyListeners();
-  // }
+  void deleteManga(int mangaId) {
+    if (manga.asData == null) {
+      return;
+    }
+    manga.asData!.value.removeWhere((element) {
+      return element.manga!.id == mangaId;
+    });
+    notifyListeners();
+  }
 
   void onSearchChanged(String query) {
     searchResult = manga.value!.where((title) {

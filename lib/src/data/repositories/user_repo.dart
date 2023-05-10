@@ -44,10 +44,7 @@ abstract class UserRepository {
     required int userId,
     required int targetId,
     required String status,
-    required int score,
-    required int episodes,
-    int? rewatches,
-    String? text,
+    String? targetType = 'Anime',
   });
 
   Future<UserRateResp> updateUserRate({
@@ -56,6 +53,7 @@ abstract class UserRepository {
     String? status,
     int? score,
     int? episodes,
+    int? chapters,
     int? rewatches,
     String? text,
   });

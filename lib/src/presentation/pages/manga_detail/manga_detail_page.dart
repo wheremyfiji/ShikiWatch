@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shikidev/src/presentation/widgets/manga_card.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-import 'package:shikidev/src/utils/extensions/string_ext.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+import 'package:shikidev/src/utils/extensions/string_ext.dart';
 
 import '../../../domain/models/manga_ranobe.dart';
 import '../../../domain/models/manga_short.dart';
@@ -16,6 +15,7 @@ import '../../providers/manga_details_provider.dart';
 import '../../widgets/error_widget.dart';
 import '../../widgets/header_appbar_title.dart';
 import '../../widgets/image_with_shimmer.dart';
+import '../../widgets/manga_card.dart';
 import '../../widgets/title_description.dart';
 import '../anime_details/related_titles.dart';
 import '../comments/comments_page.dart';
@@ -37,17 +37,69 @@ class MangaDetailPage extends ConsumerWidget {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      floatingActionButton: mangaDetails.title.isLoading
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: () {},
-              label: mangaDetails.title.value?.userRate == null
-                  ? const Text('Добавить в список')
-                  : const Text('Изменить'),
-              icon: mangaDetails.title.value?.userRate == null
-                  ? const Icon(Icons.add)
-                  : const Icon(Icons.edit),
-            ),
+      floatingActionButton: mangaDetails.title.when(
+        data: (data) {
+          return FloatingActionButton.extended(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width >= 700
+                      ? 700
+                      : double.infinity,
+                ),
+                useRootNavigator: true,
+                isScrollControlled: true,
+                enableDrag: false,
+                useSafeArea: true,
+                elevation: 0,
+                builder: (context) {
+                  return MangaUserRateBottomSheet(
+                    manga: manga,
+                    data: data,
+                  );
+                },
+              );
+            },
+            label: data.userRate == null
+                ? const Text('Добавить в список')
+                : const Text('Изменить'),
+            icon: data.userRate == null
+                ? const Icon(Icons.add)
+                : const Icon(Icons.edit),
+          );
+        },
+        error: (error, stackTrace) => null,
+        loading: () => null,
+      ),
+      // floatingActionButton: mangaDetails.title.isLoading
+      //     ? null
+      //     : FloatingActionButton.extended(
+      //         onPressed: () {
+      //           showModalBottomSheet<void>(
+      //             context: context,
+      //             constraints: BoxConstraints(
+      //               maxWidth: MediaQuery.of(context).size.width >= 700
+      //                   ? 700
+      //                   : double.infinity,
+      //             ),
+      //             useRootNavigator: true,
+      //             isScrollControlled: true,
+      //             enableDrag: false,
+      //             useSafeArea: true,
+      //             elevation: 0,
+      //             builder: (context) {
+      //               return const MangaUserRateBottomSheet();
+      //             },
+      //           );
+      //         },
+      //         label: mangaDetails.title.value?.userRate == null
+      //             ? const Text('Добавить в список')
+      //             : const Text('Изменить'),
+      //         icon: mangaDetails.title.value?.userRate == null
+      //             ? const Icon(Icons.add)
+      //             : const Icon(Icons.edit),
+      //       ),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(mangaDetailsPageProvider(manga.id!)),
         child: CustomScrollView(

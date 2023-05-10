@@ -10,6 +10,7 @@ import '../../domain/models/external_link.dart';
 import '../../domain/models/manga_ranobe.dart';
 import '../../domain/models/manga_short.dart';
 import '../../domain/models/related_title.dart';
+import '../../domain/models/user_rate.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 
 final relatedTitlesMangaProvider = FutureProvider.autoDispose
@@ -84,6 +85,82 @@ class MangaDetailsPageController extends ChangeNotifier {
   }
 
   List<int> statsValues = [];
+
+  void addRate({
+    required int rateId,
+    required String updatedAt,
+    required String status,
+    int? score,
+    int? chapters,
+    int? rewatches,
+    String? text,
+    String? textHtml,
+    String? createdAt,
+  }) {
+    if (title.asData == null) {
+      return;
+    }
+
+    final UserRate rate = UserRate();
+
+    rate.id = rateId;
+    rate.createdAt = createdAt;
+    rate.updatedAt = updatedAt;
+    rate.score = score;
+    rate.chapters = chapters;
+    rate.rewatches = rewatches;
+    rate.status = status;
+    rate.text = text;
+    rate.textHtml = textHtml;
+
+    title.asData!.value.userRate = rate;
+
+    notifyListeners();
+  }
+
+  void updateRate({
+    required int rateId,
+    required String updatedAt,
+    required String status,
+    int? score,
+    int? chapters,
+    int? rewatches,
+    String? text,
+    String? textHtml,
+    String? createdAt,
+  }) {
+    if (title.asData == null) {
+      return;
+    }
+
+    final rate = title.asData!.value.userRate;
+
+    if (rate == null) {
+      return;
+    }
+
+    rate.id = rateId;
+    rate.createdAt = createdAt;
+    rate.updatedAt = updatedAt;
+    rate.score = score;
+    rate.chapters = chapters;
+    rate.rewatches = rewatches;
+    rate.status = status;
+    rate.text = text;
+    rate.textHtml = textHtml;
+
+    notifyListeners();
+  }
+
+  void deleteRate() {
+    if (title.asData == null) {
+      return;
+    }
+
+    title.asData!.value.userRate = null;
+
+    notifyListeners();
+  }
 
   void fillVariables(MangaRanobe data) {
     if (data.ratesStatusesStats != null) {

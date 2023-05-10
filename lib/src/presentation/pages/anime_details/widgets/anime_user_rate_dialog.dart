@@ -124,10 +124,6 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
           userId: int.parse(SecureStorageService.instance.userId),
           targetId: widget.data.id!,
           status: selectedStatus ?? '',
-          score: currentScore ?? 0,
-          episodes: progress,
-          rewatches: rewatches,
-          text: _controller.text,
         );
     switch (rate.status) {
       case 'watching':

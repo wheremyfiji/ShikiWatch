@@ -533,10 +533,6 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             userId: int.parse(SecureStorageService.instance.userId),
             targetId: anime.id!,
             status: selectedStatus,
-            score: currentScore,
-            episodes: progress,
-            rewatches: rewatches,
-            text: text,
           );
 
       switch (rate.status) {
@@ -679,6 +675,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             text: text,
           );
 
+      /// если статус изменился
       if (rate.status != initStatus) {
         switch (initStatus) {
           case 'watching':

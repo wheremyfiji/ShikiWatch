@@ -109,10 +109,7 @@ class UserDataSource implements UserRepository {
     required int userId,
     required int targetId,
     required String status,
-    required int score,
-    required int episodes,
-    int? rewatches,
-    String? text,
+    String? targetType = 'Anime',
   }) async {
     final response = await dio.post(
       'v2/user_rates',
@@ -120,12 +117,8 @@ class UserDataSource implements UserRepository {
         'user_rate': {
           'user_id': userId,
           'target_id': targetId,
-          'target_type': 'Anime',
+          'target_type': targetType,
           'status': status,
-          'score': score,
-          'episodes': episodes,
-          'rewatches': rewatches,
-          'text': text,
         },
       },
       options: Options(
@@ -145,6 +138,7 @@ class UserDataSource implements UserRepository {
     String? status,
     int? score,
     int? episodes,
+    int? chapters,
     int? rewatches,
     String? text,
   }) async {
@@ -155,6 +149,7 @@ class UserDataSource implements UserRepository {
           if (status != null) 'status': status,
           if (score != null) 'score': score,
           if (episodes != null) 'episodes': episodes,
+          if (chapters != null) 'chapters': chapters,
           if (rewatches != null) 'rewatches': rewatches,
           if (text != null) 'text': text,
         },
