@@ -114,9 +114,9 @@ class ScaffoldWithNavBar extends StatelessWidget {
                     label: 'Библиотека',
                   ),
                   NavigationDestination(
-                    icon: Icon(Icons.search_outlined),
-                    selectedIcon: Icon(Icons.search),
-                    label: 'Поиск',
+                    icon: Icon(Icons.home_outlined),
+                    selectedIcon: Icon(Icons.home_rounded),
+                    label: 'Главная',
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.account_circle_outlined),
