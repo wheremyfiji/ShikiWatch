@@ -6,6 +6,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:loggy/loggy.dart';
@@ -73,7 +74,14 @@ void initApp() async {
   Paint.enableDithering = true;
 
   if (Platform.isAndroid) {
-    await setOptimalDisplayMode();
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+      final t = await FlutterDisplayMode.preferred;
+      debugPrint('refresh rate: ${t.refreshRate}');
+    } on PlatformException catch (e) {
+      debugPrint('setHighRefreshRate failed ($e)');
+    }
+    //await setOptimalDisplayMode();
     // https://stackoverflow.com/a/64184001
     //GestureBinding.instance.resamplingEnabled = true;
   }
@@ -200,64 +208,24 @@ class ProviderLogger extends ProviderObserver {
   }
 }
 
-Future<void> setOptimalDisplayMode() async {
-  final List<DisplayMode> supported = await FlutterDisplayMode.supported;
-  final DisplayMode active = await FlutterDisplayMode.active;
+// Future<void> setOptimalDisplayMode() async {
+//   final List<DisplayMode> supported = await FlutterDisplayMode.supported;
+//   final DisplayMode active = await FlutterDisplayMode.active;
 
-  final List<DisplayMode> sameResolution = supported
-      .where(
-        (DisplayMode m) => m.width == active.width && m.height == active.height,
-      )
-      .toList()
-    ..sort(
-      (DisplayMode a, DisplayMode b) => b.refreshRate.compareTo(a.refreshRate),
-    );
-
-  final DisplayMode mostOptimalMode =
-      sameResolution.isNotEmpty ? sameResolution.first : active;
-
-  await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
-
-  final t = await FlutterDisplayMode.preferred;
-  debugPrint('refresh rate: ${t.refreshRate}');
-}
-
-// Future<void> main() async {
-//   try {
-//     debugPrint(Platform.operatingSystemVersion);
-//   } catch (exception, stacktrace) {
-//     debugPrint(exception.toString());
-//     debugPrint(stacktrace.toString());
-//   }
-
-//   WidgetsFlutterBinding.ensureInitialized();
-
-//   Intl.defaultLocale = 'ru_RU';
-//   initializeDateFormatting("ru_RU", null);
-
-//   TargetP.init();
-
-//   Loggy.initLoggy(
-//     logPrinter: const PrettyPrinter(),
-//   );
-
-//   Paint.enableDithering = true;
-
-//   if (!TargetP.instance.isDesktop) {
-//     AppMetrica.runZoneGuarded(
-//       () async {
-//         if (Platform.isAndroid) {
-//           await setOptimalDisplayMode();
-//           //await FlutterDisplayMode.setHighRefreshRate();
-//         }
-//         await runMain();
-//       },
+//   final List<DisplayMode> sameResolution = supported
+//       .where(
+//         (DisplayMode m) => m.width == active.width && m.height == active.height,
+//       )
+//       .toList()
+//     ..sort(
+//       (DisplayMode a, DisplayMode b) => b.refreshRate.compareTo(a.refreshRate),
 //     );
-//   } else {
-//     if (Platform.isWindows) {
-//       await windowManager.ensureInitialized();
-//       DiscordRPC.initialize();
-//     }
-//     await runMain();
-//   }
+
+//   final DisplayMode mostOptimalMode =
+//       sameResolution.isNotEmpty ? sameResolution.first : active;
+
+//   await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
+
+//   final t = await FlutterDisplayMode.preferred;
+//   debugPrint('refresh rate: ${t.refreshRate}');
 // }
