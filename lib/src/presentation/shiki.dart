@@ -47,6 +47,16 @@ class ShikiApp extends ConsumerWidget {
             title: appTitle,
             themeMode: themeMode,
             routerConfig: router,
+            builder: (context, child) {
+              /// fix high textScaleFactor
+              final mediaQuery = MediaQuery.of(context);
+              final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+              return MediaQuery(
+                data: mediaQuery.copyWith(textScaleFactor: scale),
+                child: child!,
+              );
+            },
           ),
         );
       },
