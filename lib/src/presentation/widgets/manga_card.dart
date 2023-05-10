@@ -49,6 +49,7 @@ class MangaCardWidget extends StatelessWidget {
             );
           },
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
@@ -59,38 +60,62 @@ class MangaCardWidget extends StatelessWidget {
                   height: 150,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(6, 6, 6, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      (data.manga?.russian == ''
-                              ? data.manga?.name
-                              : data.manga?.russian) ??
-                          '',
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      getKind(data.manga?.kind ?? ''),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
-                      ),
-                    )
-                  ],
+              const SizedBox(
+                height: 4,
+              ),
+              Text(
+                (data.manga?.russian == ''
+                        ? data.manga?.name
+                        : data.manga?.russian) ??
+                    '',
+                maxLines: 2,
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
+              const SizedBox(height: 2),
+              Text(
+                getKind(data.manga?.kind ?? ''),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Theme.of(context).textTheme.bodySmall!.color,
+                ),
+              )
+              // Column(
+              //   crossAxisAlignment: CrossAxisAlignment.center,
+              //   children: [
+              //     Text(
+              //       (data.manga?.russian == ''
+              //               ? data.manga?.name
+              //               : data.manga?.russian) ??
+              //           '',
+              //       maxLines: 2,
+              //       textAlign: TextAlign.center,
+              //       overflow: TextOverflow.ellipsis,
+              //       style: const TextStyle(
+              //         fontSize: 12.0,
+              //         fontWeight: FontWeight.w500,
+              //       ),
+              //     ),
+              //     const SizedBox(height: 4),
+              //     Text(
+              //       getKind(data.manga?.kind ?? ''),
+              //       maxLines: 1,
+              //       overflow: TextOverflow.ellipsis,
+              //       textAlign: TextAlign.center,
+              //       style: TextStyle(
+              //         fontSize: 10,
+              //         color: Theme.of(context).textTheme.bodySmall!.color,
+              //       ),
+              //     )
+              //   ],
+              // ),
             ],
           ),
         ),
@@ -125,6 +150,7 @@ class MangaCardEx extends StatelessWidget {
           extra: data,
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
@@ -141,7 +167,7 @@ class MangaCardEx extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               child: Text(
                 (data.russian == '' ? data.name : data.russian) ?? '',
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.start,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -162,7 +188,7 @@ class MangaCardEx extends StatelessWidget {
                   '${getKind(data.kind ?? '')} • ${data.score}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 10,
                     color: Theme.of(context).textTheme.bodySmall!.color,

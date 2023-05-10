@@ -50,6 +50,7 @@ class AnimeCard extends StatelessWidget {
             );
           },
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //Hero(
               //  tag: data.anime?.id ?? 0,
@@ -61,54 +62,52 @@ class AnimeCard extends StatelessWidget {
                       AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
                   width: 120,
                   height: 150,
+                  fit: BoxFit.cover,
                 ),
               ),
               //),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(6, 6, 6, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      (data.anime?.russian == ''
-                              ? data.anime?.name
-                              : data.anime?.russian) ??
-                          '',
-                      //data.anime?.russian ?? data.anime?.name ?? '',
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                      ),
+              const SizedBox(
+                height: 4,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (data.anime?.russian == ''
+                            ? data.anime?.name
+                            : data.anime?.russian) ??
+                        '',
+                    maxLines: 2,
+                    textAlign: TextAlign.start,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: 4),
-                    data.anime?.status == 'released'
-                        ? Text(
-                            '${data.episodes.toString()} из ${data.anime?.episodes.toString()} эп.',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color:
-                                  Theme.of(context).textTheme.bodySmall!.color,
-                            ),
-                          )
-                        : Text(
-                            '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп.',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color:
-                                  Theme.of(context).textTheme.bodySmall!.color,
-                            ),
+                  ),
+                  const SizedBox(height: 2),
+                  data.anime?.status == 'released'
+                      ? Text(
+                          '${data.episodes.toString()} из ${data.anime?.episodes.toString()} эп.',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).textTheme.bodySmall!.color,
                           ),
-                  ],
-                ),
+                        )
+                      : Text(
+                          '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп.',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).textTheme.bodySmall!.color,
+                          ),
+                        ),
+                ],
               ),
             ],
           ),
@@ -138,6 +137,7 @@ class AnimeTileExp extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push('/explore/${data.id!}', extra: data),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
@@ -154,7 +154,7 @@ class AnimeTileExp extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               child: Text(
                 (data.russian == '' ? data.name : data.russian) ?? '',
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -167,7 +167,7 @@ class AnimeTileExp extends StatelessWidget {
               height: 2,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -175,7 +175,7 @@ class AnimeTileExp extends StatelessWidget {
                   '${getKind(data.kind ?? '')} • ${data.score}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 10,
                     color: Theme.of(context).textTheme.bodySmall!.color,
