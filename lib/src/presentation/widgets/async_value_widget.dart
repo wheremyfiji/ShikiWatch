@@ -26,11 +26,6 @@ class AsyncValueWidget<T> extends StatelessWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) {
         return CustomErrorWidget(error.toString(), retry);
-        return Center(
-          child: Text(
-            error.toString(),
-          ),
-        );
       },
     );
   }

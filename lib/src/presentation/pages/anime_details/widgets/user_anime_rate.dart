@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/utils/utils.dart';
 
@@ -40,223 +38,223 @@ class UserAnimeRateWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = useState(false);
+    //final isLoading = useState(false);
 
-    Future<void> incRate() async {
-      final rate = await ref.read(userDataSourceProvider).incrementUserRate(
-          token: SecureStorageService.instance.token,
-          rateId: data.userRate!.id!);
+    // Future<void> incRate() async {
+    //   final rate = await ref.read(userDataSourceProvider).incrementUserRate(
+    //       token: SecureStorageService.instance.token,
+    //       rateId: data.userRate!.id!);
 
-      if (rate.status != data.userRate!.status) {
-        switch (data.userRate!.status) {
-          case 'watching':
-            {
-              ref.read(watchingTabPageProvider).deleteAnime(data.id!);
-            }
-            break;
-          case 'planned':
-            {
-              ref.read(plannedTabPageProvider).deleteAnime(data.id!);
-              break;
-            }
-          case 'completed':
-            {
-              ref.read(completedTabPageProvider).deleteAnime(data.id!);
-            }
-            break;
-          case 'rewatching':
-            {
-              ref.read(rewatchingTabPageProvider).deleteAnime(data.id!);
-            }
-            break;
-          case 'on_hold':
-            {
-              ref.read(onHoldTabPageProvider).deleteAnime(data.id!);
-            }
-            break;
-          case 'dropped':
-            {
-              ref.read(droppedTabPageProvider).deleteAnime(data.id!);
-            }
-            break;
-          default:
-        }
-        switch (rate.status) {
-          case 'watching':
-            {
-              ref.read(watchingTabPageProvider).addAnime(
-                    animeId: data.id!,
-                    anime: anime,
-                    rateId: rate.id!,
-                    createdAt: rate.createdAt!,
-                    updatedAt: rate.updatedAt!,
-                    score: rate.score,
-                    episodes: rate.episodes,
-                    rewatches: rate.rewatches,
-                    status: rate.status,
-                  );
-            }
-            break;
-          case 'planned':
-            {
-              ref.read(plannedTabPageProvider).addAnime(
-                    animeId: data.id!,
-                    anime: anime,
-                    rateId: rate.id!,
-                    createdAt: rate.createdAt!,
-                    updatedAt: rate.updatedAt!,
-                    score: rate.score,
-                    episodes: rate.episodes,
-                    rewatches: rate.rewatches,
-                    status: rate.status,
-                  );
-              break;
-            }
-          case 'completed':
-            {
-              ref.read(completedTabPageProvider).addAnime(
-                    animeId: data.id!,
-                    anime: anime,
-                    rateId: rate.id!,
-                    createdAt: rate.createdAt!,
-                    updatedAt: rate.updatedAt!,
-                    score: rate.score,
-                    episodes: rate.episodes,
-                    rewatches: rate.rewatches,
-                    status: rate.status,
-                  );
-            }
-            break;
-          case 'rewatching':
-            {
-              ref.read(rewatchingTabPageProvider).addAnime(
-                    animeId: data.id!,
-                    anime: anime,
-                    rateId: rate.id!,
-                    createdAt: rate.createdAt!,
-                    updatedAt: rate.updatedAt!,
-                    score: rate.score,
-                    episodes: rate.episodes,
-                    rewatches: rate.rewatches,
-                    status: rate.status,
-                  );
-            }
-            break;
-          case 'on_hold':
-            {
-              ref.read(onHoldTabPageProvider).addAnime(
-                    animeId: data.id!,
-                    anime: anime,
-                    rateId: rate.id!,
-                    createdAt: rate.createdAt!,
-                    updatedAt: rate.updatedAt!,
-                    score: rate.score,
-                    episodes: rate.episodes,
-                    rewatches: rate.rewatches,
-                    status: rate.status,
-                  );
-            }
-            break;
-          case 'dropped':
-            {
-              ref.read(droppedTabPageProvider).addAnime(
-                    animeId: data.id!,
-                    anime: anime,
-                    rateId: rate.id!,
-                    createdAt: rate.createdAt!,
-                    updatedAt: rate.updatedAt!,
-                    score: rate.score,
-                    episodes: rate.episodes,
-                    rewatches: rate.rewatches,
-                    status: rate.status,
-                  );
-            }
-            break;
-          default:
-        }
-        ref.read(titleInfoPageProvider(data.id!)).addRate(
-              rateId: rate.id!,
-              updatedAt: rate.updatedAt!,
-              status: rate.status!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-              text: rate.text,
-              textHtml: rate.textHtml,
-              createdAt: rate.createdAt,
-            );
-        return;
-      }
-      //switch (selectedStatus ?? initStatus) {
-      switch (rate.status) {
-        case 'watching':
-          ref.read(watchingTabPageProvider).updateAnime(
-                animeId: data.id!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-              );
-          break;
-        case 'planned':
-          ref.read(plannedTabPageProvider).updateAnime(
-                animeId: data.id!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-              );
-          break;
-        case 'completed':
-          ref.read(completedTabPageProvider).updateAnime(
-                animeId: data.id!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-              );
-          break;
-        case 'rewatching':
-          ref.read(rewatchingTabPageProvider).updateAnime(
-                animeId: data.id!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-              );
-          break;
-        case 'on_hold':
-          ref.read(onHoldTabPageProvider).updateAnime(
-                animeId: data.id!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-              );
-          break;
-        case 'dropped':
-          ref.read(droppedTabPageProvider).updateAnime(
-                animeId: data.id!,
-                updatedAt: rate.updatedAt!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-              );
-          break;
-        default:
-      }
-      ref.read(titleInfoPageProvider(data.id!)).addRate(
-            rateId: rate.id!,
-            updatedAt: rate.updatedAt!,
-            status: rate.status!,
-            score: rate.score,
-            episodes: rate.episodes,
-            rewatches: rate.rewatches,
-            text: rate.text,
-            textHtml: rate.textHtml,
-            createdAt: rate.createdAt,
-          );
-    }
+    //   if (rate.status != data.userRate!.status) {
+    //     switch (data.userRate!.status) {
+    //       case 'watching':
+    //         {
+    //           ref.read(watchingTabPageProvider).deleteAnime(data.id!);
+    //         }
+    //         break;
+    //       case 'planned':
+    //         {
+    //           ref.read(plannedTabPageProvider).deleteAnime(data.id!);
+    //           break;
+    //         }
+    //       case 'completed':
+    //         {
+    //           ref.read(completedTabPageProvider).deleteAnime(data.id!);
+    //         }
+    //         break;
+    //       case 'rewatching':
+    //         {
+    //           ref.read(rewatchingTabPageProvider).deleteAnime(data.id!);
+    //         }
+    //         break;
+    //       case 'on_hold':
+    //         {
+    //           ref.read(onHoldTabPageProvider).deleteAnime(data.id!);
+    //         }
+    //         break;
+    //       case 'dropped':
+    //         {
+    //           ref.read(droppedTabPageProvider).deleteAnime(data.id!);
+    //         }
+    //         break;
+    //       default:
+    //     }
+    //     switch (rate.status) {
+    //       case 'watching':
+    //         {
+    //           ref.read(watchingTabPageProvider).addAnime(
+    //                 animeId: data.id!,
+    //                 anime: anime,
+    //                 rateId: rate.id!,
+    //                 createdAt: rate.createdAt!,
+    //                 updatedAt: rate.updatedAt!,
+    //                 score: rate.score,
+    //                 episodes: rate.episodes,
+    //                 rewatches: rate.rewatches,
+    //                 status: rate.status,
+    //               );
+    //         }
+    //         break;
+    //       case 'planned':
+    //         {
+    //           ref.read(plannedTabPageProvider).addAnime(
+    //                 animeId: data.id!,
+    //                 anime: anime,
+    //                 rateId: rate.id!,
+    //                 createdAt: rate.createdAt!,
+    //                 updatedAt: rate.updatedAt!,
+    //                 score: rate.score,
+    //                 episodes: rate.episodes,
+    //                 rewatches: rate.rewatches,
+    //                 status: rate.status,
+    //               );
+    //           break;
+    //         }
+    //       case 'completed':
+    //         {
+    //           ref.read(completedTabPageProvider).addAnime(
+    //                 animeId: data.id!,
+    //                 anime: anime,
+    //                 rateId: rate.id!,
+    //                 createdAt: rate.createdAt!,
+    //                 updatedAt: rate.updatedAt!,
+    //                 score: rate.score,
+    //                 episodes: rate.episodes,
+    //                 rewatches: rate.rewatches,
+    //                 status: rate.status,
+    //               );
+    //         }
+    //         break;
+    //       case 'rewatching':
+    //         {
+    //           ref.read(rewatchingTabPageProvider).addAnime(
+    //                 animeId: data.id!,
+    //                 anime: anime,
+    //                 rateId: rate.id!,
+    //                 createdAt: rate.createdAt!,
+    //                 updatedAt: rate.updatedAt!,
+    //                 score: rate.score,
+    //                 episodes: rate.episodes,
+    //                 rewatches: rate.rewatches,
+    //                 status: rate.status,
+    //               );
+    //         }
+    //         break;
+    //       case 'on_hold':
+    //         {
+    //           ref.read(onHoldTabPageProvider).addAnime(
+    //                 animeId: data.id!,
+    //                 anime: anime,
+    //                 rateId: rate.id!,
+    //                 createdAt: rate.createdAt!,
+    //                 updatedAt: rate.updatedAt!,
+    //                 score: rate.score,
+    //                 episodes: rate.episodes,
+    //                 rewatches: rate.rewatches,
+    //                 status: rate.status,
+    //               );
+    //         }
+    //         break;
+    //       case 'dropped':
+    //         {
+    //           ref.read(droppedTabPageProvider).addAnime(
+    //                 animeId: data.id!,
+    //                 anime: anime,
+    //                 rateId: rate.id!,
+    //                 createdAt: rate.createdAt!,
+    //                 updatedAt: rate.updatedAt!,
+    //                 score: rate.score,
+    //                 episodes: rate.episodes,
+    //                 rewatches: rate.rewatches,
+    //                 status: rate.status,
+    //               );
+    //         }
+    //         break;
+    //       default:
+    //     }
+    //     ref.read(titleInfoPageProvider(data.id!)).addRate(
+    //           rateId: rate.id!,
+    //           updatedAt: rate.updatedAt!,
+    //           status: rate.status!,
+    //           score: rate.score,
+    //           episodes: rate.episodes,
+    //           rewatches: rate.rewatches,
+    //           text: rate.text,
+    //           textHtml: rate.textHtml,
+    //           createdAt: rate.createdAt,
+    //         );
+    //     return;
+    //   }
+    //   //switch (selectedStatus ?? initStatus) {
+    //   switch (rate.status) {
+    //     case 'watching':
+    //       ref.read(watchingTabPageProvider).updateAnime(
+    //             animeId: data.id!,
+    //             updatedAt: rate.updatedAt!,
+    //             score: rate.score,
+    //             episodes: rate.episodes,
+    //             rewatches: rate.rewatches,
+    //           );
+    //       break;
+    //     case 'planned':
+    //       ref.read(plannedTabPageProvider).updateAnime(
+    //             animeId: data.id!,
+    //             updatedAt: rate.updatedAt!,
+    //             score: rate.score,
+    //             episodes: rate.episodes,
+    //             rewatches: rate.rewatches,
+    //           );
+    //       break;
+    //     case 'completed':
+    //       ref.read(completedTabPageProvider).updateAnime(
+    //             animeId: data.id!,
+    //             updatedAt: rate.updatedAt!,
+    //             score: rate.score,
+    //             episodes: rate.episodes,
+    //             rewatches: rate.rewatches,
+    //           );
+    //       break;
+    //     case 'rewatching':
+    //       ref.read(rewatchingTabPageProvider).updateAnime(
+    //             animeId: data.id!,
+    //             updatedAt: rate.updatedAt!,
+    //             score: rate.score,
+    //             episodes: rate.episodes,
+    //             rewatches: rate.rewatches,
+    //           );
+    //       break;
+    //     case 'on_hold':
+    //       ref.read(onHoldTabPageProvider).updateAnime(
+    //             animeId: data.id!,
+    //             updatedAt: rate.updatedAt!,
+    //             score: rate.score,
+    //             episodes: rate.episodes,
+    //             rewatches: rate.rewatches,
+    //           );
+    //       break;
+    //     case 'dropped':
+    //       ref.read(droppedTabPageProvider).updateAnime(
+    //             animeId: data.id!,
+    //             updatedAt: rate.updatedAt!,
+    //             score: rate.score,
+    //             episodes: rate.episodes,
+    //             rewatches: rate.rewatches,
+    //           );
+    //       break;
+    //     default:
+    //   }
+    //   ref.read(titleInfoPageProvider(data.id!)).addRate(
+    //         rateId: rate.id!,
+    //         updatedAt: rate.updatedAt!,
+    //         status: rate.status!,
+    //         score: rate.score,
+    //         episodes: rate.episodes,
+    //         rewatches: rate.rewatches,
+    //         text: rate.text,
+    //         textHtml: rate.textHtml,
+    //         createdAt: rate.createdAt,
+    //       );
+    // }
 
     if (data.userRate == null) {
       return SizedBox(
@@ -313,148 +311,6 @@ class UserAnimeRateWidget extends HookConsumerWidget {
           ),
         ),
       ),
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Отслеживание',
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                //fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          //mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              foregroundColor: Colors.transparent,
-              //backgroundImage: CachedNetworkImageProvider(imageUrl),
-              foregroundImage:
-                  ExtendedNetworkImageProvider(imageUrl, cache: true),
-              radius: 36,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Text('Статус: ${myRate!.status}'),
-                data.userRate == null
-                    ? const Text(
-                        'Статус: Не смотрю',
-                        maxLines: 1,
-                      )
-                    : Text(
-                        'Статус: ${getRateStatus(data.userRate!.status!)}',
-                        maxLines: 1,
-                      ),
-                data.userRate == null
-                    ? const Text(
-                        'Эпизоды: -',
-                        maxLines: 1,
-                      )
-                    : Text(
-                        'Эпизоды: ${data.userRate!.episodes.toString()}',
-                        maxLines: 1,
-                      ),
-                data.userRate == null
-                    ? const Text(
-                        'Оценка: -',
-                        maxLines: 1,
-                      )
-                    : Text(
-                        'Оценка: ${data.userRate!.score.toString()}',
-                        maxLines: 1,
-                      ),
-                data.userRate == null
-                    ? const Text(
-                        'Пересмотрено: -',
-                        maxLines: 1,
-                      )
-                    : Text(
-                        'Пересмотрено: ${data.userRate!.rewatches.toString()}',
-                        maxLines: 1,
-                      ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  // showDialog(
-                  //   barrierDismissible: false,
-                  //   context: context,
-                  //   builder: (context) {
-                  //     return AnimeUserRateDialog(anime: anime, data: data);
-                  //   },
-                  // );
-
-                  showModalBottomSheet<void>(
-                    context: context,
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width >= 700
-                          ? 700
-                          : double.infinity,
-                    ),
-                    useRootNavigator: true,
-                    isScrollControlled: true,
-                    enableDrag: false,
-                    useSafeArea: true,
-                    elevation: 0,
-                    builder: (context) {
-                      return AnimeUserRateBottomSheet(
-                        data: data,
-                        anime: anime,
-                      );
-                    },
-                  );
-                },
-                child: data.userRate == null
-                    ? const Text('Добавить в список')
-                    : const Text('Изменить'),
-              ),
-            ),
-            // if (data.userRate != null) ...[
-            //   const SizedBox(
-            //     width: 4,
-            //   ),
-            //   IconButton(
-            //     onPressed: isLoading.value
-            //         ? null
-            //         : () async {
-            //             isLoading.value = true;
-            //             await incRate();
-
-            //             // await ref
-            //             //     .read(animeDataSourceProvider)
-            //             //     .incrementUserRate(
-            //             //       token: SecureStorageService.instance.token,
-            //             //       rateId: data.userRate!.id!,
-            //             //     );
-            //             //ref.read(titleInfoPageProvider(data.id!)).fetch(true);
-
-            //             isLoading.value = false;
-            //           },
-            //     icon: const Icon(Icons.exposure_plus_1),
-            //   ),
-            // ],
-          ],
-        ),
-      ],
     );
   }
 

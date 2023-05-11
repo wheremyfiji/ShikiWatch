@@ -1,7 +1,7 @@
 # ShikiWatch
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/wheremyfiji/ShikiWatch)](https://github.com/wheremyfiji/ShikiWatch/releases/latest/) [![GitHub all releases](https://img.shields.io/github/downloads/wheremyfiji/ShikiWatch/total?label=All%20Downloads)](https://github.com/wheremyfiji/ShikiWatch/releases/latest/)
 
-Неофициальное приложение для [Shikimori](https://shikimori.me/) с возможносью онлайн просмотра аниме.
+Неофициальное приложение для [Shikimori](https://shikimori.me/) с возможностью онлайн просмотра аниме.
 
 ### STILL W.I.P.
 

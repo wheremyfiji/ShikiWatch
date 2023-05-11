@@ -2,7 +2,7 @@ sync:
   - flutter clean
   - flutter pub get
 gen:
-  - flutter pub run build_runner build --delete-conflicting-outputs
+  - dart run build_runner build --delete-conflicting-outputs
 test_build:
   - $sync
   - $gen

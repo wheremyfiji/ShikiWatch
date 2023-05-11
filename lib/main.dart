@@ -71,7 +71,7 @@ void initApp() async {
     logPrinter: const PrettyPrinter(),
   );
 
-  Paint.enableDithering = true;
+  //Paint.enableDithering = true;
 
   if (Platform.isAndroid) {
     try {
@@ -207,25 +207,3 @@ class ProviderLogger extends ProviderObserver {
     );
   }
 }
-
-// Future<void> setOptimalDisplayMode() async {
-//   final List<DisplayMode> supported = await FlutterDisplayMode.supported;
-//   final DisplayMode active = await FlutterDisplayMode.active;
-
-//   final List<DisplayMode> sameResolution = supported
-//       .where(
-//         (DisplayMode m) => m.width == active.width && m.height == active.height,
-//       )
-//       .toList()
-//     ..sort(
-//       (DisplayMode a, DisplayMode b) => b.refreshRate.compareTo(a.refreshRate),
-//     );
-
-//   final DisplayMode mostOptimalMode =
-//       sameResolution.isNotEmpty ? sameResolution.first : active;
-
-//   await FlutterDisplayMode.setPreferredMode(mostOptimalMode);
-
-//   final t = await FlutterDisplayMode.preferred;
-//   debugPrint('refresh rate: ${t.refreshRate}');
-// }

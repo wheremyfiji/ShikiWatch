@@ -70,56 +70,6 @@ class UserRateWidget extends StatelessWidget {
         ),
       ),
     );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Отслеживание',
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: Card(
-            margin: EdgeInsets.zero,
-            child: Padding(
-              //padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: Wrap(
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.start,
-                crossAxisAlignment: WrapCrossAlignment.start, //end
-                spacing: 8,
-                runSpacing: 0,
-                children: [
-                  CoolChip(
-                    label: 'Статус: ${getRateStatus(data.userRate!.status!)}',
-                  ),
-                  CoolChip(
-                    label: 'Тома: ${data.userRate!.volumes.toString()}',
-                  ),
-                  CoolChip(
-                    label: 'Главы: ${data.userRate!.chapters.toString()}',
-                  ),
-                  CoolChip(
-                    label: 'Оценка: ${data.userRate!.score.toString()}',
-                  ),
-                  CoolChip(
-                    label: 'Перечитано: ${data.userRate!.rewatches.toString()}',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
 

@@ -291,7 +291,7 @@ class _AnimePlayerDesktopPageState
       streamSd = list.video480!;
       streamLow = list.video720!;
 
-      controller = await VideoController.create(player.handle,
+      controller = await VideoController.create(player,
           enableHardwareAcceleration: true);
 
       await windowManager.setTitle(
@@ -504,10 +504,10 @@ class _AnimePlayerDesktopPageState
             const Align(child: CircularProgressIndicator()),
           if (buffering) const Align(child: CircularProgressIndicator()),
           if (isError)
-            Center(
+            const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   CircularProgressIndicator(),
                   Text('Ошибка воспроизведения'),
                 ],

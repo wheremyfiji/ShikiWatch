@@ -52,6 +52,7 @@ class MangaDetailPage extends ConsumerWidget {
                 isScrollControlled: true,
                 enableDrag: false,
                 useSafeArea: true,
+                //showDragHandle: true,
                 elevation: 0,
                 builder: (context) {
                   return MangaUserRateBottomSheet(
@@ -282,8 +283,8 @@ class MangaActionsWidget extends StatelessWidget {
                     reverseTransitionDuration: Duration.zero,
                   ),
                 ),
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.join_inner),
                     SizedBox(
                       height: 4,
@@ -310,8 +311,8 @@ class MangaActionsWidget extends StatelessWidget {
                           ),
                         );
                       },
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.topic), //chat
                     SizedBox(
                       height: 4,
@@ -331,8 +332,8 @@ class MangaActionsWidget extends StatelessWidget {
                 onPressed: () {
                   _openFullscreenDialog(context);
                 },
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.link),
                     SizedBox(
                       height: 4,
