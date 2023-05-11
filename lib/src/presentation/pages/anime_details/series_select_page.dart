@@ -237,11 +237,12 @@ class SeriesSelectPage extends ConsumerWidget {
                               position: episode?.position,
                               imageUrl: imageUrl,
                               startPosition: sp,
-                              //startPosition: '16:21',
                             );
-                            //context.pushNamed("player", extra: data);
+
+                            // ignore: use_build_context_synchronously
                             GoRouter.of(context)
                                 .pushNamed('player', extra: data);
+                            // ignore: use_build_context_synchronously
                             GoRouter.of(context).addListener(watchRouteChange);
                           }, //запись в бд
                           //title: Text("Серия ${reversedIndex + 1}"),
@@ -330,6 +331,7 @@ class SeriesSelectPage extends ConsumerWidget {
                 ),
               ),
             ),
+            const SliverToBoxAdapter(child: SizedBox(height: 60)),
           ],
         ),
       ),

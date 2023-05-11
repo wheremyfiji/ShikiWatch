@@ -133,17 +133,18 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 2),
-            const Text(
+            Text(
               'Для использования приложения\nнеобходимо войти в аккаунт Shikimori',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
             if (isLoading) ...[
-              Card(
-                margin: const EdgeInsets.all(0),
+              const Card(
+                margin: EdgeInsets.all(0),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.0),
                   child: Column(
-                    children: const [
+                    children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 8),
                       Text('Получение токена..'),
@@ -165,8 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                       auth();
                     }
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Icon(
                         Icons.login_outlined,
                         //size: 32,
@@ -186,8 +187,8 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     context.push('/login/settings');
                   },
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Icon(
                         Icons.settings_outlined,
                         //size: 32,

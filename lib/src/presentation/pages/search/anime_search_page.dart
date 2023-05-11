@@ -5,12 +5,9 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../domain/enums/search_state.dart';
 import '../../../domain/models/animes.dart';
-import '../../../utils/shiki_utils.dart';
 import '../../providers/anime_search_provider.dart';
-import '../../../constants/config.dart';
-import '../../../domain/models/animes.dart' as models;
+import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';
-import '../../widgets/image_with_shimmer.dart';
 
 final searchTypeProvider = StateProvider<SearchState>((ref) {
   return SearchState.anime;
@@ -61,12 +58,12 @@ class AnimeSearchPage extends ConsumerWidget {
                   : null,
             ),
           ),
-          // actions: const [
-          //   Padding(
-          //     padding: EdgeInsets.all(8.0),
-          //     child: SearchTypeWidget(),
-          //   ),
-          // ],
+          actions: const [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SearchTypeWidget(),
+            ),
+          ],
         ),
         body: Builder(
           builder: (context) {
@@ -86,7 +83,7 @@ class AnimeSearchPage extends ConsumerWidget {
               slivers: [
                 if (controller.filterCount.isNotEmpty)
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverToBoxAdapter(
                       child: Text(
                         'Кол-во фильтров: ${controller.filterCount.length}',
@@ -97,7 +94,7 @@ class AnimeSearchPage extends ConsumerWidget {
                     ),
                   ),
                 SliverPadding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   sliver: PagedSliverGrid<int, Animes>(
                     addAutomaticKeepAlives: true,
                     showNewPageErrorIndicatorAsGridChild: false,
@@ -105,15 +102,14 @@ class AnimeSearchPage extends ConsumerWidget {
                     pagingController: controller.pageController,
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 150,
-                      mainAxisExtent: 220,
+                      maxCrossAxisExtent: 140,
+                      childAspectRatio: 0.55,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
                     ),
                     builderDelegate: PagedChildBuilderDelegate<Animes>(
                       itemBuilder: (context, item, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: SearchTile(item),
-                        );
+                        return AnimeTileExp(item);
                       },
                       firstPageErrorIndicatorBuilder: (context) {
                         return CustomErrorWidget(
@@ -270,90 +266,6 @@ class NothingFound extends StatelessWidget {
           'Ничено не найдено',
           style:
               Theme.of(context).textTheme.headlineSmall!.copyWith(fontSize: 16),
-        ),
-      ),
-    );
-  }
-}
-
-class SearchTile extends StatelessWidget {
-  //final Animes data;
-  final models.Animes data;
-
-  const SearchTile(
-    this.data, {
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      shadowColor: Colors.transparent,
-      //margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      child: InkWell(
-        onTap: () => context.push('/explore/${data.id!}', extra: data),
-        child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            //Hero(
-            //  tag: data.id!,
-            //  child:
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: ImageWithShimmerWidget(
-                imageUrl: AppConfig.staticUrl + (data.image?.original ?? ''),
-                width: 120,
-                height: 150,
-              ),
-            ),
-            //),
-            const SizedBox(
-              height: 4,
-            ),
-            Padding(
-              // padding: const EdgeInsets.fromLTRB(6, 6, 6, 2),
-              padding: const EdgeInsets.all(0),
-              child: Text(
-                data.russian ?? data.name ?? '',
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${getKind(data.kind ?? '')} • ${data.score}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Theme.of(context).textTheme.bodySmall!.color,
-                  ),
-                ),
-                const Icon(
-                  Icons.star,
-                  size: 10,
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );

@@ -67,27 +67,26 @@ class SimilarAnimesPage extends ConsumerWidget {
               );
             }
             return CustomScrollView(
-              shrinkWrap: false,
               slivers: [
                 SliverPadding(
-                  //padding: const EdgeInsets.all(8.0),
-                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final anime = data.toList()[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                          child: AnimeTileExp(anime),
-                        );
+                        return AnimeTileExp(anime);
                       },
                       childCount: data.length,
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 150,
-                      mainAxisExtent: 220,
+                      // maxCrossAxisExtent: 150,
+                      // mainAxisExtent: 220,
+                      maxCrossAxisExtent: 140,
+                      childAspectRatio: 0.55,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
                     ),
                   ),
                 ),

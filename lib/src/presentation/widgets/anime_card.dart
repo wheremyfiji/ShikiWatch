@@ -24,132 +24,101 @@ class AnimeCard extends StatelessWidget {
     final updateDT = DateTime.parse(data.updatedAt!).toLocal();
     final createString = DateFormat('yyyy-MM-dd в HH:mm').format(createDT);
     final updateString = DateFormat('yyyy-MM-dd в HH:mm').format(updateDT);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-      child: Material(
-        surfaceTintColor: Colors.transparent,
-        color: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.transparent,
-        child: Tooltip(
-          //showDuration: const Duration(seconds: 2),
-          waitDuration: TargetP.instance.isDesktop
-              ? const Duration(seconds: 1)
-              : const Duration(milliseconds: 0),
-          message: 'Изменено: $updateString\nСоздано: $createString',
-          child: InkWell(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              context.pushNamed(
-                'library_anime',
-                params: <String, String>{
-                  'id': (data.anime?.id!).toString(),
-                },
-                extra: data.anime,
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: ImageWithShimmerWidget(
-                      imageUrl: AppConfig.staticUrl +
-                          (data.anime?.image?.original ?? ''),
-                      width: 120,
-                      height: 150,
-                      fit: BoxFit.cover,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Material(
+          color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          clipBehavior: Clip.antiAlias,
+          shadowColor: Colors.transparent,
+          child: Tooltip(
+            waitDuration: TargetP.instance.isDesktop
+                ? const Duration(seconds: 1)
+                : const Duration(milliseconds: 0),
+            message: 'Изменено: $updateString\nСоздано: $createString',
+            child: InkWell(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                context.pushNamed(
+                  'library_anime',
+                  params: <String, String>{
+                    'id': (data.anime?.id!).toString(),
+                  },
+                  extra: data.anime,
+                );
+              },
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight / 1.4,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: ImageWithShimmerWidget(
+                        imageUrl: AppConfig.staticUrl +
+                            (data.anime?.image?.original ?? ''),
+                      ),
                     ),
                   ),
-                ),
-
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  (data.anime?.russian == ''
-                          ? data.anime?.name
-                          : data.anime?.russian) ??
-                      '',
-                  maxLines: 2,
-                  textAlign: TextAlign.start,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(
+                    height: 4,
                   ),
-                ),
-                const SizedBox(height: 2),
-                data.anime?.status == 'released'
-                    ? Text(
-                        '${data.episodes.toString()} из ${data.anime?.episodes.toString()} эп.',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color,
+                  SizedBox(
+                    width: constraints.maxWidth,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          (data.anime?.russian == ''
+                                  ? data.anime?.name
+                                  : data.anime?.russian) ??
+                              '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      )
-                    : Text(
-                        '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп.',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color,
+                        const SizedBox(
+                          height: 2,
                         ),
-                      ),
-                // Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [
-                //     Text(
-                //       (data.anime?.russian == ''
-                //               ? data.anime?.name
-                //               : data.anime?.russian) ??
-                //           '',
-                //       maxLines: 2,
-                //       textAlign: TextAlign.start,
-                //       overflow: TextOverflow.ellipsis,
-                //       style: const TextStyle(
-                //         fontSize: 12.0,
-                //         fontWeight: FontWeight.w500,
-                //       ),
-                //     ),
-                //     const SizedBox(height: 2),
-                //     data.anime?.status == 'released'
-                //         ? Text(
-                //             '${data.episodes.toString()} из ${data.anime?.episodes.toString()} эп.',
-                //             maxLines: 1,
-                //             overflow: TextOverflow.ellipsis,
-                //             textAlign: TextAlign.start,
-                //             style: TextStyle(
-                //               fontSize: 10,
-                //               color: Theme.of(context).textTheme.bodySmall!.color,
-                //             ),
-                //           )
-                //         : Text(
-                //             '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп.',
-                //             maxLines: 1,
-                //             overflow: TextOverflow.ellipsis,
-                //             textAlign: TextAlign.start,
-                //             style: TextStyle(
-                //               fontSize: 10,
-                //               color: Theme.of(context).textTheme.bodySmall!.color,
-                //             ),
-                //           ),
-                //   ],
-                // ),
-              ],
+                        data.anime?.status == 'released'
+                            ? Text(
+                                '${data.episodes.toString()} из ${data.anime?.episodes.toString()} эп.',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .color,
+                                ),
+                              )
+                            : Text(
+                                '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes.toString()} эп.',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .color,
+                                ),
+                              ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -164,68 +133,75 @@ class AnimeTileExp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      shadowColor: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.push('/explore/${data.id!}', extra: data),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: ImageWithShimmerWidget(
-                  imageUrl: AppConfig.staticUrl + (data.image?.original ?? ''),
-                  width: 120,
-                  height: 150,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            Text(
-              (data.russian == '' ? data.name : data.russian) ?? '',
-              textAlign: TextAlign.left,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12.0,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(
-              height: 2,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Material(
+          color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          clipBehavior: Clip.antiAlias,
+          shadowColor: Colors.transparent,
+          child: InkWell(
+            onTap: () => context.push('/explore/${data.id!}', extra: data),
+            child: Column(
               children: [
-                Text(
-                  '${getKind(data.kind ?? '')} • ${data.score}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: Theme.of(context).textTheme.bodySmall!.color,
+                SizedBox(
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight / 1.4,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: ImageWithShimmerWidget(
+                      imageUrl:
+                          AppConfig.staticUrl + (data.image?.original ?? ''),
+                    ),
                   ),
                 ),
-                const Icon(
-                  Icons.star,
-                  size: 10,
+                const SizedBox(
+                  height: 4,
                 ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        (data.russian == '' ? data.name : data.russian) ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '${getKind(data.kind ?? '')} • ${data.score}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall!.color,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 10,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

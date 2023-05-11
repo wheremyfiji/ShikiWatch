@@ -10,6 +10,18 @@ import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';
 import 'widgets/explore_actions.dart';
 
+List<Color> colorList = [
+  Colors.red,
+  Colors.green,
+  Colors.yellow,
+  Colors.orange,
+  Colors.indigo,
+  Colors.pink,
+  Colors.deepPurple,
+  Colors.deepOrange,
+  Colors.lightGreen,
+];
+
 class ExplorePage extends ConsumerWidget {
   const ExplorePage({super.key});
 
@@ -66,15 +78,17 @@ class ExplorePage extends ConsumerWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: PagedSliverGrid<int, Animes>(
-                //showNoMoreItemsIndicatorAsGridChild: false,
                 showNewPageErrorIndicatorAsGridChild: false,
                 addAutomaticKeepAlives: true,
                 pagingController: controller.pageController,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 150,
-                  mainAxisExtent: 220,
+                  maxCrossAxisExtent: 140, //150
+                  //mainAxisExtent: 230,
+                  childAspectRatio: 0.55,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
                 builderDelegate: PagedChildBuilderDelegate<Animes>(
                   firstPageErrorIndicatorBuilder: (context) {
@@ -90,11 +104,7 @@ class ExplorePage extends ConsumerWidget {
                     );
                   },
                   itemBuilder: (context, item, index) {
-                    return Padding(
-                      //padding: const EdgeInsets.all(8.0),
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: AnimeTileExp(item),
-                    );
+                    return AnimeTileExp(item);
                   },
                 ),
               ),

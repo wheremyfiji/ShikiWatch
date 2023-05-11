@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../../kodik/kodik.dart';
 import '../../../../kodik/models/kodik_anime.dart';
@@ -73,22 +74,16 @@ class StudioSelectPage extends ConsumerWidget {
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
-                        // data.studio?.sort((a, b) {
-                        //   int adate = a.episodesCount!;
-                        //   int bdate = b.episodesCount!;
-                        //   return -adate.compareTo(bdate);
-                        // });
-
                         data.studio?.sort(
                           (a, b) {
-                            final int sortByCourse =
+                            final int sortByEpCount =
                                 -a.episodesCount!.compareTo(b.episodesCount!);
-                            if (sortByCourse == 0) {
-                              final int sortByName =
+                            if (sortByEpCount == 0) {
+                              final int sortByUpdate =
                                   -a.updatedAt!.compareTo(b.updatedAt!);
-                              return sortByName;
+                              return sortByUpdate;
                             }
-                            return sortByCourse;
+                            return sortByEpCount;
                           },
                         );
 
@@ -106,11 +101,6 @@ class StudioSelectPage extends ConsumerWidget {
                                 element?.name ?? '',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
-                                style: const TextStyle(
-                                  //color: Colors.white,
-                                  fontSize: 16,
-                                  //fontWeight: FontWeight.bold,
-                                ),
                               ),
                               subtitle: Text(
                                 'Обновлено: $formattedDate',
@@ -118,13 +108,17 @@ class StudioSelectPage extends ConsumerWidget {
                                 maxLines: 1,
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  //fontWeight: FontWeight.w300,
                                 ),
                               ),
                               trailing: Text(
                                 '${element?.episodesCount} эп.',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
+                                // style: const TextStyle(
+                                //   fontSize: 12,
+                                // ),
+                                style: context.textTheme.bodyMedium
+                                    ?.copyWith(fontSize: 12),
                               ),
                               onTap: () {
                                 Navigator.push(
@@ -160,6 +154,7 @@ class StudioSelectPage extends ConsumerWidget {
                 );
               },
             ),
+            const SliverToBoxAdapter(child: SizedBox(height: 60)),
           ],
         ),
       ),

@@ -497,23 +497,22 @@ class SimilarMangaPage extends ConsumerWidget {
               shrinkWrap: false,
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   sliver: SliverGrid(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final manga = data.toList()[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: MangaCardEx(manga),
-                        );
+                        return MangaCardEx(manga);
                       },
                       childCount: data.length,
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 150,
-                      mainAxisExtent: 220,
+                      maxCrossAxisExtent: 140,
+                      childAspectRatio: 0.55,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
                     ),
                   ),
                 ),

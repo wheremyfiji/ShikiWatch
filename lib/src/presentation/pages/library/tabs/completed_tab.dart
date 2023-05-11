@@ -55,8 +55,7 @@ class CompletedTab extends ConsumerWidget {
                       ),
                     ],
                     SliverPadding(
-                      //padding: const EdgeInsets.all(0.0),
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       sliver: SliverGrid(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
@@ -86,10 +85,10 @@ class CompletedTab extends ConsumerWidget {
                         ),
                         gridDelegate:
                             const SliverGridDelegateWithMaxCrossAxisExtent(
-                          crossAxisSpacing: 0,
-                          mainAxisSpacing: 0,
-                          maxCrossAxisExtent: 150, //150
-                          mainAxisExtent: 220, //220
+                          maxCrossAxisExtent: 140,
+                          childAspectRatio: 0.55,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
                         ),
                       ),
                     ),

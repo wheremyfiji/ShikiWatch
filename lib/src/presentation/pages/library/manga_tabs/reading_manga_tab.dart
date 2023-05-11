@@ -52,12 +52,11 @@ class ReadingMangaTab extends ConsumerWidget {
                     ),
                   ],
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverGrid(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
                           data.sort((a, b) {
-                            // выбор типа сортировки через настройки
                             String adate = a.updatedAt!;
                             String bdate = b.updatedAt!;
                             return -adate.compareTo(bdate);
@@ -73,7 +72,7 @@ class ReadingMangaTab extends ConsumerWidget {
 
                           final model = sortedData[index];
 
-                          return MangaCardWidget(model);
+                          return MangaCard(model);
                         },
                         childCount: controller.searchResult.isEmpty
                             ? data.length
@@ -81,10 +80,10 @@ class ReadingMangaTab extends ConsumerWidget {
                       ),
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(
-                        crossAxisSpacing: 0,
-                        mainAxisSpacing: 0,
-                        maxCrossAxisExtent: 150, //150
-                        mainAxisExtent: 220, //220
+                        maxCrossAxisExtent: 140,
+                        childAspectRatio: 0.55,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                       ),
                     ),
                   ),
