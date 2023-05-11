@@ -13,6 +13,7 @@ import 'package:loggy/loggy.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -88,6 +89,7 @@ void initApp() async {
 
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
+    MediaKit.ensureInitialized();
     DiscordRPC.initialize();
   }
 

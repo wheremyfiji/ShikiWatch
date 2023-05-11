@@ -656,6 +656,7 @@ class _PlayerControlsState extends State<PlayerControls> {
   Duration savedPos = Duration.zero;
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
+  Duration buffer = Duration.zero;
 
   double volume = 0.0;
   bool isMute = false;
@@ -673,6 +674,7 @@ class _PlayerControlsState extends State<PlayerControls> {
     //buffering = widget.player.state.buffering;
     position = widget.player.state.position;
     duration = widget.player.state.duration;
+    buffer = widget.player.state.buffer;
     volume = widget.player.state.volume;
     subscriptions.addAll(
       [
@@ -695,6 +697,12 @@ class _PlayerControlsState extends State<PlayerControls> {
           //print('player volume: $volume');
           setState(() {
             volume = event;
+          });
+        }),
+        widget.player.streams.buffer.listen((event) {
+          //print('player volume: $volume');
+          setState(() {
+            buffer = event;
           });
         }),
         // widget.player.streams.buffering.listen((event) {
@@ -869,14 +877,14 @@ class _PlayerControlsState extends State<PlayerControls> {
               //   ),
               // ),
               IconButton(
-                tooltip: 'Перемотать 30 секунд',
+                tooltip: 'Перемотать 125 секунд',
                 iconSize: 32,
                 color: Colors.white,
                 onPressed: widget.isLoading
                     ? null
                     : () {
                         widget.player.seek(
-                          position + const Duration(seconds: 30),
+                          position + const Duration(seconds: 85),
                         );
                       },
                 icon: const Icon(Icons.forward_30),
@@ -889,6 +897,7 @@ class _PlayerControlsState extends State<PlayerControls> {
           ProgressBar(
             progress: position,
             total: duration,
+            buffered: buffer,
             thumbRadius: 8,
             timeLabelPadding: 4,
             timeLabelTextStyle: const TextStyle(color: Colors.white),
