@@ -199,23 +199,5 @@ class CommentWidget extends StatelessWidget {
         ),
       ),
     );
-
-    return ListTile(
-      isThreeLine: true,
-      leading: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        backgroundImage: ExtendedNetworkImageProvider(
-          comment.user?.avatar ?? '',
-          cache: true,
-        ),
-      ),
-      title: Text(
-        '${comment.user?.nickname}',
-      ),
-      subtitle: Text(
-        '${comment.body}',
-        maxLines: 4,
-      ),
-    );
   }
 }

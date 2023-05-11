@@ -10,18 +10,6 @@ import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';
 import 'widgets/explore_actions.dart';
 
-List<Color> colorList = [
-  Colors.red,
-  Colors.green,
-  Colors.yellow,
-  Colors.orange,
-  Colors.indigo,
-  Colors.pink,
-  Colors.deepPurple,
-  Colors.deepOrange,
-  Colors.lightGreen,
-];
-
 class ExplorePage extends ConsumerWidget {
   const ExplorePage({super.key});
 

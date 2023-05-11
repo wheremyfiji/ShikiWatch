@@ -72,8 +72,6 @@ void initApp() async {
     logPrinter: const PrettyPrinter(),
   );
 
-  //Paint.enableDithering = true;
-
   if (Platform.isAndroid) {
     try {
       await FlutterDisplayMode.setHighRefreshRate();
@@ -82,7 +80,6 @@ void initApp() async {
     } on PlatformException catch (e) {
       debugPrint('setHighRefreshRate failed ($e)');
     }
-    //await setOptimalDisplayMode();
     // https://stackoverflow.com/a/64184001
     //GestureBinding.instance.resamplingEnabled = true;
   }
