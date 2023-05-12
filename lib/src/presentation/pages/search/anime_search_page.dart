@@ -58,12 +58,12 @@ class AnimeSearchPage extends ConsumerWidget {
                   : null,
             ),
           ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: SearchTypeWidget(),
-            ),
-          ],
+          // actions: const [
+          //   Padding(
+          //     padding: EdgeInsets.all(8.0),
+          //     child: SearchTypeWidget(),
+          //   ),
+          // ],
         ),
         body: Builder(
           builder: (context) {
