@@ -1,5 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
+
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../domain/models/user_profile.dart';
@@ -15,9 +16,9 @@ class UserProfileHeader extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 72, //64
-          backgroundImage: ExtendedNetworkImageProvider(
-              data.image?.x160 ?? data.avatar ?? '',
-              cache: true),
+          backgroundImage: CachedNetworkImageProvider(
+            data.image?.x160 ?? data.avatar ?? '',
+          ),
         ),
         Expanded(
           child: Column(

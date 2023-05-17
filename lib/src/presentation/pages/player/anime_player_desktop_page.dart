@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:extended_image/extended_image.dart';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -774,10 +774,14 @@ class _PlayerControlsState extends State<PlayerControls> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(4.0),
-                child: ExtendedImage.network(
-                  AppConfig.staticUrl + widget.animePic,
+                child: CachedNetworkImage(
+                  imageUrl: AppConfig.staticUrl + widget.animePic,
                   height: 60,
                 ),
+                // ExtendedImage.network(
+                //   AppConfig.staticUrl + widget.animePic,
+                //   height: 60,
+                // ),
               ),
               const SizedBox(
                 width: 10,

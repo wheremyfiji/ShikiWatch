@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 //import 'package:git_info/git_info.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:extended_image/extended_image.dart' as extended_image;
+//import 'package:extended_image/extended_image.dart' as extended_image;
 import 'package:path_provider/path_provider.dart';
 import 'package:shikidev/src/services/secure_storage/secure_storage_service.dart';
 import 'package:shikidev/src/utils/extensions/theme_mode.dart';
@@ -57,9 +57,8 @@ class SettingsPage extends ConsumerWidget {
       body: CustomScrollView(
         shrinkWrap: true,
         slivers: [
-          SliverAppBar.large(
-            stretch: true,
-            title: const Text('Настройки'),
+          const SliverAppBar.large(
+            title: Text('Настройки'),
           ),
           if (SecureStorageService.instance.token != '')
             SliverToBoxAdapter(
@@ -92,8 +91,8 @@ class SettingsPage extends ConsumerWidget {
                         return;
                       }
 
-                      await extended_image.clearDiskCachedImages();
-                      extended_image.clearMemoryImageCache();
+                      // await extended_image.clearDiskCachedImages();
+                      // extended_image.clearMemoryImageCache();
                       await SecureStorageService.instance.deleteAll();
                       if (context.mounted) {
                         context.scaffoldMessenger.showSnackBar(
@@ -127,6 +126,7 @@ class SettingsPage extends ConsumerWidget {
                       onTap: () {
                         showModalBottomSheet(
                           useRootNavigator: true,
+                          showDragHandle: true,
                           context: context,
                           constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width >= 700
@@ -183,6 +183,7 @@ class SettingsPage extends ConsumerWidget {
                       onTap: () {
                         showModalBottomSheet(
                           useRootNavigator: true,
+                          showDragHandle: true,
                           context: context,
                           constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width >= 700
@@ -214,7 +215,7 @@ class SettingsPage extends ConsumerWidget {
                       export();
                     },
                   ),
-                const ClearCacheWidget(),
+                //const ClearCacheWidget(),
                 SettingsOption(
                   title: 'Очистить БД',
                   subtitle: 'Удалить все локальные отметки просмотра',
@@ -380,8 +381,8 @@ class ClearCacheWidget extends ConsumerWidget {
           duration: Duration(milliseconds: 800),
         ));
         await storage.clear();
-        await extended_image.clearDiskCachedImages();
-        extended_image.clearMemoryImageCache();
+        // await extended_image.clearDiskCachedImages();
+        // extended_image.clearMemoryImageCache();
         if (context.mounted) {
           context.scaffoldMessenger.showSnackBar(
             const SnackBar(

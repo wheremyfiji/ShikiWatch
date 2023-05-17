@@ -1,4 +1,3 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/constants/config.dart';
@@ -46,8 +45,8 @@ class AnimeMomentsPage extends ConsumerWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar.large(
-            title: const Text('Кадры'),
+          const SliverAppBar.large(
+            title: Text('Кадры'),
           ),
           ...moments.when(
             data: (data) => [
@@ -63,68 +62,86 @@ class AnimeMomentsPage extends ConsumerWidget {
                         aspectRatio: 16 / 9,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: ExtendedImage.network(
+                          child: Image.network(
                             AppConfig.staticUrl + moment.original!,
-                            //compressionRatio: 0.2,
-                            maxBytes: null,
-                            cacheWidth: null,
-                            cacheHeight: null,
                             fit: BoxFit.contain,
-                            //mode: ExtendedImageMode.gesture,
-                            // initGestureConfigHandler: (state) {
-                            //   return GestureConfig(
-                            //     minScale: 1.0,
-                            //     animationMinScale: 0.7,
-                            //     maxScale: 3.0,
-                            //     animationMaxScale: 3.5,
-                            //     speed: 1.0,
-                            //     inertialSpeed: 100.0,
-                            //     initialScale: 1.0,
-                            //     inPageView: false,
-                            //     initialAlignment: InitialAlignment.center,
-                            //   );
-                            // },
-                            cache: false,
-                            //enableLoadState: false,
-                            loadStateChanged: (ExtendedImageState state) {
-                              switch (state.extendedImageLoadState) {
-                                case LoadState.loading:
-                                  return const _Placeholder();
-                                // return const Center(
-                                //   child: CircularProgressIndicator(),
-                                // );
-                                case LoadState.completed:
-                                  return state.completedWidget;
-                                case LoadState.failed:
-                                  return const Icon(Icons.error);
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
                               }
-                              //return null;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
                             },
-                            // loadStateChanged: (state) {
-                            //   if (state.wasSynchronouslyLoaded &&
-                            //       state.isCompleted) {
-                            //     return state.completedWidget;
-                            //   }
-
-                            //   return AnimatedSwitcher(
-                            //     duration: const Duration(milliseconds: 150),
-                            //     child: state.isCompleted
-                            //         ? state.completedWidget
-                            //         : _Placeholder(isFailed: state.isFailed),
-                            //     layoutBuilder:
-                            //         (currentChild, previousChildren) {
-                            //       return Stack(
-                            //         alignment: Alignment.center,
-                            //         fit: StackFit.passthrough,
-                            //         children: [
-                            //           ...previousChildren,
-                            //           if (currentChild != null) currentChild,
-                            //         ],
-                            //       );
-                            //     },
-                            //   );
-                            // },
                           ),
+                          // ExtendedImage.network(
+                          //   AppConfig.staticUrl + moment.original!,
+                          //   //compressionRatio: 0.2,
+                          //   maxBytes: null,
+                          //   cacheWidth: null,
+                          //   cacheHeight: null,
+                          //   fit: BoxFit.contain,
+                          //   //mode: ExtendedImageMode.gesture,
+                          //   // initGestureConfigHandler: (state) {
+                          //   //   return GestureConfig(
+                          //   //     minScale: 1.0,
+                          //   //     animationMinScale: 0.7,
+                          //   //     maxScale: 3.0,
+                          //   //     animationMaxScale: 3.5,
+                          //   //     speed: 1.0,
+                          //   //     inertialSpeed: 100.0,
+                          //   //     initialScale: 1.0,
+                          //   //     inPageView: false,
+                          //   //     initialAlignment: InitialAlignment.center,
+                          //   //   );
+                          //   // },
+                          //   cache: false,
+                          //   //enableLoadState: false,
+                          //   loadStateChanged: (ExtendedImageState state) {
+                          //     switch (state.extendedImageLoadState) {
+                          //       case LoadState.loading:
+                          //         return const _Placeholder();
+                          //       // return const Center(
+                          //       //   child: CircularProgressIndicator(),
+                          //       // );
+                          //       case LoadState.completed:
+                          //         return state.completedWidget;
+                          //       case LoadState.failed:
+                          //         return const Icon(Icons.error);
+                          //     }
+                          //     //return null;
+                          //   },
+                          //   // loadStateChanged: (state) {
+                          //   //   if (state.wasSynchronouslyLoaded &&
+                          //   //       state.isCompleted) {
+                          //   //     return state.completedWidget;
+                          //   //   }
+
+                          //   //   return AnimatedSwitcher(
+                          //   //     duration: const Duration(milliseconds: 150),
+                          //   //     child: state.isCompleted
+                          //   //         ? state.completedWidget
+                          //   //         : _Placeholder(isFailed: state.isFailed),
+                          //   //     layoutBuilder:
+                          //   //         (currentChild, previousChildren) {
+                          //   //       return Stack(
+                          //   //         alignment: Alignment.center,
+                          //   //         fit: StackFit.passthrough,
+                          //   //         children: [
+                          //   //           ...previousChildren,
+                          //   //           if (currentChild != null) currentChild,
+                          //   //         ],
+                          //   //       );
+                          //   //     },
+                          //   //   );
+                          //   // },
+                          // ),
                         ),
                       ),
                     );

@@ -39,10 +39,13 @@ class AnimeScreenshots extends StatelessWidget {
               },
               child: Text(
                 'Больше',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                style: context.textTheme.bodyMedium?.copyWith(
                   color: context.theme.colorScheme.primary,
                 ),
+                // style: context.textTheme.bodyLarge?.copyWith(
+                //   fontWeight: FontWeight.bold,
+                //   color: context.theme.colorScheme.primary,
+                // ),
                 // style: TextStyle(
                 //   color: context.theme.colorScheme.primary,
                 // ),

@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:shikidev/src/constants/config.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
@@ -74,9 +74,9 @@ class AnimeChipsWidget extends StatelessWidget {
                       backgroundColor:
                           context.theme.colorScheme.secondaryContainer,
                       //backgroundColor: Colors.grey,
-                      backgroundImage: ExtendedNetworkImageProvider(
-                          '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
-                          cache: true),
+                      backgroundImage: CachedNetworkImageProvider(
+                        '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
+                      ),
                     ),
                   ),
                   label: Text(studios![index].name ?? ""),

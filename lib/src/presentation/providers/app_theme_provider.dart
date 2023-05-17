@@ -52,7 +52,9 @@ class AppThemeDataNotifier {
       background: harmonized.surface.shade(isDark ? 30 : 3),
       outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
     );
-    final origin = isDark ? ThemeData.dark() : ThemeData.light();
+    final origin = isDark
+        ? ThemeData.dark(useMaterial3: true)
+        : ThemeData.light(useMaterial3: true);
     return origin.copyWith(
       //pageTransitionsTheme: NoTransitions(),
       visualDensity: VisualDensity.adaptivePlatformDensity,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../utils/utils.dart';
 import '../../../widgets/custom_card_button.dart';
@@ -16,7 +17,7 @@ class ExploreActions extends StatelessWidget {
               child: CustomCardButton(
                 label: 'Топ аниме',
                 onTap: () {
-                  showSnackBar(ctx: context, msg: 'Пока нельзя');
+                  context.pushNamed('top_anime');
                 },
                 icon: Icons.movie_rounded,
               ),
@@ -28,7 +29,7 @@ class ExploreActions extends StatelessWidget {
               child: CustomCardButton(
                 label: 'Топ манги',
                 onTap: () {
-                  showSnackBar(ctx: context, msg: 'Пока нельзя');
+                  context.pushNamed('top_manga');
                 },
                 icon: Icons.menu_book_rounded,
               ),
@@ -56,7 +57,7 @@ class ExploreActions extends StatelessWidget {
               child: CustomCardButton(
                 label: 'Календарь',
                 onTap: () {
-                  showSnackBar(ctx: context, msg: 'Пока нельзя');
+                  context.pushNamed('calendar');
                 },
                 icon: Icons.calendar_month_rounded,
               ),

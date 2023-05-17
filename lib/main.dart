@@ -6,11 +6,9 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:loggy/loggy.dart';
-import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:media_kit/media_kit.dart';
@@ -72,17 +70,17 @@ void initApp() async {
     logPrinter: const PrettyPrinter(),
   );
 
-  if (Platform.isAndroid) {
-    try {
-      await FlutterDisplayMode.setHighRefreshRate();
-      final t = await FlutterDisplayMode.preferred;
-      debugPrint('refresh rate: ${t.refreshRate}');
-    } on PlatformException catch (e) {
-      debugPrint('setHighRefreshRate failed ($e)');
-    }
-    // https://stackoverflow.com/a/64184001
-    //GestureBinding.instance.resamplingEnabled = true;
-  }
+  // if (Platform.isAndroid) {
+  //   try {
+  //     await FlutterDisplayMode.setHighRefreshRate();
+  //     final t = await FlutterDisplayMode.preferred;
+  //     debugPrint('refresh rate: ${t.refreshRate}');
+  //   } on PlatformException catch (e) {
+  //     debugPrint('setHighRefreshRate failed ($e)');
+  //   }
+  //   // https://stackoverflow.com/a/64184001
+  //   //GestureBinding.instance.resamplingEnabled = true;
+  // }
 
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
@@ -120,7 +118,7 @@ void initApp() async {
   await initializedStorageService.init();
 
   final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
-  await animeDatabase.migration();
+  //await animeDatabase.migration();
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -136,6 +134,8 @@ void initApp() async {
   if (Platform.isWindows) {
     windowsInfo = await DeviceInfoPlugin().windowsInfo;
   }
+
+  //debugRepaintRainbowEnabled = true;
 
   runApp(
     ProviderScope(

@@ -55,6 +55,9 @@ class WatchingTab extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverGrid(
                       delegate: SliverChildBuilderDelegate(
+                        addAutomaticKeepAlives: false,
+                        addRepaintBoundaries: false,
+                        addSemanticIndexes: false,
                         (context, index) {
                           data.sort((a, b) {
                             String adate = a.updatedAt!;

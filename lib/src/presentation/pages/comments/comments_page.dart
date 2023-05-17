@@ -1,5 +1,5 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,6 +21,35 @@ class CommentsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(commentsPageProvider(topicId));
+
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(
+          () => controller.pageController.refresh(),
+        ),
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('Обсуждение'),
+            ),
+            SliverPadding(
+              // padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: PagedSliverList<int, ShikiComment>(
+                pagingController: controller.pageController,
+                builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
+                  itemBuilder: (context, item, index) {
+                    return CommentWidget(
+                      comment: item,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
 
     return Scaffold(
       body: NestedScrollView(
@@ -89,9 +118,8 @@ class CommentWidget extends StatelessWidget {
                   CircleAvatar(
                     //radius: 24,
                     backgroundColor: Colors.transparent,
-                    backgroundImage: ExtendedNetworkImageProvider(
+                    backgroundImage: CachedNetworkImageProvider(
                       comment.user?.avatar ?? '',
-                      cache: true,
                     ),
                   ),
                   const SizedBox(
@@ -137,7 +165,7 @@ class CommentWidget extends StatelessWidget {
             // ),
             Html(
               data: comment.htmlBody,
-              onLinkTap: (url, context, attributes, element) {
+              onLinkTap: (url, attributes, element) {
                 //print(url);
                 if (url.isNull) {
                   return;
@@ -160,44 +188,44 @@ class CommentWidget extends StatelessWidget {
       ),
     );
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.transparent,
-              backgroundImage: ExtendedNetworkImageProvider(
-                comment.user?.avatar ?? '',
-                cache: true,
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${comment.user?.nickname}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${comment.updatedAt}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    '${comment.body}',
-                    //maxLines: 4,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    // return Card(
+    //   child: Padding(
+    //     padding: const EdgeInsets.all(8.0),
+    //     child: Row(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: [
+    //         CircleAvatar(
+    //           radius: 24,
+    //           backgroundColor: Colors.transparent,
+    //           backgroundImage: ExtendedNetworkImageProvider(
+    //             comment.user?.avatar ?? '',
+    //             cache: true,
+    //           ),
+    //         ),
+    //         Expanded(
+    //           child: Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: [
+    //               Text(
+    //                 '${comment.user?.nickname}',
+    //                 maxLines: 1,
+    //                 overflow: TextOverflow.ellipsis,
+    //               ),
+    //               Text(
+    //                 '${comment.updatedAt}',
+    //                 maxLines: 1,
+    //                 overflow: TextOverflow.ellipsis,
+    //               ),
+    //               Text(
+    //                 '${comment.body}',
+    //                 //maxLines: 4,
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

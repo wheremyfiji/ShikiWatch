@@ -1,7 +1,7 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../constants/config.dart';
@@ -40,10 +40,9 @@ class MangaInfoHeader extends StatelessWidget {
                   border: Border.all(width: 0, color: Colors.transparent),
                   image: DecorationImage(
                     filterQuality: FilterQuality.low,
-                    image: ExtendedNetworkImageProvider(
+                    image: CachedNetworkImageProvider(
                       AppConfig.staticUrl +
                           (data.image?.original ?? data.image?.preview ?? ''),
-                      cache: true,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -86,14 +85,21 @@ class MangaInfoHeader extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      ExtendedImage.network(
-                        AppConfig.staticUrl +
+                      CachedNetworkImage(
+                        imageUrl: AppConfig.staticUrl +
                             (data.image?.original ?? data.image?.preview ?? ''),
                         height: height - 150,
                         width: 145,
                         fit: BoxFit.cover,
-                        cache: true,
                       ),
+                      // ExtendedImage.network(
+                      //   AppConfig.staticUrl +
+                      //       (data.image?.original ?? data.image?.preview ?? ''),
+                      //   height: height - 150,
+                      //   width: 145,
+                      //   fit: BoxFit.cover,
+                      //   cache: true,
+                      // ),
                       // if (favoured) ...[
                       //   const Padding(
                       //     padding: EdgeInsets.all(8.0),

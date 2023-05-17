@@ -118,6 +118,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     return Scaffold(
+      appBar: AppBar(),
       body: Container(
         alignment: Alignment.bottomCenter,
         padding: const EdgeInsets.fromLTRB(16, 32, 16, 64),

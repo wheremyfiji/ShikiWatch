@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shikidev/src/domain/models/manga_short.dart';
+import 'package:shikidev/src/presentation/pages/calendar/calendar_page.dart';
 //import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
@@ -24,7 +25,6 @@ import '../presentation/pages/library/library_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 
-import '../presentation/widgets/shiki_annotate_region_widget.dart';
 import 'target_platform.dart';
 import 'updater.dart';
 
@@ -99,7 +99,9 @@ final GoRouter router = GoRouter(
               name: 'library',
               path: '/library',
               builder: (BuildContext context, GoRouterState state) =>
-                  const LibraryPage(),
+                  LibraryPage(
+                key: state.pageKey,
+              ),
               routes: <RouteBase>[
                 GoRoute(
                   name: 'library_anime',
@@ -109,9 +111,13 @@ final GoRouter router = GoRouter(
                     return CustomTransitionPage(
                       child: TargetP.instance.isDesktop
                           ? AnimeDetailsDesktopPage(
+                              key: state.pageKey,
                               animeData: data,
                             )
-                          : AnimeDetailsPage(animeData: data),
+                          : AnimeDetailsPage(
+                              key: state.pageKey,
+                              animeData: data,
+                            ),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),
@@ -126,7 +132,10 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     MangaShort data = state.extra as MangaShort;
                     return CustomTransitionPage(
-                      child: MangaDetailPage(manga: data),
+                      child: MangaDetailPage(
+                        key: state.pageKey,
+                        manga: data,
+                      ),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),
@@ -171,13 +180,17 @@ final GoRouter router = GoRouter(
               name: 'explore',
               path: '/explore',
               builder: (BuildContext context, GoRouterState state) =>
-                  const ExplorePage(),
+                  ExplorePage(
+                key: state.pageKey,
+              ),
               routes: [
                 GoRoute(
                     name: 'explore_search',
                     path: 'search',
                     pageBuilder: (_, __) => CustomTransitionPage(
-                          child: const AnimeSearchPage(),
+                          child: AnimeSearchPage(
+                            key: __.pageKey,
+                          ),
                           transitionsBuilder: (_, animation, __, child) =>
                               FadeTransition(opacity: animation, child: child),
                           transitionDuration: const Duration(milliseconds: 150),
@@ -206,9 +219,61 @@ final GoRouter router = GoRouter(
                     return CustomTransitionPage(
                       child: TargetP.instance.isDesktop
                           ? AnimeDetailsDesktopPage(
+                              key: state.pageKey,
                               animeData: data,
                             )
-                          : AnimeDetailsPage(animeData: data),
+                          : AnimeDetailsPage(
+                              key: state.pageKey,
+                              animeData: data,
+                            ),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'calendar',
+                  path: 'calendar',
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      child: CalendarPage(
+                        key: state.pageKey,
+                      ),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'top_anime',
+                  path: 'top_anime',
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      child: CalendarPage(
+                        key: state.pageKey,
+                      ),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'top_manga',
+                  path: 'top_manga',
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      child: CalendarPage(
+                        key: state.pageKey,
+                      ),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),
@@ -232,7 +297,9 @@ final GoRouter router = GoRouter(
               name: 'profile',
               path: '/profile',
               builder: (BuildContext context, GoRouterState state) =>
-                  const MyProfilePage(),
+                  MyProfilePage(
+                key: state.pageKey,
+              ),
               routes: <RouteBase>[
                 GoRoute(
                   name: 'profile_id',
@@ -240,7 +307,10 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     User data = state.extra as User;
                     return CustomTransitionPage(
-                      child: UserProfilePage(data: data),
+                      child: UserProfilePage(
+                        key: state.pageKey,
+                        data: data,
+                      ),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),
@@ -254,7 +324,9 @@ final GoRouter router = GoRouter(
                   path: 'settings',
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
-                      child: const SettingsPage(),
+                      child: SettingsPage(
+                        key: state.pageKey,
+                      ),
                       transitionsBuilder: (_, animation, __, child) =>
                           FadeTransition(opacity: animation, child: child),
                       transitionDuration: const Duration(milliseconds: 150),
@@ -270,11 +342,19 @@ final GoRouter router = GoRouter(
       ],
       builder:
           (BuildContext context, StatefulShellRouteState state, Widget child) {
-        return UpdaterWidget(
-          child: ShikiAnnotatedRegionWidget(
+        return ExcludeSemantics(
+          child: UpdaterWidget(
             child: ScaffoldWithNavBar(shellState: state, body: child),
           ),
         );
+
+        // return ExcludeSemantics(
+        //   child: UpdaterWidget(
+        //     child: ShikiAnnotatedRegionWidget(
+        //       child: ScaffoldWithNavBar(shellState: state, body: child),
+        //     ),
+        //   ),
+        // );
       },
     ),
   ],

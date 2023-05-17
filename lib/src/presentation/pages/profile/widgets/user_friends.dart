@@ -1,5 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/user.dart';
@@ -61,9 +62,8 @@ class UserFriendsWidget extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 40,
-                          backgroundImage: ExtendedNetworkImageProvider(
+                          backgroundImage: CachedNetworkImageProvider(
                             friend.image?.x160 ?? friend.avatar ?? '',
-                            cache: true,
                           ),
                         ),
                         const SizedBox(

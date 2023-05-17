@@ -1,4 +1,5 @@
-import 'package:extended_image/extended_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -143,11 +144,15 @@ class HistoryItem extends ConsumerWidget {
                 aspectRatio: 0.703,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: ExtendedImage.network(
-                    AppConfig.staticUrl + image,
+                  child: CachedNetworkImage(
+                    imageUrl: AppConfig.staticUrl + image,
                     fit: BoxFit.cover,
-                    cache: true,
                   ),
+                  // ExtendedImage.network(
+                  //   AppConfig.staticUrl + image,
+                  //   fit: BoxFit.cover,
+                  //   cache: true,
+                  // ),
                 ),
               ),
             ),

@@ -1,8 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -146,14 +146,21 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                ExtendedImage.network(
-                                  AppConfig.staticUrl +
+                                CachedNetworkImage(
+                                  imageUrl: AppConfig.staticUrl +
                                       (animeData.image?.original ??
                                           animeData.image?.preview ??
                                           ''),
                                   fit: BoxFit.cover,
-                                  cache: true,
                                 ),
+                                // ExtendedImage.network(
+                                //   AppConfig.staticUrl +
+                                //       (animeData.image?.original ??
+                                //           animeData.image?.preview ??
+                                //           ''),
+                                //   fit: BoxFit.cover,
+                                //   cache: true,
+                                // ),
                                 if (titleInfo.isFavor) ...[
                                   const Align(
                                     alignment: Alignment.bottomRight,
@@ -398,9 +405,12 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                                     child: CircleAvatar(
                                       backgroundColor: context
                                           .theme.colorScheme.secondaryContainer,
-                                      backgroundImage: ExtendedNetworkImageProvider(
-                                          '${AppConfig.staticUrl}${titleInfo.title.asData!.value.studios![index].image ?? '/assets/globals/missing/mini.png'}',
-                                          cache: true),
+                                      backgroundImage: CachedNetworkImageProvider(
+                                          '${AppConfig.staticUrl}${titleInfo.title.asData!.value.studios![index].image ?? '/assets/globals/missing/mini.png'}'),
+                                      //     ExtendedNetworkImageProvider(
+                                      //   '${AppConfig.staticUrl}${titleInfo.title.asData!.value.studios![index].image ?? '/assets/globals/missing/mini.png'}',
+                                      //   cache: true,
+                                      // ),
                                     ),
                                   ),
                                   label: Text(titleInfo.title.asData!.value
