@@ -72,42 +72,6 @@ class ExplorePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(explorePageProvider);
 
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text('ShikiWatch'),
-    //   ),
-    //   body: PagedGridView<int, Animes>(
-    //     cacheExtent: 0,
-    //     pagingController: controller.pageController,
-    //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-    //     addSemanticIndexes: false,
-    //     clipBehavior: Clip.none,
-    //     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-    //       maxCrossAxisExtent: 140,
-    //       childAspectRatio: 0.55,
-    //       crossAxisSpacing: 8,
-    //       mainAxisSpacing: 8,
-    //     ),
-    //     builderDelegate: PagedChildBuilderDelegate<Animes>(
-    //       firstPageErrorIndicatorBuilder: (context) {
-    //         return CustomErrorWidget(
-    //           controller.pageController.error.toString(),
-    //           () => controller.pageController.refresh(),
-    //         );
-    //       },
-    //       newPageErrorIndicatorBuilder: (context) {
-    //         return CustomErrorWidget(
-    //           controller.pageController.error.toString(),
-    //           () => controller.pageController.retryLastFailedRequest(),
-    //         );
-    //       },
-    //       itemBuilder: (context, item, index) {
-    //         return AnimeTileExp(item);
-    //       },
-    //     ),
-    //   ),
-    // );
-
     return Scaffold(
       body: CustomScrollView(
         //cacheExtent: 0,

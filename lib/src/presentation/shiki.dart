@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
@@ -41,6 +43,57 @@ class ShikiApp extends ConsumerWidget {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
 
+    // return DynamicColorBuilder(
+    //   builder: (lightDynamic, darkDynamic) {
+    //     if (environment.androidInfo != null &&
+    //         lightDynamic == null &&
+    //         (environment.sdkVersion ?? 0) > 30) {
+    //       return const SizedBox.shrink();
+    //     }
+
+    //     return MaterialApp.router(
+    //       debugShowCheckedModeBanner: false,
+    //       theme: ThemeData(
+    //         colorScheme: lightDynamic ??
+    //             ColorScheme.fromSeed(
+    //               seedColor: Colors.green,
+    //               brightness: Brightness.light,
+    //             ),
+    //         useMaterial3: true,
+    //       ),
+    //       darkTheme: ThemeData(
+    //         colorScheme: darkDynamic ??
+    //             ColorScheme.fromSeed(
+    //               seedColor: Colors.green,
+    //               brightness: Brightness.dark,
+    //             ),
+    //         useMaterial3: true,
+    //       ),
+    //       title: appTitle,
+    //       //themeMode: themeMode,
+    //       routerConfig: router,
+    //       builder: (context, child) {
+    //         if (!kDebugMode) {
+    //           ErrorWidget.builder = (FlutterErrorDetails error) {
+    //             return const Center(
+    //               child: Text('Произошла ошибка'),
+    //             );
+    //           };
+    //         }
+
+    //         /// fix high textScaleFactor
+    //         final mediaQuery = MediaQuery.of(context);
+    //         final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+    //         return MediaQuery(
+    //           data: mediaQuery.copyWith(textScaleFactor: scale),
+    //           child: child!,
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (environment.sdkVersion ?? 0) > 28 ? customStyle : defaultStyle,
       child: ValueListenableBuilder<Box>(
@@ -55,92 +108,92 @@ class ShikiApp extends ConsumerWidget {
             defaultValue: 0,
           )];
 
-          return AppThemeBuilder(
-            builder: (context, appTheme) => MaterialApp.router(
-              //useInheritedMediaQuery: true,
-              debugShowCheckedModeBanner: false,
-
-              //showPerformanceOverlay: true,
-              //checkerboardOffscreenLayers: true,
-              //checkerboardRasterCacheImages: true,
-
-              theme: appTheme.day,
-              darkTheme: isOled ? appTheme.midnight : appTheme.night,
-              title: appTitle,
-              themeMode: themeMode,
-              routerConfig: router,
-              builder: (context, child) {
-                if (!kDebugMode) {
-                  ErrorWidget.builder = (FlutterErrorDetails error) {
-                    return const Center(
-                      child: Text('Произошла ошибка'),
-                    );
-                  };
-                }
-
-                /// fix high textScaleFactor
-                final mediaQuery = MediaQuery.of(context);
-                final scale =
-                    mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
-
-                return MediaQuery(
-                  data: mediaQuery.copyWith(textScaleFactor: scale),
-                  child: child!,
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
-
-    return ValueListenableBuilder<Box>(
-      valueListenable: Hive.box(BoxType.settings.name).listenable(
-        keys: [oledModeKey, themeModeKey],
-      ),
-      builder: (context, value, child) {
-        final bool isOled = value.get(oledModeKey, defaultValue: false);
-
-        final ThemeMode themeMode = ThemeMode.values[value.get(
-          themeModeKey,
-          defaultValue: 0,
-        )];
-
-        return AppThemeBuilder(
-          builder: (context, appTheme) => MaterialApp.router(
-            //useInheritedMediaQuery: true,
-            debugShowCheckedModeBanner: false,
-
-            //showPerformanceOverlay: true,
-            //checkerboardOffscreenLayers: true,
-            //checkerboardRasterCacheImages: true,
-
-            theme: appTheme.day,
-            darkTheme: isOled ? appTheme.midnight : appTheme.night,
-            title: appTitle,
-            themeMode: themeMode,
-            routerConfig: router,
-            builder: (context, child) {
-              if (!kDebugMode) {
-                ErrorWidget.builder = (FlutterErrorDetails error) {
-                  return const Center(
-                    child: Text('Произошла ошибка'),
-                  );
-                };
+          return DynamicColorBuilder(
+            builder: (lightDynamic, darkDynamic) {
+              if (environment.androidInfo != null &&
+                  lightDynamic == null &&
+                  environment.sdkVersion! > 30) {
+                return const SizedBox.shrink();
               }
 
-              /// fix high textScaleFactor
-              final mediaQuery = MediaQuery.of(context);
-              final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+              return AppThemeBuilder(
+                dynamicLight: lightDynamic,
+                dynamicDark: darkDynamic,
+                builder: (context, appTheme) => MaterialApp.router(
+                  themeAnimationDuration: Duration.zero,
+                  //useInheritedMediaQuery: true,
+                  debugShowCheckedModeBanner: false,
 
-              return MediaQuery(
-                data: mediaQuery.copyWith(textScaleFactor: scale),
-                child: child!,
+                  //showPerformanceOverlay: true,
+                  //checkerboardOffscreenLayers: true,
+                  //checkerboardRasterCacheImages: true,
+
+                  theme: appTheme.day,
+                  darkTheme: isOled ? appTheme.midnight : appTheme.night,
+                  title: appTitle,
+                  themeMode: themeMode,
+                  routerConfig: router,
+                  builder: (context, child) {
+                    if (!kDebugMode) {
+                      ErrorWidget.builder = (FlutterErrorDetails error) {
+                        return const Center(
+                          child: Text('Произошла ошибка'),
+                        );
+                      };
+                    }
+
+                    /// fix high textScaleFactor
+                    final mediaQuery = MediaQuery.of(context);
+                    final scale =
+                        mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+                    return MediaQuery(
+                      data: mediaQuery.copyWith(textScaleFactor: scale),
+                      child: child!,
+                    );
+                  },
+                ),
               );
             },
-          ),
-        );
-      },
+          );
+
+          // return AppThemeBuilder(
+          //   builder: (context, appTheme) => MaterialApp.router(
+          //     //useInheritedMediaQuery: true,
+          //     debugShowCheckedModeBanner: false,
+
+          //     //showPerformanceOverlay: true,
+          //     //checkerboardOffscreenLayers: true,
+          //     //checkerboardRasterCacheImages: true,
+
+          //     theme: appTheme.day,
+          //     darkTheme: isOled ? appTheme.midnight : appTheme.night,
+          //     title: appTitle,
+          //     themeMode: themeMode,
+          //     routerConfig: router,
+          //     builder: (context, child) {
+          //       if (!kDebugMode) {
+          //         ErrorWidget.builder = (FlutterErrorDetails error) {
+          //           return const Center(
+          //             child: Text('Произошла ошибка'),
+          //           );
+          //         };
+          //       }
+
+          //       /// fix high textScaleFactor
+          //       final mediaQuery = MediaQuery.of(context);
+          //       final scale =
+          //           mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+          //       return MediaQuery(
+          //         data: mediaQuery.copyWith(textScaleFactor: scale),
+          //         child: child!,
+          //       );
+          //     },
+          //   ),
+          // );
+        },
+      ),
     );
   }
 }
