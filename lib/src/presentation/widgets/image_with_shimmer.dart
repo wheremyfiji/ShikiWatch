@@ -47,8 +47,7 @@ class ImageWithShimmerWidget extends StatelessWidget {
       imageUrl: imageUrl,
       placeholder: (context, url) {
         return Shimmer.fromColors(
-          // TODO при светлой теме выглядит угли
-          baseColor: Theme.of(context).colorScheme.surface,
+          baseColor: Theme.of(context).colorScheme.surfaceVariant,
           highlightColor: Theme.of(context).colorScheme.onInverseSurface,
           child: Container(
             color: Colors.black,

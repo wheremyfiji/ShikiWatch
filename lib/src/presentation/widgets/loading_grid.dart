@@ -43,14 +43,7 @@ class GridLoadingElement extends StatelessWidget {
               height: constraints.maxHeight / 1.4,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Shimmer.fromColors(
-                  baseColor: Theme.of(context).colorScheme.surface,
-                  highlightColor:
-                      Theme.of(context).colorScheme.onInverseSurface,
-                  child: Container(
-                    color: Colors.black,
-                  ),
-                ),
+                child: const CustomShimmer(),
               ),
             ),
             const SizedBox(
@@ -59,14 +52,16 @@ class GridLoadingElement extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Shimmer.fromColors(
-                  baseColor: Theme.of(context).colorScheme.surface,
-                  highlightColor:
-                      Theme.of(context).colorScheme.onInverseSurface,
-                  child: Container(
-                    color: Colors.black,
-                  ),
-                ),
+                child: const CustomShimmer(),
+              ),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: const CustomShimmer(),
               ),
             ),
             const SizedBox(
@@ -75,6 +70,22 @@ class GridLoadingElement extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class CustomShimmer extends StatelessWidget {
+  const CustomShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      //baseColor: Theme.of(context).colorScheme.surface,
+      baseColor: Theme.of(context).colorScheme.surfaceVariant,
+      highlightColor: Theme.of(context).colorScheme.onInverseSurface,
+      child: Container(
+        color: Colors.black,
+      ),
     );
   }
 }
