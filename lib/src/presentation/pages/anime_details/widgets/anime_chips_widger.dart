@@ -5,6 +5,7 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../../domain/models/studio.dart';
 import '../../../../domain/models/genre.dart';
+import '../../../widgets/cached_image.dart';
 
 class AnimeChipsWidget extends StatelessWidget {
   final List<Genre>? genres;
@@ -31,17 +32,18 @@ class AnimeChipsWidget extends StatelessWidget {
           spacing: 8,
           runSpacing: 0, //0
           children: [
-            Chip(
-              avatar: const Icon(Icons.star),
-              padding: const EdgeInsets.all(0),
-              shadowColor: Colors.transparent,
-              elevation: 0,
-              side: const BorderSide(width: 0, color: Colors.transparent),
-              labelStyle: context.theme.textTheme.bodyMedium?.copyWith(
-                  color: context.theme.colorScheme.onSecondaryContainer),
-              backgroundColor: context.theme.colorScheme.secondaryContainer,
-              label: Text(score ?? '0'),
-            ),
+            if (score != null && score != '0.0')
+              Chip(
+                avatar: const Icon(Icons.star),
+                padding: const EdgeInsets.all(0),
+                shadowColor: Colors.transparent,
+                elevation: 0,
+                side: const BorderSide(width: 0, color: Colors.transparent),
+                labelStyle: context.theme.textTheme.bodyMedium?.copyWith(
+                    color: context.theme.colorScheme.onSecondaryContainer),
+                backgroundColor: context.theme.colorScheme.secondaryContainer,
+                label: Text(score!),
+              ),
             if (genres != null) ...[
               ...List.generate(
                 genres!.length,
@@ -76,6 +78,7 @@ class AnimeChipsWidget extends StatelessWidget {
                       //backgroundColor: Colors.grey,
                       backgroundImage: CachedNetworkImageProvider(
                         '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
+                        cacheManager: cacheManager,
                       ),
                     ),
                   ),

@@ -81,8 +81,6 @@ class SimilarAnimesPage extends ConsumerWidget {
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                      // maxCrossAxisExtent: 150,
-                      // mainAxisExtent: 220,
                       maxCrossAxisExtent: 140,
                       childAspectRatio: 0.55,
                       crossAxisSpacing: 8,

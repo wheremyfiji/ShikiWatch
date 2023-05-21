@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/user.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
+import '../../../widgets/cached_image.dart';
 
 class UserFriendsWidget extends StatelessWidget {
   final List<User> data;
@@ -64,6 +65,7 @@ class UserFriendsWidget extends StatelessWidget {
                           radius: 40,
                           backgroundImage: CachedNetworkImageProvider(
                             friend.image?.x160 ?? friend.avatar ?? '',
+                            cacheManager: cacheManager,
                           ),
                         ),
                         const SizedBox(

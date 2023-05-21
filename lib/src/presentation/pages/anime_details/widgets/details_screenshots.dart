@@ -20,10 +20,10 @@ class AnimeScreenshots extends StatelessWidget {
           children: [
             Text(
               'Кадры',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    //fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
+                  .copyWith(fontWeight: FontWeight.bold),
             ),
             InkWell(
               onTap: () {
@@ -42,29 +42,8 @@ class AnimeScreenshots extends StatelessWidget {
                 style: context.textTheme.bodyMedium?.copyWith(
                   color: context.theme.colorScheme.primary,
                 ),
-                // style: context.textTheme.bodyLarge?.copyWith(
-                //   fontWeight: FontWeight.bold,
-                //   color: context.theme.colorScheme.primary,
-                // ),
-                // style: TextStyle(
-                //   color: context.theme.colorScheme.primary,
-                // ),
               ),
             ),
-            // TextButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => AnimeMomentsPage(
-            //           id: data.id ?? 0,
-            //           name: data.russian ?? data.name ?? '',
-            //         ),
-            //       ),
-            //     );
-            //   },
-            //   child: const Text('Ещё'), // Показать все
-            // ),
           ],
         ),
         const SizedBox(

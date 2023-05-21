@@ -37,8 +37,6 @@ class StudioSelectPage extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              //title: const Text('Студия'),
-              //title: Text('$animeName • Студия'),
             ),
             // SliverPinnedHeader(
             //   child: Padding(

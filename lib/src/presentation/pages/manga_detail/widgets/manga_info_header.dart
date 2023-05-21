@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../../constants/config.dart';
 import '../../../../domain/models/manga_short.dart';
 import '../../../../utils/shiki_utils.dart';
+import '../../../widgets/cached_image.dart';
 
 class MangaInfoHeader extends StatelessWidget {
   final MangaShort data;
@@ -43,6 +44,7 @@ class MangaInfoHeader extends StatelessWidget {
                     image: CachedNetworkImageProvider(
                       AppConfig.staticUrl +
                           (data.image?.original ?? data.image?.preview ?? ''),
+                      cacheManager: cacheManager,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -91,6 +93,7 @@ class MangaInfoHeader extends StatelessWidget {
                         height: height - 150,
                         width: 145,
                         fit: BoxFit.cover,
+                        cacheManager: cacheManager,
                       ),
                       // ExtendedImage.network(
                       //   AppConfig.staticUrl +

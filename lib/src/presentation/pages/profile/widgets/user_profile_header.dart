@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../domain/models/user_profile.dart';
+import '../../../widgets/cached_image.dart';
 
 class UserProfileHeader extends StatelessWidget {
   final UserProfile data;
@@ -18,6 +19,7 @@ class UserProfileHeader extends StatelessWidget {
           radius: 72, //64
           backgroundImage: CachedNetworkImageProvider(
             data.image?.x160 ?? data.avatar ?? '',
+            cacheManager: cacheManager,
           ),
         ),
         Expanded(

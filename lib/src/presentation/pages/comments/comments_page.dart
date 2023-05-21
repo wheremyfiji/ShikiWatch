@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 //import '../../../domain/models/anime.dart';
 import '../../../domain/models/shiki_comment.dart';
 import '../../providers/comments_provider.dart';
+import '../../widgets/cached_image.dart';
 import '../../widgets/cool_chip.dart';
 
 class CommentsPage extends ConsumerWidget {
@@ -120,6 +121,7 @@ class CommentWidget extends StatelessWidget {
                     backgroundColor: Colors.transparent,
                     backgroundImage: CachedNetworkImageProvider(
                       comment.user?.avatar ?? '',
+                      cacheManager: cacheManager,
                     ),
                   ),
                   const SizedBox(

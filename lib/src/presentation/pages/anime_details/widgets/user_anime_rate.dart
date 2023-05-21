@@ -980,24 +980,20 @@ class _AnimeUserRateBottomSheetState
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  Text(
-                    // widget.data.russian ??
-                    //     widget.data.name ??
-                    //     '[Без навзвания]',
-                    (widget.data.russian == ''
-                            ? widget.data.name
-                            : widget.data.russian) ??
-                        '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                ],
+              Text(
+                // widget.data.russian ??
+                //     widget.data.name ??
+                //     '[Без навзвания]',
+                (widget.data.russian == ''
+                        ? widget.data.name
+                        : widget.data.russian) ??
+                    '',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
               const SizedBox(
                 height: 16,

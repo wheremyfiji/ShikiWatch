@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'cached_image.dart';
+
 class ImageWithShimmerWidget extends StatelessWidget {
   const ImageWithShimmerWidget({
     Key? key,
@@ -58,6 +60,7 @@ class ImageWithShimmerWidget extends StatelessWidget {
       fit: fit,
       width: width,
       height: height,
+      cacheManager: cacheManager,
     );
   }
 }

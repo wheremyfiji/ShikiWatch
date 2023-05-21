@@ -34,7 +34,7 @@ dependencies:
   flutter_bbcode: ^1.4.1
   
   #desktop
-  window_manager: ^0.3.1
+  window_manager: ^0.3.4
   path: ^1.8.2
   media_kit: ^0.0.7+1
   media_kit_video: ^0.0.9
@@ -55,7 +55,7 @@ dependencies:
 
   #network
   http: ^0.13.5
-  connectivity_plus: ^4.0.0
+  connectivity_plus: ^4.0.1
   dio: ^5.0.2
   dio_smart_retry: ^5.0.0
   #native_dio_adapter: ^0.1.0
@@ -79,7 +79,7 @@ dependencies:
   url_launcher: ^6.1.11
   hooks_riverpod: ^2.3.6
   flutter_hooks: ^0.18.6
-  shimmer: ^2.0.0
+  shimmer: ^3.0.0
   sliver_tools: ^0.2.10
   tinycolor2: ^3.0.1
   expandable_text: ^2.3.0
@@ -89,8 +89,10 @@ dependencies:
   package_info_plus: ^3.0.3
   device_info_plus: ^8.2.1
   share_plus: ^6.3.4
+  
   #transparent_image: ^2.0.1
   cached_network_image: ^3.2.3
+  flutter_cache_manager: ^3.3.0
 
   video_player: ^2.6.1
   wakelock: ^0.6.2

@@ -69,6 +69,9 @@ class AnimeMomentsPage extends ConsumerWidget {
                               if (loadingProgress == null) {
                                 return child;
                               }
+
+                              return const _Placeholder();
+
                               return Center(
                                 child: CircularProgressIndicator(
                                   value: loadingProgress.expectedTotalBytes !=
@@ -80,68 +83,6 @@ class AnimeMomentsPage extends ConsumerWidget {
                               );
                             },
                           ),
-                          // ExtendedImage.network(
-                          //   AppConfig.staticUrl + moment.original!,
-                          //   //compressionRatio: 0.2,
-                          //   maxBytes: null,
-                          //   cacheWidth: null,
-                          //   cacheHeight: null,
-                          //   fit: BoxFit.contain,
-                          //   //mode: ExtendedImageMode.gesture,
-                          //   // initGestureConfigHandler: (state) {
-                          //   //   return GestureConfig(
-                          //   //     minScale: 1.0,
-                          //   //     animationMinScale: 0.7,
-                          //   //     maxScale: 3.0,
-                          //   //     animationMaxScale: 3.5,
-                          //   //     speed: 1.0,
-                          //   //     inertialSpeed: 100.0,
-                          //   //     initialScale: 1.0,
-                          //   //     inPageView: false,
-                          //   //     initialAlignment: InitialAlignment.center,
-                          //   //   );
-                          //   // },
-                          //   cache: false,
-                          //   //enableLoadState: false,
-                          //   loadStateChanged: (ExtendedImageState state) {
-                          //     switch (state.extendedImageLoadState) {
-                          //       case LoadState.loading:
-                          //         return const _Placeholder();
-                          //       // return const Center(
-                          //       //   child: CircularProgressIndicator(),
-                          //       // );
-                          //       case LoadState.completed:
-                          //         return state.completedWidget;
-                          //       case LoadState.failed:
-                          //         return const Icon(Icons.error);
-                          //     }
-                          //     //return null;
-                          //   },
-                          //   // loadStateChanged: (state) {
-                          //   //   if (state.wasSynchronouslyLoaded &&
-                          //   //       state.isCompleted) {
-                          //   //     return state.completedWidget;
-                          //   //   }
-
-                          //   //   return AnimatedSwitcher(
-                          //   //     duration: const Duration(milliseconds: 150),
-                          //   //     child: state.isCompleted
-                          //   //         ? state.completedWidget
-                          //   //         : _Placeholder(isFailed: state.isFailed),
-                          //   //     layoutBuilder:
-                          //   //         (currentChild, previousChildren) {
-                          //   //       return Stack(
-                          //   //         alignment: Alignment.center,
-                          //   //         fit: StackFit.passthrough,
-                          //   //         children: [
-                          //   //           ...previousChildren,
-                          //   //           if (currentChild != null) currentChild,
-                          //   //         ],
-                          //   //       );
-                          //   //     },
-                          //   //   );
-                          //   // },
-                          // ),
                         ),
                       ),
                     );
@@ -173,59 +114,6 @@ class AnimeMomentsPage extends ConsumerWidget {
     );
   }
 }
-
-// class TetsPage extends StatefulWidget {
-//   final List<AnimeScreenshots> pics;
-//   final int index;
-//   const TetsPage({super.key, required this.index, required this.pics});
-
-//   @override
-//   State<TetsPage> createState() => _TetsPageState();
-// }
-
-// class _TetsPageState extends State<TetsPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final int currentIndex;
-//     return ExtendedImageGesturePageView.builder(
-//       itemBuilder: (BuildContext context, int index) {
-//         var item = widget.pics[index].original;
-//         Widget image = ExtendedImage.network(
-//           item ?? '',
-//           fit: BoxFit.contain,
-//           mode: ExtendedImageMode.gesture,
-//           gestureConfig: GestureConfig(
-//               inPageView: true,
-//               initialScale: 1.0,
-//               //you can cache gesture state even though page view page change.
-//               //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-//               cacheGesture: false),
-//         );
-//         image = Container(
-//           padding: const EdgeInsets.all(5.0),
-//           child: image,
-//         );
-//         if (index == currentIndex) {
-//           return Hero(
-//             tag: item + index.toString(),
-//             child: image,
-//           );
-//         } else {
-//           return image;
-//         }
-//       },
-//       itemCount: widget.pics.length,
-//       onPageChanged: (int index) {
-//         currentIndex = index;
-//         rebuild.add(index);
-//       },
-//       controller: ExtendedPageController(
-//         initialPage: widget.index,
-//       ),
-//       scrollDirection: Axis.horizontal,
-//     );
-//   }
-// }
 
 class _Placeholder extends StatelessWidget {
   final bool isFailed;

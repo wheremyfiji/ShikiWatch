@@ -8,17 +8,18 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shikidev/src/services/secure_storage/secure_storage_service.dart';
 import 'package:shikidev/src/utils/extensions/theme_mode.dart';
+import 'package:shikidev/src/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../domain/enums/library_state.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
-import '../../../services/http/cache_storage/cache_storage_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
 import '../../../utils/target_platform.dart';
 import '../../providers/environment_provider.dart';
+import '../../widgets/cached_image.dart';
 import 'widgets/current_theme.dart';
 import 'widgets/library_start_fragment.dart';
 import 'widgets/setting_option.dart';
@@ -221,7 +222,7 @@ class SettingsPage extends ConsumerWidget {
                       export();
                     },
                   ),
-                //const ClearCacheWidget(),
+                const ClearCacheWidget(),
                 SettingsOption(
                   title: 'Очистить БД',
                   subtitle: 'Удалить все локальные отметки просмотра',
@@ -371,36 +372,68 @@ class SettingsPage extends ConsumerWidget {
   }
 }
 
-class ClearCacheWidget extends ConsumerWidget {
+class ClearCacheWidget extends StatelessWidget {
   const ClearCacheWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final storage = ref.read(cacheStorageServiceProvider);
+  Widget build(BuildContext context) {
     return SettingsOption(
       title: 'Очистить кэш',
       subtitle:
           'Удалить кэшированные изображения', //Удалить кэш API и изображений
       onTap: () async {
-        context.scaffoldMessenger.showSnackBar(const SnackBar(
-          content: Text('Очистка..'),
-          duration: Duration(milliseconds: 800),
-        ));
-        await storage.clear();
+        showSnackBar(
+          ctx: context,
+          msg: 'Очистка..',
+          dur: const Duration(milliseconds: 800),
+        );
         // await extended_image.clearDiskCachedImages();
         // extended_image.clearMemoryImageCache();
+
+        await clearImageCache();
+
         if (context.mounted) {
-          context.scaffoldMessenger.showSnackBar(
-            const SnackBar(
-              content: Text('Кэш успешно очищен'),
-              duration: Duration(milliseconds: 1200),
-            ),
+          showSnackBar(
+            ctx: context,
+            msg: 'Кэш успешно очищен',
+            dur: const Duration(milliseconds: 1200),
           );
         }
       },
     );
   }
 }
+
+// class ClearCacheWidget extends ConsumerWidget {
+//   const ClearCacheWidget({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final storage = ref.read(cacheStorageServiceProvider);
+//     return SettingsOption(
+//       title: 'Очистить кэш',
+//       subtitle:
+//           'Удалить кэшированные изображения', //Удалить кэш API и изображений
+//       onTap: () async {
+//         context.scaffoldMessenger.showSnackBar(const SnackBar(
+//           content: Text('Очистка..'),
+//           duration: Duration(milliseconds: 800),
+//         ));
+//         await storage.clear();
+//         // await extended_image.clearDiskCachedImages();
+//         // extended_image.clearMemoryImageCache();
+//         if (context.mounted) {
+//           context.scaffoldMessenger.showSnackBar(
+//             const SnackBar(
+//               content: Text('Кэш успешно очищен'),
+//               duration: Duration(milliseconds: 1200),
+//             ),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
 
 // class ExitProfileWidget extends ConsumerWidget {
 //   const ExitProfileWidget({super.key});

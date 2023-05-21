@@ -20,3 +20,5 @@ build:
     #- $gen
     - flutter build apk --flavor prod --split-per-abi
     - dart run shikidev:rename_apk
+  windows:
+    - flutter build windows

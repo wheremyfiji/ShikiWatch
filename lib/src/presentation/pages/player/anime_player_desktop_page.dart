@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +28,7 @@ import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../utils/shaders.dart';
 import '../../../utils/utils.dart';
 import '../../widgets/auto_hide.dart';
+import '../../widgets/cached_image.dart';
 import '../../widgets/scrollable_slider.dart';
 
 import 'continue_dialog.dart';
@@ -774,10 +774,14 @@ class _PlayerControlsState extends State<PlayerControls> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(4.0),
-                child: CachedNetworkImage(
-                  imageUrl: AppConfig.staticUrl + widget.animePic,
+                child: CachedImage(
+                  AppConfig.staticUrl + widget.animePic,
                   height: 60,
                 ),
+                // CachedNetworkImage(
+                //   imageUrl: AppConfig.staticUrl + widget.animePic,
+                //   height: 60,
+                // ),
                 // ExtendedImage.network(
                 //   AppConfig.staticUrl + widget.animePic,
                 //   height: 60,

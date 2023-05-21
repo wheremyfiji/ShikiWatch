@@ -97,7 +97,7 @@ class TitleInfoPageController extends ChangeNotifier {
   final CancelToken cancelToken;
   AsyncValue<Anime> title;
 
-  int duration = 0;
+  String duration = '?';
   bool isAnons = true;
   bool isFavor = false;
   String? nextEp;
@@ -308,7 +308,8 @@ class TitleInfoPageController extends ChangeNotifier {
       'pg_13': '16+',
       'r': '18+',
       'r_plus': '18+',
-      'rx': 'Hentai'
+      'rx': 'Hentai',
+      'none': '?'
     };
     return map[r] ?? r;
     //return '';
@@ -316,7 +317,7 @@ class TitleInfoPageController extends ChangeNotifier {
 
   void fillVariables(Anime data) {
     isAnons = data.anons ?? true;
-    duration = data.duration ?? 0;
+    duration = (data.duration ?? 0) == 0 ? '?' : '${data.duration}';
     isFavor = data.favoured ?? false;
     rating = getRating(data.rating ?? '');
 

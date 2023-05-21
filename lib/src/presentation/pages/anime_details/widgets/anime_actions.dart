@@ -32,8 +32,8 @@ class AnimeActionsWidget extends StatelessWidget {
                     reverseTransitionDuration: Duration.zero,
                   ),
                 ),
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.join_inner),
                     SizedBox(
                       height: 4,
@@ -60,17 +60,14 @@ class AnimeActionsWidget extends StatelessWidget {
                           ),
                         );
                       },
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.topic), //chat
                     SizedBox(
                       height: 4,
                     ),
                     Text(
                       'Обсуждение',
-                      // style: TextStyle(
-                      //   color: context.textTheme.bodyMedium?.color,
-                      // ),
                     ),
                   ],
                 ),
@@ -81,8 +78,8 @@ class AnimeActionsWidget extends StatelessWidget {
                 onPressed: () {
                   _openFullscreenDialog(context);
                 },
-                child: Column(
-                  children: const [
+                child: const Column(
+                  children: [
                     Icon(Icons.link),
                     SizedBox(
                       height: 4,
@@ -108,41 +105,6 @@ class AnimeActionsWidget extends StatelessWidget {
           animeId: anime.id!,
         ),
       ),
-    );
-  }
-
-  Future<void> _dialogBuilder(BuildContext context) {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Basic dialog title'),
-          content: const Text('A dialog is a type of modal window that\n'
-              'appears in front of app content to\n'
-              'provide critical information, or prompt\n'
-              'for a decision to be made.'),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Disable'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Enable'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }

@@ -18,14 +18,6 @@ class ExternalLinksWidget extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ссылки'),
-        centerTitle: false,
-        //automaticallyImplyLeading: false,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.close),
-        //     onPressed: () => Navigator.of(context).pop(),
-        //   ),
-        // ],
       ),
       body: links.when(
         data: (data) {

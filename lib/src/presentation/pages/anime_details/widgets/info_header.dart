@@ -6,10 +6,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../constants/config.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../utils/shiki_utils.dart';
+import '../../../widgets/cached_image.dart';
 
 class AnimeInfoHeader extends StatelessWidget {
   final Animes data;
-  final int duration;
+  final String duration;
   final bool favoured;
   final String nextEp;
   final String rating;
@@ -57,15 +58,10 @@ class AnimeInfoHeader extends StatelessWidget {
                   border: Border.all(width: 0, color: Colors.transparent),
                   image: DecorationImage(
                     filterQuality: FilterQuality.low,
-                    image:
-                        // ExtendedNetworkImageProvider(
-                        //   AppConfig.staticUrl +
-                        //       (data.image?.original ?? data.image?.preview ?? ''),
-                        //   cache: true,
-                        // ),
-                        CachedNetworkImageProvider(
+                    image: CachedNetworkImageProvider(
                       AppConfig.staticUrl +
                           (data.image?.original ?? data.image?.preview ?? ''),
+                      cacheManager: cacheManager,
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -103,22 +99,11 @@ class AnimeInfoHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(width: 16),
-                // Hero(
-                //   tag: data.id ?? 0,
-                //   child:
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      // ExtendedImage.network(
-                      //   AppConfig.staticUrl +
-                      //       (data.image?.original ?? data.image?.preview ?? ''),
-                      //   height: height - 150,
-                      //   width: 145,
-                      //   fit: BoxFit.cover,
-                      //   cache: true,
-                      // ),
                       CachedNetworkImage(
                         imageUrl: AppConfig.staticUrl +
                             (data.image?.original ?? data.image?.preview ?? ''),
@@ -138,7 +123,6 @@ class AnimeInfoHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-                //),
                 const SizedBox(width: 16),
                 Flexible(
                   child: Column(
@@ -176,20 +160,11 @@ class AnimeInfoHeader extends StatelessWidget {
                         height: 8,
                       ),
                       Text('$year • $season', textAlign: TextAlign.start),
-                      // const SizedBox(
-                      //   height: 2,
-                      // ),
                       Text(
                         '${getStatus(data.status!)} • ${getKind(data.kind!)} • $rating',
                         textAlign: TextAlign.start,
                       ),
-                      // const SizedBox(
-                      //   height: 2,
-                      // ),
-                      if (data.episodes != null && data.episodesAired != null
-                          //&&
-                          //data.duration != null
-                          )
+                      if (data.episodes != null && data.episodesAired != null)
                         data.status == 'released'
                             ? Text(
                                 '${data.episodes!} эп. по ~$duration мин.',
@@ -199,9 +174,6 @@ class AnimeInfoHeader extends StatelessWidget {
                                 '${data.episodesAired!} из ${data.episodes! == 0 ? '?' : '${data.episodes!}'} эп. по ~$duration мин.',
                                 textAlign: TextAlign.start,
                               ),
-                      // const SizedBox(
-                      //   height: 2,
-                      // ),
                       nextEp != ''
                           ? Text('След. серия в $nextEp',
                               textAlign: TextAlign.start)

@@ -27,16 +27,12 @@ class AnimeRatesStatusesWidget extends StatelessWidget {
             Text(
               'Статистика',
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    //fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
             ),
             Text(
               'Всего: $sum',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  //fontSize: 15,
-                  //fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),
@@ -54,9 +50,6 @@ class AnimeRatesStatusesWidget extends StatelessWidget {
           spacing: 4.0,
           runSpacing: 8.0,
           direction: Axis.horizontal,
-          //crossAxisAlignment: WrapCrossAlignment.start,
-          //alignment: WrapAlignment.spaceEvenly,
-          //runAlignment: WrapAlignment.start,
           children: [
             ...List.generate(
               statsValues.length,

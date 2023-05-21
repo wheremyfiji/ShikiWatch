@@ -93,12 +93,6 @@ class RelatedTitles extends StatelessWidget {
                                       imageUrl: AppConfig.staticUrl +
                                           (title?.image?.original ?? ''),
                                     ),
-                                    // ExtendedImage.network(
-                                    //   AppConfig.staticUrl +
-                                    //       (title?.image?.original ?? ''),
-                                    //   fit: BoxFit.cover,
-                                    //   cache: true,
-                                    // ),
                                   ),
                                 ),
                               ),
@@ -127,7 +121,6 @@ class RelatedTitles extends StatelessWidget {
                                       '$year год • $kind • $relation',
                                       style: context.textTheme.bodySmall,
                                     ),
-                                    //Text('$isManga'),
                                   ],
                                 ),
                               ),

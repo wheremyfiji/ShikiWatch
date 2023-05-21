@@ -157,8 +157,6 @@ class SeriesSelectPage extends ConsumerWidget {
                   ),
                 ),
               ],
-              //title: const Text('Серия'),
-              //title: Text(widget.stud ?? 'Серия'),
               title: Text(
                 '$animeName • $studioName',
                 maxLines: 1,
@@ -245,8 +243,6 @@ class SeriesSelectPage extends ConsumerWidget {
                             // ignore: use_build_context_synchronously
                             GoRouter.of(context).addListener(watchRouteChange);
                           }, //запись в бд
-                          //title: Text("Серия ${reversedIndex + 1}"),
-                          //title: Text("Серия ${seria!.name}"),
                           title: seria.type != null
                               ? Text("Серия ${seria.number} (${seria.type})")
                               : Text("Серия ${seria.number}"),
@@ -353,7 +349,6 @@ class SeriesSelectPage extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(0.0),
             child: Column(
-              //crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 RadioListTile<EpisodeSortType>(
@@ -376,19 +371,6 @@ class SeriesSelectPage extends ConsumerWidget {
                     setSortType(EpisodeSortType.newest);
                   },
                 ),
-                // ListTile(
-                //   title: const Text(
-                //     'По старым',
-                //     style: TextStyle(
-                //       fontWeight: FontWeight.normal,
-                //     ),
-                //   ),
-                //   onTap: () => setSortType(EpisodeSortType.oldest),
-                // ),
-                // ListTile(
-                //   title: const Text('По новым'),
-                //   onTap: () => setSortType(EpisodeSortType.newest),
-                // ),
               ],
             ),
           ),
@@ -397,200 +379,3 @@ class SeriesSelectPage extends ConsumerWidget {
     );
   }
 }
-
-// class SeriesSelectPage extends StatefulWidget {
-//   final List<KodikSeries>? seriesList;
-
-//   // final int? epWatched;
-//   // final String? animeName;
-//   // final String? stud;
-
-//   final int studioId;
-//   final int shikimoriId;
-//   final int episodeNumber;
-//   final String animeName;
-//   final String studioName;
-//   final String studioType;
-//   final String episodeLink;
-
-//   const SeriesSelectPage(
-//       {super.key,
-//       this.seriesList,
-//       required this.studioId,
-//       required this.shikimoriId,
-//       required this.episodeNumber,
-//       required this.animeName,
-//       required this.studioName,
-//       required this.studioType,
-//       required this.episodeLink});
-
-//   // studioId: studioId,
-//   // shikimoriId: shikimoriId,
-//   // episodeNumber: episodeNumber,
-//   // animeName: animeName,
-//   // studioName: studioName,
-//   // studioType: studioType,
-//   // episodeLink: episodeLink
-
-//   // const SeriesSelectPage(
-//   //     {super.key,
-//   //     required this.seriesList,
-//   //     required this.epWatched,
-//   //     required this.animeName,
-//   //     required this.stud});
-
-//   @override
-//   State<SeriesSelectPage> createState() => _SeriesSelectPageState();
-// }
-
-// class _SeriesSelectPageState extends State<SeriesSelectPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: CustomScrollView(
-//         slivers: [
-//           SliverAppBar.large(
-//             actions: [
-//               IconButton(
-//                 onPressed: () {
-//                   _sortBottomSheet(context);
-//                 },
-//                 icon: const Icon(Icons.filter_list),
-//               ),
-//             ],
-//             title: const Text('Серия'),
-//             //title: Text(widget.stud ?? 'Серия'),
-//             //title: Text('${widget.animeName} • ${widget.stud}'),
-//           ),
-//           // SliverPinnedHeader(
-//           //   child: Padding(
-//           //     padding: const EdgeInsets.all(8.0),
-//           //     child: Card(
-//           //       shadowColor: Colors.transparent,
-//           //       child: Padding(
-//           //         padding: const EdgeInsets.all(16.0),
-//           //         child: Column(
-//           //           children: [Text('${widget.animeName} • ${widget.stud}')],
-//           //         ),
-//           //       ),
-//           //     ),
-//           //   ),
-//           // ),
-//           SliverList(
-//             delegate: SliverChildBuilderDelegate(
-//               (BuildContext context, int index) {
-//                 //int itemCount = seriesList?.length ?? 0;
-//                 //int reversedIndex = itemCount - 1 - index;
-//                 int reversedIndex = index;
-//                 final seria = widget.seriesList?[reversedIndex];
-//                 final isComp = reversedIndex < widget.epWatched!;
-//                 return ListTile(
-//                   onTap: () {
-//                     // context.pushNamed(
-//                     //   'player',
-//                     //   params: {
-//                     //     'link': seria.link ?? '',
-//                     //     'name': widget.animeName ?? '',
-//                     //     //'ep': widget.epWatched!.toString(),
-//                     //     'ep': '${reversedIndex + 1}'
-//                     //   },
-//                     AnimePlayerPageExtra data = AnimePlayerPageExtra(
-//                         studioId: studioId,
-//                         shikimoriId: shikimoriId,
-//                         episodeNumber: episodeNumber,
-//                         animeName: animeName,
-//                         studioName: studioName,
-//                         studioType: studioType,
-//                         episodeLink: episodeLink);
-//                     context.pushNamed("player", extra: data);
-//                   }, //запись в бд
-//                   //title: Text("Серия ${reversedIndex + 1}"),
-//                   //title: Text("Серия ${seria!.name}"),
-//                   title: seria!.type != null
-//                       ? Text("Серия ${seria.number} (${seria.type})")
-//                       : Text("Серия ${seria.number}"),
-//                   //subtitle: const Text('Просморено до 27:54'),
-//                   trailing: Row(
-//                     mainAxisSize: MainAxisSize.min,
-//                     children: [
-//                       if (isComp) ...[
-//                         Icon(
-//                           Icons.done,
-//                           color: Theme.of(context).colorScheme.primary,
-//                         ),
-//                       ],
-//                       IconButton(
-//                         onPressed: () {},
-//                         icon: const Icon(Icons.more_vert),
-//                       ),
-//                     ],
-//                   ),
-//                 );
-//               },
-//               childCount: widget.seriesList?.length, // 1000 list items
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   _sortBottomSheet(BuildContext context
-//       //, Function(EpisodeSortType type) setSortType
-//       ) {
-//     return showModalBottomSheet(
-//       useRootNavigator: true,
-//       //isDismissible: false,
-//       context: context,
-//       builder: (context) {
-//         return Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: Container(
-//             margin: const EdgeInsets.all(16),
-//             child: Column(
-//               //crossAxisAlignment: CrossAxisAlignment.start,
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 //const Text('Выбор сортировки списка'),
-//                 ListTile(
-//                   title: Text(
-//                     'Сортировка списка серий',
-//                     style: TextStyle(
-//                       color: Theme.of(context).colorScheme.primary,
-//                       fontWeight: FontWeight.bold,
-//                     ),
-//                   ),
-//                   onTap: () {
-//                     context.pop();
-//                   },
-//                   //onTap: () => setSortType(EpisodeSortType.newest),
-//                 ),
-//                 ListTile(
-//                   title: const Text(
-//                     'От новых к старым',
-//                     style: TextStyle(
-//                       fontWeight: FontWeight.normal,
-//                     ),
-//                   ),
-//                   onTap: () {
-//                     context.pop();
-//                   },
-//                   trailing: const Icon(Icons.check),
-//                   //onTap: () => setSortType(EpisodeSortType.newest),
-//                 ),
-//                 ListTile(
-//                   selected: true,
-//                   title: const Text('От старых к новым'),
-//                   onTap: () {
-//                     context.pop();
-//                   },
-//                   // onTap: () => setSortType(EpisodeSortType.oldest),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

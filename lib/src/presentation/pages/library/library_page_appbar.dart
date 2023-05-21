@@ -8,6 +8,7 @@ import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
 import '../../../domain/enums/library_state.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../widgets/cached_image.dart';
 
 final libraryStateProvider = StateProvider<LibraryState>((ref) {
   int value = Hive.box(BoxType.settings.name).get(
@@ -65,6 +66,7 @@ class LibraryPageAppBar extends ConsumerWidget {
             backgroundColor: Colors.transparent,
             foregroundImage: CachedNetworkImageProvider(
               SecureStorageService.instance.userProfileImage,
+              cacheManager: cacheManager,
             ),
           ),
         ),

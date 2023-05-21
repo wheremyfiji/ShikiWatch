@@ -13,6 +13,7 @@ import '../../../services/shared_pref/shared_preferences_provider.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../../utils/utils.dart';
 import '../../providers/anime_details_provider.dart';
+import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/title_description.dart';
@@ -146,13 +147,20 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                CachedNetworkImage(
-                                  imageUrl: AppConfig.staticUrl +
+                                CachedImage(
+                                  AppConfig.staticUrl +
                                       (animeData.image?.original ??
                                           animeData.image?.preview ??
                                           ''),
                                   fit: BoxFit.cover,
                                 ),
+                                // CachedNetworkImage(
+                                //   imageUrl: AppConfig.staticUrl +
+                                //       (animeData.image?.original ??
+                                //           animeData.image?.preview ??
+                                //           ''),
+                                //   fit: BoxFit.cover,
+                                // ),
                                 // ExtendedImage.network(
                                 //   AppConfig.staticUrl +
                                 //       (animeData.image?.original ??
@@ -405,8 +413,13 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                                     child: CircleAvatar(
                                       backgroundColor: context
                                           .theme.colorScheme.secondaryContainer,
-                                      backgroundImage: CachedNetworkImageProvider(
-                                          '${AppConfig.staticUrl}${titleInfo.title.asData!.value.studios![index].image ?? '/assets/globals/missing/mini.png'}'),
+
+                                      backgroundImage:
+                                          CachedNetworkImageProvider(
+                                        '${AppConfig.staticUrl}${titleInfo.title.asData!.value.studios![index].image ?? '/assets/globals/missing/mini.png'}',
+                                        cacheManager: cacheManager,
+                                      ),
+
                                       //     ExtendedNetworkImageProvider(
                                       //   '${AppConfig.staticUrl}${titleInfo.title.asData!.value.studios![index].image ?? '/assets/globals/missing/mini.png'}',
                                       //   cache: true,
