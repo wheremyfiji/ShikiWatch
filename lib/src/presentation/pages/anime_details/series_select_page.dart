@@ -351,7 +351,7 @@ class SeriesSelectPage extends ConsumerWidget {
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(0.0),
             child: Column(
               //crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
