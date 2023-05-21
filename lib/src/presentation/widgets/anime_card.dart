@@ -84,7 +84,7 @@ class AnimeCard extends StatelessWidget {
                       ),
                       data.anime?.status == 'released'
                           ? Text(
-                              '${data.episodes.toString()} из ${data.episodes! == 0 ? '?' : '${data.episodes!}'} эп.',
+                              '${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -96,7 +96,7 @@ class AnimeCard extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.episodes! == 0 ? '?' : '${data.episodes!}'} эп.',
+                              '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
