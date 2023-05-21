@@ -501,7 +501,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка создания отметки', s);
+      state = AsyncValue.error('Ошибка при добавлении', s);
     } finally {
       state = const AsyncValue.data(null);
       //onFinally();
@@ -748,7 +748,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           );
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка обновления отметки', s);
+      state = AsyncValue.error('Ошибка при обновлении', s);
     } finally {
       state = const AsyncValue.data(null);
       //onFinally();
@@ -795,7 +795,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка удаления отметки', s);
+      state = AsyncValue.error('Ошибка при удалении', s);
     } finally {
       state = const AsyncValue.data(null);
       // onFinally();
@@ -1223,6 +1223,7 @@ class _AnimeUserRateBottomSheetState
                     border: OutlineInputBorder(),
                     hintText: 'Добавить заметку',
                   ),
+                  minLines: 1,
                   maxLines: 3,
                 ),
               ],
@@ -1257,7 +1258,8 @@ class _AnimeUserRateBottomSheetState
 
                                         showSnackBar(
                                           ctx: context,
-                                          msg: 'Отметка создана',
+                                          msg:
+                                              'Добавлено в список "${getChipLabel(selectedStatus ?? 0)}"',
                                           dur: const Duration(seconds: 3),
                                         );
                                       },
@@ -1282,7 +1284,7 @@ class _AnimeUserRateBottomSheetState
 
                                         showSnackBar(
                                           ctx: context,
-                                          msg: 'Отметка обновлена',
+                                          msg: 'Сохранено успешно',
                                           dur: const Duration(seconds: 3),
                                         );
                                       },
@@ -1307,7 +1309,7 @@ class _AnimeUserRateBottomSheetState
                       widget.data.userRate?.id != null &&
                       !isLoading)
                     IconButton(
-                      tooltip: 'Удалить отметку',
+                      tooltip: 'Удалить из списка',
                       onPressed: () {
                         ref
                             .read(updateAnimeRateButtonProvider.notifier)
@@ -1320,7 +1322,8 @@ class _AnimeUserRateBottomSheetState
 
                                 showSnackBar(
                                   ctx: context,
-                                  msg: 'Отметка удалена',
+                                  msg:
+                                      'Удалено из списка "${getChipLabel(selectedStatus ?? 0)}"',
                                   dur: const Duration(seconds: 3),
                                 );
                               },
