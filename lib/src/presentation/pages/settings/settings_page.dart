@@ -168,7 +168,7 @@ class SettingsPage extends ConsumerWidget {
             ),
           SliverToBoxAdapter(
             child: SettingsGroup(
-              title: 'Библиотека',
+              title: 'Приложение', // Библиотека
               options: [
                 ValueListenableBuilder(
                   valueListenable: Hive.box(BoxType.settings.name).listenable(
@@ -198,6 +198,12 @@ class SettingsPage extends ConsumerWidget {
                     );
                   },
                 ),
+                // SwitchListTile(
+                //   value: false,
+                //   onChanged: (value) {},
+                //   title: const Text('NSFW-контент'),
+                //   subtitle: const Text('Искать и показывать NSFW-контент'),
+                // ),
               ],
             ),
           ),

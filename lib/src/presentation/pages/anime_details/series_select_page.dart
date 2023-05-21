@@ -342,16 +342,16 @@ class SeriesSelectPage extends ConsumerWidget {
       Function(EpisodeSortType type) setSortType, EpisodeSortType currentSort) {
     return showModalBottomSheet(
       useRootNavigator: true,
+      showDragHandle: true,
       constraints: BoxConstraints(
         maxWidth:
             MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
       ),
       context: context,
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            margin: const EdgeInsets.all(16),
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               //crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,

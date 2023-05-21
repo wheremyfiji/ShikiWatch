@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../providers/library_tab_page_provider.dart';
 import '../../../widgets/anime_card.dart';
 import '../../../widgets/error_widget.dart';
+import '../../../widgets/loading_grid.dart';
 import '../widgets/search_widget.dart';
 import '../widgets/empty_list.dart';
 
@@ -96,9 +97,11 @@ class RewatchingTab extends ConsumerWidget {
                 ),
               ),
             ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) =>
-          CustomErrorWidget(err.toString(), () => controller.fetch()),
+      loading: () => const LoadingGrid(),
+      error: (err, stack) => CustomErrorWidget(
+        err.toString(),
+        () => ref.refresh(rewatchingTabPageProvider),
+      ),
     );
   }
 }

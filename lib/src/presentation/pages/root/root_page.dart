@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 
 import 'package:shikidev/src/utils/target_platform.dart';
@@ -36,111 +37,90 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime lastTimeBackbuttonWasClicked = DateTime.now();
     final ext = MediaQuery.of(context).size.width > 1600; //1200
-    return WillPopScope(
-      onWillPop: () async {
-        if (DateTime.now().difference(lastTimeBackbuttonWasClicked) >=
-            const Duration(seconds: 2)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              behavior: SnackBarBehavior.floating,
-              dismissDirection: DismissDirection.horizontal,
-              margin: EdgeInsets.fromLTRB(16, 8, 16, 48),
-              showCloseIcon: true,
-              content: Text("Нажмите ещё раз для выхода"),
-              duration: Duration(seconds: 2),
+
+    return TargetP.instance.isDesktop
+        ? Scaffold(
+            body: SafeArea(
+              child: Row(
+                children: [
+                  Stack(
+                    children: [
+                      NavigationRail(
+                        // trailing: const Expanded(
+                        //   child: Align(
+                        //     alignment: Alignment.bottomLeft,
+                        //     child: Padding(
+                        //       padding: EdgeInsets.only(bottom: 8.0),
+                        //       child: Text('Версия: пошел '),
+                        //     ),
+                        //   ),
+                        // ),
+                        extended: ext,
+                        groupAlignment: -1.0,
+                        destinations: _allDestinations,
+                        selectedIndex: shellState.currentIndex,
+                        onDestinationSelected: (tappedIndex) {
+                          if (shellState.currentIndex == tappedIndex &&
+                              GoRouter.of(context).location == '/explore') {
+                            context.push('/explore/search');
+                            return;
+                          }
+
+                          if (shellState.currentIndex == tappedIndex) {
+                            shellState.currentNavigatorKey.currentState
+                                ?.popUntil((r) => r.isFirst);
+                          } else {
+                            shellState.goBranch(index: tappedIndex);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  //const VerticalDivider(thickness: 1, width: 1),
+                  Expanded(
+                    child: body,
+                  )
+                ],
+              ),
+            ),
+          )
+        : Scaffold(
+            body: body,
+            bottomNavigationBar: NavigationBar(
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.book_outlined),
+                  selectedIcon: Icon(Icons.book),
+                  label: 'Библиотека',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home_rounded),
+                  label: 'Главная',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.account_circle_outlined),
+                  selectedIcon: Icon(Icons.account_circle),
+                  label: 'Профиль',
+                ),
+              ],
+              selectedIndex: shellState.currentIndex,
+              onDestinationSelected: (tappedIndex) {
+                if (shellState.currentIndex == tappedIndex &&
+                    GoRouter.of(context).location == '/explore') {
+                  context.push('/explore/search');
+                  return;
+                }
+
+                if (shellState.currentIndex == tappedIndex) {
+                  shellState.currentNavigatorKey.currentState
+                      ?.popUntil((r) => r.isFirst);
+                } else {
+                  shellState.goBranch(index: tappedIndex);
+                }
+              },
             ),
           );
-          lastTimeBackbuttonWasClicked = DateTime.now();
-          return false;
-        } else {
-          return true;
-        }
-      },
-      child: TargetP.instance.isDesktop
-          ? Scaffold(
-              body: SafeArea(
-                child: Row(
-                  children: [
-                    Stack(
-                      children: [
-                        NavigationRail(
-                          // trailing: const Expanded(
-                          //   child: Align(
-                          //     alignment: Alignment.bottomLeft,
-                          //     child: Padding(
-                          //       padding: EdgeInsets.only(bottom: 8.0),
-                          //       child: Text('Версия: пошел '),
-                          //     ),
-                          //   ),
-                          // ),
-                          extended: ext,
-                          groupAlignment: -1.0,
-                          destinations: _allDestinations,
-                          selectedIndex: shellState.currentIndex,
-                          onDestinationSelected: (tappedIndex) {
-                            if (shellState.currentIndex == tappedIndex &&
-                                GoRouter.of(context).location == '/explore') {
-                              context.push('/explore/search');
-                              return;
-                            }
-
-                            if (shellState.currentIndex == tappedIndex) {
-                              shellState.currentNavigatorKey.currentState
-                                  ?.popUntil((r) => r.isFirst);
-                            } else {
-                              shellState.goBranch(index: tappedIndex);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    //const VerticalDivider(thickness: 1, width: 1),
-                    Expanded(
-                      child: body,
-                    )
-                  ],
-                ),
-              ),
-            )
-          : Scaffold(
-              body: body,
-              bottomNavigationBar: NavigationBar(
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.book_outlined),
-                    selectedIcon: Icon(Icons.book),
-                    label: 'Библиотека',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home_rounded),
-                    label: 'Главная',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.account_circle_outlined),
-                    selectedIcon: Icon(Icons.account_circle),
-                    label: 'Профиль',
-                  ),
-                ],
-                selectedIndex: shellState.currentIndex,
-                onDestinationSelected: (tappedIndex) {
-                  if (shellState.currentIndex == tappedIndex &&
-                      GoRouter.of(context).location == '/explore') {
-                    context.push('/explore/search');
-                    return;
-                  }
-
-                  if (shellState.currentIndex == tappedIndex) {
-                    shellState.currentNavigatorKey.currentState
-                        ?.popUntil((r) => r.isFirst);
-                  } else {
-                    shellState.goBranch(index: tappedIndex);
-                  }
-                },
-              ),
-            ),
-    );
   }
 }

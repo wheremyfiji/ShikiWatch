@@ -23,10 +23,13 @@ class _SearchWidgetState extends State<SearchWidget> {
   Widget build(BuildContext context) {
     return Container(
       //height: 40,
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 10), // 10 + 4 = 16
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      //margin: const EdgeInsets.fromLTRB(16, 16, 16, 10), // 10 + 4 = 16
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Theme.of(context).colorScheme.onInverseSurface,
+        color: Theme.of(context)
+            .colorScheme
+            .onInverseSurface, // TODO при светлой теме выглядит угли
         // border: Border.all(color: Theme.of(context).colorScheme.primary),
         //border: Border.all(color: Theme.of(context).navigationBarTheme.indicatorColor!),
       ),

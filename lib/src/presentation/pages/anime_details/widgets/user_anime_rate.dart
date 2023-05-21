@@ -327,9 +327,11 @@ class UserAnimeRateWidget extends HookConsumerWidget {
       useSafeArea: true,
       elevation: 0,
       builder: (context) {
-        return AnimeUserRateBottomSheet(
-          data: data,
-          anime: anime,
+        return SafeArea(
+          child: AnimeUserRateBottomSheet(
+            data: data,
+            anime: anime,
+          ),
         );
       },
     );

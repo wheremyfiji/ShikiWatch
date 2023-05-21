@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+
 import 'package:shimmer/shimmer.dart';
-//import 'package:extended_image/extended_image.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ImageWithShimmerWidget extends StatelessWidget {
@@ -47,6 +47,7 @@ class ImageWithShimmerWidget extends StatelessWidget {
       imageUrl: imageUrl,
       placeholder: (context, url) {
         return Shimmer.fromColors(
+          // TODO при светлой теме выглядит угли
           baseColor: Theme.of(context).colorScheme.surface,
           highlightColor: Theme.of(context).colorScheme.onInverseSurface,
           child: Container(

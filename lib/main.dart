@@ -23,7 +23,6 @@ import 'secret.dart';
 import 'src/constants/box_types.dart';
 import 'src/data/data_sources/environment_data_src.dart';
 import 'src/presentation/shiki.dart';
-import 'src/presentation/widgets/window_watcher.dart';
 import 'src/services/secure_storage/secure_storage_service.dart';
 
 import 'src/data/repositories/cache_storage_repo.dart';
@@ -155,10 +154,11 @@ void initApp() async {
         cacheStorageServiceProvider
             .overrideWithValue(initializedStorageService),
       ],
-      child: WindowWatcher(
-        child: const ShikiApp(),
-        onClose: () {},
-      ),
+      // child: WindowWatcher(
+      //   child: const ShikiApp(),
+      //   onClose: () {},
+      // ),
+      child: const ShikiApp(),
     ),
   );
 }

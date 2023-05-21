@@ -5,6 +5,7 @@ import '../../../providers/library_tab_page_provider.dart';
 import '../../../widgets/anime_card.dart';
 import '../../../widgets/error_widget.dart';
 
+import '../../../widgets/loading_grid.dart';
 import '../widgets/search_widget.dart';
 import '../widgets/empty_list.dart';
 
@@ -16,84 +17,184 @@ class WatchingTab extends ConsumerWidget {
     final controller = ref.watch(watchingTabPageProvider);
 
     return controller.animes.when(
-      data: (data) => data.isEmpty
-          ? RefreshIndicator(
-              onRefresh: () async => ref.refresh(watchingTabPageProvider),
-              child: Stack(
-                children: <Widget>[ListView(), const EmptyList()],
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: () async => ref.refresh(watchingTabPageProvider),
-              child: CustomScrollView(
-                key: const PageStorageKey<String>('WatchingPage'),
-                scrollDirection: Axis.vertical,
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: SearchWidget(
-                      controller: controller.textEditingController,
-                      text: 'controller.query',
-                      onChanged: controller.onSearchChanged,
-                      hintText: 'Поиск (${data.length} всего)',
-                    ),
-                  ),
-                  if (controller.searchAnimes.isEmpty &&
-                      controller.textEditingController.text.isNotEmpty) ...[
-                    const SliverPadding(
-                      padding: EdgeInsets.all(16.0),
-                      sliver: SliverToBoxAdapter(
-                        child: Center(
-                          child: Text(
-                            'В этом списке пусто\nПопробуй поискать в другом', // Хм, похоже здесь пусто
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    sliver: SliverGrid(
-                      delegate: SliverChildBuilderDelegate(
-                        addAutomaticKeepAlives: false,
-                        addRepaintBoundaries: false,
-                        addSemanticIndexes: false,
-                        (context, index) {
-                          data.sort((a, b) {
-                            String adate = a.updatedAt!;
-                            String bdate = b.updatedAt!;
-                            return -adate.compareTo(bdate);
-                          });
-                          final sortedData = controller.searchAnimes.isEmpty &&
-                                  controller.textEditingController.text.isEmpty
-                              ? data
-                              : controller.searchAnimes;
-
-                          if (sortedData.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-
-                          final model = sortedData[index];
-
-                          return AnimeCard(model);
-                        },
-                        childCount: controller.searchAnimes.isEmpty
-                            ? data.length
-                            : controller.searchAnimes.length,
-                      ),
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 140,
-                        childAspectRatio: 0.55,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+      data: (data) {
+        if (data.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: () async => ref.refresh(watchingTabPageProvider),
+            child: Stack(
+              children: <Widget>[ListView(), const EmptyList()],
             ),
-      loading: () => const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // return CustomScrollView(
+        //   slivers: [
+        //     SliverPadding(
+        //       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        //       sliver: SliverGrid(
+        //         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        //           maxCrossAxisExtent: 140,
+        //           childAspectRatio: 0.55,
+        //           crossAxisSpacing: 8,
+        //           mainAxisSpacing: 8,
+        //         ),
+        //         delegate: SliverChildBuilderDelegate(
+        //           (context, index) => const GridLoadingElement(),
+        //           childCount: 12,
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // );
+
+        return RefreshIndicator(
+          onRefresh: () async => ref.refresh(watchingTabPageProvider),
+          child: CustomScrollView(
+            key: const PageStorageKey<String>('WatchingPage'),
+            slivers: [
+              SliverToBoxAdapter(
+                child: SearchWidget(
+                  controller: controller.textEditingController,
+                  text: 'controller.query',
+                  onChanged: controller.onSearchChanged,
+                  hintText: 'Поиск (${data.length} всего)',
+                ),
+              ),
+              if (controller.searchAnimes.isEmpty &&
+                  controller.textEditingController.text.isNotEmpty) ...[
+                const SliverPadding(
+                  padding: EdgeInsets.all(16.0),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(
+                      child: Text(
+                        'В этом списке пусто\nПопробуй поискать в другом', // Хм, похоже здесь пусто
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    addAutomaticKeepAlives: false,
+                    addRepaintBoundaries: false,
+                    addSemanticIndexes: false,
+                    (context, index) {
+                      data.sort((a, b) {
+                        String adate = a.updatedAt!;
+                        String bdate = b.updatedAt!;
+                        return -adate.compareTo(bdate);
+                      });
+                      final sortedData = controller.searchAnimes.isEmpty &&
+                              controller.textEditingController.text.isEmpty
+                          ? data
+                          : controller.searchAnimes;
+
+                      if (sortedData.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final model = sortedData[index];
+
+                      return AnimeCard(model);
+                    },
+                    childCount: controller.searchAnimes.isEmpty
+                        ? data.length
+                        : controller.searchAnimes.length,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 140,
+                    childAspectRatio: 0.55,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      // data: (data) => data.isEmpty
+      //     ? RefreshIndicator(
+      //         onRefresh: () async => ref.refresh(watchingTabPageProvider),
+      //         child: Stack(
+      //           children: <Widget>[ListView(), const EmptyList()],
+      //         ),
+      //       )
+      //     : RefreshIndicator(
+      //         onRefresh: () async => ref.refresh(watchingTabPageProvider),
+      //         child: CustomScrollView(
+      //           key: const PageStorageKey<String>('WatchingPage'),
+      //           scrollDirection: Axis.vertical,
+      //           slivers: [
+      //             SliverToBoxAdapter(
+      //               child: SearchWidget(
+      //                 controller: controller.textEditingController,
+      //                 text: 'controller.query',
+      //                 onChanged: controller.onSearchChanged,
+      //                 hintText: 'Поиск (${data.length} всего)',
+      //               ),
+      //             ),
+      //             if (controller.searchAnimes.isEmpty &&
+      //                 controller.textEditingController.text.isNotEmpty) ...[
+      //               const SliverPadding(
+      //                 padding: EdgeInsets.all(16.0),
+      //                 sliver: SliverToBoxAdapter(
+      //                   child: Center(
+      //                     child: Text(
+      //                       'В этом списке пусто\nПопробуй поискать в другом', // Хм, похоже здесь пусто
+      //                       textAlign: TextAlign.center,
+      //                     ),
+      //                   ),
+      //                 ),
+      //               ),
+      //             ],
+      //             SliverPadding(
+      //               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      //               sliver: SliverGrid(
+      //                 delegate: SliverChildBuilderDelegate(
+      //                   addAutomaticKeepAlives: false,
+      //                   addRepaintBoundaries: false,
+      //                   addSemanticIndexes: false,
+      //                   (context, index) {
+      //                     data.sort((a, b) {
+      //                       String adate = a.updatedAt!;
+      //                       String bdate = b.updatedAt!;
+      //                       return -adate.compareTo(bdate);
+      //                     });
+      //                     final sortedData = controller.searchAnimes.isEmpty &&
+      //                             controller.textEditingController.text.isEmpty
+      //                         ? data
+      //                         : controller.searchAnimes;
+
+      //                     if (sortedData.isEmpty) {
+      //                       return const SizedBox.shrink();
+      //                     }
+
+      //                     final model = sortedData[index];
+
+      //                     return AnimeCard(model);
+      //                   },
+      //                   childCount: controller.searchAnimes.isEmpty
+      //                       ? data.length
+      //                       : controller.searchAnimes.length,
+      //                 ),
+      //                 gridDelegate:
+      //                     const SliverGridDelegateWithMaxCrossAxisExtent(
+      //                   maxCrossAxisExtent: 140,
+      //                   childAspectRatio: 0.55,
+      //                   crossAxisSpacing: 8,
+      //                   mainAxisSpacing: 8,
+      //                 ),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const LoadingGrid(),
       error: (err, stack) => CustomErrorWidget(
           err.toString(), () => ref.refresh(watchingTabPageProvider)),
     );
