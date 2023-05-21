@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../providers/library_manga_provider.dart';
 import '../../../widgets/error_widget.dart';
 
+import '../../../widgets/loading_grid.dart';
 import '../../../widgets/manga_card.dart';
 import '../widgets/search_widget.dart';
 import '../widgets/empty_list.dart';
@@ -90,7 +91,7 @@ class ReadingMangaTab extends ConsumerWidget {
                 ],
               ),
             ),
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const LoadingGrid(),
       error: (err, stack) => CustomErrorWidget(
           err.toString(), () => ref.refresh(readingMangaTabProvider)),
     );
