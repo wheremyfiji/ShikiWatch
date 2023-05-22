@@ -518,6 +518,8 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      //elevation: 0,
+      backgroundColor: Theme.of(context).colorScheme.background,
       scrollable: true,
       actions: [
         if (widget.data.userRate != null && widget.data.userRate?.id != null)

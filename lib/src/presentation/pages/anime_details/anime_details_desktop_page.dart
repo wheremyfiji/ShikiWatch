@@ -18,6 +18,7 @@ import '../../widgets/error_widget.dart';
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/title_description.dart';
 
+import 'anime_details_page.dart';
 import 'rating_dialog.dart';
 import 'studio_select_page.dart';
 import 'widgets/anime_actions.dart';
@@ -332,22 +333,24 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                           spacing: 8,
                           runSpacing: 8, //0
                           children: [
-                            Chip(
-                              avatar: const Icon(Icons.star),
-                              padding: const EdgeInsets.all(0),
-                              shadowColor: Colors.transparent,
-                              elevation: 0,
-                              side: const BorderSide(
-                                  width: 0, color: Colors.transparent),
-                              labelStyle: context.theme.textTheme.bodyMedium
-                                  ?.copyWith(
-                                      color: context.theme.colorScheme
-                                          .onSecondaryContainer),
-                              backgroundColor:
-                                  context.theme.colorScheme.secondaryContainer,
-                              label: Text(animeData.score ?? '0'),
-                            ),
-                            if (titleInfo.rating != '-')
+                            if (animeData.score != null &&
+                                animeData.score != '0.0')
+                              Chip(
+                                avatar: const Icon(Icons.star),
+                                padding: const EdgeInsets.all(0),
+                                shadowColor: Colors.transparent,
+                                elevation: 0,
+                                side: const BorderSide(
+                                    width: 0, color: Colors.transparent),
+                                labelStyle: context.theme.textTheme.bodyMedium
+                                    ?.copyWith(
+                                        color: context.theme.colorScheme
+                                            .onSecondaryContainer),
+                                backgroundColor: context
+                                    .theme.colorScheme.secondaryContainer,
+                                label: Text(animeData.score ?? '0'),
+                              ),
+                            if (titleInfo.rating != '?')
                               Chip(
                                 //avatar: const Icon(Icons.star),
                                 padding: const EdgeInsets.all(0),
@@ -571,8 +574,12 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                   const SizedBox(
                     height: 16,
                   ),
-                  AnimeRelatedTitlesWidget(
-                    animeId: animeData.id!,
+                  // AnimeRelatedTitlesWidget(
+                  //   animeId: animeData.id!,
+                  // ),
+                  RelatedWidget(
+                    id: animeData.id!,
+                    padding: false,
                   ),
                   const SizedBox(
                     height: 70,
@@ -819,152 +826,5 @@ class AnimeVideosWidget extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-class AnimeRelatedTitlesWidget extends ConsumerWidget {
-  final int animeId;
-  const AnimeRelatedTitlesWidget({super.key, required this.animeId});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final related = ref.watch(relatedTitlesAnimeProvider(animeId));
-
-    return related.when(
-      data: (data) {
-        //if (data.isEmpty) return const SizedBox.shrink();
-        //final dataList = data.toList();
-        final dataList = data.toList();
-        //final dataList = t.toSet().toList();
-        return SizedBox(
-          height: 200,
-          child: ListView.builder(
-            //itemExtent: 40,
-            physics: const ClampingScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: dataList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                onTap: () {},
-                //isThreeLine: true,
-                //leading: Image.network(AppConfig.staticUrl +
-                //    (dataList[index].title?.image?.preview ?? '')),
-                // leading: Expanded(
-                //   child: AspectRatio(
-                //     aspectRatio: 0.703,
-                //     child: ExtendedImage.network(
-                //       AppConfig.staticUrl +
-                //           (dataList[index].title?.image?.preview ?? ''),
-                //       fit: BoxFit.cover,
-                //     ),
-                //   ),
-                // ),
-                // title: Text(
-                //   dataList[index].title?.russian ?? '',
-                // ),
-                // subtitle: Text(
-                //     // '${dataList[index].relationRussian} • ${dataList[index].title?.kind} • ${dataList[index].title?.airedOn}'),
-                //     '${dataList[index].relationRussian} • ${getKind(dataList[index].title?.kind ?? '')} • ${dataList[index].title?.airedOn}'),
-              );
-              // return Row(
-              //   children: [
-              //     Text(dataList[index].title?.kind ?? ''),
-              //     const SizedBox(
-              //       width: 4,
-              //     ),
-              //     Text(dataList[index].title?.airedOn ?? ''),
-              //     const SizedBox(
-              //       width: 4,
-              //     ),
-              //     Text(
-              //       dataList[index].title?.russian ?? '',
-              //     ),
-              //     const SizedBox(
-              //       width: 4,
-              //     ),
-              //     Text(dataList[index].relationRussian ?? ''),
-              //   ],
-              // );
-              // return Text(
-              //   dataList[index].title?.russian ??
-              //       dataList[index].relation ??
-              //       '',
-              // );
-              // return Text(
-              //   dataList[index].relationRussian ?? dataList[index].relation ?? '',
-              // );
-            },
-          ),
-        );
-        // return Column(
-        //   crossAxisAlignment: CrossAxisAlignment.start,
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: [
-        //     Padding(
-        //       padding: const EdgeInsets.only(bottom: 8),
-        //       child: Text(
-        //         'Связанное',
-        //         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-        //               //fontSize: 15,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //       ),
-        //     ),
-        //     data.nodes!.isEmpty
-        //         ? Text(
-        //             'Отсутствует',
-        //             style: Theme.of(context).textTheme.bodyMedium,
-        //           )
-        //         : ConstrainedBox(
-        //             constraints: const BoxConstraints(
-        //               maxHeight: 180.0,
-        //               //maxWidth: 100.0,
-        //             ),
-        //             child: ListView.builder(
-        //               //reverse: true,
-        //               //physics: const NeverScrollableScrollPhysics(),
-        //               //shrinkWrap: true,
-        //               scrollDirection: Axis.horizontal,
-        //               itemCount: dataList.length,
-        //               itemBuilder: (context, index) {
-        //                 final model = dataList[index];
-        //                 //return Text(model.name!);
-
-        //                 return Padding(
-        //                   padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-        //                   child: AspectRatio(
-        //                     aspectRatio: 225.0 / 320.0,
-        //                     child: Material(
-        //                       clipBehavior: Clip.antiAlias,
-        //                       shadowColor: Colors.transparent,
-        //                       shape: RoundedRectangleBorder(
-        //                         borderRadius: BorderRadius.circular(12),
-        //                       ),
-        //                       child: InkWell(
-        //                         onTap: () =>
-        //                             print('tapped anime id: ${model.id}'),
-        //                         // onTap: () {
-        //                         //   if (id != model.id) {
-        //                         //     context.push('/my_animes/${model.id!}');
-        //                         //   }
-        //                         // },
-        //                         child: ImageWithShimmerWidget(
-        //                           imageUrl: model.imageUrl ?? '',
-        //                         ),
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 );
-        //               },
-        //             ),
-        //           ),
-        //   ],
-        // );
-      },
-      error: ((error, stackTrace) => Center(child: Text(error.toString()))),
-      loading: () =>
-          const Center(child: CircularProgressIndicator()), //add loading skelet
-    );
-    //loading: () => const Center(child: CircularProgressIndicator()));
   }
 }

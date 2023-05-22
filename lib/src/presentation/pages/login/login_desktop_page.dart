@@ -44,7 +44,7 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
   }
 
   void goToHome() {
-    GoRouter.of(context).go('/explore'); //library explore
+    GoRouter.of(context).go('/library'); //library explore
   }
 
   Future<void> auth(String code) async {
@@ -227,8 +227,12 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
                         obscureText: true,
                         autocorrect: false,
                         controller: _controller,
-                        onSubmitted: (value) async {
-                          await auth(value);
+                        onSubmitted: (value) {
+                          if (value.isEmpty) {
+                            return;
+                          }
+
+                          auth(value);
                         },
                       ),
                     ],

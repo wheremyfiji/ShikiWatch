@@ -283,8 +283,13 @@ class AnimeDetailsPage extends ConsumerWidget {
 
 class RelatedWidget extends ConsumerWidget {
   final int id;
+  final bool padding;
 
-  const RelatedWidget({super.key, required this.id});
+  const RelatedWidget({
+    super.key,
+    required this.id,
+    this.padding = true,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -299,7 +304,9 @@ class RelatedWidget extends ConsumerWidget {
         final dataList = data.toList();
         final hasMore = dataList.length > 3;
         return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+          padding: padding
+              ? const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight)
+              : const EdgeInsets.all(0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
