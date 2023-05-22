@@ -15,16 +15,19 @@ Future<void> clearImageCache() async => await cacheManager.emptyCache();
 
 class CachedImage extends StatelessWidget {
   final String imageUrl;
-  final BoxFit fit;
-  final double width;
-  final double height;
+  final BoxFit? fit;
+  final double? width;
+  final double? height;
 
   const CachedImage(
     this.imageUrl, {
     super.key,
-    this.fit = BoxFit.cover,
-    this.width = double.infinity,
-    this.height = double.infinity,
+    //this.fit = BoxFit.cover,
+    // this.width = double.infinity,
+    // this.height = double.infinity,
+    this.fit,
+    this.width,
+    this.height,
   });
 
   @override

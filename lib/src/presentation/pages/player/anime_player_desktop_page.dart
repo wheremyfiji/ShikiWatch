@@ -610,6 +610,153 @@ class _AnimePlayerDesktopPageState
 
 const List<String> list = <String>['720p', '480p', '360p'];
 
+class PlayerInfoHeader extends StatelessWidget {
+  final String animeName;
+  final String animePicture;
+  final int episodeNumber;
+  final String studioName;
+  final VoidCallback? onPressed;
+
+  const PlayerInfoHeader({
+    super.key,
+    required this.animeName,
+    required this.animePicture,
+    required this.episodeNumber,
+    required this.studioName,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start, //spaceBetween
+      //mainAxisSize: MainAxisSize.max,
+      //crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4.0),
+          child: CachedImage(
+            AppConfig.staticUrl + animePicture,
+            height: 60,
+          ),
+          //     CachedNetworkImage(
+          //   imageUrl: AppConfig.staticUrl + animePicture,
+          //   height: 60,
+          // ),
+          // ExtendedImage.network(
+          //   AppConfig.staticUrl + widget.animePic,
+          //   height: 60,
+          // ),
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              animeName,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            Text(
+              'Серия $episodeNumber • $studioName',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ],
+        ),
+        const Spacer(),
+
+        // if (shaders)
+        //   ElevatedButton(
+        //       onPressed:
+        //           widget.isLoading ? null : () => toggleShaders(context),
+        //       child: const Text('Disable anime4K')),
+        // if (!shaders)
+        //   ElevatedButton(
+        //     onPressed:
+        //         widget.isLoading ? null : () => toggleShaders(context),
+        //     child: const Text('Enable anime4K'),
+        //   ),
+        // ElevatedButton(
+        //   onPressed:
+        //       widget.isLoading ? null : () => toggleShaders(context),
+        //   child: shaders
+        //       ? const Text('Disable anime4K')
+        //       : const Text('Enable anime4K'),
+        // ),
+        // ElevatedButton(
+        //   onPressed: widget.isLoading
+        //       ? null
+        //       : () async {
+        //           bool exists =
+        //               await Directory(getShadersDir(appDir!.path))
+        //                   .exists();
+        //           if (!exists && context.mounted) {
+        //             showSnackBar(context, 'Шейдеры не найдены');
+        //             return;
+        //           }
+        //           await (widget.player.platform as libmpvPlayer)
+        //               .setProperty(
+        //             'glsl-shaders',
+        //             anime4kModeDoubleAFast(appDir!.path),
+        //           );
+        //         },
+        //   child: const Text(
+        //     'Set',
+        //     textAlign: TextAlign.center,
+        //   ),
+        // ),
+        // ElevatedButton(
+        //   onPressed: widget.isLoading
+        //       ? null
+        //       : () async {
+        //           await (widget.player.platform as libmpvPlayer)
+        //               .setProperty('glsl-shaders', '');
+        //         },
+        //   child: const Text(
+        //     'Clear',
+        //     textAlign: TextAlign.center,
+        //   ),
+        // ),
+        // ElevatedButton(
+        //   onPressed: widget.isLoading
+        //       ? null
+        //       : () {
+        //           widget.player.seek(
+        //             position + const Duration(seconds: 70),
+        //           );
+        //         },
+        //   child: const Text(
+        //     //'Пропустить опенинг',
+        //     '+110 сек.',
+        //     textAlign: TextAlign.center,
+        //   ),
+        // ),
+        IconButton(
+          tooltip: 'Перемотать 125 секунд',
+          iconSize: 32,
+          color: Colors.white,
+          onPressed: onPressed,
+          icon: const Icon(Icons.forward_30),
+        ),
+      ],
+    );
+  }
+}
+
 class PlayerControls extends StatefulWidget {
   final Player player;
   final AutoHideController? hide;
@@ -767,137 +914,18 @@ class _PlayerControlsState extends State<PlayerControls> {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start, //spaceBetween
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4.0),
-                child: CachedImage(
-                  AppConfig.staticUrl + widget.animePic,
-                  height: 60,
-                ),
-                // CachedNetworkImage(
-                //   imageUrl: AppConfig.staticUrl + widget.animePic,
-                //   height: 60,
-                // ),
-                // ExtendedImage.network(
-                //   AppConfig.staticUrl + widget.animePic,
-                //   height: 60,
-                // ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.animeName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  Text(
-                    'Серия ${widget.episodeNumber} • ${widget.studioName}',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ],
-              ),
-              const Spacer(),
-
-              // if (shaders)
-              //   ElevatedButton(
-              //       onPressed:
-              //           widget.isLoading ? null : () => toggleShaders(context),
-              //       child: const Text('Disable anime4K')),
-              // if (!shaders)
-              //   ElevatedButton(
-              //     onPressed:
-              //         widget.isLoading ? null : () => toggleShaders(context),
-              //     child: const Text('Enable anime4K'),
-              //   ),
-              // ElevatedButton(
-              //   onPressed:
-              //       widget.isLoading ? null : () => toggleShaders(context),
-              //   child: shaders
-              //       ? const Text('Disable anime4K')
-              //       : const Text('Enable anime4K'),
-              // ),
-              // ElevatedButton(
-              //   onPressed: widget.isLoading
-              //       ? null
-              //       : () async {
-              //           bool exists =
-              //               await Directory(getShadersDir(appDir!.path))
-              //                   .exists();
-              //           if (!exists && context.mounted) {
-              //             showSnackBar(context, 'Шейдеры не найдены');
-              //             return;
-              //           }
-              //           await (widget.player.platform as libmpvPlayer)
-              //               .setProperty(
-              //             'glsl-shaders',
-              //             anime4kModeDoubleAFast(appDir!.path),
-              //           );
-              //         },
-              //   child: const Text(
-              //     'Set',
-              //     textAlign: TextAlign.center,
-              //   ),
-              // ),
-              // ElevatedButton(
-              //   onPressed: widget.isLoading
-              //       ? null
-              //       : () async {
-              //           await (widget.player.platform as libmpvPlayer)
-              //               .setProperty('glsl-shaders', '');
-              //         },
-              //   child: const Text(
-              //     'Clear',
-              //     textAlign: TextAlign.center,
-              //   ),
-              // ),
-              // ElevatedButton(
-              //   onPressed: widget.isLoading
-              //       ? null
-              //       : () {
-              //           widget.player.seek(
-              //             position + const Duration(seconds: 70),
-              //           );
-              //         },
-              //   child: const Text(
-              //     //'Пропустить опенинг',
-              //     '+110 сек.',
-              //     textAlign: TextAlign.center,
-              //   ),
-              // ),
-              IconButton(
-                tooltip: 'Перемотать 125 секунд',
-                iconSize: 32,
-                color: Colors.white,
-                onPressed: widget.isLoading
-                    ? null
-                    : () {
-                        widget.player.seek(
-                          position + const Duration(seconds: 85),
-                        );
-                      },
-                icon: const Icon(Icons.forward_30),
-              ),
-            ],
+          PlayerInfoHeader(
+            animeName: widget.animeName,
+            animePicture: widget.animePic,
+            episodeNumber: widget.episodeNumber,
+            studioName: widget.studioName,
+            onPressed: widget.isLoading
+                ? null
+                : () {
+                    widget.player.seek(
+                      position + const Duration(seconds: 85),
+                    );
+                  },
           ),
           const SizedBox(
             height: 16,
