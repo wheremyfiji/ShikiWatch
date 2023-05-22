@@ -21,7 +21,9 @@ class SettingsGroup extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
           //color: Colors.grey.withOpacity(0.2),
-          color: Theme.of(context).colorScheme.onInverseSurface,
+          color: Theme.of(context)
+              .colorScheme
+              .surfaceVariant, //onInverseSurface  surfaceVariant
           width: 1,
         ),
       ),

@@ -121,8 +121,8 @@ class AnimeFilterPage extends ConsumerWidget {
       // ),
       body: CustomScrollView(
         slivers: [
-          SliverAppBar.large(
-            title: const Text('Фильтры'),
+          const SliverAppBar.large(
+            title: Text('Фильтры'),
             // actions: [
             //   IconButton(
             //     onPressed: () => ref.read(animeSearchProvider).clearFilter(),

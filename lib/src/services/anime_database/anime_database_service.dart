@@ -338,6 +338,17 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
   }
 
   @override
+  Future<double> getDatabaseSize() async {
+    final size = await isardb.getSize(
+      includeIndexes: true,
+      includeLinks: true,
+    );
+
+    return size / (1024); // KB
+    //return size / (1024 * 1024); //MB
+  }
+
+  @override
   Future<void> clearDatabase() async {
     await isardb.writeTxn(() async {
       await isardb.animeDatabases.clear();

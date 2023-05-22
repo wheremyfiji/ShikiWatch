@@ -29,5 +29,6 @@ abstract class LocalAnimeDatabaseRepo {
   });
   Future<void> migration();
   Future<bool> export({required String path});
+  Future<double> getDatabaseSize();
   Future<void> clearDatabase();
 }

@@ -325,7 +325,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
       isScrollControlled: true,
       enableDrag: false,
       useSafeArea: true,
-      elevation: 0,
+      //elevation: 0,
       builder: (context) {
         return SafeArea(
           child: AnimeUserRateBottomSheet(
@@ -1230,7 +1230,7 @@ class _AnimeUserRateBottomSheetState
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    child: FilledButton.tonal(
+                    child: FilledButton(
                       // style: FilledButton.styleFrom(
                       //   padding: const EdgeInsets.all(12.0),
                       // ),

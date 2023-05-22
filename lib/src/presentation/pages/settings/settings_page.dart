@@ -1,14 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+
 //import 'package:git_info/git_info.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-//import 'package:extended_image/extended_image.dart' as extended_image;
 import 'package:path_provider/path_provider.dart';
 import 'package:shikidev/src/services/secure_storage/secure_storage_service.dart';
 import 'package:shikidev/src/utils/extensions/theme_mode.dart';
-import 'package:shikidev/src/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -19,11 +17,12 @@ import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
 import '../../../utils/target_platform.dart';
 import '../../providers/environment_provider.dart';
-import '../../widgets/cached_image.dart';
+import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
 import 'widgets/library_start_fragment.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
+import 'widgets/version_option.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -213,15 +212,6 @@ class SettingsPage extends ConsumerWidget {
               // Хранилище
               title: 'Данные', // импорт/экспорт локальных отметок
               options: [
-                if (TargetP.instance.isDesktop)
-                  SettingsOption(
-                    title: 'Экспорт отметок',
-                    subtitle:
-                        'Экспортировать локальные отметки просмотра в json файл',
-                    onTap: () {
-                      export();
-                    },
-                  ),
                 const ClearCacheWidget(),
                 SettingsOption(
                   title: 'Очистить БД',
@@ -263,6 +253,15 @@ class SettingsPage extends ConsumerWidget {
                     }
                   },
                 ),
+                if (TargetP.instance.isDesktop)
+                  SettingsOption(
+                    title: 'Экспорт отметок',
+                    subtitle:
+                        'Экспортировать локальные отметки просмотра в json файл',
+                    onTap: () {
+                      export();
+                    },
+                  ),
               ],
             ),
           ),
@@ -344,6 +343,7 @@ class SettingsPage extends ConsumerWidget {
                     );
                   },
                 ),
+
                 if (TargetP.instance.isDesktop)
                   SettingsOption(
                     title: 'распаковать pedals',
@@ -364,76 +364,12 @@ class SettingsPage extends ConsumerWidget {
           //     ],
           //   ),
           // ),
-
           const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
     );
   }
 }
-
-class ClearCacheWidget extends StatelessWidget {
-  const ClearCacheWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SettingsOption(
-      title: 'Очистить кэш',
-      subtitle:
-          'Удалить кэшированные изображения', //Удалить кэш API и изображений
-      onTap: () async {
-        showSnackBar(
-          ctx: context,
-          msg: 'Очистка..',
-          dur: const Duration(milliseconds: 800),
-        );
-        // await extended_image.clearDiskCachedImages();
-        // extended_image.clearMemoryImageCache();
-
-        await clearImageCache();
-
-        if (context.mounted) {
-          showSnackBar(
-            ctx: context,
-            msg: 'Кэш успешно очищен',
-            dur: const Duration(milliseconds: 1200),
-          );
-        }
-      },
-    );
-  }
-}
-
-// class ClearCacheWidget extends ConsumerWidget {
-//   const ClearCacheWidget({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final storage = ref.read(cacheStorageServiceProvider);
-//     return SettingsOption(
-//       title: 'Очистить кэш',
-//       subtitle:
-//           'Удалить кэшированные изображения', //Удалить кэш API и изображений
-//       onTap: () async {
-//         context.scaffoldMessenger.showSnackBar(const SnackBar(
-//           content: Text('Очистка..'),
-//           duration: Duration(milliseconds: 800),
-//         ));
-//         await storage.clear();
-//         // await extended_image.clearDiskCachedImages();
-//         // extended_image.clearMemoryImageCache();
-//         if (context.mounted) {
-//           context.scaffoldMessenger.showSnackBar(
-//             const SnackBar(
-//               content: Text('Кэш успешно очищен'),
-//               duration: Duration(milliseconds: 1200),
-//             ),
-//           );
-//         }
-//       },
-//     );
-//   }
-// }
 
 // class ExitProfileWidget extends ConsumerWidget {
 //   const ExitProfileWidget({super.key});
@@ -578,38 +514,6 @@ class DynamicColorsWidget extends ConsumerWidget {
           },
         );
       },
-    );
-  }
-}
-
-class VersionWidget extends ConsumerWidget {
-  const VersionWidget({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final environment = ref.watch(environmentProvider);
-
-    final version = environment.packageInfo.version;
-    final build = environment.packageInfo.buildNumber;
-    final appname = environment.packageInfo.packageName;
-
-    return SettingsOption(
-      title: 'Версия: $version ($build)',
-      subtitle: appname,
-      onTap: null,
-      // () {
-      //   Clipboard.setData(
-      //     ClipboardData(text: 'Версия: $version ($build)'),
-      //   ).then(
-      //     (_) {
-      //       ScaffoldMessenger.of(context).showSnackBar(
-      //         const SnackBar(
-      //           content: Text('Версия приложения скопирована в буфер обмена'),
-      //         ),
-      //       );
-      //     },
-      //   );
-      // },
     );
   }
 }

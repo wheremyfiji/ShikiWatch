@@ -26,7 +26,7 @@ class _LibraryStartFragmentState extends State<LibraryStartFragment> {
         children: [
           ListTile(
             title: Text(
-              'Выбор раздела при запуске приложения',
+              'Выбор раздела библиотеки по умолчанию', //Выбор раздела при запуске приложения
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),

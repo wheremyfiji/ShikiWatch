@@ -7,7 +7,6 @@ import '../../../../domain/models/animes.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../providers/library_tab_page_provider.dart';
-import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/utils.dart';
 
 const List<String> statusList = <String>[
@@ -543,7 +542,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                   },
             icon: const Icon(Icons.delete),
           ),
-        OutlinedButton(
+        TextButton(
           onPressed: isLoading
               ? null
               : () {
@@ -562,7 +561,9 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                   }
 
                   //ref.read(titleInfoPageProvider(widget.data.id!)).fetch(true);
-                  Navigator.pop(context);
+                  if (mounted) {
+                    Navigator.pop(context);
+                  }
                 },
           child: const Text('Сохранить'),
         ),
@@ -608,11 +609,12 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                            color: context.isDarkThemed
-                                ? context.theme.colorScheme.primaryContainer
-                                : context.theme.colorScheme
-                                    .onPrimary, //surface  primaryContainer
+                            // color: context.isDarkThemed
+                            //     ? context.theme.colorScheme.primaryContainer
+                            //     : context.theme.colorScheme
+                            //         .onPrimary, //surface  primaryContainer
                             //color: context.theme.cardTheme.surfaceTintColor,
+                            color: Theme.of(context).colorScheme.surfaceVariant,
                             borderRadius: BorderRadius.circular(10)),
                         child: DropdownButton<String>(
                           underline: const SizedBox(),
@@ -653,9 +655,11 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                     clipBehavior: Clip.antiAlias,
                     shadowColor: Colors.transparent,
                     margin: EdgeInsets.zero,
-                    color: context.isDarkThemed
-                        ? context.theme.colorScheme.primaryContainer
-                        : context.theme.colorScheme.onPrimary,
+                    // color: context.isDarkThemed
+                    //     ? context.theme.colorScheme.primaryContainer
+                    //     : context.theme.colorScheme.onPrimary,
+                    //elevation: 0,
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     elevation: 0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -719,9 +723,10 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                     clipBehavior: Clip.antiAlias,
                     shadowColor: Colors.transparent,
                     margin: EdgeInsets.zero,
-                    color: context.isDarkThemed
-                        ? context.theme.colorScheme.primaryContainer
-                        : context.theme.colorScheme.onPrimary,
+                    // color: context.isDarkThemed
+                    //     ? context.theme.colorScheme.primaryContainer
+                    //     : context.theme.colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     elevation: 0,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -777,10 +782,11 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                     clipBehavior: Clip.antiAlias,
                     shadowColor: Colors.transparent,
                     margin: EdgeInsets.zero,
-                    color: context.isDarkThemed
-                        ? context.theme.colorScheme.primaryContainer
-                        : context.theme.colorScheme.onPrimary,
+                    // color: context.isDarkThemed
+                    //     ? context.theme.colorScheme.primaryContainer
+                    //     : context.theme.colorScheme.onPrimary,
                     elevation: 0,
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
@@ -858,6 +864,7 @@ class _AnimeUserRateDialogState extends ConsumerState<AnimeUserRateDialog> {
                       //border: InputBorder.none,
                       hintText: 'Добавить заметку',
                     ),
+                    minLines: 1,
                     maxLines: 3,
                   ),
                 ],
