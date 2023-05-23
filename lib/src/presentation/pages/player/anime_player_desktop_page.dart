@@ -750,7 +750,7 @@ class PlayerInfoHeader extends StatelessWidget {
           iconSize: 32,
           color: Colors.white,
           onPressed: onPressed,
-          icon: const Icon(Icons.forward_30),
+          icon: const Icon(Icons.double_arrow_rounded),
         ),
       ],
     );
