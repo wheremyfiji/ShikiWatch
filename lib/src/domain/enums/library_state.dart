@@ -9,7 +9,7 @@ extension LibraryStateName on LibraryState {
       case LibraryState.anime:
         return 'Аниме';
       case LibraryState.manga:
-        return 'Манга и ранобэ';
+        return 'Манга и ранобе';
     }
   }
 }

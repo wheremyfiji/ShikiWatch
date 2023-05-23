@@ -46,7 +46,7 @@ String getKind(String value) {
     'special': 'Спешл',
     'music': 'Клип',
     'manga': 'Манга',
-    'light_novel': 'Ранобэ',
+    'light_novel': 'Ранобе',
     'novel': 'Новелла',
     'one_shot': 'Ваншот',
     'doujin': 'Додзинси',

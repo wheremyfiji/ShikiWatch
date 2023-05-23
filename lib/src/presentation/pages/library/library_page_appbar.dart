@@ -39,7 +39,7 @@ class LibraryPageAppBar extends ConsumerWidget {
       floating: true,
       snap: false,
       title: state == LibraryState.manga
-          ? const Text('Манга и ранобэ')
+          ? const Text('Манга и ранобе')
           : const Text('Аниме'),
       actions: [
         PopupMenuButton<LibraryState>(
@@ -56,7 +56,7 @@ class LibraryPageAppBar extends ConsumerWidget {
             ),
             PopupMenuItem(
               value: LibraryState.manga,
-              child: Text('Манга и ранобэ'),
+              child: Text('Манга и ранобе'),
             ),
           ],
           onSelected: (value) {

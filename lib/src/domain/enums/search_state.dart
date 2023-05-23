@@ -13,7 +13,7 @@ extension SearchStateEx on SearchState {
       case SearchState.manga:
         return 'Поиск манги';
       case SearchState.ranobe:
-        return 'Поиск ранобэ';
+        return 'Поиск ранобе';
       case SearchState.character:
         return 'Поиск персонажа';
     }

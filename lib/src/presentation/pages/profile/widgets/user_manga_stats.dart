@@ -28,7 +28,7 @@ class UserMangaStatsWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Манга и ранобэ',
+              'Манга и ранобе',
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     //fontSize: 15,
                     fontWeight: FontWeight.bold,

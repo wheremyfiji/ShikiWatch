@@ -184,7 +184,7 @@ class SearchTypeWidget extends ConsumerWidget {
         ),
         PopupMenuItem(
           value: SearchState.ranobe,
-          child: Text('Ранобэ'),
+          child: Text('Ранобе'),
         ),
       ],
       onSelected: (value) {
