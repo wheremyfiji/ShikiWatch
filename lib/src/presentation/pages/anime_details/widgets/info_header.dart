@@ -49,13 +49,13 @@ class AnimeInfoHeader extends StatelessWidget {
         alignment: Alignment.centerLeft,
         children: [
           ClipRRect(
+            clipBehavior: Clip.antiAlias,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
               child: Container(
                 height: height,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  border: Border.all(width: 0, color: Colors.transparent),
                   image: DecorationImage(
                     filterQuality: FilterQuality.low,
                     image: CachedNetworkImageProvider(
@@ -70,24 +70,21 @@ class AnimeInfoHeader extends StatelessWidget {
             ),
           ),
           Container(
-              height: height,
-              color: Theme.of(context).colorScheme.background.withOpacity(0.9),
-              alignment: Alignment.center),
-          Positioned(
-            bottom: -1,
-            child: Container(
-              height: height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.background,
-                    Colors.transparent
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  stops: const [0, 1],
-                ),
+            color: Theme.of(context).colorScheme.background.withOpacity(0.9),
+            alignment: Alignment.center,
+          ),
+          Container(
+            height: height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.background,
+                  Colors.transparent
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                stops: const [0, 1],
               ),
             ),
           ),
@@ -131,7 +128,6 @@ class AnimeInfoHeader extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        //data.russian ?? data.name ?? '[Без навзвания]',
                         (data.russian == '' ? data.name : data.russian) ?? '',
                         maxLines: 3,
                         textAlign: TextAlign.start,
