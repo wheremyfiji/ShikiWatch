@@ -90,60 +90,51 @@ class StudioSelectPage extends ConsumerWidget {
                         final formattedDate = DateFormat('dd/MM/yyyy - HH:mm')
                             .format(DateTime.parse(dateTimeString!).toLocal());
 
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                          child: Card(
-                            clipBehavior: Clip.antiAlias,
-                            child: ListTile(
-                              title: Text(
-                                element?.name ?? '',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              subtitle: Text(
-                                'Обновлено: $formattedDate',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                              trailing: Text(
-                                '${element?.episodesCount} эп.',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                // style: const TextStyle(
-                                //   fontSize: 12,
-                                // ),
-                                style: context.textTheme.bodyMedium
-                                    ?.copyWith(fontSize: 12),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    settings: const RouteSettings(
-                                      name: 'series select page',
-                                    ),
-                                    pageBuilder:
-                                        (context, animation1, animation2) =>
-                                            SeriesSelectPage(
-                                      seriesList: element?.kodikSeries,
-                                      studioId: element?.studioId ?? 0,
-                                      shikimoriId: shikimoriId,
-                                      episodeWatched: epWatched,
-                                      animeName: animeName,
-                                      studioName: element?.name ?? '',
-                                      studioType: element?.type ?? '',
-                                      imageUrl: imageUrl,
-                                    ),
-                                    transitionDuration: Duration.zero,
-                                    reverseTransitionDuration: Duration.zero,
-                                  ),
-                                );
-                              },
+                        return ListTile(
+                          title: Text(
+                            element?.name ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                          subtitle: Text(
+                            'Обновлено: $formattedDate',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 12,
                             ),
                           ),
+                          trailing: Text(
+                            '${element?.episodesCount} эп.',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: context.textTheme.bodyMedium
+                                ?.copyWith(fontSize: 12),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                settings: const RouteSettings(
+                                  name: 'series select page',
+                                ),
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        SeriesSelectPage(
+                                  seriesList: element?.kodikSeries,
+                                  studioId: element?.studioId ?? 0,
+                                  shikimoriId: shikimoriId,
+                                  episodeWatched: epWatched,
+                                  animeName: animeName,
+                                  studioName: element?.name ?? '',
+                                  studioType: element?.type ?? '',
+                                  imageUrl: imageUrl,
+                                ),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
                         );
                       },
                       childCount: data.total,
