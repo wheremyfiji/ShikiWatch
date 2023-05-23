@@ -8,12 +8,6 @@ test_build:
   - $gen
   - flutter build apk --flavor prod --target-platform android-arm64
   #- flutter pub run shikidev:rename_apk
-android_release:
-  - $sync
-  - $gen
-  - flutter build apk --flavor prod --split-per-abi
-  - dart run shikidev:rename_apk
-
 build:
   android:
     - $sync
