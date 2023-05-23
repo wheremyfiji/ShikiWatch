@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:shikidev/src/utils/utils.dart';
 
 import '../../../../data/data_sources/anime_data_src.dart';
@@ -11,7 +12,9 @@ import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../providers/library_tab_page_provider.dart';
 import '../../../widgets/cool_chip.dart';
+import '../../../widgets/delete_dialog.dart';
 import '../../../widgets/material_you_chip.dart';
+import '../../../widgets/number_field.dart';
 
 class UserAnimeRateWidget extends HookConsumerWidget {
   final Animes anime;
@@ -923,6 +926,31 @@ class _AnimeUserRateBottomSheetState
   int epCount = 0;
   String userRateText = '';
 
+  String? createdAt;
+  String? updatedAt;
+
+  void fill() {
+    if (widget.data.userRate == null) {
+      return;
+    }
+
+    final created =
+        DateTime.tryParse(widget.data.userRate?.createdAt ?? '')?.toLocal() ??
+            DateTime(1970);
+    final createdDate = DateFormat.yMMMMd().format(created);
+    final createdTime = DateFormat.Hm().format(created);
+
+    createdAt = '$createdDate в $createdTime';
+
+    final updated =
+        DateTime.tryParse(widget.data.userRate?.updatedAt ?? '')?.toLocal() ??
+            DateTime(1970);
+    final updatedDate = DateFormat.yMMMMd().format(updated);
+    final updatedTime = DateFormat.Hm().format(updated);
+
+    updatedAt = '$updatedDate в $updatedTime';
+  }
+
   @override
   void initState() {
     initStatus = widget.data.userRate?.status;
@@ -942,6 +970,7 @@ class _AnimeUserRateBottomSheetState
     userRateText = widget.data.userRate?.text ?? '';
     _controller = TextEditingController();
     _controller.text = userRateText;
+    fill();
     super.initState();
   }
 
@@ -981,9 +1010,6 @@ class _AnimeUserRateBottomSheetState
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                // widget.data.russian ??
-                //     widget.data.name ??
-                //     '[Без навзвания]',
                 (widget.data.russian == ''
                         ? widget.data.name
                         : widget.data.russian) ??
@@ -1024,65 +1050,78 @@ class _AnimeUserRateBottomSheetState
                 const SizedBox(
                   height: 16,
                 ),
-                Card(
-                  clipBehavior: Clip.antiAlias,
-                  shadowColor: Colors.transparent,
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Wrap(
-                          children: [
-                            const Text('Эпизоды:'),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              '$progress/${epCount.toString()}',
-                            ),
-                          ],
-                        ),
-                        Wrap(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                if (progress == 0) {
-                                  return;
-                                }
-                                setState(() {
-                                  progress = progress - 1;
-                                });
-                              },
-                              icon: const Icon(Icons.remove),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                if (progress >= epCount) {
-                                  return;
-                                }
-                                setState(() {
-                                  progress = progress + 1;
-                                });
-                              },
-                              icon: const Icon(Icons.add),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                NumberField(
+                  label: 'Эпизоды:',
+                  initial: progress,
+                  maxValue: epCount,
+                  onChanged: (value) {
+                    setState(() {
+                      progress = value;
+                    });
+                  },
                 ),
                 const SizedBox(
                   height: 16,
                 ),
+                // Card(
+                //   clipBehavior: Clip.antiAlias,
+                //   shadowColor: Colors.transparent,
+                //   margin: EdgeInsets.zero,
+                //   child: Padding(
+                //     padding: const EdgeInsets.symmetric(
+                //       vertical: 8,
+                //       horizontal: 16,
+                //     ),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Wrap(
+                //           children: [
+                //             const Text('Эпизоды:'),
+                //             const SizedBox(
+                //               width: 4,
+                //             ),
+                //             Text(
+                //               '$progress/${epCount.toString()}',
+                //             ),
+                //           ],
+                //         ),
+                //         Wrap(
+                //           children: [
+                //             IconButton(
+                //               onPressed: () {
+                //                 if (progress == 0) {
+                //                   return;
+                //                 }
+                //                 setState(() {
+                //                   progress = progress - 1;
+                //                 });
+                //               },
+                //               icon: const Icon(Icons.remove),
+                //             ),
+                //             const SizedBox(
+                //               width: 4,
+                //             ),
+                //             IconButton(
+                //               onPressed: () {
+                //                 if (progress >= epCount) {
+                //                   return;
+                //                 }
+                //                 setState(() {
+                //                   progress = progress + 1;
+                //                 });
+                //               },
+                //               icon: const Icon(Icons.add),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 16,
+                // ),
                 Card(
                   clipBehavior: Clip.antiAlias,
                   shadowColor: Colors.transparent,
@@ -1226,6 +1265,33 @@ class _AnimeUserRateBottomSheetState
               const SizedBox(
                 height: 16,
               ),
+              if (createdAt != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    shadowColor: Colors.transparent,
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Дата создания: $createdAt'),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          if (updatedAt != null)
+                            Text('Дата изменения: $updatedAt'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -1306,7 +1372,18 @@ class _AnimeUserRateBottomSheetState
                       !isLoading)
                     IconButton(
                       tooltip: 'Удалить из списка',
-                      onPressed: () {
+                      onPressed: () async {
+                        bool value = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  const DeleteDialog(),
+                            ) ??
+                            false;
+
+                        if (!value) {
+                          return;
+                        }
+
                         ref
                             .read(updateAnimeRateButtonProvider.notifier)
                             .deleteRate(
