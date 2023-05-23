@@ -15,7 +15,7 @@ import '../../services/secure_storage/secure_storage_service.dart';
 
 final relatedTitlesMangaProvider = FutureProvider.autoDispose
     .family<Iterable<RelatedTitle>, int>((ref, id) async {
-  ref.cacheFor();
+  //ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -32,7 +32,7 @@ final externalLinksMangaProvider = FutureProvider.autoDispose
     await ref.debounce();
   }
 
-  ref.cacheFor();
+  //ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -48,7 +48,7 @@ final similarTitlesMangaProvider = FutureProvider.autoDispose
     await ref.debounce();
   }
 
-  ref.cacheFor();
+  //ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -60,7 +60,7 @@ final similarTitlesMangaProvider = FutureProvider.autoDispose
 
 final mangaDetailsPageProvider = ChangeNotifierProvider.autoDispose
     .family<MangaDetailsPageController, int>((ref, id) {
-  ref.cacheFor();
+  //ref.cacheFor();
 
   final cancelToken = ref.cancelToken();
 

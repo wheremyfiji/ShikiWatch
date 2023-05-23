@@ -13,7 +13,7 @@ import '../../services/secure_storage/secure_storage_service.dart';
 
 final userProfileProvider = ChangeNotifierProvider.autoDispose
     .family<UserProfileController, String>((ref, userId) {
-  ref.cacheFor();
+  //ref.cacheFor();
 
   final cancelToken = ref.cancelToken();
 
