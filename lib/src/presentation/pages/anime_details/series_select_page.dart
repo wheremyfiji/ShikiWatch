@@ -204,126 +204,90 @@ class SeriesSelectPage extends ConsumerWidget {
                     final int seriaNum = int.parse(seria.number ?? '0');
 
                     final isComp = seriaNum <= episodeWatched;
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child: ListTile(
-                          onTap: () async {
-                            String sp = '';
-                            if (!TargetP.instance.isDesktop &&
-                                episode?.position != null) {
-                              bool? dialogValue = await showDialog<bool>(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) => const ContinueDialog(),
-                              );
+                    return ListTile(
+                      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                      onTap: () async {
+                        String sp = '';
+                        if (!TargetP.instance.isDesktop &&
+                            episode?.position != null) {
+                          bool? dialogValue = await showDialog<bool>(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) => const ContinueDialog(),
+                          );
 
-                              if (dialogValue ?? false) {
-                                sp = episode?.position ?? '';
-                              }
-                            }
-                            AnimePlayerPageExtra data = AnimePlayerPageExtra(
-                              studioId: studioId,
-                              shikimoriId: shikimoriId,
-                              episodeNumber: int.parse(seria.number ?? ''),
-                              animeName: animeName,
-                              studioName: studioName,
-                              studioType: studioType,
-                              episodeLink: seria.link ?? '',
-                              additInfo: seria.type ?? '',
-                              position: episode?.position,
-                              imageUrl: imageUrl,
-                              startPosition: sp,
-                            );
+                          if (dialogValue ?? false) {
+                            sp = episode?.position ?? '';
+                          }
+                        }
+                        AnimePlayerPageExtra data = AnimePlayerPageExtra(
+                          studioId: studioId,
+                          shikimoriId: shikimoriId,
+                          episodeNumber: int.parse(seria.number ?? ''),
+                          animeName: animeName,
+                          studioName: studioName,
+                          studioType: studioType,
+                          episodeLink: seria.link ?? '',
+                          additInfo: seria.type ?? '',
+                          position: episode?.position,
+                          imageUrl: imageUrl,
+                          startPosition: sp,
+                        );
 
-                            // ignore: use_build_context_synchronously
-                            GoRouter.of(context)
-                                .pushNamed('player', extra: data);
-                            // ignore: use_build_context_synchronously
-                            GoRouter.of(context).addListener(watchRouteChange);
-                          }, //запись в бд
-                          title: seria.type != null
-                              ? Text("Серия ${seria.number} (${seria.type})")
-                              : Text("Серия ${seria.number}"),
-                          //subtitle: const Text('Просморено до 27:54'),
-                          subtitle: episode != null
-                              ? Text(episode.timeStamp ?? '')
-                              : null,
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // if (episode != null) ...[
-                              //   episode.isComplete!
-                              //       ? IconButton(
-                              //           onPressed: () {},
-                              //           icon: const Icon(Icons.check_circle_rounded),
-                              //           color: Theme.of(context).colorScheme.primary,
-                              //         )
-                              //       :
-                              //       // Icon(
-                              //       //     Icons.done,
-                              //       //     color: Theme.of(context).colorScheme.primary,
-                              //       //   ),
-                              //       IconButton(
-                              //           onPressed: () {
-                              //             addEpisode(int.parse(seria.number ?? ''));
-                              //           },
-                              //           icon: const Icon(Icons.done),
-                              //           color: context.colorScheme.onSurfaceVariant,
-                              //         ),
-                              // ],
-                              if (episode != null && !isComp) ...[
-                                // Icon(
-                                //   Icons.done,
-                                //   color: Theme.of(context).colorScheme.primary,
-                                // ),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.done),
-                                  color: Theme.of(context).colorScheme.primary,
-                                )
-                              ],
-                              if (isComp) ...[
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.check_circle_rounded),
-                                  color: Theme.of(context).colorScheme.primary,
-                                )
-                              ],
-                              if (episode != null) ...[
-                                IconButton(
-                                  onPressed: () {
-                                    removeEpisode(
-                                        int.parse(seria.number ?? ''));
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                  color: MediaQuery.of(context)
-                                              .platformBrightness ==
+                        // ignore: use_build_context_synchronously
+                        GoRouter.of(context).pushNamed('player', extra: data);
+                        // ignore: use_build_context_synchronously
+                        GoRouter.of(context).addListener(watchRouteChange);
+                      },
+                      title: seria.type != null
+                          ? Text("Серия ${seria.number} (${seria.type})")
+                          : Text("Серия ${seria.number}"),
+                      subtitle: episode != null
+                          ? Text(episode.timeStamp ?? '')
+                          : null,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (episode != null && !isComp) ...[
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.done),
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                          ],
+                          if (isComp) ...[
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.check_circle_rounded),
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                          ],
+                          if (episode != null) ...[
+                            IconButton(
+                              onPressed: () {
+                                removeEpisode(int.parse(seria.number ?? ''));
+                              },
+                              icon: const Icon(Icons.delete),
+                              color:
+                                  MediaQuery.of(context).platformBrightness ==
                                           Brightness.dark
                                       ? Colors.red.shade200
                                       : Colors.red.shade600,
-                                ),
-                              ] else ...[
-                                IconButton(
-                                  onPressed: () {
-                                    addEpisode(int.parse(seria.number ?? ''));
-                                  },
-                                  icon: const Icon(Icons.add),
-                                  color: context.colorScheme.onSurfaceVariant,
-                                ),
-                              ],
-                              // IconButton(
-                              //   onPressed: () {},
-                              //   icon: const Icon(Icons.more_vert),
-                              // ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          ] else ...[
+                            IconButton(
+                              onPressed: () {
+                                addEpisode(int.parse(seria.number ?? ''));
+                              },
+                              icon: const Icon(Icons.add),
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ],
                       ),
                     );
                   },
-                  childCount: sortedSeriesList.length, // 1000 list items
+                  childCount: sortedSeriesList.length,
                 ),
               ),
             ),
