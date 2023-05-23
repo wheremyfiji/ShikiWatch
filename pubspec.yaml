@@ -55,9 +55,9 @@ dependencies:
   flutter_secure_storage: ^8.0.0
 
   #network
-  http: ^0.13.5
+  http: ^0.13.6
   connectivity_plus: ^4.0.1
-  dio: ^5.0.2
+  dio: ^5.1.2
   dio_smart_retry: ^5.0.0
   #native_dio_adapter: ^0.1.0
   pretty_dio_logger: ^1.3.1
@@ -102,8 +102,8 @@ dependencies:
   #copy_with_extension: ^5.0.2
 
   #appmetrica_plugin: ^1.1.0
-  sentry_flutter: ^7.6.1
-  sentry_dio: ^7.6.1
+  sentry_flutter: ^7.6.2
+  sentry_dio: ^7.6.2
   loggy: ^2.0.3
 
 dev_dependencies:

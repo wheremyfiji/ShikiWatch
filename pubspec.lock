@@ -326,10 +326,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "2644a9e0965a7aa3deb09cb8ce4081db4450c178f472818c8cd34216a3070d7b"
+      sha256: "347d56c26d63519552ef9a569f2a593dda99a81fdbdff13c584b7197cfe05059"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.2"
+    version: "5.1.2"
   dio_smart_retry:
     dependency: "direct main"
     description:
@@ -1013,26 +1013,26 @@ packages:
     dependency: transitive
     description:
       name: sentry
-      sha256: "01f8fc950b6a5f3daf8c2d2b0ae5c38812e63d703c19c56cb68524c0597660bc"
+      sha256: "617e4973b17adcfcbdcafd021d089cf6d32d47e345104217bc8e8aa5d88f0114"
       url: "https://pub.dev"
     source: hosted
-    version: "7.6.1"
+    version: "7.6.2"
   sentry_dio:
     dependency: "direct main"
     description:
       name: sentry_dio
-      sha256: "970110afb1013ac1bdd7e2e4ea8b6d457b9165c5171175bd540c279f3d063630"
+      sha256: "03bf84fb16585098a04652fd03a61437e06f1d6c4c169a0d5f463df680f523de"
       url: "https://pub.dev"
     source: hosted
-    version: "7.6.1"
+    version: "7.6.2"
   sentry_flutter:
     dependency: "direct main"
     description:
       name: sentry_flutter
-      sha256: "9583ebcdbbba6907e555a8eeaf42380021baff57db1e399a3a31e80ce1f1cbe5"
+      sha256: "8bea9438d4c0306d51d1958833fdd12a08bd26e2f9060be7eec3a95647f8347d"
       url: "https://pub.dev"
     source: hosted
-    version: "7.6.1"
+    version: "7.6.2"
   share_plus:
     dependency: "direct main"
     description:
