@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  circular_reveal_animation:
+    dependency: transitive
+    description:
+      name: circular_reveal_animation
+      sha256: "198f5a1fa27384dcf950807e0ae07a0da857c04df6233f7468755ee9db102b0c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   clock:
     dependency: transitive
     description:
@@ -318,10 +326,10 @@ packages:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "347d56c26d63519552ef9a569f2a593dda99a81fdbdff13c584b7197cfe05059"
+      sha256: "2644a9e0965a7aa3deb09cb8ce4081db4450c178f472818c8cd34216a3070d7b"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.2"
+    version: "5.0.2"
   dio_smart_retry:
     dependency: "direct main"
     description:
@@ -330,6 +338,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  double_tap_player_view:
+    dependency: "direct main"
+    description:
+      name: double_tap_player_view
+      sha256: e36b51af5bf49ac85c0a38e489a72ee735ba50203751ad55aacb0eb374e94ebe
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -513,6 +529,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: aeac15850ef1b38ee368d4c53ba9a847e900bb2c53a4db3f6881cbb3cb684338
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   frontend_server_client:
     dependency: transitive
     description:
