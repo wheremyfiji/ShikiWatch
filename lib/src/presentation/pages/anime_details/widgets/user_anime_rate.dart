@@ -1146,14 +1146,13 @@ class _AnimeUserRateBottomSheetState
                         Wrap(
                           children: [
                             IconButton(
-                              onPressed: () {
-                                if (rewatches == 0) {
-                                  return;
-                                }
-                                setState(() {
-                                  rewatches--;
-                                });
-                              },
+                              onPressed: rewatches == 0
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        rewatches--;
+                                      });
+                                    },
                               icon: const Icon(Icons.remove),
                             ),
                             const SizedBox(
@@ -1229,18 +1228,20 @@ class _AnimeUserRateBottomSheetState
                               width: 4,
                             ),
                             IconButton(
-                              onPressed: () {
-                                if (currentScore == 10) {
-                                  return;
-                                }
-                                setState(() {
-                                  if (currentScore == null) {
-                                    currentScore = 1;
-                                    return;
-                                  }
-                                  currentScore = currentScore! + 1;
-                                });
-                              },
+                              onPressed: currentScore == 10
+                                  ? null
+                                  : () {
+                                      if (currentScore == 10) {
+                                        return;
+                                      }
+                                      setState(() {
+                                        if (currentScore == null) {
+                                          currentScore = 1;
+                                          return;
+                                        }
+                                        currentScore = currentScore! + 1;
+                                      });
+                                    },
                               icon: const Icon(Icons.add),
                             ),
                           ],

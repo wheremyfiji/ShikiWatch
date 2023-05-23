@@ -87,14 +87,19 @@ class NumberFieldState extends State<NumberField> {
               Wrap(
                 children: [
                   IconButton(
-                    onPressed: () => _validateInput(_ctrl.text, -1),
+                    onPressed: _ctrl.text == '0'
+                        ? null
+                        : () => _validateInput(_ctrl.text, -1),
                     icon: const Icon(Icons.remove),
                   ),
                   const SizedBox(
                     width: 4,
                   ),
                   IconButton(
-                    onPressed: () => _validateInput(_ctrl.text, 1),
+                    onPressed: (widget.maxValue != null &&
+                            _ctrl.text == '${widget.maxValue}')
+                        ? null
+                        : () => _validateInput(_ctrl.text, 1),
                     icon: const Icon(Icons.add),
                   ),
                 ],
