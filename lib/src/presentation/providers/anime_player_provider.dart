@@ -100,9 +100,9 @@ class PlayerController extends flutter.ChangeNotifier {
 
   late Duration newCurrentPosition;
 
-  late String streamHd;
-  late String streamSd;
-  late String streamLow;
+  String? streamHd;
+  String? streamSd;
+  String? streamLow;
 
   int streamQuality = 0;
   bool enableSwipe = false;
@@ -135,7 +135,7 @@ class PlayerController extends flutter.ChangeNotifier {
           duration: const Duration(seconds: 3),
         );
 
-  String get getStreamLink {
+  String? get getStreamLink {
     switch (streamQuality) {
       case 0:
         return streamHd;
@@ -199,14 +199,14 @@ class PlayerController extends flutter.ChangeNotifier {
     );
 
     streamAsync.whenData((value) async {
-      streamLow = value.video360!;
-      streamSd = value.video480!;
-      streamHd = value.video720!;
+      streamLow = value.video360;
+      streamSd = value.video480;
+      streamHd = value.video720;
 
       //enableSwipe = true;
 
       playerController = VideoPlayerController.network(
-        streamHd,
+        streamHd ?? streamSd ?? streamLow!,
       );
 
       playerController.addListener(playerCallback);
@@ -418,20 +418,6 @@ class PlayerController extends flutter.ChangeNotifier {
     );
   }
 
-  Future<void> backMore() async {
-    playerController.seekTo(
-      (await playerController.position ?? Duration.zero) -
-          const Duration(seconds: 60),
-    );
-  }
-
-  Future<void> forwardMore() async {
-    playerController.seekTo(
-      (await playerController.position ?? Duration.zero) +
-          const Duration(seconds: 60),
-    );
-  }
-
   Future<bool> _clearPrevious() async {
     await playerController.pause();
     return true;
@@ -455,7 +441,8 @@ class PlayerController extends flutter.ChangeNotifier {
     newCurrentPosition = playerController.value.position;
     Future.delayed(const Duration(milliseconds: 200), () {
       _clearPrevious().then((_) {
-        playerController = VideoPlayerController.network(streamHd);
+        playerController =
+            VideoPlayerController.network(streamHd ?? streamSd ?? streamLow!);
         playerController.addListener(playerCallback);
         playerController.initialize().then((_) {
           playerController.seekTo(newCurrentPosition);
@@ -483,10 +470,14 @@ class PlayerController extends flutter.ChangeNotifier {
     //     videoPath = streamHd;
     // }
 
-    log(getStreamLink, name: 'PlayerController');
+    if (getStreamLink == null) {
+      return;
+    }
+
+    log(getStreamLink!, name: 'PlayerController');
 
     newCurrentPosition = playerController.value.position;
-    _startPlay(getStreamLink);
+    _startPlay(getStreamLink!);
     log(newCurrentPosition.toString(), name: 'PlayerController');
   }
 
