@@ -10,6 +10,8 @@ class PlayerBottom extends StatelessWidget {
   final VoidCallback opSkip;
   final Function(Duration) onSeek;
   final VoidCallback onDragUpdate;
+  final VoidCallback onExpand;
+  final bool expandVideo;
 
   const PlayerBottom({
     super.key,
@@ -19,6 +21,8 @@ class PlayerBottom extends StatelessWidget {
     required this.opSkip,
     required this.onSeek,
     required this.onDragUpdate,
+    required this.onExpand,
+    required this.expandVideo,
   });
 
   @override
@@ -26,29 +30,50 @@ class PlayerBottom extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+        //padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton(
-                onPressed: opSkip,
-                child: const Text('+ 125'),
+            const SizedBox(
+              width: 24,
+            ),
+            Expanded(
+              child: ProgressBar(
+                progress: progress,
+                total: total,
+                onDragUpdate: (_) => onDragUpdate(),
+                buffered: buffered,
+                onSeek: onSeek,
+                timeLabelTextStyle: const TextStyle(color: Colors.white),
+                thumbRadius: 8,
+                timeLabelPadding: 4,
+                timeLabelLocation: TimeLabelLocation.below,
+                timeLabelType: TimeLabelType.totalTime,
               ),
             ),
             const SizedBox(
-              height: 8,
+              width: 8,
             ),
-            ProgressBar(
-              progress: progress,
-              total: total,
-              onDragUpdate: (_) => onDragUpdate(),
-              thumbRadius: 8,
-              timeLabelTextStyle: const TextStyle(color: Colors.white),
-              buffered: buffered,
-              timeLabelPadding: 4,
-              onSeek: onSeek,
+            IconButton(
+              onPressed: opSkip,
+              icon: const Icon(
+                Icons.double_arrow_rounded, //keyboard_double_arrow_right
+              ),
+              iconSize: 18,
+              tooltip: 'Перемотать 125 секунд',
+            ),
+            IconButton(
+              onPressed: onExpand,
+              icon: Icon(
+                expandVideo
+                    ? Icons.close_fullscreen_rounded
+                    : Icons.open_in_full_rounded,
+              ),
+              iconSize: 18,
+            ),
+            const SizedBox(
+              width: 8,
             ),
           ],
         ),

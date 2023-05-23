@@ -68,6 +68,7 @@ class AnimePlayerPage extends HookConsumerWidget {
                         ? VideoWidget(
                             controller.playerController,
                             enableSwipe: controller.enableSwipe,
+                            expandVideo: controller.expandVideo,
                             aspectRatio:
                                 controller.playerController.value.aspectRatio,
                             currentPosition:
@@ -129,6 +130,8 @@ class AnimePlayerPage extends HookConsumerWidget {
                                   const Duration(seconds: 85),
                             );
                           },
+                          expandVideo: controller.expandVideo,
+                          onExpand: controller.toggleExpand,
                         ),
                       ],
                     ),

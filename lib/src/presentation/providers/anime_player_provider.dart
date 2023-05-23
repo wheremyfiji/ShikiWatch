@@ -105,6 +105,8 @@ class PlayerController extends flutter.ChangeNotifier {
   late String streamLow;
 
   int streamQuality = 0;
+  bool enableSwipe = false;
+  bool expandVideo = false;
 
   PlayerController(
       this._ref,
@@ -161,8 +163,6 @@ class PlayerController extends flutter.ChangeNotifier {
     return Duration(hours: hours, minutes: minutes, microseconds: micros);
   }
 
-  bool enableSwipe = false;
-
   Future<void> initState() async {
     streamAsync = await AsyncValue.guard(
       () async {
@@ -203,7 +203,7 @@ class PlayerController extends flutter.ChangeNotifier {
       streamSd = value.video480!;
       streamHd = value.video720!;
 
-      enableSwipe = true;
+      //enableSwipe = true;
 
       playerController = VideoPlayerController.network(
         streamHd,
@@ -397,6 +397,11 @@ class PlayerController extends flutter.ChangeNotifier {
 
   void seekTo(Duration position) {
     playerController.seekTo(position);
+  }
+
+  void toggleExpand() {
+    expandVideo = !expandVideo;
+    notifyListeners();
   }
 
   Future<void> back() async {
