@@ -161,6 +161,8 @@ class PlayerController extends flutter.ChangeNotifier {
     return Duration(hours: hours, minutes: minutes, microseconds: micros);
   }
 
+  bool enableSwipe = false;
+
   Future<void> initState() async {
     streamAsync = await AsyncValue.guard(
       () async {
@@ -170,7 +172,6 @@ class PlayerController extends flutter.ChangeNotifier {
         return links;
       },
     );
-
     streamAsync.whenOrNull(
       error: (error, stackTrace) {
         Sentry.captureException(
@@ -201,6 +202,8 @@ class PlayerController extends flutter.ChangeNotifier {
       streamLow = value.video360!;
       streamSd = value.video480!;
       streamHd = value.video720!;
+
+      enableSwipe = true;
 
       playerController = VideoPlayerController.network(
         streamHd,
