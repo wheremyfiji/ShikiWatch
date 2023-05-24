@@ -29,6 +29,8 @@ abstract class LocalAnimeDatabaseRepo {
   });
   Future<void> migration();
   Future<bool> export({required String path});
+  Future<bool> exportJson(String path);
+  Future<bool> importJson(String path, {bool clearDb = false});
   Future<double> getDatabaseSize();
   Future<void> clearDatabase();
 }

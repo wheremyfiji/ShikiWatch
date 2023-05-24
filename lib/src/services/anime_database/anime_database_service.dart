@@ -3,6 +3,7 @@ import 'dart:convert' as c;
 import 'dart:io' as io;
 
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:path/path.dart' as p;
@@ -316,10 +317,9 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
         await isardb.animeDatabases.where().sortByLastUpdateDesc().exportJson();
 
     final conv = c.jsonEncode(json);
-
     final directory = await path_prov.getApplicationSupportDirectory();
-
-    final timestamp = DateTime.now().toLocal().toUtc().millisecondsSinceEpoch;
+    final timeStamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+    //DateTime.now().toLocal().toUtc().millisecondsSinceEpoch;
 
     final path = p.join(directory.path, 'export');
 
@@ -329,12 +329,52 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
       await io.Directory(path).create(recursive: true);
     }
 
-    final file = io.File(p.join(path, 'anime-database-$timestamp.json'));
+    final file = io.File(p.join(path, 'shikiwatch_database-$timeStamp.json'));
 
     return await file.writeAsString(conv).then((value) async {
       await launchUrl(Uri.parse(path));
       return true;
     }).onError((error, stackTrace) => false);
+  }
+
+  @override
+  Future<bool> exportJson(String path) async {
+    final json =
+        await isardb.animeDatabases.where().sortByLastUpdateDesc().exportJson();
+
+    final conv = c.jsonEncode(json);
+    final timeStamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+    final file = io.File(p.join(path, 'shikiwatch_$timeStamp.json'));
+
+    return await file.writeAsString(conv).then((value) {
+      return true;
+    }).onError((error, stackTrace) => false);
+  }
+
+  @override
+  Future<bool> importJson(String path, {bool clearDb = false}) async {
+    try {
+      final file = io.File(path);
+      final jsonString = await file.readAsString();
+      var con = c.jsonDecode(jsonString); // я прикупил огромный байк
+
+      if (con is! List) {
+        con = [con];
+      }
+
+      final json = con.cast<Map<String, dynamic>>();
+
+      await isardb.writeTxn(
+        () async {
+          if (clearDb) await isardb.animeDatabases.clear();
+          await isardb.animeDatabases.importJson(json);
+        },
+      );
+
+      return true;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   @override
@@ -350,8 +390,10 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
 
   @override
   Future<void> clearDatabase() async {
-    await isardb.writeTxn(() async {
-      await isardb.animeDatabases.clear();
-    });
+    await isardb.writeTxn(
+      () async {
+        await isardb.animeDatabases.clear();
+      },
+    );
   }
 }

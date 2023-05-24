@@ -11,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../domain/enums/library_state.dart';
-import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
@@ -20,6 +19,7 @@ import '../../providers/environment_provider.dart';
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
 import 'widgets/library_start_fragment.dart';
+import 'widgets/local_database_manage.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/version_option.dart';
@@ -29,29 +29,17 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    clearIsar() async {
-      await ref.read(animeDatabaseProvider).clearDatabase();
-      if (context.mounted) {
-        context.scaffoldMessenger.showSnackBar(
-          const SnackBar(
-            content: Text('Локальные отметки очищены'),
-            duration: Duration(milliseconds: 1500),
-          ),
-        );
-      }
-    }
-
-    export() async {
-      bool t = await ref.read(animeDatabaseProvider).export(path: '');
-      if (t && context.mounted) {
-        context.scaffoldMessenger.showSnackBar(
-          const SnackBar(
-            content: Text('Успешно'),
-            duration: Duration(milliseconds: 1500),
-          ),
-        );
-      }
-    }
+    // export() async {
+    //   bool t = await ref.read(animeDatabaseProvider).export(path: '');
+    //   if (t && context.mounted) {
+    //     context.scaffoldMessenger.showSnackBar(
+    //       const SnackBar(
+    //         content: Text('Успешно'),
+    //         duration: Duration(milliseconds: 1500),
+    //       ),
+    //     );
+    //   }
+    // }
 
     return Scaffold(
       body: CustomScrollView(
@@ -214,27 +202,14 @@ class SettingsPage extends ConsumerWidget {
               options: [
                 const ClearCacheWidget(),
                 SettingsOption(
-                  title: 'Очистить БД',
-                  subtitle: 'Удалить все локальные отметки просмотра',
-                  onTap: () async {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text('Вы уверены?'),
-                        content: const Text(
-                            'Внимание!\nЭто удалит все локальные отметки просмотра'),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("Отмена")),
-                          FilledButton(
-                              onPressed: () => clearIsar()
-                                  .then((_) => Navigator.pop(context)),
-                              child: const Text("Удалить")),
-                        ],
-                      ),
-                    );
-                  },
+                  title: 'Резервное копирование',
+                  subtitle:
+                      'Импорт/экспорт/удаление локальных отметок просмотра аниме',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const LocalDatabaseManage(),
+                    ),
+                  ),
                 ),
                 SettingsOption(
                   title: 'Сброс настроек',
@@ -253,15 +228,15 @@ class SettingsPage extends ConsumerWidget {
                     }
                   },
                 ),
-                if (TargetP.instance.isDesktop)
-                  SettingsOption(
-                    title: 'Экспорт отметок',
-                    subtitle:
-                        'Экспортировать локальные отметки просмотра в json файл',
-                    onTap: () {
-                      export();
-                    },
-                  ),
+                // if (TargetP.instance.isDesktop)
+                //   SettingsOption(
+                //     title: 'Экспорт отметок',
+                //     subtitle:
+                //         'Экспортировать локальные отметки просмотра в json файл',
+                //     onTap: () {
+                //       export();
+                //     },
+                //   ),
               ],
             ),
           ),
