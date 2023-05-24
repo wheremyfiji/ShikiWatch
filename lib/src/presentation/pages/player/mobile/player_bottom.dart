@@ -56,6 +56,7 @@ class PlayerBottom extends StatelessWidget {
               width: 8,
             ),
             IconButton(
+              color: Colors.white,
               onPressed: opSkip,
               icon: const Icon(
                 Icons.double_arrow_rounded, //keyboard_double_arrow_right
@@ -64,6 +65,7 @@ class PlayerBottom extends StatelessWidget {
               tooltip: 'Перемотать 125 секунд',
             ),
             IconButton(
+              color: Colors.white,
               onPressed: onExpand,
               icon: Icon(
                 expandVideo
