@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -20,10 +22,10 @@ class LocalDatabaseManage extends StatelessWidget {
             title: Text('Резервное копирование'),
           ),
           SliverToBoxAdapter(
-            child: ImportDB(),
+            child: ExportDB(),
           ),
           SliverToBoxAdapter(
-            child: ExportDB(),
+            child: ImportDB(),
           ),
           SliverToBoxAdapter(
             child: ClearDB(),
@@ -63,13 +65,47 @@ class _ImportDBState extends ConsumerState<ImportDB> {
       title: const Text('Восстановить'),
       subtitle: const Text('Импортировать из json-файла'),
       onTap: () async {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            return WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: const Dialog(
+                child: Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+
         final sdkVer = ref.read(environmentProvider).sdkVersion;
 
         if (sdkVer == null) {
+          Navigator.of(context).pop();
           return;
         }
 
-        await requestPermission(sdkVer);
+        final p = await requestPermission(sdkVer);
+
+        if (!p) {
+          showErrorSnackBar(
+            ctx: context,
+            msg: 'Разрешение не получено',
+            dur: const Duration(seconds: 5),
+          );
+          Navigator.of(context).pop();
+          return;
+        }
 
         final FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: sdkVer < 29 ? FileType.any : FileType.custom,
@@ -77,10 +113,12 @@ class _ImportDBState extends ConsumerState<ImportDB> {
         );
 
         if (result == null || result.files.isEmpty) {
+          Navigator.of(context).pop();
           return;
         }
 
         if (result.files.first.path == null) {
+          Navigator.of(context).pop();
           return;
         }
 
@@ -93,6 +131,8 @@ class _ImportDBState extends ConsumerState<ImportDB> {
           return;
         }
 
+        Navigator.of(context).pop();
+
         if (t) {
           showSnackBar(
             ctx: context,
@@ -103,7 +143,7 @@ class _ImportDBState extends ConsumerState<ImportDB> {
           showErrorSnackBar(
             ctx: context,
             msg: 'Ошибка',
-            dur: const Duration(seconds: 3),
+            dur: const Duration(seconds: 5),
           );
         }
       },
@@ -140,14 +180,50 @@ class _ExportDBState extends ConsumerState<ExportDB> {
       title: const Text('Создать'),
       subtitle: const Text('Экспортировать в json-файл'),
       onTap: () async {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            return WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: const Dialog(
+                child: Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+
         final sdkVer = ref.read(environmentProvider).sdkVersion;
 
         if (sdkVer == null) {
+          Navigator.of(context).pop();
           return;
         }
-        await requestPermission(sdkVer);
+
+        final p = await requestPermission(sdkVer);
+        if (!p) {
+          Navigator.of(context).pop();
+          showErrorSnackBar(
+            ctx: context,
+            msg: 'Разрешение не получено',
+            dur: const Duration(seconds: 5),
+          );
+          return;
+        }
+
         final path = await FilePicker.platform.getDirectoryPath();
         if (path == null) {
+          Navigator.of(context).pop();
           return;
         }
 
@@ -156,6 +232,8 @@ class _ExportDBState extends ConsumerState<ExportDB> {
         if (!mounted) {
           return;
         }
+
+        Navigator.of(context).pop();
 
         if (t) {
           showSnackBar(
@@ -167,7 +245,7 @@ class _ExportDBState extends ConsumerState<ExportDB> {
           showErrorSnackBar(
             ctx: context,
             msg: 'Ошибка',
-            dur: const Duration(seconds: 3),
+            dur: const Duration(seconds: 5),
           );
         }
         // showDialog(

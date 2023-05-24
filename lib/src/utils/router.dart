@@ -25,6 +25,7 @@ import '../presentation/pages/library/library_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 
+import '../presentation/pages/settings/widgets/local_database_manage.dart';
 import 'target_platform.dart';
 import 'updater.dart';
 
@@ -62,6 +63,21 @@ final GoRouter router = GoRouter(
           child: TargetP.instance.isDesktop
               ? AnimePlayerDesktopPage(data: data)
               : AnimePlayerPage(data: data),
+          transitionsBuilder: (_, animation, __, child) =>
+              FadeTransition(opacity: animation, child: child),
+          transitionDuration: const Duration(milliseconds: 150),
+          reverseTransitionDuration: const Duration(milliseconds: 0),
+        );
+      },
+    ),
+
+    GoRoute(
+      path: '/backup',
+      name: 'backup',
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) {
+        return CustomTransitionPage(
+          child: const LocalDatabaseManage(),
           transitionsBuilder: (_, animation, __, child) =>
               FadeTransition(opacity: animation, child: child),
           transitionDuration: const Duration(milliseconds: 150),

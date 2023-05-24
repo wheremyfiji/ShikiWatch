@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 //import 'package:git_info/git_info.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,7 +20,6 @@ import '../../providers/environment_provider.dart';
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
 import 'widgets/library_start_fragment.dart';
-import 'widgets/local_database_manage.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/version_option.dart';
@@ -205,11 +205,12 @@ class SettingsPage extends ConsumerWidget {
                   title: 'Резервное копирование',
                   subtitle:
                       'Импорт/экспорт/удаление локальных отметок просмотра аниме',
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const LocalDatabaseManage(),
-                    ),
-                  ),
+                  onTap: () => context.pushNamed('backup'),
+                  // Navigator.of(context).push(
+                  //   MaterialPageRoute(
+                  //     builder: (context) => const LocalDatabaseManage(),
+                  //   ),
+                  // ),
                 ),
                 SettingsOption(
                   title: 'Сброс настроек',
