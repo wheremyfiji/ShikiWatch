@@ -39,7 +39,7 @@ class MangaCard extends StatelessWidget {
               FocusScope.of(context).unfocus();
               context.pushNamed(
                 'library_manga',
-                pathParameters: <String, String>{
+                params: <String, String>{
                   'id': (data.manga?.id!).toString(),
                 },
                 extra: data.manga,
@@ -119,7 +119,7 @@ class MangaCardEx extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
           onTap: () => context.pushNamed(
             'library_manga',
-            pathParameters: <String, String>{
+            params: <String, String>{
               'id': (data.id!).toString(),
             },
             extra: data,

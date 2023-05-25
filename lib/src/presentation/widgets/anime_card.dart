@@ -40,7 +40,7 @@ class AnimeCard extends StatelessWidget {
               FocusScope.of(context).unfocus();
               context.pushNamed(
                 'library_anime',
-                pathParameters: <String, String>{
+                params: <String, String>{
                   'id': (data.anime?.id!).toString(),
                 },
                 extra: data.anime,

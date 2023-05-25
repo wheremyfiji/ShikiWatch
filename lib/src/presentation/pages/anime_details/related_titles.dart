@@ -64,7 +64,7 @@ class RelatedTitles extends StatelessWidget {
                             if (isManga) {
                               context.pushNamed(
                                 'library_manga',
-                                pathParameters: <String, String>{
+                                params: <String, String>{
                                   'id': (title!.id!).toString(),
                                 },
                                 extra: title,
@@ -72,7 +72,7 @@ class RelatedTitles extends StatelessWidget {
                             } else {
                               context.pushNamed(
                                 'library_anime',
-                                pathParameters: <String, String>{
+                                params: <String, String>{
                                   'id': (title!.id!).toString(),
                                 },
                                 extra: title,

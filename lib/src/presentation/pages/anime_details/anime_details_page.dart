@@ -295,9 +295,6 @@ class RelatedWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final related = ref.watch(relatedTitlesAnimeProvider(id));
 
-    //final t = router.routerDelegate.navigatorKey.currentWidget; // root key
-    //final t = router.routerDelegate.navigatorKey.currentContext;
-
     return related.when(
       data: (data) {
         if (data.isEmpty) {
@@ -393,7 +390,7 @@ class RelatedWidget extends ConsumerWidget {
                           if (isManga) {
                             context.pushNamed(
                               'library_manga',
-                              pathParameters: <String, String>{
+                              params: <String, String>{
                                 'id': (title!.id!).toString(),
                               },
                               extra: title,
@@ -401,7 +398,7 @@ class RelatedWidget extends ConsumerWidget {
                           } else {
                             context.pushNamed(
                               'library_anime',
-                              pathParameters: <String, String>{
+                              params: <String, String>{
                                 'id': (title!.id!).toString(),
                               },
                               extra: title,

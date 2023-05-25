@@ -34,9 +34,6 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 final GlobalKey<NavigatorState> _tabANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'bebra');
 
-BuildContext? get routerCtx =>
-    router.routerDelegate.navigatorKey.currentContext;
-
 final GoRouter router = GoRouter(
   debugLogDiagnostics: true,
   observers: [
@@ -105,7 +102,7 @@ final GoRouter router = GoRouter(
       ],
     ),
 
-    StatefulShellRoute.indexedStack(
+    StatefulShellRoute(
       branches: <StatefulShellBranch>[
         /// library screen
         StatefulShellBranch(
@@ -163,6 +160,27 @@ final GoRouter router = GoRouter(
                     );
                   },
                 ),
+                // GoRoute(
+                //   name: 'library_ranobe',
+                //   path: 'ranobe/:id',
+                //   pageBuilder: (context, state) {
+                //     MangaShort data = state.extra as MangaShort;
+                //     return CustomTransitionPage(
+                //       child:
+                //           // TargetP.instance.isDesktop
+                //           //     ? AnimeDetailsDesktopPage(
+                //           //         animeData: data,
+                //           //       )
+                //           //     :
+                //           MangaDetailPage(manga: data),
+                //       transitionsBuilder: (_, animation, __, child) =>
+                //           FadeTransition(opacity: animation, child: child),
+                //       transitionDuration: const Duration(milliseconds: 150),
+                //       reverseTransitionDuration:
+                //           const Duration(milliseconds: 150),
+                //     );
+                //   },
+                // ),
               ],
             ),
           ],
@@ -338,13 +356,21 @@ final GoRouter router = GoRouter(
           ],
         ),
       ],
-      builder: (BuildContext context, GoRouterState state,
-          StatefulNavigationShell navigationShell) {
+      builder:
+          (BuildContext context, StatefulShellRouteState state, Widget child) {
         return ExcludeSemantics(
           child: UpdaterWidget(
-            child: ScaffoldWithNavBar(navigationShell: navigationShell),
+            child: ScaffoldWithNavBar(shellState: state, body: child),
           ),
         );
+
+        // return ExcludeSemantics(
+        //   child: UpdaterWidget(
+        //     child: ShikiAnnotatedRegionWidget(
+        //       child: ScaffoldWithNavBar(shellState: state, body: child),
+        //     ),
+        //   ),
+        // );
       },
     ),
   ],

@@ -26,12 +26,14 @@ const _allDestinations = [
 ];
 
 class ScaffoldWithNavBar extends StatelessWidget {
-  final StatefulNavigationShell navigationShell;
-
   const ScaffoldWithNavBar({
-    required this.navigationShell,
+    required this.shellState,
+    required this.body,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
+
+  final StatefulShellRouteState shellState;
+  final Widget body;
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +59,19 @@ class ScaffoldWithNavBar extends StatelessWidget {
                         extended: ext,
                         groupAlignment: -1.0,
                         destinations: _allDestinations,
-                        selectedIndex: navigationShell.currentIndex,
+                        selectedIndex: shellState.currentIndex,
                         onDestinationSelected: (tappedIndex) {
-                          if (navigationShell.currentIndex == tappedIndex &&
+                          if (shellState.currentIndex == tappedIndex &&
                               GoRouter.of(context).location == '/explore') {
                             context.push('/explore/search');
                             return;
                           }
 
-                          if (navigationShell.currentIndex == tappedIndex) {
-                            navigationShell
-                                .shellRouteContext.navigatorKey.currentState
+                          if (shellState.currentIndex == tappedIndex) {
+                            shellState.currentNavigatorKey.currentState
                                 ?.popUntil((r) => r.isFirst);
                           } else {
-                            navigationShell.goBranch(tappedIndex);
+                            shellState.goBranch(index: tappedIndex);
                           }
                         },
                       ),
@@ -78,14 +79,14 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   ),
                   //const VerticalDivider(thickness: 1, width: 1),
                   Expanded(
-                    child: navigationShell,
+                    child: body,
                   )
                 ],
               ),
             ),
           )
         : Scaffold(
-            body: navigationShell,
+            body: body,
             bottomNavigationBar: NavigationBar(
               destinations: const [
                 NavigationDestination(
@@ -104,19 +105,19 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   label: 'Профиль',
                 ),
               ],
-              selectedIndex: navigationShell.currentIndex,
+              selectedIndex: shellState.currentIndex,
               onDestinationSelected: (tappedIndex) {
-                if (navigationShell.currentIndex == tappedIndex &&
+                if (shellState.currentIndex == tappedIndex &&
                     GoRouter.of(context).location == '/explore') {
                   context.push('/explore/search');
                   return;
                 }
 
-                if (navigationShell.currentIndex == tappedIndex) {
-                  navigationShell.shellRouteContext.navigatorKey.currentState
+                if (shellState.currentIndex == tappedIndex) {
+                  shellState.currentNavigatorKey.currentState
                       ?.popUntil((r) => r.isFirst);
                 } else {
-                  navigationShell.goBranch(tappedIndex);
+                  shellState.goBranch(index: tappedIndex);
                 }
               },
             ),
