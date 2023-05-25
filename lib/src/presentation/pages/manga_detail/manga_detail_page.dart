@@ -627,7 +627,7 @@ class RelatedWidget extends ConsumerWidget {
                           if (isManga) {
                             context.pushNamed(
                               'library_manga',
-                              params: <String, String>{
+                              pathParameters: <String, String>{
                                 'id': (title!.id!).toString(),
                               },
                               extra: title,
@@ -635,7 +635,7 @@ class RelatedWidget extends ConsumerWidget {
                           } else {
                             context.pushNamed(
                               'library_anime',
-                              params: <String, String>{
+                              pathParameters: <String, String>{
                                 'id': (title!.id!).toString(),
                               },
                               extra: title,
