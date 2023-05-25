@@ -66,9 +66,8 @@ dependencies:
     git:
       url: https://github.com/themisir/flutter-network-logger.git
       ref: master # branch name
-  
-  go_router:
-    path: external/go_router
+
+  go_router: ^7.1.1
   #yaml: ^3.1.1
   intl: ^0.18.1
   collection: ^1.17.1
