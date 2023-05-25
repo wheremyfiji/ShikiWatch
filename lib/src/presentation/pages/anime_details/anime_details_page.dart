@@ -295,9 +295,6 @@ class RelatedWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final related = ref.watch(relatedTitlesAnimeProvider(id));
 
-    //final t = router.routerDelegate.navigatorKey.currentWidget; // root key
-    //final t = router.routerDelegate.navigatorKey.currentContext;
-
     return related.when(
       data: (data) {
         if (data.isEmpty) {
