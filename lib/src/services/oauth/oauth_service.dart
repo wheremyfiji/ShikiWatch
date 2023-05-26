@@ -49,11 +49,10 @@ class OAuthService {
       SecureStorageService.instance.refreshToken = data['refresh_token'];
 
       if (await getUserInfo(data['access_token'])) {
-        //logDebug('[Auth login] new request token = ${data['access_token']}');
-        //logDebug('[Auth login] new refresh token = ${data['refresh_token']}');
         return true;
       }
 
+      //шизофрения
       return true;
     }
 
@@ -79,8 +78,6 @@ class OAuthService {
       headers: headers,
     );
 
-    //logDebug('[Auth refreshToken] ${tokenRefreshResponse.statusCode}');
-
     if (tokenRefreshResponse.statusCode == 200) {
       final data =
           convert.jsonDecode(tokenRefreshResponse.body) as Map<String, dynamic>;
@@ -92,17 +89,9 @@ class OAuthService {
       SecureStorageService.instance.token = data['access_token'];
       SecureStorageService.instance.refreshToken = data['refresh_token'];
 
-      //logDebug('[Auth refreshToken] updated token = ${data['access_token']}');
-      //logDebug(
-      //    '[Auth refreshToken] updated refresh token = ${data['refresh_token']}');
-
       return data['access_token'];
     }
     return null;
-    // else {
-    //   throw Exception(
-    //       '[Auth refreshToken] Error requesting new token with refresh token');
-    // }
   }
 
   Future<bool> getUserInfo(String token) async {

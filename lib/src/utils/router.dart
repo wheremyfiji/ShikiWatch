@@ -25,7 +25,7 @@ import '../presentation/pages/library/library_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 
-import '../presentation/pages/settings/widgets/local_database_manage.dart';
+import '../presentation/pages/settings/local_database_manage_page.dart';
 import 'target_platform.dart';
 import 'updater.dart';
 

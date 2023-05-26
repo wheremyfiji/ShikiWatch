@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-//import 'package:git_info/git_info.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,18 +28,6 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // export() async {
-    //   bool t = await ref.read(animeDatabaseProvider).export(path: '');
-    //   if (t && context.mounted) {
-    //     context.scaffoldMessenger.showSnackBar(
-    //       const SnackBar(
-    //         content: Text('Успешно'),
-    //         duration: Duration(milliseconds: 1500),
-    //       ),
-    //     );
-    //   }
-    // }
-
     return Scaffold(
       body: CustomScrollView(
         shrinkWrap: true,
@@ -206,29 +193,24 @@ class SettingsPage extends ConsumerWidget {
                   subtitle:
                       'Импорт/экспорт/удаление локальных отметок просмотра аниме',
                   onTap: () => context.pushNamed('backup'),
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => const LocalDatabaseManage(),
-                  //   ),
-                  // ),
                 ),
-                SettingsOption(
-                  title: 'Сброс настроек',
-                  subtitle:
-                      'Сброс настроек приложения до значений по умолчанию',
-                  onTap: () async {
-                    var box = Hive.box(BoxType.settings.name);
-                    await box.clear();
-                    if (context.mounted) {
-                      context.scaffoldMessenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('Настройки сброшены'),
-                          duration: Duration(milliseconds: 1500),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                // SettingsOption(
+                //   title: 'Сброс настроек',
+                //   subtitle:
+                //       'Сброс настроек приложения до значений по умолчанию',
+                //   onTap: () async {
+                //     var box = Hive.box(BoxType.settings.name);
+                //     await box.clear();
+                //     if (context.mounted) {
+                //       context.scaffoldMessenger.showSnackBar(
+                //         const SnackBar(
+                //           content: Text('Настройки сброшены'),
+                //           duration: Duration(milliseconds: 1500),
+                //         ),
+                //       );
+                //     }
+                //   },
+                // ),
                 // if (TargetP.instance.isDesktop)
                 //   SettingsOption(
                 //     title: 'Экспорт отметок',
@@ -297,16 +279,6 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 const VersionWidget(),
                 if (TargetP.instance.isDesktop) const WindowsDeviceInfoWidget(),
-                // SettingsOption(
-                //   title: 'Проверить обновления',
-                //   subtitle: 'Проверить наличие обновлений приложения',
-                //   onTap: () {
-                //     showSnackBar(context, 'Обновлений не найдено');
-                //   },
-                // ),
-
-                //const GitCommitWidget(),
-
                 SettingsOption(
                   title: 'Лицензии',
                   subtitle: 'Лицензии с открытым исходным кодом',
@@ -319,7 +291,6 @@ class SettingsPage extends ConsumerWidget {
                     );
                   },
                 ),
-
                 if (TargetP.instance.isDesktop)
                   SettingsOption(
                     title: 'распаковать pedals',
@@ -346,64 +317,6 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 }
-
-// class ExitProfileWidget extends ConsumerWidget {
-//   const ExitProfileWidget({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final storage = ref.read(cacheStorageServiceProvider);
-
-//     //deleteDB() async {}
-
-//     logout() async {
-//       var box = Hive.box(BoxType.settings.name);
-//       await box.clear();
-//       await storage.clear();
-//       SecureStorageService.instance.deleteAll();
-//       await extended_image.clearDiskCachedImages();
-//       extended_image.clearMemoryImageCache();
-//     }
-
-//     return SettingsOption(
-//       title: 'Выход',
-//       subtitle: 'Выйти из учётной записи',
-//       onTap: () async {
-//         showDialog<String>(
-//           context: context,
-//           builder: (BuildContext context) => AlertDialog(
-//             title: const Text('Выход'),
-//             content: const Text('Вы точно хотите выйти из учётной записи?'),
-//             actions: <Widget>[
-//               TextButton(
-//                 onPressed: () {
-//                   Navigator.pop(context);
-//                 },
-//                 child: const Text('Нет'),
-//               ),
-//               TextButton(
-//                 onPressed: () {
-//                   // await deleteDB();
-//                   // SecureStorageService.instance.deleteAll();
-//                   // await extended_image.clearDiskCachedImages();
-//                   // extended_image.clearMemoryImageCache();
-//                   logout().then((value) => Phoenix.rebirth(context));
-
-//                   //Phoenix.rebirth(context);
-
-//                   //Navigator.pop(context);
-//                   //ref.refresh(loginControllerProvider);
-//                   //context.go('/login');
-//                 },
-//                 child: const Text('Да'),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 
 class PlayerDiscordRpc extends StatelessWidget {
   const PlayerDiscordRpc({super.key});

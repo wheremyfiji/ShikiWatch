@@ -1,14 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../services/anime_database/anime_database_provider.dart';
-import '../../../providers/environment_provider.dart';
-import '../../../../utils/utils.dart';
+import '../../../services/anime_database/anime_database_provider.dart';
+import '../../providers/environment_provider.dart';
+import '../../../utils/utils.dart';
 
 class LocalDatabaseManage extends StatelessWidget {
   const LocalDatabaseManage({super.key});
@@ -248,36 +247,6 @@ class _ExportDBState extends ConsumerState<ExportDB> {
             dur: const Duration(seconds: 5),
           );
         }
-        // showDialog(
-        //   barrierDismissible: false,
-        //   context: context,
-        //   builder: (_) {
-        //     return const Dialog(
-        //       child: Padding(
-        //         padding: EdgeInsets.all(24),
-        //         child: Column(
-        //           mainAxisSize: MainAxisSize.min,
-        //           children: [
-        //             CircularProgressIndicator(),
-        //             SizedBox(
-        //               height: 16,
-        //             ),
-        //             Text('Loading...')
-        //           ],
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // );
-
-        // //await requestPermission();
-        // await Future.delayed(const Duration(seconds: 3));
-
-        // if (!mounted) {
-        //   return;
-        // }
-
-        // Navigator.of(context).pop();
       },
     );
   }
