@@ -9,7 +9,6 @@ import 'package:sentry_dio/sentry_dio.dart';
 
 import '../../constants/config.dart';
 import '../../data/repositories/http_service.dart';
-import '../../data/repositories/cache_storage_repo.dart';
 
 import '../../utils/target_platform.dart';
 import 'interceptors/request_interceptor.dart';
@@ -24,7 +23,7 @@ import 'interceptors/refresh_token_interceptor.dart';
 
 class DioHttpService implements HttpService {
   /// Creates new instance of [DioHttpService]
-  DioHttpService(this.storageService) {
+  DioHttpService() {
     dio = Dio(baseOptions);
 
     // if (Platform.isIOS || Platform.isMacOS || Platform.isAndroid) {
@@ -57,7 +56,6 @@ class DioHttpService implements HttpService {
       ],
     ));
 
-    //dio.interceptors.add(CacheInterceptor(storageService));
     dio.interceptors.add(RefreshTokenInterceptor(dio));
     dio.interceptors.add(RequestInterceptors(dio));
 
@@ -80,7 +78,7 @@ class DioHttpService implements HttpService {
     dio.addSentry();
   }
 
-  final CacheStorageRepo storageService;
+  //final CacheStorageRepo storageService;
   late final Dio dio;
 
   BaseOptions get baseOptions => BaseOptions(
@@ -102,12 +100,12 @@ class DioHttpService implements HttpService {
 
   /// GET method
   @override
-  Future<dynamic> get(String endpoint,
-      {Map<String, dynamic>? queryParameters,
-      Options? options,
-      CancelToken? cancelToken,
-      bool needToCache = false,
-      bool forceRefresh = false}) async {
+  Future<dynamic> get(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
     dio.options.extra[AppConfig.dioNeedToCacheKey] = false;
     dio.options.extra[AppConfig.dioCacheForceRefreshKey] = true;
     try {

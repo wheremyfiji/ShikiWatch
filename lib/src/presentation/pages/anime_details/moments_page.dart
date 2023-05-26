@@ -32,7 +32,7 @@ class AnimeScreenshots {
 final animeMomentsProvider = FutureProvider.autoDispose
     .family<List<AnimeScreenshots>, int>((ref, id) async {
   final dio = ref.read(httpServiceProvider);
-  final response = await dio.get('animes/$id/screenshots', needToCache: true);
+  final response = await dio.get('animes/$id/screenshots');
   return [for (final e in response) AnimeScreenshots.fromJson(e)];
 }, name: 'animeMomentsProvider');
 

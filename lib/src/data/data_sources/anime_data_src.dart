@@ -30,8 +30,6 @@ class AnimeDataSource implements AnimeRepository {
       final response = await dio.get(
         'animes/$id',
         cancelToken: cancelToken,
-        forceRefresh: forceRefresh,
-        needToCache: needToCache,
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -44,8 +42,6 @@ class AnimeDataSource implements AnimeRepository {
       final response = await dio.get(
         'animes/$id',
         cancelToken: cancelToken,
-        forceRefresh: forceRefresh,
-        needToCache: needToCache,
       );
 
       return Anime.fromJson(response);

@@ -25,10 +25,6 @@ import 'src/data/data_sources/environment_data_src.dart';
 import 'src/presentation/shiki.dart';
 import 'src/services/secure_storage/secure_storage_service.dart';
 
-import 'src/data/repositories/cache_storage_repo.dart';
-import 'src/services/http/cache_storage/cache_storage_provider.dart';
-import 'src/services/http/cache_storage/cache_storage_service.dart';
-
 import 'src/services/anime_database/anime_database_provider.dart';
 import 'src/services/anime_database/anime_database_service.dart';
 import 'src/services/shared_pref/shared_preferences_provider.dart';
@@ -113,9 +109,6 @@ void initApp() async {
   await Hive.initFlutter(hiveDir.path);
   await Hive.openBox<dynamic>(BoxType.settings.name);
 
-  final CacheStorageRepo initializedStorageService = CacheStorageImpl();
-  await initializedStorageService.init();
-
   final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
   //await animeDatabase.migration();
 
@@ -151,8 +144,6 @@ void initApp() async {
         ),
         sharedPreferencesProvider.overrideWithValue(prefs),
         animeDatabaseProvider.overrideWithValue(animeDatabase),
-        cacheStorageServiceProvider
-            .overrideWithValue(initializedStorageService),
       ],
       // child: WindowWatcher(
       //   child: const ShikiApp(),

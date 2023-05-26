@@ -10,13 +10,12 @@ abstract class HttpService {
 
   /// Http get request
   //Future<Map<String, dynamic>> get(String endpoint,
-  Future<dynamic> get(String endpoint,
-      {Map<String, dynamic>? queryParameters,
-      Options? options,
-      //String? token,
-      CancelToken? cancelToken,
-      bool needToCache = false,
-      bool forceRefresh = false});
+  Future<dynamic> get(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  });
 
   /// Http post request
   Future<dynamic> post(

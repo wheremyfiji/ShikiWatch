@@ -26,8 +26,6 @@ class RanobeDataSource implements RanobeRepository {
     final response = await dio.get(
       'ranobe/$id',
       cancelToken: cancelToken,
-      forceRefresh: forceRefresh,
-      needToCache: needToCache,
       options: Options(
         headers: {
           'Authorization': 'Bearer $token',

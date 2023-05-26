@@ -29,8 +29,6 @@ class MangaDataSource implements MangaRepository {
     final response = await dio.get(
       'mangas/$id',
       cancelToken: cancelToken,
-      forceRefresh: forceRefresh,
-      needToCache: needToCache,
       options: Options(
         headers: {
           'Authorization': 'Bearer $token',
