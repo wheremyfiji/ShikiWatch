@@ -30,7 +30,6 @@ class VersionWidget extends ConsumerWidget {
         showModalBottomSheet<void>(
           showDragHandle: true,
           useRootNavigator: true,
-          useSafeArea: true,
           context: context,
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width >= 700
@@ -59,61 +58,69 @@ class DebugInfo extends ConsumerWidget {
     final environment = ref.watch(environmentProvider);
     final db = ref.watch(dbSizeProvider);
 
+    final buildSignature = environment.packageInfo.buildSignature.isEmpty
+        ? ''
+        : environment.packageInfo.buildSignature
+            .substring(environment.packageInfo.buildSignature.length - 6);
+
     return db.when(
       data: (data) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Debug info',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Debug info',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text('dart: ${Platform.version}'),
-              const SizedBox(
-                height: 4,
-              ),
-              Text('operatingSystem: ${Platform.operatingSystemVersion}'),
-              const SizedBox(
-                height: 8,
-              ),
-              Text('appName: ${environment.packageInfo.appName}'),
-              Text('packageName: ${environment.packageInfo.packageName}'),
-              Text('version: ${environment.packageInfo.version}'),
-              Text('build: ${environment.packageInfo.buildNumber}'),
-              Text(
-                'buildSignature: ${environment.packageInfo.buildSignature}',
-              ),
-              if (environment.packageInfo.installerStore != null)
+                const SizedBox(
+                  height: 8,
+                ),
+                Text('dart: ${Platform.version}'),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text('operatingSystem: ${Platform.operatingSystemVersion}'),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text('appName: ${environment.packageInfo.appName}'),
+                Text('packageName: ${environment.packageInfo.packageName}'),
+                Text('version: ${environment.packageInfo.version}'),
+                Text('build: ${environment.packageInfo.buildNumber}'),
                 Text(
-                  'installerStore: ${environment.packageInfo.installerStore}',
+                  'buildSignature: $buildSignature (${environment.packageInfo.buildSignature.length})',
                 ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text('userId: ${SecureStorageService.instance.userId}'),
-              Text(
-                'userProfileImage: ${SecureStorageService.instance.userProfileImage}',
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text('anime db size: $data Kb'),
-              // const SizedBox(
-              //   height: 8,
-              // ),
-              // const FilledButton(
-              //   onPressed: null,
-              //   child: Text('copy'),
-              // ),
-            ],
+                if (environment.packageInfo.installerStore != null)
+                  Text(
+                    'installerStore: ${environment.packageInfo.installerStore}',
+                  ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text('userId: ${SecureStorageService.instance.userId}'),
+                Text(
+                  'userProfileImage: ${SecureStorageService.instance.userProfileImage}',
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text('anime db size: $data Kb'),
+                // const SizedBox(
+                //   height: 8,
+                // ),
+                // const FilledButton(
+                //   onPressed: null,
+                //   child: Text('copy'),
+                // ),
+              ],
+            ),
           ),
         );
       },
