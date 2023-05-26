@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
@@ -126,8 +127,10 @@ class SeriesSelectPage extends ConsumerWidget {
         await Future.delayed(const Duration(milliseconds: 500));
 
         ref.invalidate(isAnimeInDataBaseProvider);
+        debugPrint('invalidate isAnimeInDataBaseProvider');
         if (context.mounted) {
-          GoRouter.of(context).removeListener(watchRouteChange);
+          debugPrint('removeListener watchRouteChange');
+          GoRouter.maybeOf(context)?.removeListener(watchRouteChange);
         }
       }
     }
@@ -136,9 +139,6 @@ class SeriesSelectPage extends ConsumerWidget {
     final currentSort = ref.watch(episodeSortTypeProvider);
 
     return Scaffold(
-      // floatingActionButton: FloatingActionButton.large(onPressed: () {
-      //   scrollToIndex;
-      // }),
       body: RefreshIndicator(
         onRefresh: () async =>
             ref.refresh(isAnimeInDataBaseProvider(shikimoriId)),
@@ -238,6 +238,7 @@ class SeriesSelectPage extends ConsumerWidget {
                         GoRouter.of(context).pushNamed('player', extra: data);
                         // ignore: use_build_context_synchronously
                         GoRouter.of(context).addListener(watchRouteChange);
+                        debugPrint('addListener watchRouteChange');
                       },
                       title: seria.type != null
                           ? Text("Серия ${seria.number} (${seria.type})")
