@@ -7,6 +7,7 @@ import '../../../../constants/config.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../utils/shiki_utils.dart';
 import '../../../widgets/cached_image.dart';
+import '../../../widgets/show_pop_up.dart';
 
 class AnimeInfoHeader extends StatelessWidget {
   final Animes data;
@@ -49,7 +50,6 @@ class AnimeInfoHeader extends StatelessWidget {
         alignment: Alignment.centerLeft,
         children: [
           ClipRRect(
-            clipBehavior: Clip.antiAlias,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
               child: Container(
@@ -101,12 +101,26 @@ class AnimeInfoHeader extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: AppConfig.staticUrl +
-                            (data.image?.original ?? data.image?.preview ?? ''),
-                        height: height - 150,
-                        width: 145,
-                        fit: BoxFit.cover,
+                      GestureDetector(
+                        onTap: () => showSlideUp(
+                          context,
+                          ImageViewer(
+                            AppConfig.staticUrl +
+                                (data.image?.original ??
+                                    data.image?.preview ??
+                                    ''),
+                            cached: true,
+                          ),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: AppConfig.staticUrl +
+                              (data.image?.original ??
+                                  data.image?.preview ??
+                                  ''),
+                          height: height - 150,
+                          width: 145,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       if (favoured) ...[
                         const Padding(

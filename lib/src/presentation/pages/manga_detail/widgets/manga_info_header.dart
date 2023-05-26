@@ -8,6 +8,7 @@ import '../../../../constants/config.dart';
 import '../../../../domain/models/manga_short.dart';
 import '../../../../utils/shiki_utils.dart';
 import '../../../widgets/cached_image.dart';
+import '../../../widgets/show_pop_up.dart';
 
 class MangaInfoHeader extends StatelessWidget {
   final MangaShort data;
@@ -38,7 +39,6 @@ class MangaInfoHeader extends StatelessWidget {
                 height: height,
                 width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
-                  border: Border.all(width: 0, color: Colors.transparent),
                   image: DecorationImage(
                     filterQuality: FilterQuality.low,
                     image: CachedNetworkImageProvider(
@@ -53,24 +53,22 @@ class MangaInfoHeader extends StatelessWidget {
             ),
           ),
           Container(
-              height: height,
-              color: Theme.of(context).colorScheme.background.withOpacity(0.9),
-              alignment: Alignment.center),
-          Positioned(
-            bottom: -1,
-            child: Container(
-              height: height,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).colorScheme.background,
-                    Colors.transparent
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  stops: const [0, 1],
-                ),
+            height: height,
+            color: Theme.of(context).colorScheme.background.withOpacity(0.9),
+            alignment: Alignment.center,
+          ),
+          Container(
+            height: height,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.background,
+                  Colors.transparent
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                stops: const [0, 1],
               ),
             ),
           ),
@@ -87,13 +85,27 @@ class MangaInfoHeader extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: AppConfig.staticUrl +
-                            (data.image?.original ?? data.image?.preview ?? ''),
-                        height: height - 150,
-                        width: 145,
-                        fit: BoxFit.cover,
-                        cacheManager: cacheManager,
+                      GestureDetector(
+                        onTap: () => showSlideUp(
+                          context,
+                          ImageViewer(
+                            AppConfig.staticUrl +
+                                (data.image?.original ??
+                                    data.image?.preview ??
+                                    ''),
+                            cached: true,
+                          ),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: AppConfig.staticUrl +
+                              (data.image?.original ??
+                                  data.image?.preview ??
+                                  ''),
+                          height: height - 150,
+                          width: 145,
+                          fit: BoxFit.cover,
+                          cacheManager: cacheManager,
+                        ),
                       ),
                       // ExtendedImage.network(
                       //   AppConfig.staticUrl +

@@ -3,7 +3,9 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../../constants/config.dart';
 import '../../../../domain/models/anime.dart' as a;
+import '../../../widgets/cached_image.dart';
 import '../../../widgets/image_with_shimmer.dart';
+import '../../../widgets/show_pop_up.dart';
 import '../moments_page.dart';
 
 class AnimeScreenshots extends StatelessWidget {
@@ -61,23 +63,29 @@ class AnimeScreenshots extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: data.screenshots!.length,
                   itemBuilder: (context, index) {
-                    final screenShot = data.screenshots![index];
+                    //final screenShot = data.screenshots![index];
+                    final url = data.screenshots![index].original ??
+                        data.screenshots![index].preview ??
+                        '';
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () => showSlideUp(
+                            context,
+                            ImageViewer(
+                              AppConfig.staticUrl + url,
+                              cached: true,
+                            ),
+                          ),
                           child: AspectRatio(
                             aspectRatio: (16 / 9),
                             child: Container(
                               color: Colors.black,
                               child: ImageWithShimmerWidget(
                                 fit: BoxFit.contain,
-                                imageUrl: AppConfig.staticUrl +
-                                    (screenShot.original ??
-                                        screenShot.preview ??
-                                        ''),
+                                imageUrl: AppConfig.staticUrl + url,
                               ),
                             ),
                           ),

@@ -6,7 +6,9 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tinycolor2/tinycolor2.dart';
 
+import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
+import '../../widgets/show_pop_up.dart';
 
 class AnimeScreenshots {
   String? original;
@@ -58,30 +60,41 @@ class AnimeMomentsPage extends ConsumerWidget {
 
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            AppConfig.staticUrl + moment.original!,
-                            fit: BoxFit.contain,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) {
-                                return child;
-                              }
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: GestureDetector(
+                          onTap: () => showSlideUp(
+                            context,
+                            ImageViewer(
+                              AppConfig.staticUrl + (moment.original ?? ''),
+                              cached: false,
+                            ),
+                          ),
+                          child: AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Image.network(
+                              AppConfig.staticUrl + moment.original!,
+                              fit: BoxFit.contain,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
 
-                              return const _Placeholder();
+                                return const _Placeholder();
 
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
+                                // return Center(
+                                //   child: CircularProgressIndicator(
+                                //     value: loadingProgress.expectedTotalBytes !=
+                                //             null
+                                //         ? loadingProgress
+                                //                 .cumulativeBytesLoaded /
+                                //             loadingProgress.expectedTotalBytes!
+                                //         : null,
+                                //   ),
+                                // );
+                              },
+                            ),
                           ),
                         ),
                       ),
