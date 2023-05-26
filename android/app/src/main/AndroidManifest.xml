@@ -13,8 +13,9 @@
    <application
         android:label="@string/app_name"
         android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true"
-        android:icon="@mipmap/ic_launcher">
+        android:allowBackup="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -45,3 +46,5 @@
             android:value="2" />
     </application>
 </manifest>
+
+<!-- android:hasFragileUserData="true" -->
