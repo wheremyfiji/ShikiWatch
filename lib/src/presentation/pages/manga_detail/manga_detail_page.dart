@@ -52,12 +52,13 @@ class MangaDetailPage extends ConsumerWidget {
                 isScrollControlled: true,
                 enableDrag: false,
                 useSafeArea: true,
-                //showDragHandle: true,
                 elevation: 0,
                 builder: (context) {
-                  return MangaUserRateBottomSheet(
-                    manga: manga,
-                    data: data,
+                  return SafeArea(
+                    child: MangaUserRateBottomSheet(
+                      manga: manga,
+                      data: data,
+                    ),
                   );
                 },
               );
@@ -73,34 +74,6 @@ class MangaDetailPage extends ConsumerWidget {
         error: (error, stackTrace) => null,
         loading: () => null,
       ),
-      // floatingActionButton: mangaDetails.title.isLoading
-      //     ? null
-      //     : FloatingActionButton.extended(
-      //         onPressed: () {
-      //           showModalBottomSheet<void>(
-      //             context: context,
-      //             constraints: BoxConstraints(
-      //               maxWidth: MediaQuery.of(context).size.width >= 700
-      //                   ? 700
-      //                   : double.infinity,
-      //             ),
-      //             useRootNavigator: true,
-      //             isScrollControlled: true,
-      //             enableDrag: false,
-      //             useSafeArea: true,
-      //             elevation: 0,
-      //             builder: (context) {
-      //               return const MangaUserRateBottomSheet();
-      //             },
-      //           );
-      //         },
-      //         label: mangaDetails.title.value?.userRate == null
-      //             ? const Text('Добавить в список')
-      //             : const Text('Изменить'),
-      //         icon: mangaDetails.title.value?.userRate == null
-      //             ? const Icon(Icons.add)
-      //             : const Icon(Icons.edit),
-      //       ),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(mangaDetailsPageProvider(manga.id!)),
         child: CustomScrollView(

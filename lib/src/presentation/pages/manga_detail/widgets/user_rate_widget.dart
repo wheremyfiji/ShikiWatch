@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../data/data_sources/user_data_src.dart';
 import '../../../../domain/models/manga_ranobe.dart';
@@ -9,7 +10,9 @@ import '../../../../utils/utils.dart';
 import '../../../providers/library_manga_provider.dart';
 import '../../../providers/manga_details_provider.dart';
 import '../../../widgets/cool_chip.dart';
+import '../../../widgets/delete_dialog.dart';
 import '../../../widgets/material_you_chip.dart';
+import '../../../widgets/number_field.dart';
 
 class UserRateWidget extends StatelessWidget {
   final MangaShort manga;
@@ -194,6 +197,31 @@ class _MangaUserRateBottomSheetState
   int chaptersCount = 0;
   String userRateText = '';
 
+  String? createdAt;
+  String? updatedAt;
+
+  void fill() {
+    if (widget.data.userRate == null) {
+      return;
+    }
+
+    final created =
+        DateTime.tryParse(widget.data.userRate?.createdAt ?? '')?.toLocal() ??
+            DateTime(1970);
+    final createdDate = DateFormat.yMMMMd().format(created);
+    final createdTime = DateFormat.Hm().format(created);
+
+    createdAt = '$createdDate в $createdTime';
+
+    final updated =
+        DateTime.tryParse(widget.data.userRate?.updatedAt ?? '')?.toLocal() ??
+            DateTime(1970);
+    final updatedDate = DateFormat.yMMMMd().format(updated);
+    final updatedTime = DateFormat.Hm().format(updated);
+
+    updatedAt = '$updatedDate в $updatedTime';
+  }
+
   @override
   void initState() {
     initStatus = widget.data.userRate?.status;
@@ -213,6 +241,7 @@ class _MangaUserRateBottomSheetState
     userRateText = widget.data.userRate?.text ?? '';
     _controller = TextEditingController();
     _controller.text = userRateText;
+    fill();
     super.initState();
   }
 
@@ -287,66 +316,76 @@ class _MangaUserRateBottomSheetState
                 const SizedBox(
                   height: 16,
                 ),
-                Card(
-                  clipBehavior: Clip.antiAlias,
-                  shadowColor: Colors.transparent,
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Wrap(
-                          children: [
-                            const Text('Главы:'),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            chaptersCount == 0
-                                ? Text(
-                                    '$progress',
-                                  )
-                                : Text(
-                                    '$progress/${chaptersCount.toString()}',
-                                  ),
-                          ],
-                        ),
-                        Wrap(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                if (progress == 0) {
-                                  return;
-                                }
-                                setState(() {
-                                  progress = progress - 1;
-                                });
-                              },
-                              icon: const Icon(Icons.remove),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                if (chaptersCount != 0 &&
-                                    progress >= chaptersCount) {
-                                  return;
-                                }
-                                setState(() {
-                                  progress = progress + 1;
-                                });
-                              },
-                              icon: const Icon(Icons.add),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                // Card(
+                //   clipBehavior: Clip.antiAlias,
+                //   shadowColor: Colors.transparent,
+                //   margin: EdgeInsets.zero,
+                //   child: Padding(
+                //     padding: const EdgeInsets.symmetric(
+                //       vertical: 8,
+                //       horizontal: 16,
+                //     ),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Wrap(
+                //           children: [
+                //             const Text('Главы:'),
+                //             const SizedBox(
+                //               width: 4,
+                //             ),
+                //             chaptersCount == 0
+                //                 ? Text(
+                //                     '$progress',
+                //                   )
+                //                 : Text(
+                //                     '$progress/${chaptersCount.toString()}',
+                //                   ),
+                //           ],
+                //         ),
+                //         Wrap(
+                //           children: [
+                //             IconButton(
+                //               onPressed: () {
+                //                 if (progress == 0) {
+                //                   return;
+                //                 }
+                //                 setState(() {
+                //                   progress = progress - 1;
+                //                 });
+                //               },
+                //               icon: const Icon(Icons.remove),
+                //             ),
+                //             const SizedBox(
+                //               width: 4,
+                //             ),
+                //             IconButton(
+                //               onPressed: () {
+                //                 if (chaptersCount != 0 &&
+                //                     progress >= chaptersCount) {
+                //                   return;
+                //                 }
+                //                 setState(() {
+                //                   progress = progress + 1;
+                //                 });
+                //               },
+                //               icon: const Icon(Icons.add),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                NumberField(
+                  label: 'Главы:',
+                  initial: progress,
+                  maxValue: chaptersCount,
+                  onChanged: (value) {
+                    setState(() {
+                      progress = value;
+                    });
+                  },
                 ),
                 const SizedBox(
                   height: 16,
@@ -375,14 +414,16 @@ class _MangaUserRateBottomSheetState
                         Wrap(
                           children: [
                             IconButton(
-                              onPressed: () {
-                                if (rewatches == 0) {
-                                  return;
-                                }
-                                setState(() {
-                                  rewatches--;
-                                });
-                              },
+                              onPressed: rewatches == 0
+                                  ? null
+                                  : () {
+                                      if (rewatches == 0) {
+                                        return;
+                                      }
+                                      setState(() {
+                                        rewatches--;
+                                      });
+                                    },
                               icon: const Icon(Icons.remove),
                             ),
                             const SizedBox(
@@ -487,12 +528,40 @@ class _MangaUserRateBottomSheetState
                     border: OutlineInputBorder(),
                     hintText: 'Добавить заметку',
                   ),
+                  minLines: 1,
                   maxLines: 3,
                 ),
               ],
               const SizedBox(
                 height: 16,
               ),
+              if (createdAt != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    shadowColor: Colors.transparent,
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Дата создания: $createdAt'),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          if (updatedAt != null)
+                            Text('Дата изменения: $updatedAt'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
               Row(
                 children: [
                   Expanded(
@@ -514,7 +583,8 @@ class _MangaUserRateBottomSheetState
 
                                         showSnackBar(
                                           ctx: context,
-                                          msg: 'Отметка создана',
+                                          msg:
+                                              'Добавлено в список "${getChipLabel(selectedStatus ?? 0)}"',
                                           dur: const Duration(seconds: 3),
                                         );
                                       },
@@ -538,7 +608,7 @@ class _MangaUserRateBottomSheetState
 
                                         showSnackBar(
                                           ctx: context,
-                                          msg: 'Отметка обновлена',
+                                          msg: 'Сохранено успешно',
                                           dur: const Duration(seconds: 3),
                                         );
                                       },
@@ -563,8 +633,18 @@ class _MangaUserRateBottomSheetState
                       widget.data.userRate?.id != null &&
                       !isLoading)
                     IconButton(
-                      tooltip: 'Удалить отметку',
-                      onPressed: () {
+                      tooltip: 'Удалить из списка',
+                      onPressed: () async {
+                        bool value = await showDialog<bool>(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  const DeleteDialog(),
+                            ) ??
+                            false;
+
+                        if (!value) {
+                          return;
+                        }
                         ref
                             .read(updateMangaRateButtonProvider.notifier)
                             .deleteRate(
@@ -576,7 +656,8 @@ class _MangaUserRateBottomSheetState
 
                                 showSnackBar(
                                   ctx: context,
-                                  msg: 'Отметка удалена',
+                                  msg:
+                                      'Удалено из списка "${getChipLabel(selectedStatus ?? 0)}"',
                                   dur: const Duration(seconds: 3),
                                 );
                               },
@@ -726,7 +807,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка создания отметки', s);
+      state = AsyncValue.error('Ошибка при добавлении', s);
     } finally {
       state = const AsyncValue.data(null);
     }
@@ -966,7 +1047,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка обновления отметки', s);
+      state = AsyncValue.error('Ошибка при обновлении', s);
     } finally {
       state = const AsyncValue.data(null);
     }
@@ -1012,7 +1093,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
 
       onFinally();
     } catch (e, s) {
-      state = AsyncValue.error('Ошибка удаления отметки', s);
+      state = AsyncValue.error('Ошибка при удалении', s);
     } finally {
       state = const AsyncValue.data(null);
     }
