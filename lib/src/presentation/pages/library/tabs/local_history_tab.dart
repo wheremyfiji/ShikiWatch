@@ -139,25 +139,20 @@ class HistoryItem extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 120,
+              width: 100, //120
               child: AspectRatio(
                 aspectRatio: 0.703,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8), //12
                   child: CachedNetworkImage(
                     imageUrl: AppConfig.staticUrl + image,
                     fit: BoxFit.cover,
                   ),
-                  // ExtendedImage.network(
-                  //   AppConfig.staticUrl + image,
-                  //   fit: BoxFit.cover,
-                  //   cache: true,
-                  // ),
                 ),
               ),
             ),
             const SizedBox(
-              width: 16,
+              width: 8,
             ),
             Expanded(
               child: Column(
@@ -173,24 +168,11 @@ class HistoryItem extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 8,
+                    height: 4,
                   ),
                   Text('$episode серия • $studioName'),
-
-                  if (timeStamp != null) ...[
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Text(timeStamp!)
-                  ],
-                  const SizedBox(
-                    height: 2,
-                  ),
+                  if (timeStamp != null) Text(timeStamp!),
                   Text('$date в $time'),
-                  //Text('$day $monthName в $time'),
-                  // Text('Студия: $studioName'),
-                  // Text('Последний эпизод: $episode'),
-                  // Text('Обновлено $formattedDate'),
                 ],
               ),
             ),
