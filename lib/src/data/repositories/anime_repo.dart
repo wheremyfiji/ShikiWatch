@@ -5,10 +5,9 @@ import '../../domain/models/animes.dart';
 import '../../domain/models/external_link.dart';
 import '../../domain/models/franchise.dart';
 import '../../domain/models/related_title.dart';
+import '../../domain/models/shiki_calendar.dart';
 
 abstract class AnimeRepository {
-  //final AnimeRepository _animeRepository;
-  //AnimeRepository(this._animeRepository);
   const AnimeRepository();
 
   Future<Anime> getAnime({
@@ -55,6 +54,11 @@ abstract class AnimeRepository {
     String? censored,
     String? search,
     String? userToken,
+    CancelToken? cancelToken,
+  });
+
+  Future<Iterable<ShikiCalendar>> getCalendar({
+    bool censored = false,
     CancelToken? cancelToken,
   });
 }

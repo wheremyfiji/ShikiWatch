@@ -6,6 +6,7 @@ import '../../domain/models/animes.dart';
 import '../../domain/models/external_link.dart';
 import '../../domain/models/franchise.dart';
 import '../../domain/models/related_title.dart';
+import '../../domain/models/shiki_calendar.dart';
 import '../repositories/anime_repo.dart';
 import '../repositories/http_service.dart';
 import '../../services/http/http_service_provider.dart';
@@ -141,5 +142,21 @@ class AnimeDataSource implements AnimeRepository {
     );
 
     return [for (final e in response) Animes.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<ShikiCalendar>> getCalendar({
+    bool censored = false,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      'calendar',
+      cancelToken: cancelToken,
+      queryParameters: {
+        'censored': 'true',
+      },
+    );
+
+    return [for (final e in response) ShikiCalendar.fromJson(e)];
   }
 }
