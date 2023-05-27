@@ -72,4 +72,48 @@ class MangaDataSource implements MangaRepository {
 
     return [for (final e in response) MangaShort.fromJson(e)];
   }
+
+  @override
+  Future<Iterable<MangaShort>> getMangas({
+    int? page,
+    int? limit,
+    String? order,
+    String? kind,
+    String? status,
+    String? season,
+    int? score,
+    String? genre,
+    //String? studio,
+    String? mylist,
+    String? censored,
+    String? search,
+    String? userToken,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      'mangas',
+      cancelToken: cancelToken,
+      queryParameters: {
+        if (page != null) 'page': page.toString(),
+        if (limit != null) 'limit': limit.toString(),
+        if (order != null) 'order': order,
+        if (kind != null) 'kind': kind,
+        if (status != null) 'status': status,
+        if (season != null) 'season': season,
+        if (score != null) 'score': score.toString(),
+        if (genre != null) 'genre': genre,
+        //if (studio != null) 'studio': studio,
+        if (censored != null) 'censored': censored,
+        if (mylist != null) 'mylist': mylist,
+        if (search != null) 'search': search,
+      },
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $userToken',
+        },
+      ),
+    );
+
+    return [for (final e in response) MangaShort.fromJson(e)];
+  }
 }

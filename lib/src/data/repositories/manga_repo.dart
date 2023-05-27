@@ -30,4 +30,21 @@ abstract class MangaRepository {
     required int? id,
     required CancelToken cancelToken,
   });
+
+  Future<Iterable<MangaShort>> getMangas({
+    int? page,
+    int? limit,
+    String? order,
+    String? kind,
+    String? status,
+    String? season,
+    int? score,
+    String? genre,
+    //String? studio,
+    String? mylist,
+    String? censored,
+    String? search,
+    String? userToken,
+    CancelToken? cancelToken,
+  });
 }

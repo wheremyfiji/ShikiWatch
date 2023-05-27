@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shikidev/src/domain/models/manga_short.dart';
-import 'package:shikidev/src/presentation/pages/calendar/calendar_page.dart';
-//import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
 import '../domain/models/animes.dart';
+import '../domain/models/manga_short.dart';
 import '../domain/models/user.dart';
 
 import '../presentation/pages/anime_details/anime_details_desktop_page.dart';
+import '../presentation/pages/calendar/calendar_page.dart';
+import '../presentation/pages/explore/top_anime_page.dart';
+import '../presentation/pages/explore/top_manga_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/login/login_desktop_page.dart';
 import '../presentation/pages/manga_detail/manga_detail_page.dart';
@@ -24,8 +26,8 @@ import '../presentation/pages/settings/settings_page.dart';
 import '../presentation/pages/library/library_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
-
 import '../presentation/pages/settings/local_database_manage_page.dart';
+
 import 'target_platform.dart';
 import 'updater.dart';
 
@@ -253,7 +255,7 @@ final GoRouter router = GoRouter(
                   path: 'top_anime',
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
-                      child: CalendarPage(
+                      child: TopAnimePage(
                         key: state.pageKey,
                       ),
                       transitionsBuilder: (_, animation, __, child) =>
@@ -269,7 +271,7 @@ final GoRouter router = GoRouter(
                   path: 'top_manga',
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
-                      child: CalendarPage(
+                      child: TopMangaPage(
                         key: state.pageKey,
                       ),
                       transitionsBuilder: (_, animation, __, child) =>
