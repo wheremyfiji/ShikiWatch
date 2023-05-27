@@ -100,9 +100,36 @@ class Anime {
     airedOn = json['aired_on'];
     releasedOn = json['released_on'];
     rating = json['rating'];
-    english = json['english'].cast<String>();
-    japanese = json['japanese'].cast<String>();
-    synonyms = json['synonyms'].cast<String>();
+
+    //english = json['english'].cast<String>();
+    //japanese = json['japanese'].cast<String>();
+    //synonyms = json['synonyms'].cast<String>();
+
+    if (json['english'] != null) {
+      english = <String>[];
+      json['english'].forEach((v) {
+        if (v != null) {
+          english!.add(v);
+        }
+      });
+    }
+    if (json['japanese'] != null) {
+      japanese = <String>[];
+      json['japanese'].forEach((v) {
+        if (v != null) {
+          japanese!.add(v);
+        }
+      });
+    }
+    if (json['synonyms'] != null) {
+      synonyms = <String>[];
+      json['synonyms'].forEach((v) {
+        if (v != null) {
+          synonyms!.add(v);
+        }
+      });
+    }
+
     //licenseNameRu = json['license_name_ru'];
     duration = json['duration'];
     description = json['description'];

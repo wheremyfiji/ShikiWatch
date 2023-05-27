@@ -43,7 +43,7 @@ class ExploreActions extends StatelessWidget {
           children: [
             Expanded(
               child: CustomCardButton(
-                label: 'Случайное',
+                label: 'Случайное', //   Выйдет в след. сезоне
                 onTap: () {
                   showSnackBar(ctx: context, msg: 'Пока нельзя');
                 },

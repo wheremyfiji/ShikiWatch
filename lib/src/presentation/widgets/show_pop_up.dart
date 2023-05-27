@@ -7,22 +7,23 @@ Future<T?> showSlideUp<T>(
 }) =>
     showDialog<T>(
       context: context,
-      builder: (context) => PopUpAnimation(child),
+      builder: (context) => SlideUpAnimation(child),
       useRootNavigator: root,
-      barrierColor: Theme.of(context).colorScheme.background.withAlpha(170),
-      //barrierColor: Colors.black.withOpacity(0.8),
+      barrierColor:
+          Theme.of(context).colorScheme.background.withAlpha(230), //170
+      //barrierColor: Colors.black,
     );
 
-class PopUpAnimation extends StatefulWidget {
-  const PopUpAnimation(this.child, {super.key});
+class SlideUpAnimation extends StatefulWidget {
+  const SlideUpAnimation(this.child, {super.key});
 
   final Widget child;
 
   @override
-  PopUpAnimationState createState() => PopUpAnimationState();
+  SlideUpAnimationState createState() => SlideUpAnimationState();
 }
 
-class PopUpAnimationState extends State<PopUpAnimation>
+class SlideUpAnimationState extends State<SlideUpAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<Offset> _offsetFloat;

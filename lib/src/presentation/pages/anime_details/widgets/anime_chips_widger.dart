@@ -11,12 +11,14 @@ class AnimeChipsWidget extends StatelessWidget {
   final List<Genre>? genres;
   final List<Studio>? studios;
   final String? score;
+  final String rating;
 
   const AnimeChipsWidget({
     Key? key,
     required this.genres,
     required this.studios,
     required this.score,
+    required this.rating,
   }) : super(key: key);
 
   @override
@@ -44,10 +46,22 @@ class AnimeChipsWidget extends StatelessWidget {
                 backgroundColor: context.theme.colorScheme.secondaryContainer,
                 label: Text(score!),
               ),
+            if (rating != '?')
+              Chip(
+                padding: const EdgeInsets.all(0),
+                shadowColor: Colors.transparent,
+                elevation: 0,
+                side: const BorderSide(width: 0, color: Colors.transparent),
+                labelStyle: context.theme.textTheme.bodyMedium?.copyWith(
+                    color: context.theme.colorScheme.onSecondaryContainer),
+                backgroundColor: context.theme.colorScheme.secondaryContainer,
+                label: Text(rating),
+              ),
             if (genres != null) ...[
               ...List.generate(
                 genres!.length,
-                (index) => Chip(
+                (index) => ActionChip(
+                  onPressed: () {},
                   padding: const EdgeInsets.all(0),
                   shadowColor: Colors.transparent,
                   elevation: 0,
@@ -62,7 +76,8 @@ class AnimeChipsWidget extends StatelessWidget {
             if (studios != null) ...[
               ...List.generate(
                 studios!.length,
-                (index) => Chip(
+                (index) => ActionChip(
+                  onPressed: () {},
                   padding: const EdgeInsets.all(0),
                   shadowColor: Colors.transparent,
                   elevation: 0,

@@ -196,7 +196,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                     child: UserAnimeRateWidget(
                       animeData,
                       data,
-                      titleInfo.userImage,
+                      '',
                     ),
                   ),
                 ),
@@ -207,6 +207,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                       genres: data.genres,
                       studios: data.studios,
                       score: animeData.score,
+                      rating: titleInfo.rating,
                     ),
                   ),
                 ),

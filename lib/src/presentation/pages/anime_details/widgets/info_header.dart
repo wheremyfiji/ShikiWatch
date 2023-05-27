@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../constants/config.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../utils/shiki_utils.dart';
+import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/show_pop_up.dart';
 
@@ -141,29 +143,35 @@ class AnimeInfoHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        (data.russian == '' ? data.name : data.russian) ?? '',
-                        maxLines: 3,
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      if (data.name != null) ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.name!,
-                          maxLines: 2,
+                      GestureDetector(
+                        onTap: () => _showSheet(context),
+                        child: Text(
+                          (data.russian == '' ? data.name : data.russian) ?? '',
+                          maxLines: 3,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
                               .titleSmall!
-                              .copyWith(fontWeight: FontWeight.normal),
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      if (data.name != null) ...[
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        GestureDetector(
+                          onTap: () => _showSheet(context),
+                          child: Text(
+                            data.name!,
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontWeight: FontWeight.normal),
+                          ),
                         ),
                       ],
                       const SizedBox(
@@ -171,7 +179,7 @@ class AnimeInfoHeader extends StatelessWidget {
                       ),
                       Text('$year • $season', textAlign: TextAlign.start),
                       Text(
-                        '${getStatus(data.status!)} • ${getKind(data.kind!)} • $rating',
+                        '${getKind(data.kind!)} • ${getStatus(data.status!)}', // • $rating
                         textAlign: TextAlign.start,
                       ),
                       if (data.episodes != null && data.episodesAired != null)
@@ -196,6 +204,98 @@ class AnimeInfoHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _showSheet(BuildContext c) {
+    showModalBottomSheet<void>(
+      context: c,
+      builder: (context) => AnimeOtherNames(data.id!),
+      useRootNavigator: true,
+      showDragHandle: true,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(c).size.width >= 700 ? 700 : double.infinity,
+      ),
+    );
+  }
+}
+
+class AnimeOtherNames extends ConsumerWidget {
+  final int animeId;
+
+  const AnimeOtherNames(this.animeId, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final anime = ref
+        .watch(titleInfoPageProvider(animeId))
+        .title
+        .whenOrNull(data: (data) => data);
+
+    if (anime == null) {
+      return const SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: 120,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (anime.english != null && anime.english!.isNotEmpty) ...[
+              const Text(
+                'English',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              ...List.generate(anime.english!.length,
+                  ((index) => SelectableText(anime.english![index]))),
+              const Divider(),
+            ],
+            if (anime.japanese != null && anime.japanese!.isNotEmpty) ...[
+              const Text(
+                'Japanese',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              ...List.generate(anime.japanese!.length,
+                  ((index) => SelectableText(anime.japanese![index]))),
+            ],
+            if (anime.synonyms != null && anime.synonyms!.isNotEmpty) ...[
+              const Divider(),
+              const Text(
+                'Синонимы',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              ...List.generate(anime.synonyms!.length,
+                  ((index) => SelectableText(anime.synonyms![index]))),
+            ],
+          ],
+        ),
       ),
     );
   }

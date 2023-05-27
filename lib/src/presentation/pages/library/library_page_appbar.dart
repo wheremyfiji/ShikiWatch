@@ -42,6 +42,10 @@ class LibraryPageAppBar extends ConsumerWidget {
           ? const Text('Манга и ранобе')
           : const Text('Аниме'),
       actions: [
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: const Icon(Icons.notifications),
+        // ),
         PopupMenuButton<LibraryState>(
           tooltip: 'Выбор списка',
           shape: RoundedRectangleBorder(

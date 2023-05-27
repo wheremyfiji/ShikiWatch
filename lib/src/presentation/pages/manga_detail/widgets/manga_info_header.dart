@@ -2,11 +2,13 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../constants/config.dart';
 import '../../../../domain/models/manga_short.dart';
 import '../../../../utils/shiki_utils.dart';
+import '../../../providers/manga_details_provider.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/show_pop_up.dart';
 
@@ -134,29 +136,35 @@ class MangaInfoHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        (data.russian == '' ? data.name : data.russian) ?? '',
-                        maxLines: 3,
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      if (data.name != null) ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.name!,
-                          maxLines: 2,
+                      GestureDetector(
+                        onTap: () => _showSheet(context),
+                        child: Text(
+                          (data.russian == '' ? data.name : data.russian) ?? '',
+                          maxLines: 3,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
                               .titleSmall!
-                              .copyWith(fontWeight: FontWeight.normal),
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      if (data.name != null) ...[
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        GestureDetector(
+                          onTap: () => _showSheet(context),
+                          child: Text(
+                            data.name!,
+                            maxLines: 2,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontWeight: FontWeight.normal),
+                          ),
                         ),
                       ],
                       const SizedBox(
@@ -225,6 +233,98 @@ class MangaInfoHeader extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _showSheet(BuildContext c) {
+    showModalBottomSheet<void>(
+      context: c,
+      builder: (context) => MangaOtherNames(data.id!),
+      useRootNavigator: true,
+      showDragHandle: true,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(c).size.width >= 700 ? 700 : double.infinity,
+      ),
+    );
+  }
+}
+
+class MangaOtherNames extends ConsumerWidget {
+  final int mangaId;
+
+  const MangaOtherNames(this.mangaId, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final manga = ref
+        .watch(mangaDetailsPageProvider(mangaId))
+        .title
+        .whenOrNull(data: (data) => data);
+
+    if (manga == null) {
+      return const SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: 120,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (manga.english != null && manga.english!.isNotEmpty) ...[
+              const Text(
+                'English',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              ...List.generate(manga.english!.length,
+                  ((index) => SelectableText(manga.english![index]))),
+              const Divider(),
+            ],
+            if (manga.japanese != null && manga.japanese!.isNotEmpty) ...[
+              const Text(
+                'Japanese',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              ...List.generate(manga.japanese!.length,
+                  ((index) => SelectableText(manga.japanese![index]))),
+            ],
+            if (manga.synonyms != null && manga.synonyms!.isNotEmpty) ...[
+              const Divider(),
+              const Text(
+                'Синонимы',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              ...List.generate(manga.synonyms!.length,
+                  ((index) => SelectableText(manga.synonyms![index]))),
+            ],
+          ],
+        ),
       ),
     );
   }

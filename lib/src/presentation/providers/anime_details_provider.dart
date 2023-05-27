@@ -121,91 +121,6 @@ class TitleInfoPageController extends ChangeNotifier {
   int currentScore = 0;
   String currentStatus = '';
 
-  // int? currentProgress;
-  // int? currentRewatches = 0;
-  // int? currentScore = 0;
-  // String? currentStatus = '';
-
-  String userImage = '';
-
-  // void addEpisodeButton() {
-  //   if (currentProgress < title.asData!.value.episodes!) {
-  //     currentProgress = currentProgress + 1;
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void removeEpisodeButton() {
-  //   if (currentProgress > 0) {
-  //     currentProgress = currentProgress - 1;
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void addRewatchButton() {
-  //   currentRewatches = currentRewatches + 1;
-  //   notifyListeners();
-  // }
-
-  // void removeRewatchButton() {
-  //   if (currentRewatches > 0) {
-  //     currentRewatches = currentRewatches - 1;
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void incScoreButton() {
-  //   if (currentScore < 10) {
-  //     currentScore = currentScore + 1;
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void decScoreButton() {
-  //   if (currentScore > 0) {
-  //     currentScore = currentScore - 1;
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void onStatusSelected(bool selected, String newStatus) {
-  //   if (selected) {
-  //     currentStatus = newStatus;
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void fillVariables( Anime data) {
-  //   try {
-  //     currentProgress = title.asData!.value.userRate!.episodes!;
-  //     currentRewatches = title.asData!.value.userRate!.rewatches!;
-  //     currentScore = title.asData!.value.userRate!.score!;
-  //     currentStatus = title.asData!.value.userRate!.status!;
-
-  //     isAnons = title.asData?.value.anons ?? true;
-  //     duration = title.asData?.value.duration ?? 0;
-  //   } on Exception catch (e) {
-  //     throw Exception(e);
-  //   }
-
-  //   try {
-  //     for (var i = 0; i < title.asData!.value.ratesScoresStats!.length; i++) {
-  //       allScores += title.asData!.value.ratesScoresStats![i].value!.toInt();
-  //     }
-  //   } on Exception catch (e) {
-  //     throw Exception(e);
-  //   }
-
-  //   try {
-  //     for (var i = 0; i < title.asData!.value.ratesStatusesStats!.length; i++) {
-  //       allStatuses +=
-  //           title.asData!.value.ratesStatusesStats![i].value!.toInt();
-  //     }
-  //   } on Exception catch (e) {
-  //     throw Exception(e);
-  //   }
-  // }
-
   void addRate({
     required int rateId,
     required String updatedAt,
@@ -371,7 +286,6 @@ class TitleInfoPageController extends ChangeNotifier {
       fillVariables(value);
       //calcAllRates();
     });
-    userImage = SecureStorageService.instance.userProfileImage;
     //if (title.asData!.value != null) calcAllRates();
     notifyListeners();
   }
