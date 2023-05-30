@@ -75,7 +75,7 @@ class CalendarPage extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              date.isToday
+                              date.isToday()
                                   ? 'Сегодня'
                                   : dateString.capitalizeFirst!,
                               style: context.textTheme.bodyLarge,
