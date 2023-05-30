@@ -10,6 +10,7 @@ import '../domain/models/user.dart';
 
 import '../presentation/pages/anime_details/anime_details_desktop_page.dart';
 import '../presentation/pages/calendar/calendar_page.dart';
+import '../presentation/pages/explore/next_season_anime_page.dart';
 import '../presentation/pages/explore/top_anime_page.dart';
 import '../presentation/pages/explore/top_manga_page.dart';
 import '../presentation/pages/login/login_page.dart';
@@ -285,6 +286,22 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     return CustomTransitionPage(
                       child: TopMangaPage(
+                        key: state.pageKey,
+                      ),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'next_season_anime',
+                  path: 'next_season_anime',
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      child: NextSeasonAnimePage(
                         key: state.pageKey,
                       ),
                       transitionsBuilder: (_, animation, __, child) =>

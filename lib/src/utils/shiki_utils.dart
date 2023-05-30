@@ -78,3 +78,23 @@ String getSeason(int month) {
     return 'Зима';
   }
 }
+
+String getSeasonEng(int month) {
+  if ([3, 4, 5].contains(month)) {
+    return 'spring';
+  } else if ([6, 7, 8].contains(month)) {
+    return 'summer';
+  } else if ([9, 10, 11].contains(month)) {
+    return 'autumn';
+  } else {
+    return 'winter';
+  }
+}
+
+String getNextSeason() {
+  final currentYear = DateTime.now().year;
+  final currentMonth = DateTime.now().month;
+  final season = getSeasonEng(currentMonth + 1);
+
+  return '${season}_$currentYear';
+}
