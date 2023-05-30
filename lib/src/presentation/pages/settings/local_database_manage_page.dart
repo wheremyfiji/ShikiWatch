@@ -61,8 +61,14 @@ class _ImportDBState extends ConsumerState<ImportDB> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      //leading: const Icon(Icons.input_rounded),
       title: const Text('Восстановить'),
-      subtitle: const Text('Импортировать из json-файла'),
+      subtitle: Text(
+        'Импортировать из json-файла',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.8),
+        ),
+      ),
       onTap: () async {
         showDialog(
           barrierDismissible: false,
@@ -176,8 +182,14 @@ class _ExportDBState extends ConsumerState<ExportDB> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      //leading: const Icon(Icons.backup),
       title: const Text('Создать'),
-      subtitle: const Text('Экспортировать в json-файл'),
+      subtitle: Text(
+        'Экспортировать в json-файл',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.8),
+        ),
+      ),
       onTap: () async {
         showDialog(
           barrierDismissible: false,
@@ -258,8 +270,14 @@ class ClearDB extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
+      //leading: const Icon(Icons.delete_rounded),
       title: const Text('Удалить'),
-      subtitle: const Text('Удалить все локальные отметки просмотра'),
+      subtitle: Text(
+        'Удалить все локальные отметки просмотра',
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.8),
+        ),
+      ),
       onTap: () {
         showDialog(
           context: context,
