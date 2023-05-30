@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../../../domain/enums/search_state.dart';
@@ -14,11 +14,16 @@ final searchTypeProvider = StateProvider<SearchState>((ref) {
 }, name: 'searchTypeProvider');
 
 class AnimeSearchPage extends ConsumerWidget {
-  const AnimeSearchPage({Key? key}) : super(key: key);
+  final int? studioId;
+  final int? genreId;
+
+  const AnimeSearchPage({super.key, this.studioId, this.genreId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref.watch(animeSearchProvider);
+    final t =
+        SearchPageParameters(studioId: studioId ?? 0, genreId: genreId ?? 0);
+    final controller = ref.watch(animeSearchProvider(t));
 
     final seatchTypeState = ref.watch(searchTypeProvider);
 
@@ -30,7 +35,7 @@ class AnimeSearchPage extends ConsumerWidget {
       },
       child: Scaffold(
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => context.pushNamed('search_filters'),
+          onPressed: () => context.pushNamed('search_filters', extra: t),
           icon: const Icon(Icons.tune), //tune  filter_list  done_all
           label: const Text('Фильтры'),
         ),

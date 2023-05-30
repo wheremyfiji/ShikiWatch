@@ -1,6 +1,7 @@
 //import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart' as flutter;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -14,68 +15,48 @@ import '../../domain/models/genre.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 import '../../services/shared_pref/shared_preferences_provider.dart';
 import '../../utils/debouncer.dart';
+import '../pages/search/anime_genres.dart';
 
 const String animeSearchHistoryKey = 'anime_search_history';
 
-final animeSearchProvider = ChangeNotifierProvider.autoDispose((ref) {
+class SearchPageParameters extends Equatable {
+  const SearchPageParameters({
+    required this.studioId,
+    required this.genreId,
+  });
+
+  final int studioId;
+  final int genreId;
+
+  @override
+  List<Object> get props => [
+        studioId,
+        genreId,
+      ];
+}
+
+final animeSearchProvider = ChangeNotifierProvider.autoDispose
+    .family<AnimeSearchController, SearchPageParameters>((ref, i) {
   final cancelToken = ref.cancelToken();
 
-  final c = AnimeSearchController(
-      ref, ref.read(animeDataSourceProvider), cancelToken);
+  final c = AnimeSearchController(ref, ref.read(animeDataSourceProvider),
+      cancelToken, i.genreId, i.studioId);
+
   c.initState();
+
   ref.onDispose(() {
     c.textEditingController.dispose();
     c.pageController.dispose();
     c.focusNode.dispose();
     c.debouncer.dispose();
   });
+
   return c;
 }, name: 'animeSearchProvider');
 
-List<AnimeFilter> animeSortList = [
-  AnimeFilter('ranked', 'Оценке'),
-  AnimeFilter('popularity', 'Популярности'),
-  AnimeFilter('aired_on', 'Дате выхода'),
-  //AnimeFilter('status', 'Статусу'),
-  //AnimeFilter('kind', 'Типу'),
-  //AnimeFilter('name', 'Имени'),
-  AnimeFilter('episodes', 'Кол-ву эпизодов'),
-  AnimeFilter('created_at', 'Дате создания'),
-  AnimeFilter('created_at_desc', 'Дате создания (по убыванию)'),
-];
-
-List<AnimeFilter> animeEpisodeDurationList = [
-  AnimeFilter('S', 'Менее 10 минут'),
-  AnimeFilter('D', 'Менее 30 минут'),
-  AnimeFilter('F', 'Более 30 минут'),
-];
-
-List<AnimeFilter> animeMyList = [
-  AnimeFilter('planned', 'В планах'),
-  AnimeFilter('watching', 'Смотрю'),
-  AnimeFilter('rewatching', 'Пересматриваю'),
-  AnimeFilter('completed', 'Просмотрено'),
-  AnimeFilter('on_hold', 'Отложено'),
-  AnimeFilter('dropped', 'Брошено'),
-];
-
-List<AnimeFilter> animeStatusList = [
-  AnimeFilter('anons', 'Анонс'),
-  AnimeFilter('ongoing', 'Онгоинг'),
-  AnimeFilter('released', 'Вышло'),
-];
-
-List<AnimeFilter> animeKindList = [
-  AnimeFilter('tv', 'Сериал'),
-  AnimeFilter('movie', 'Фильм'),
-  AnimeFilter('ova', 'OVA'),
-  AnimeFilter('ona', 'ONA'),
-  AnimeFilter('special', 'Спешл'),
-  AnimeFilter('music', 'Клип'),
-];
-
 class AnimeSearchController extends flutter.ChangeNotifier {
-  AnimeSearchController(this._ref, this.animeRepository, this.cancelToken)
+  AnimeSearchController(this._ref, this.animeRepository, this.cancelToken,
+      this.initGenre, this.initStudio)
       : textEditingController = flutter.TextEditingController(),
         debouncer = Debouncer(delay: const Duration(milliseconds: 800));
 
@@ -83,6 +64,9 @@ class AnimeSearchController extends flutter.ChangeNotifier {
   final CancelToken cancelToken;
   final Debouncer debouncer;
   final AnimeRepository animeRepository;
+
+  final int initGenre;
+  int initStudio = 0;
 
   final flutter.TextEditingController textEditingController;
 
@@ -111,32 +95,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
 
   Set<Genre>? selectedGenres;
 
-  addGenre(Genre g) {
-    if (selectedGenres == null) {
-      selectedGenres = {g};
-    } else {
-      selectedGenres!.add(g);
-    }
-    filterCount.add('genre');
-    //log('count: ${selectedGenres?.length}', name: 'genre');
-    notifyListeners();
-  }
-
-  removeGenre(Genre g) {
-    selectedGenres?.remove(g);
-
-    if (selectedGenres?.isEmpty ?? false) {
-      filterCount.remove('genre');
-    }
-    //log('count: ${selectedGenres?.length}', name: 'genre');
-    notifyListeners();
-  }
-
-  clearSelectedGenres() {
-    filterCount.remove('genre');
-    selectedGenres = null;
-    notifyListeners();
-  }
+  //bool disableSearch = false;
 
   PagingController<int, Animes> get pageController => _pagingController;
 
@@ -144,7 +103,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
 
   void initState() {
     _focusNode = flutter.FocusNode();
-    _focusNode.requestFocus();
+
     _pagingController.addPageRequestListener((pageKey) {
       _fetch(pageKey);
     });
@@ -152,6 +111,22 @@ class AnimeSearchController extends flutter.ChangeNotifier {
             .read(sharedPreferencesProvider)
             .getStringList(animeSearchHistoryKey) ??
         [];
+    if (initGenre != 0 || initStudio != 0) {
+      //disableSearch = true;
+
+      if (initGenre != 0) {
+        final g = animeGenres.firstWhere((element) => element.id == initGenre);
+        addGenre(g);
+      }
+
+      if (initStudio != 0) {
+        filterCount.add('stdo');
+      }
+
+      applyFilter();
+      return;
+    }
+    _focusNode.requestFocus();
   }
 
   toggleStatus({required AnimeFilter s, required bool t}) {
@@ -280,6 +255,33 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     return false;
   }
 
+  addGenre(Genre g) {
+    if (selectedGenres == null) {
+      selectedGenres = {g};
+    } else {
+      selectedGenres!.add(g);
+    }
+    filterCount.add('genre');
+    //log('count: ${selectedGenres?.length}', name: 'genre');
+    notifyListeners();
+  }
+
+  removeGenre(Genre g) {
+    selectedGenres?.remove(g);
+
+    if (selectedGenres?.isEmpty ?? false) {
+      filterCount.remove('genre');
+    }
+    //log('count: ${selectedGenres?.length}', name: 'genre');
+    notifyListeners();
+  }
+
+  clearSelectedGenres() {
+    filterCount.remove('genre');
+    selectedGenres = null;
+    notifyListeners();
+  }
+
   applyFilter() {
     f = true;
     isFilterApplied = true;
@@ -297,6 +299,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     selectedGenres = null;
     isFilterApplied = false;
     showHistory = true;
+    initStudio = 0;
     filterCount.clear();
     notifyListeners();
     //_pagingController.refresh();
@@ -390,6 +393,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
         duration: selectedEpDuration,
         //rating: ,
         genre: g?.join(','),
+        studio: initStudio != 0 ? '$initStudio' : null,
         mylist: selectedMyList,
         censored: 'true',
         search: textEditingController.text != ''
@@ -448,6 +452,48 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     notifyListeners();
   }
 }
+
+List<AnimeFilter> animeSortList = [
+  AnimeFilter('ranked', 'Оценке'),
+  AnimeFilter('popularity', 'Популярности'),
+  AnimeFilter('aired_on', 'Дате выхода'),
+  //AnimeFilter('status', 'Статусу'),
+  //AnimeFilter('kind', 'Типу'),
+  //AnimeFilter('name', 'Имени'),
+  AnimeFilter('episodes', 'Кол-ву эпизодов'),
+  AnimeFilter('created_at', 'Дате создания'),
+  AnimeFilter('created_at_desc', 'Дате создания (по убыванию)'),
+];
+
+List<AnimeFilter> animeEpisodeDurationList = [
+  AnimeFilter('S', 'Менее 10 минут'),
+  AnimeFilter('D', 'Менее 30 минут'),
+  AnimeFilter('F', 'Более 30 минут'),
+];
+
+List<AnimeFilter> animeMyList = [
+  AnimeFilter('planned', 'В планах'),
+  AnimeFilter('watching', 'Смотрю'),
+  AnimeFilter('rewatching', 'Пересматриваю'),
+  AnimeFilter('completed', 'Просмотрено'),
+  AnimeFilter('on_hold', 'Отложено'),
+  AnimeFilter('dropped', 'Брошено'),
+];
+
+List<AnimeFilter> animeStatusList = [
+  AnimeFilter('anons', 'Анонс'),
+  AnimeFilter('ongoing', 'Онгоинг'),
+  AnimeFilter('released', 'Вышло'),
+];
+
+List<AnimeFilter> animeKindList = [
+  AnimeFilter('tv', 'Сериал'),
+  AnimeFilter('movie', 'Фильм'),
+  AnimeFilter('ova', 'OVA'),
+  AnimeFilter('ona', 'ONA'),
+  AnimeFilter('special', 'Спешл'),
+  AnimeFilter('music', 'Клип'),
+];
 
 // class AnimeSearchController extends flutter.ChangeNotifier {
 //   final Ref _ref;

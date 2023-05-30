@@ -9,110 +9,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
-import '../../../domain/models/genre.dart';
 import '../../../domain/models/studio.dart';
 import '../../providers/anime_search_provider.dart';
-
-// ClipRRect(
-//   borderRadius: BorderRadius.circular(50),
-//   child: Material(
-//     child: InkWell(
-//       child: const Padding(
-//         padding: EdgeInsets.all(4),
-//         child: Icon(
-//           Icons.clear_all_outlined,
-//         ),
-//       ),
-//       onTap: () {},
-//     ),
-//   ),
-// ),
-
-class FilterChipWidget extends StatelessWidget {
-  const FilterChipWidget({
-    Key? key,
-    required this.title,
-    required this.chips,
-    this.onClear,
-    this.canClear = false,
-  }) : super(key: key);
-
-  final String title;
-  final Widget chips;
-  final Function()? onClear;
-  final bool canClear;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-            ),
-            if (canClear)
-              // IconButton(
-              //   //padding: const EdgeInsets.all(0),
-              //   tooltip: 'Очистить',
-              //   onPressed: onClear,
-              //   icon: const Icon(Icons.clear_all_outlined),
-              // ),
-              GestureDetector(
-                onTap: onClear,
-                child: const Icon(Icons.clear_all_outlined),
-              ),
-          ],
-        ),
-        // if (!canClear)
-        //   const SizedBox(
-        //     height: 8,
-        //   ),
-        chips,
-      ],
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ListTile(
-          title: Text(
-            title,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-          isThreeLine: false,
-          trailing: canClear
-              ? const IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: null,
-                  icon: Icon(Icons.clear_all_outlined),
-                )
-              : null,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: chips,
-        )
-      ],
-    );
-  }
-}
+import 'anime_genres.dart';
 
 class AnimeFilterPage extends ConsumerWidget {
-  const AnimeFilterPage({super.key});
+  final SearchPageParameters t;
+  const AnimeFilterPage(this.t, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final c = ref.watch(animeSearchProvider);
+    final c = ref.watch(animeSearchProvider(t));
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -164,6 +71,7 @@ class AnimeFilterPage extends ConsumerWidget {
                       duration: const Duration(milliseconds: 250),
                       builder: (context, scrollController, bottomSheetOffset) {
                         return GenresBottomSheet(
+                          t,
                           scrollController: scrollController,
                         );
                       },
@@ -277,9 +185,7 @@ class AnimeFilterPage extends ConsumerWidget {
                           return CustomFilterChip(
                             label: kind.russian,
                             selected: c.isKindSelected(kind),
-                            onSelected: (b) => ref
-                                .read(animeSearchProvider)
-                                .toggleKind(k: kind, t: b),
+                            onSelected: (b) => c.toggleKind(k: kind, t: b),
                           );
                         },
                       ),
@@ -317,9 +223,7 @@ class AnimeFilterPage extends ConsumerWidget {
                             label: s.russian,
                             selected: c.isStatusSelected(s),
                             onSelected: (b) {
-                              ref
-                                  .read(animeSearchProvider)
-                                  .toggleStatus(s: s, t: b);
+                              c.toggleStatus(s: s, t: b);
                             },
                           );
                         },
@@ -356,9 +260,7 @@ class AnimeFilterPage extends ConsumerWidget {
                           return CustomFilterChip(
                             label: e.russian,
                             selected: c.isEpDurationSelected(e),
-                            onSelected: (b) => ref
-                                .read(animeSearchProvider)
-                                .toggleEpDuration(e: e, t: b),
+                            onSelected: (b) => c.toggleEpDuration(e: e, t: b),
                           );
                         },
                       ),
@@ -443,9 +345,7 @@ class AnimeFilterPage extends ConsumerWidget {
                           return CustomFilterChip(
                             label: l.russian,
                             selected: c.isMyListSelected(l),
-                            onSelected: (b) => ref
-                                .read(animeSearchProvider)
-                                .toggleMyList(l: l, t: b),
+                            onSelected: (b) => c.toggleMyList(l: l, t: b),
                           );
                         },
                       ),
@@ -478,9 +378,8 @@ class AnimeFilterPage extends ConsumerWidget {
                           return CustomFilterChip(
                             label: sort.russian,
                             selected: c.isSortTypeSelected(sort),
-                            onSelected: (b) => ref
-                                .read(animeSearchProvider)
-                                .toggleSortType(sort: sort, t: b),
+                            onSelected: (b) =>
+                                c.toggleSortType(sort: sort, t: b),
                           );
                         },
                       ),
@@ -502,14 +401,14 @@ class AnimeFilterPage extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () {
                 //context.pop();
-                ref.read(animeSearchProvider).clearFilter();
+                c.clearFilter();
               },
               icon: const Icon(Icons.refresh), //restart_alt_outlined  refresh
               label: const Text('Сбросить'),
             ),
             FilledButton.icon(
               onPressed: () {
-                ref.read(animeSearchProvider).applyFilter();
+                c.applyFilter();
                 context.pop();
               },
               icon: const Icon(Icons.done_all),
@@ -521,6 +420,98 @@ class AnimeFilterPage extends ConsumerWidget {
     );
   }
 }
+
+class GenresBottomSheet extends ConsumerWidget {
+  final SearchPageParameters t;
+  final ScrollController scrollController;
+
+  const GenresBottomSheet(this.t, {super.key, required this.scrollController});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = ref.watch(animeSearchProvider(t));
+    return Material(
+      color: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Жанры',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const Spacer(),
+                  Tooltip(
+                    message: 'Очистить всё',
+                    child: IconButton(
+                      onPressed: (c.selectedGenres?.isEmpty ?? true)
+                          ? null
+                          : () {
+                              c.clearSelectedGenres();
+                            },
+                      icon: const Icon(Icons.clear_all),
+                    ),
+                  ),
+                ],
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final genre = animeGenres[index];
+                  final isSelected = c.selectedGenres?.contains(genre) ?? false;
+                  return CheckboxListTile(
+                    contentPadding: const EdgeInsets.all(0),
+                    value: isSelected,
+                    onChanged: (value) {
+                      if (value!) {
+                        c.addGenre(genre);
+                      } else {
+                        c.removeGenre(genre);
+                      }
+                    },
+                    title: Text(
+                      genre.russian!,
+                    ),
+                  );
+                },
+                // separatorBuilder: (context, index) {
+                //   return const SizedBox(
+                //     height: 4,
+                //   );
+                // },
+                itemCount: animeGenres.length,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ClipRRect(
+//   borderRadius: BorderRadius.circular(50),
+//   child: Material(
+//     child: InkWell(
+//       child: const Padding(
+//         padding: EdgeInsets.all(4),
+//         child: Icon(
+//           Icons.clear_all_outlined,
+//         ),
+//       ),
+//       onTap: () {},
+//     ),
+//   ),
+// ),
 
 class CustomFilterChip extends StatelessWidget {
   final String label;
@@ -552,271 +543,84 @@ class CustomFilterChip extends StatelessWidget {
   }
 }
 
-class GenresBottomSheet extends ConsumerWidget {
-  final ScrollController scrollController;
+class FilterChipWidget extends StatelessWidget {
+  const FilterChipWidget({
+    Key? key,
+    required this.title,
+    required this.chips,
+    this.onClear,
+    this.canClear = false,
+  }) : super(key: key);
 
-  const GenresBottomSheet({super.key, required this.scrollController});
+  final String title;
+  final Widget chips;
+  final Function()? onClear;
+  final bool canClear;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final c = ref.watch(animeSearchProvider);
-    return Material(
-      color: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      child: SingleChildScrollView(
-        controller: scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Жанры',
-                    style: Theme.of(context).textTheme.titleLarge,
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                   ),
-                  const Spacer(),
-                  Tooltip(
-                    message: 'Очистить всё',
-                    child: IconButton(
-                      onPressed: (c.selectedGenres?.isEmpty ?? true)
-                          ? null
-                          : () {
-                              ref
-                                  .read(animeSearchProvider)
-                                  .clearSelectedGenres();
-                            },
-                      icon: const Icon(Icons.clear_all),
-                    ),
-                  ),
-                ],
+            ),
+            if (canClear)
+              // IconButton(
+              //   //padding: const EdgeInsets.all(0),
+              //   tooltip: 'Очистить',
+              //   onPressed: onClear,
+              //   icon: const Icon(Icons.clear_all_outlined),
+              // ),
+              GestureDetector(
+                onTap: onClear,
+                child: const Icon(Icons.clear_all_outlined),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final genre = animeGenres[index];
-                  final isSelected = c.selectedGenres?.contains(genre) ?? false;
-                  return CheckboxListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    value: isSelected,
-                    onChanged: (value) {
-                      if (value!) {
-                        ref.read(animeSearchProvider).addGenre(genre);
-                      } else {
-                        ref.read(animeSearchProvider).removeGenre(genre);
-                      }
-                    },
-                    title: Text(
-                      genre.russian!,
-                    ),
-                  );
-                },
-                // separatorBuilder: (context, index) {
-                //   return const SizedBox(
-                //     height: 4,
-                //   );
-                // },
-                itemCount: animeGenres.length,
-              ),
-            ],
-          ),
+          ],
         ),
-      ),
+        // if (!canClear)
+        //   const SizedBox(
+        //     height: 8,
+        //   ),
+        chips,
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          title: Text(
+            title,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+          isThreeLine: false,
+          trailing: canClear
+              ? const IconButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: null,
+                  icon: Icon(Icons.clear_all_outlined),
+                )
+              : null,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: chips,
+        )
+      ],
     );
   }
 }
-
-List<Genre> animeGenres = [
-  Genre(
-    id: 5,
-    russian: 'Безумие',
-  ),
-  Genre(
-    id: 17,
-    russian: 'Боевые искусства',
-  ),
-  Genre(
-    id: 32,
-    russian: 'Вампиры',
-  ),
-  Genre(
-    id: 38,
-    russian: 'Военное',
-  ),
-  Genre(
-    id: 35,
-    russian: 'Гарем',
-  ),
-  Genre(
-    id: 543,
-    russian: 'Гурман',
-  ),
-  Genre(
-    id: 6,
-    russian: 'Демоны',
-  ),
-  Genre(
-    id: 7,
-    russian: 'Детектив',
-  ),
-  Genre(
-    id: 15,
-    russian: 'Детское',
-  ),
-  Genre(
-    id: 43,
-    russian: 'Дзёсей',
-  ),
-  Genre(
-    id: 8,
-    russian: 'Драма',
-  ),
-  Genre(
-    id: 11,
-    russian: 'Игры',
-  ),
-  Genre(
-    id: 13,
-    russian: 'Исторический',
-  ),
-  Genre(
-    id: 4,
-    russian: 'Комедия',
-  ),
-  Genre(
-    id: 29,
-    russian: 'Космос',
-  ),
-
-  Genre(
-    id: 16,
-    russian: 'Магия',
-  ),
-  Genre(
-    id: 3,
-    russian: 'Машины',
-  ),
-  Genre(
-    id: 18,
-    russian: 'Меха',
-  ),
-  Genre(
-    id: 19,
-    russian: 'Музыка',
-  ),
-  Genre(
-    id: 20,
-    russian: 'Пародия',
-  ),
-  Genre(
-    id: 36,
-    russian: 'Повседневность',
-  ),
-  Genre(
-    id: 39,
-    russian: 'Полиция',
-  ),
-  Genre(
-    id: 2,
-    russian: 'Приключения',
-  ),
-  Genre(
-    id: 40,
-    russian: 'Психологическое',
-  ),
-  Genre(
-    id: 541,
-    russian: 'Работа',
-  ),
-  Genre(
-    id: 22,
-    russian: 'Романтика',
-  ),
-  Genre(
-    id: 21,
-    russian: 'Самураи',
-  ),
-  Genre(
-    id: 37,
-    russian: 'Сверхъестественное',
-  ),
-  Genre(
-    id: 30,
-    russian: 'Спорт',
-  ),
-  Genre(
-    id: 31,
-    russian: 'Супер сила',
-  ),
-  Genre(
-    id: 42,
-    russian: 'Сэйнэн',
-  ),
-  Genre(
-    id: 25,
-    russian: 'Сёдзё',
-  ),
-  Genre(
-    id: 26,
-    russian: 'Сёдзё-ай',
-  ),
-  Genre(
-    id: 27,
-    russian: 'Сёнен',
-  ),
-  Genre(
-    id: 28,
-    russian: 'Сёнен-ай',
-  ),
-  Genre(
-    id: 41,
-    russian: 'Триллер',
-  ),
-  Genre(
-    id: 14,
-    russian: 'Ужасы',
-  ),
-  Genre(
-    id: 24,
-    russian: 'Фантастика',
-  ),
-  Genre(
-    id: 10,
-    russian: 'Фэнтези',
-  ),
-  // Genre(
-  //   id: 12,
-  //   russian: 'Хентай',
-  // ),
-  Genre(
-    id: 23,
-    russian: 'Школа',
-  ),
-  Genre(
-    id: 1,
-    russian: 'Экшен',
-  ),
-  // Genre(
-  //   id: 539,
-  //   russian: 'Эротика',
-  // ),
-  // Genre(
-  //   id: 9,
-  //   russian: 'Этти',
-  // ),
-  // Genre(
-  //   id: 34,
-  //   russian: 'Юри',
-  // ),
-  // Genre(
-  //   id: 33,
-  //   russian: 'Яой',
-  // ),
-];
 
 final studiosListProvider = FutureProvider<List<Studio>>((ref) async {
   String data = '';

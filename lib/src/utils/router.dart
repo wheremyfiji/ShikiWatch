@@ -28,6 +28,7 @@ import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 import '../presentation/pages/settings/local_database_manage_page.dart';
 
+import '../presentation/providers/anime_search_provider.dart';
 import 'target_platform.dart';
 import 'updater.dart';
 
@@ -185,32 +186,44 @@ final GoRouter router = GoRouter(
               ),
               routes: [
                 GoRoute(
-                    name: 'explore_search',
-                    path: 'search',
-                    pageBuilder: (_, __) => CustomTransitionPage(
-                          child: AnimeSearchPage(
-                            key: __.pageKey,
-                          ),
-                          transitionsBuilder: (_, animation, __, child) =>
-                              FadeTransition(opacity: animation, child: child),
-                          transitionDuration: const Duration(milliseconds: 150),
-                          reverseTransitionDuration:
-                              const Duration(milliseconds: 50),
-                        ),
-                    routes: [
-                      GoRoute(
-                        name: 'search_filters',
-                        path: 'filters',
-                        pageBuilder: (_, __) => CustomTransitionPage(
-                          child: const AnimeFilterPage(),
-                          transitionsBuilder: (_, animation, __, child) =>
-                              FadeTransition(opacity: animation, child: child),
-                          transitionDuration: const Duration(milliseconds: 150),
-                          reverseTransitionDuration:
-                              const Duration(milliseconds: 50),
-                        ),
+                  name: 'explore_search',
+                  path: 'search',
+                  pageBuilder: (context, state) {
+                    final sId = state.queryParameters['studioId'];
+                    final gId = state.queryParameters['genreId'];
+                    return CustomTransitionPage(
+                      child: AnimeSearchPage(
+                        key: state.pageKey,
+                        studioId: sId == null ? null : int.tryParse(sId),
+                        genreId: gId == null ? null : int.tryParse(gId),
                       ),
-                    ]),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 50),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                        name: 'search_filters', //AnimeSearchController
+                        path: 'filters',
+                        pageBuilder: (context, state) {
+                          SearchPageParameters p =
+                              state.extra as SearchPageParameters;
+                          return CustomTransitionPage(
+                            child: AnimeFilterPage(p),
+                            transitionsBuilder: (_, animation, __, child) =>
+                                FadeTransition(
+                                    opacity: animation, child: child),
+                            transitionDuration:
+                                const Duration(milliseconds: 150),
+                            reverseTransitionDuration:
+                                const Duration(milliseconds: 50),
+                          );
+                        }),
+                  ],
+                ),
                 GoRoute(
                   name: 'explore_id',
                   path: r':id(\d+)',
