@@ -65,69 +65,43 @@ class AnimeDetailsPage extends ConsumerWidget {
     final titleInfo = ref.watch(titleInfoPageProvider(animeData.id!));
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      floatingActionButton:
-          // titleInfo.isAnons
-          //     ? const SizedBox.shrink()
-          //     :
-          titleInfo.title.isLoading || animeData.kind == 'music'
-              ? null
-              : FloatingActionButton.extended(
-                  onPressed: () async {
-                    if (titleInfo.rating == '18+') {
-                      final allowExp = ref
-                              .read(sharedPreferencesProvider)
-                              .getBool('allowExpContent') ??
-                          false;
-
-                      if (!allowExp) {
-                        bool? dialogValue = await showDialog<bool>(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) => const RatingDialog(),
-                        );
-
-                        if (dialogValue ?? false) {
-                          await ref
-                              .read(sharedPreferencesProvider)
-                              .setBool('allowExpContent', true);
-                          // ignore: use_build_context_synchronously
-                          pushStudioSelectPage(
-                            ctx: context,
-                            id: animeData.id ?? 0,
-                            name: animeData.russian ??
-                                animeData.name ??
-                                '[Без навзвания]',
-                            ep: titleInfo.currentProgress,
-                            imgUrl: animeData.image?.original ?? '',
-                          );
-                        }
-                      } else {
-                        pushStudioSelectPage(
-                          ctx: context,
-                          id: animeData.id ?? 0,
-                          name: animeData.russian ??
-                              animeData.name ??
-                              '[Без навзвания]',
-                          ep: titleInfo.currentProgress,
-                          imgUrl: animeData.image?.original ?? '',
-                        );
-                      }
-                    } else {
-                      pushStudioSelectPage(
-                        ctx: context,
-                        id: animeData.id ?? 0,
-                        name: animeData.russian ??
-                            animeData.name ??
-                            '[Без навзвания]',
-                        ep: titleInfo.currentProgress,
-                        imgUrl: animeData.image?.original ?? '',
-                      );
-                    }
-                  },
-                  label: const Text('Смотреть'),
-                  icon: const Icon(Icons.play_arrow),
+      //extendBodyBehindAppBar: true,
+      floatingActionButton: titleInfo.title.when(
+        data: (data) {
+          return FloatingActionButton.extended(
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width >= 700
+                      ? 700
+                      : double.infinity,
                 ),
+                useRootNavigator: true,
+                isScrollControlled: true,
+                enableDrag: false,
+                useSafeArea: true,
+                builder: (context) {
+                  return SafeArea(
+                    child: AnimeUserRateBottomSheet(
+                      data: data,
+                      anime: animeData,
+                    ),
+                  );
+                },
+              );
+            },
+            label: data.userRate == null
+                ? const Text('Добавить в список')
+                : const Text('Изменить'),
+            icon: data.userRate == null
+                ? const Icon(Icons.add)
+                : const Icon(Icons.edit),
+          );
+        },
+        error: (error, stackTrace) => null,
+        loading: () => null,
+      ),
       body: RefreshIndicator(
         onRefresh: () async =>
             ref.refresh(titleInfoPageProvider(animeData.id!)),
@@ -183,25 +157,83 @@ class AnimeDetailsPage extends ConsumerWidget {
             ...titleInfo.title.when(
               data: (data) => [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                   sliver: SliverToBoxAdapter(
                     child: AnimeActionsWidget(
                       anime: data,
+                      onPlayPress: () async {
+                        if (titleInfo.rating == '18+') {
+                          final allowExp = ref
+                                  .read(sharedPreferencesProvider)
+                                  .getBool('allowExpContent') ??
+                              false;
+
+                          if (!allowExp) {
+                            bool? dialogValue = await showDialog<bool>(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) => const RatingDialog(),
+                            );
+
+                            if (dialogValue ?? false) {
+                              await ref
+                                  .read(sharedPreferencesProvider)
+                                  .setBool('allowExpContent', true);
+                              // ignore: use_build_context_synchronously
+                              pushStudioSelectPage(
+                                ctx: context,
+                                id: animeData.id ?? 0,
+                                name: (animeData.russian == ''
+                                        ? animeData.name
+                                        : animeData.russian) ??
+                                    '',
+                                ep: titleInfo.currentProgress,
+                                imgUrl: animeData.image?.original ?? '',
+                              );
+                            }
+                          } else {
+                            pushStudioSelectPage(
+                              ctx: context,
+                              id: animeData.id ?? 0,
+                              name: (animeData.russian == ''
+                                      ? animeData.name
+                                      : animeData.russian) ??
+                                  '',
+                              ep: titleInfo.currentProgress,
+                              imgUrl: animeData.image?.original ?? '',
+                            );
+                          }
+                        } else {
+                          pushStudioSelectPage(
+                            ctx: context,
+                            id: animeData.id ?? 0,
+                            name: (animeData.russian == ''
+                                    ? animeData.name
+                                    : animeData.russian) ??
+                                '',
+                            // animeData.russian ??
+                            //     animeData.name ??
+                            //     '[Без навзвания]',
+                            ep: titleInfo.currentProgress,
+                            imgUrl: animeData.image?.original ?? '',
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),
+                // SliverPadding(
+                //   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                //   sliver: SliverToBoxAdapter(
+                //     child: UserAnimeRateWidget(
+                //       animeData,
+                //       data,
+                //       '',
+                //     ),
+                //   ),
+                // ),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                  sliver: SliverToBoxAdapter(
-                    child: UserAnimeRateWidget(
-                      animeData,
-                      data,
-                      '',
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
                   sliver: SliverToBoxAdapter(
                     child: AnimeChipsWidget(
                       genres: data.genres,
@@ -216,7 +248,9 @@ class AnimeDetailsPage extends ConsumerWidget {
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                     sliver: SliverToBoxAdapter(
-                      child: TitleDescription(data.descriptionHtml!),
+                      child: TitleDescription(
+                        data.descriptionHtml!,
+                      ),
                     ),
                   ),
                 ],
@@ -226,7 +260,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: AnimeRatesStatusesWidget(
-                          statsValues: titleInfo.statsValues),
+                        statsValues: titleInfo.statsValues,
+                      ),
                     ),
                   ),
                 ],

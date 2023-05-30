@@ -43,6 +43,31 @@ class UserRateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 0,
+        children: [
+          CoolChip(
+            label: getRateStatus(data.userRate!.status!),
+          ),
+          // CoolChip(
+          //   label: 'Тома: ${data.userRate!.volumes.toString()}',
+          // ),
+          CoolChip(
+            label: 'Главы: ${data.userRate!.chapters.toString()}',
+          ),
+          CoolChip(
+            label: 'Оценка: ${data.userRate!.score.toString()}',
+          ),
+          CoolChip(
+            label: 'Перечитано: ${data.userRate!.rewatches.toString()}',
+          ),
+        ],
+      ),
+    );
+
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(

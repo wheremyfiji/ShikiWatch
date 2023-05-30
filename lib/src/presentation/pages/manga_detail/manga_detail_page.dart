@@ -36,7 +36,7 @@ class MangaDetailPage extends ConsumerWidget {
     final mangaDetails = ref.watch(mangaDetailsPageProvider(manga.id!));
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      //extendBodyBehindAppBar: true,
       floatingActionButton: mangaDetails.title.when(
         data: (data) {
           return FloatingActionButton.extended(
@@ -52,7 +52,6 @@ class MangaDetailPage extends ConsumerWidget {
                 isScrollControlled: true,
                 enableDrag: false,
                 useSafeArea: true,
-                elevation: 0,
                 builder: (context) {
                   return SafeArea(
                     child: MangaUserRateBottomSheet(
@@ -124,7 +123,7 @@ class MangaDetailPage extends ConsumerWidget {
             ...mangaDetails.title.when(
               data: (data) => [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   sliver: SliverToBoxAdapter(
                     child: MangaActionsWidget(
                       manga: manga,
@@ -134,8 +133,7 @@ class MangaDetailPage extends ConsumerWidget {
                 ),
                 if (data.userRate != null) ...[
                   SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     sliver: SliverToBoxAdapter(
                       child: UserRateWidget(
                         manga: manga,
@@ -145,7 +143,7 @@ class MangaDetailPage extends ConsumerWidget {
                   ),
                 ],
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   sliver: SliverToBoxAdapter(
                     child: MangaChipsWidget(
                       genres: data.genres,

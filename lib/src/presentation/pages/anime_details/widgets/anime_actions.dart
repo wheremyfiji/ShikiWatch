@@ -7,8 +7,9 @@ import '../similar_animes.dart';
 
 class AnimeActionsWidget extends StatelessWidget {
   final Anime anime;
+  final VoidCallback? onPlayPress;
 
-  const AnimeActionsWidget({super.key, required this.anime});
+  const AnimeActionsWidget({super.key, required this.anime, this.onPlayPress});
 
   @override
   Widget build(BuildContext context) {
@@ -18,77 +19,92 @@ class AnimeActionsWidget extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        SimilarAnimesPage(animeId: anime.id!),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            SimilarAnimesPage(animeId: anime.id!),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    ),
+                    child: const Column(
+                      children: [
+                        Icon(Icons.join_inner),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text('Похожее'),
+                      ],
+                    ),
                   ),
                 ),
-                child: const Column(
-                  children: [
-                    Icon(Icons.join_inner),
-                    SizedBox(
-                      height: 4,
+                Expanded(
+                  child: TextButton(
+                    onPressed: (topicId == null || topicId == 0)
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        CommentsPage(
+                                  topicId: topicId,
+                                ),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
+                    child: const Column(
+                      children: [
+                        Icon(Icons.topic), //chat
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'Обсуждение',
+                        ),
+                      ],
                     ),
-                    Text('Похожее'),
-                  ],
+                  ),
+                ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      _openFullscreenDialog(context);
+                    },
+                    child: const Column(
+                      children: [
+                        Icon(Icons.link),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text('Ссылки'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (anime.kind != 'music')
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: onPlayPress,
+                  label: const Text('Смотреть'),
+                  icon: const Icon(Icons.play_arrow),
                 ),
               ),
-            ),
-            Expanded(
-              child: TextButton(
-                onPressed: (topicId == null || topicId == 0)
-                    ? null
-                    : () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation1, animation2) =>
-                                CommentsPage(
-                              topicId: topicId,
-                            ),
-                            transitionDuration: Duration.zero,
-                            reverseTransitionDuration: Duration.zero,
-                          ),
-                        );
-                      },
-                child: const Column(
-                  children: [
-                    Icon(Icons.topic), //chat
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      'Обсуждение',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: TextButton(
-                onPressed: () {
-                  _openFullscreenDialog(context);
-                },
-                child: const Column(
-                  children: [
-                    Icon(Icons.link),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text('Ссылки'),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
