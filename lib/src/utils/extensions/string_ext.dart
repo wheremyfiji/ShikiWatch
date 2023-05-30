@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 extension StringExt on String? {
   bool get isNull => this == null;
 
@@ -24,5 +26,20 @@ extension StringExt on String? {
     if (isNull) return null;
     if (this!.isEmpty) return this;
     return this![0].toUpperCase() + this!.substring(1).toLowerCase();
+  }
+
+  DateTime? get toDateTime {
+    if (isNull) return null;
+
+    if (this!.isEmpty) {
+      return null;
+    }
+
+    try {
+      DateFormat format = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+      return format.parse(this!);
+    } catch (e) {
+      return null;
+    }
   }
 }

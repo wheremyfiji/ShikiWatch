@@ -1,22 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shikidev/src/presentation/widgets/image_with_shimmer.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
-import '../../../constants/config.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+import 'package:shikidev/src/utils/extensions/date_time_ext.dart';
+import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
+import 'package:shikidev/src/utils/extensions/string_ext.dart';
+
 import '../../../data/data_sources/anime_data_src.dart';
 import '../../../domain/models/shiki_calendar.dart';
+import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';
 
 final calendarProvider =
-    FutureProvider.autoDispose<List<ShikiCalendar>>((ref) async {
+    FutureProvider.autoDispose<Map<DateTime, List<ShikiCalendar>>>((ref) async {
   final token = ref.cancelToken();
   final ds = ref.read(animeDataSourceProvider);
   final r = await ds.getCalendar(cancelToken: token);
-  return r.toList();
+
+  Map<DateTime, List<ShikiCalendar>> groupedData = groupDataByDay(r.toList());
+
+  return groupedData;
 }, name: 'calendarProvider');
+
+Map<DateTime, List<ShikiCalendar>> groupDataByDay(
+    List<ShikiCalendar> dataModels) {
+  Map<DateTime, List<ShikiCalendar>> groupedData = {};
+
+  for (var model in dataModels) {
+    DateTime date = DateTime(model.nextEpisodeDateTime!.year,
+        model.nextEpisodeDateTime!.month, model.nextEpisodeDateTime!.day);
+
+    if (groupedData.containsKey(date)) {
+      groupedData[date]!.add(model);
+    } else {
+      groupedData[date] = [model];
+    }
+  }
+
+  return groupedData;
+}
 
 class CalendarPage extends ConsumerWidget {
   const CalendarPage({super.key});
@@ -39,10 +63,56 @@ class CalendarPage extends ConsumerWidget {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final item = data[index];
-                      return CalendarItem(item);
+                      final date = data.keys.toList()[index];
+                      final dateString =
+                          '${DateFormat.EEEE().format(date)}, ${DateFormat.MMMd().format(date)}';
+                      final items = data[date]!;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            date.isToday
+                                ? 'Сегодня'
+                                : dateString.capitalizeFirst!,
+                            style: context.textTheme.bodyLarge,
+                          ), // Выходит или вышло сегодня
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          SizedBox(
+                            height: 210,
+                            child: ListView.separated(
+                              addRepaintBoundaries: false,
+                              addSemanticIndexes: false,
+                              shrinkWrap: true,
+                              itemCount: items.length,
+                              scrollDirection: Axis.horizontal,
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(
+                                  width: 8,
+                                );
+                              },
+                              itemBuilder: (context, index) {
+                                final item = items[index];
+
+                                return AspectRatio(
+                                  aspectRatio: 0.55,
+                                  child: AnimeTileExp(item.anime!),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                        ],
+                      );
                     },
                     childCount: data.length,
+                    addRepaintBoundaries: false,
+                    addSemanticIndexes: false,
                   ),
                 ),
               ),
@@ -63,98 +133,6 @@ class CalendarPage extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class CalendarItem extends StatelessWidget {
-  final ShikiCalendar item;
-
-  const CalendarItem(this.item, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final nextEpisodeAt =
-        DateTime.tryParse(item.nextEpisodeAt ?? '')?.toLocal() ??
-            DateTime(1970);
-    final nextEpisodeDate = DateFormat.MMMd().format(nextEpisodeAt);
-    final nextEpisodeTime = DateFormat.Hm().format(nextEpisodeAt);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: InkWell(
-        onTap: () => context.pushNamed(
-          'explore_id',
-          pathParameters: <String, String>{
-            'id': (item.anime?.id!).toString(),
-          },
-          extra: item.anime,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: ImageWithShimmerWidget(
-                imageUrl: AppConfig.staticUrl +
-                    (item.anime?.image?.original ??
-                        item.anime?.image?.preview ??
-                        ''),
-                height: 120,
-                width: 84,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    (item.anime?.russian == ''
-                            ? item.anime?.name
-                            : item.anime?.russian) ??
-                        '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(
-                    height: 2,
-                  ),
-                  Text('Серия ${item.nextEpisode}'),
-                  const SizedBox(
-                    height: 2,
-                  ),
-                  // Text('Выйдет: ${item.nextEpisodeAt}'),
-                  Text('Выйдет $nextEpisodeDate в $nextEpisodeTime'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text((item.anime?.russian == ''
-                ? item.anime?.name
-                : item.anime?.russian) ??
-            ''),
-        const SizedBox(
-          height: 4,
-        ),
-        Text('Серия: ${item.nextEpisode}'),
-        const SizedBox(
-          height: 4,
-        ),
-        Text('Выйдет: ${item.nextEpisodeAt}'),
-        const SizedBox(
-          height: 16,
-        ),
-      ],
     );
   }
 }
