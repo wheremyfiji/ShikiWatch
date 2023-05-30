@@ -121,10 +121,12 @@ class AnimeCard extends StatelessWidget {
 
 class AnimeTileExp extends StatelessWidget {
   final Animes data;
+  final bool showScore;
 
   const AnimeTileExp(
     this.data, {
     Key? key,
+    this.showScore = true,
   }) : super(key: key);
 
   @override
@@ -171,7 +173,9 @@ class AnimeTileExp extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          '${getKind(data.kind ?? '')} • ${data.score}',
+                          showScore
+                              ? '${getKind(data.kind ?? '')} • ${data.score}'
+                              : getKind(data.kind ?? ''),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -179,10 +183,11 @@ class AnimeTileExp extends StatelessWidget {
                             color: Theme.of(context).textTheme.bodySmall!.color,
                           ),
                         ),
-                        const Icon(
-                          Icons.star_rounded,
-                          size: 10,
-                        ),
+                        if (showScore)
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 10,
+                          ),
                       ],
                     ),
                   ],

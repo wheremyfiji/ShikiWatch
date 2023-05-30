@@ -55,7 +55,7 @@ class NextSeasonAnimePage extends ConsumerWidget {
                   );
                 },
                 itemBuilder: (context, item, index) {
-                  return ExcludeSemantics(child: AnimeTileExp(item));
+                  return AnimeTileExp(item, showScore: false);
                 },
               ),
             ),

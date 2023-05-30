@@ -50,7 +50,7 @@ class TopMangaPage extends ConsumerWidget {
                   );
                 },
                 itemBuilder: (context, item, index) {
-                  return ExcludeSemantics(child: MangaCardEx(item));
+                  return MangaCardEx(item);
                 },
               ),
             ),

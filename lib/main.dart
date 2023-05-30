@@ -15,13 +15,13 @@ import 'package:media_kit/media_kit.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shikidev/src/presentation/providers/environment_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'secret.dart';
 import 'src/constants/box_types.dart';
 import 'src/data/data_sources/environment_data_src.dart';
+import 'src/presentation/providers/environment_provider.dart';
 import 'src/presentation/shiki.dart';
 import 'src/services/secure_storage/secure_storage_service.dart';
 
