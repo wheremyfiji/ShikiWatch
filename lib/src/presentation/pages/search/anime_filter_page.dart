@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -49,35 +48,23 @@ class AnimeFilterPage extends ConsumerWidget {
                         style: Theme.of(context).textTheme.bodySmall,
                         //textAlign: TextAlign.start,
                       ),
-                trailing: IconButton(
-                  tooltip: 'Выбрать жанры',
-                  onPressed: () {
-                    showFlexibleBottomSheet(
-                      decoration: BoxDecoration(
-                        color: context.theme.colorScheme.background,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(16.0),
-                          topRight: Radius.circular(16.0),
-                        ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: 'Выбрать жанры',
+                      onPressed: () => showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        useRootNavigator: true,
+                        showDragHandle: true,
+                        useSafeArea: true,
+                        //backgroundColor: Colors.transparent,
+                        builder: (context) => GenresBottomSheet(t),
                       ),
-                      //bottomSheetColor: context.theme.colorScheme.background,
-                      bottomSheetColor: Colors.transparent,
-                      minHeight: 0,
-                      initHeight: 0.5,
-                      maxHeight: 1,
-                      context: context,
-                      anchors: [0, 0.5, 1],
-                      isSafeArea: true,
-                      duration: const Duration(milliseconds: 250),
-                      builder: (context, scrollController, bottomSheetOffset) {
-                        return GenresBottomSheet(
-                          t,
-                          scrollController: scrollController,
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.add),
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -423,74 +410,89 @@ class AnimeFilterPage extends ConsumerWidget {
 
 class GenresBottomSheet extends ConsumerWidget {
   final SearchPageParameters t;
-  final ScrollController scrollController;
 
-  const GenresBottomSheet(this.t, {super.key, required this.scrollController});
+  const GenresBottomSheet(this.t, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.watch(animeSearchProvider(t));
-    return Material(
-      color: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      child: SingleChildScrollView(
-        controller: scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Жанры',
-                    style: Theme.of(context).textTheme.titleLarge,
+
+    return DraggableScrollableSheet(
+      expand: false,
+      snap: false,
+      maxChildSize: 0.75,
+      builder: (context, scrollController) => SafeArea(
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Жанры',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: (c.selectedGenres?.isEmpty ?? true)
+                            ? null
+                            : () {
+                                c.clearSelectedGenres();
+                              },
+                        child: const Text('Очистить'),
+                      ),
+                      // IconButton(
+                      //   tooltip: 'Очистить всё',
+                      //   onPressed: (c.selectedGenres?.isEmpty ?? true)
+                      //       ? null
+                      //       : () {
+                      //           c.clearSelectedGenres();
+                      //         },
+                      //   icon: const Icon(Icons.clear_all),
+                      // ),
+                      // const SizedBox(
+                      //   width: 4,
+                      // ),
+                    ],
                   ),
-                  const Spacer(),
-                  Tooltip(
-                    message: 'Очистить всё',
-                    child: IconButton(
-                      onPressed: (c.selectedGenres?.isEmpty ?? true)
-                          ? null
-                          : () {
-                              c.clearSelectedGenres();
-                            },
-                      icon: const Icon(Icons.clear_all),
-                    ),
-                  ),
-                ],
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final genre = animeGenres[index];
-                  final isSelected = c.selectedGenres?.contains(genre) ?? false;
-                  return CheckboxListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    value: isSelected,
-                    onChanged: (value) {
-                      if (value!) {
-                        c.addGenre(genre);
-                      } else {
-                        c.removeGenre(genre);
-                      }
-                    },
-                    title: Text(
-                      genre.russian!,
-                    ),
-                  );
-                },
-                // separatorBuilder: (context, index) {
-                //   return const SizedBox(
-                //     height: 4,
-                //   );
-                // },
-                itemCount: animeGenres.length,
-              ),
-            ],
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final genre = animeGenres[index];
+                    final isSelected =
+                        c.selectedGenres?.contains(genre) ?? false;
+                    return CheckboxListTile(
+                      //contentPadding: const EdgeInsets.all(0),
+                      value: isSelected,
+                      onChanged: (value) {
+                        if (value!) {
+                          c.addGenre(genre);
+                        } else {
+                          c.removeGenre(genre);
+                        }
+                      },
+                      title: Text(
+                        genre.russian!,
+                      ),
+                    );
+                  },
+                  // separatorBuilder: (context, index) {
+                  //   return const SizedBox(
+                  //     height: 4,
+                  //   );
+                  // },
+                  itemCount: animeGenres.length,
+                ),
+              ],
+            ),
           ),
         ),
       ),
