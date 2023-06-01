@@ -29,6 +29,7 @@ class MaterialYouChip extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Card(
+        margin: const EdgeInsets.all(0),
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius,
         ),
@@ -57,7 +58,7 @@ class MaterialYouChip extends StatelessWidget {
                 title,
                 style: TextStyle(
                   color: colorOnPrimary,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: isSelected ? FontWeight.w500 : null,
                 ),
               ),
             ],

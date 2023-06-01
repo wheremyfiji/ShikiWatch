@@ -56,7 +56,7 @@ class NumberFieldState extends State<NumberField> {
         margin: EdgeInsets.zero,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 8,
+            vertical: 7,
             horizontal: 16,
           ),
           child: Row(
@@ -66,21 +66,29 @@ class NumberFieldState extends State<NumberField> {
                 width: 4,
               ),
               Expanded(
-                child: TextField(
-                  maxLines: 1,
-                  minLines: 1,
-                  controller: _ctrl,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      maxLines: 1,
+                      minLines: 1,
+                      controller: _ctrl,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(0),
+                      ),
+                      onChanged: _validateInput,
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
                   ],
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(0),
-                  ),
-                  onChanged: _validateInput,
                 ),
               ),
               const Spacer(),

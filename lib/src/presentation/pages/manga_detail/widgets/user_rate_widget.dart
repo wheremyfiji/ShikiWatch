@@ -307,17 +307,18 @@ class _MangaUserRateBottomSheetState
                     '',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(
-                height: 16,
+                height: 10,
               ),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Wrap(
+                  spacing: 8,
                   children: List<Widget>.generate(
                     6,
                     (int index) {
@@ -550,8 +551,11 @@ class _MangaUserRateBottomSheetState
                 TextField(
                   controller: _controller,
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Добавить заметку',
+                    //filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                    ),
+                    hintText: 'Заметка',
                   ),
                   minLines: 1,
                   maxLines: 3,
@@ -572,12 +576,11 @@ class _MangaUserRateBottomSheetState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Дата создания: $createdAt'),
+                          Text('Создано $createdAt'),
                           const SizedBox(
                             height: 4,
                           ),
-                          if (updatedAt != null)
-                            Text('Дата изменения: $updatedAt'),
+                          if (updatedAt != null) Text('Изменено $updatedAt'),
                         ],
                       ),
                     ),

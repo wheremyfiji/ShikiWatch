@@ -34,7 +34,7 @@ class LocalHistoryTab extends ConsumerWidget {
           : CustomScrollView(
               slivers: [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                   //sliver: SliverFixedExtentList(
                   sliver: SliverList(
                     //itemExtent: 180.0,
@@ -138,6 +138,9 @@ class HistoryItem extends ConsumerWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              width: 16,
+            ),
             SizedBox(
               width: 100, //120
               child: AspectRatio(
@@ -180,22 +183,48 @@ class HistoryItem extends ConsumerWidget {
           // ),
         ),
         Positioned(
-          child: Tooltip(
-            message: 'Удалить эпизод',
-            child: IconButton(
-              onPressed: () {
-                ref
-                    .read(animeDatabaseProvider)
-                    .deleteEpisode(
-                        shikimoriId: shikimoriId,
-                        studioId: studioId,
-                        episodeNumber: episode!)
-                    .then((value) => showSnackBar(
-                        ctx: context, msg: 'Серия $episode удалена'));
-              },
-              icon: const Icon(Icons.delete),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Material(
+              child: InkWell(
+                child: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Icon(
+                    Icons.delete,
+                  ),
+                ),
+                onTap: () =>
+                    showSnackBar(ctx: context, msg: 'Удерживайте для удаления'),
+                onLongPress: () {
+                  ref
+                      .read(animeDatabaseProvider)
+                      .deleteEpisode(
+                          shikimoriId: shikimoriId,
+                          studioId: studioId,
+                          episodeNumber: episode!)
+                      .then((value) => showSnackBar(
+                          ctx: context, msg: 'Серия $episode удалена'));
+                },
+              ),
             ),
           ),
+
+          //     Tooltip(
+          //   message: 'Удалить эпизод',
+          //   child: IconButton(
+          //     onPressed: () {
+          //       ref
+          //           .read(animeDatabaseProvider)
+          //           .deleteEpisode(
+          //               shikimoriId: shikimoriId,
+          //               studioId: studioId,
+          //               episodeNumber: episode!)
+          //           .then((value) => showSnackBar(
+          //               ctx: context, msg: 'Серия $episode удалена'));
+          //     },
+          //     icon: const Icon(Icons.delete),
+          //   ),
+          // ),
         ),
       ],
     );
