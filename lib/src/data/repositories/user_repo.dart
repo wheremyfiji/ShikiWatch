@@ -8,6 +8,13 @@ import '../../domain/models/user_rate_resp.dart';
 abstract class UserRepository {
   const UserRepository();
 
+  Future<Iterable<User>> getUsers({
+    required int page,
+    required int limit,
+    String? search,
+    CancelToken? cancelToken,
+  });
+
   Future<UserProfile> getUserProfile({
     required String? id,
     String? userToken,

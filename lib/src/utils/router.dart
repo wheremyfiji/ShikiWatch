@@ -20,6 +20,7 @@ import '../presentation/pages/profile/my_profile_page.dart';
 import '../presentation/pages/player/anime_player_desktop_page.dart';
 import '../presentation/pages/player/anime_player_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
+import '../presentation/pages/profile/user_search.dart';
 import '../presentation/pages/root/root_page.dart';
 import '../presentation/pages/search/anime_filter_page.dart';
 import '../presentation/pages/search/anime_search_page.dart';
@@ -346,6 +347,22 @@ final GoRouter router = GoRouter(
                       transitionDuration: const Duration(milliseconds: 150),
                       reverseTransitionDuration:
                           const Duration(milliseconds: 150),
+                    );
+                  },
+                ),
+                GoRoute(
+                  name: 'user_search',
+                  path: 'user_search',
+                  pageBuilder: (context, state) {
+                    return CustomTransitionPage(
+                      child: UserSearchPage(
+                        key: state.pageKey,
+                      ),
+                      transitionsBuilder: (_, animation, __, child) =>
+                          FadeTransition(opacity: animation, child: child),
+                      transitionDuration: const Duration(milliseconds: 150),
+                      reverseTransitionDuration:
+                          const Duration(milliseconds: 0),
                     );
                   },
                 ),

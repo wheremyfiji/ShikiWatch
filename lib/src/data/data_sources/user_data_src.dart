@@ -18,6 +18,26 @@ class UserDataSource implements UserRepository {
   UserDataSource(this.dio);
 
   @override
+  Future<Iterable<User>> getUsers({
+    required int page,
+    required int limit,
+    String? search,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get(
+      'users',
+      cancelToken: cancelToken,
+      queryParameters: {
+        'page': page.toString(),
+        'limit': limit.toString(),
+        if (search != null) 'search': search,
+      },
+    );
+
+    return [for (final e in response) User.fromJson(e)];
+  }
+
+  @override
   Future<UserProfile> getUserProfile({
     required String? id,
     String? userToken,

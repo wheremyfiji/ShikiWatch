@@ -205,19 +205,17 @@ class _ProfilePageAppBar extends StatelessWidget {
             icon: const Icon(Icons.travel_explore),
           ),
         ],
-        const Tooltip(
-          message: 'Искать пользователя',
-          child: IconButton(
-            onPressed: null,
-            icon: Icon(Icons.person_search),
+        IconButton(
+          tooltip: 'Искать пользователя',
+          onPressed: () => context.pushNamed('user_search'),
+          icon: const Icon(
+            Icons.person_search,
           ),
         ),
-        Tooltip(
-          message: 'Настройки',
-          child: IconButton(
-            onPressed: () => context.push('/profile/settings'),
-            icon: const Icon(Icons.settings_outlined),
-          ),
+        IconButton(
+          tooltip: 'Настройки',
+          onPressed: () => context.push('/profile/settings'),
+          icon: const Icon(Icons.settings_outlined),
         ),
       ],
     );
