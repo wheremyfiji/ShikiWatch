@@ -7,9 +7,43 @@ import '../similar_animes.dart';
 
 class AnimeActionsWidget extends StatelessWidget {
   final Anime anime;
-  final VoidCallback? onPlayPress;
+  final VoidCallback? onBtnPress;
 
-  const AnimeActionsWidget({super.key, required this.anime, this.onPlayPress});
+  const AnimeActionsWidget({super.key, required this.anime, this.onBtnPress});
+
+  String getStatus(String value, int? c) {
+    String status;
+
+    const map = {
+      'planned': 'В планах',
+      'watching': 'Смотрю',
+      'rewatching': 'Пересматриваю',
+      'completed': 'Просмотрено',
+      'on_hold': 'Отложено',
+      'dropped': 'Брошено'
+    };
+
+    status = map[value] ?? '';
+
+    return (c != 0 && value == 'watching') ? '$status (Серия $c)' : status;
+  }
+
+  IconData getIcon(String value) {
+    IconData icon;
+
+    const map = {
+      'planned': Icons.event_available,
+      'watching': Icons.remove_red_eye,
+      'rewatching': Icons.refresh,
+      'completed': Icons.done_all,
+      'on_hold': Icons.pause,
+      'dropped': Icons.close
+    };
+
+    icon = map[value] ?? Icons.add_rounded;
+
+    return icon;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,15 +130,16 @@ class AnimeActionsWidget extends StatelessWidget {
                 ),
               ],
             ),
-            if (anime.kind != 'music')
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: onPlayPress,
-                  label: const Text('Смотреть'),
-                  icon: const Icon(Icons.play_arrow),
-                ),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: onBtnPress,
+                label: Text(anime.userRate != null
+                    ? getStatus(anime.userRate!.status ?? '', 0)
+                    : 'Добавить в список'),
+                icon: Icon(getIcon(anime.userRate?.status ?? '')),
               ),
+            ),
           ],
         ),
       ),

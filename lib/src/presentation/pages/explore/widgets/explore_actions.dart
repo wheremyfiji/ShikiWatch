@@ -75,7 +75,7 @@ class ExploreActions extends StatelessWidget {
           height: 8,
         ),
         CustomCardButton(
-          label: 'Выйдет в след. сезоне',
+          label: 'Выйдет в ближайшее время', // Выйдет в след. сезоне
           icon: Icons.interests_rounded,
           onTap: () => context.pushNamed('next_season_anime'),
         ),

@@ -23,9 +23,9 @@ import '../anime_details/related_titles.dart';
 import '../comments/comments_page.dart';
 
 import 'widgets/manga_chips.dart';
-import 'widgets/manga_detail_fab.dart';
 import 'widgets/manga_info_header.dart';
 import 'widgets/manga_rates_statuses.dart';
+import 'widgets/user_rate_widget.dart';
 
 const double dividerHeight = 16;
 
@@ -40,11 +40,6 @@ class MangaDetailPage extends ConsumerWidget {
 
     return Scaffold(
       //extendBodyBehindAppBar: true,
-      floatingActionButton: mangaDetails.title.when(
-        data: (data) => MangaDetailFAB(data: data, manga: manga),
-        error: (error, stackTrace) => null,
-        loading: () => null,
-      ),
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(mangaDetailsPageProvider(manga.id!)),
         child: CustomScrollView(
@@ -187,7 +182,24 @@ class MangaActionsWidget extends StatelessWidget {
     required this.data,
   });
 
-  String getRateStatus(String value) {
+  // String getRateStatus(String value) {
+  //   String status;
+
+  //   const map = {
+  //     'planned': 'В планах',
+  //     'watching': 'Читаю',
+  //     'rewatching': 'Перечитываю',
+  //     'completed': 'Прочитано',
+  //     'on_hold': 'Отложено',
+  //     'dropped': 'Брошено'
+  //   };
+
+  //   status = map[value] ?? '';
+
+  //   return status;
+  // }
+
+  String getStatus(String value, int? c) {
     String status;
 
     const map = {
@@ -201,7 +213,24 @@ class MangaActionsWidget extends StatelessWidget {
 
     status = map[value] ?? '';
 
-    return status;
+    return (c != 0 && value == 'watching') ? '$status (Глава $c)' : status;
+  }
+
+  IconData getIcon(String value) {
+    IconData icon;
+
+    const map = {
+      'planned': Icons.event_available,
+      'watching': Icons.auto_stories,
+      'rewatching': Icons.refresh,
+      'completed': Icons.done_all,
+      'on_hold': Icons.pause,
+      'dropped': Icons.close
+    };
+
+    icon = map[value] ?? Icons.edit;
+
+    return icon;
   }
 
   @override
@@ -212,78 +241,113 @@ class MangaActionsWidget extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        SimilarMangaPage(mangaId: manga.id!),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            SimilarMangaPage(mangaId: manga.id!),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    ),
+                    child: const Column(
+                      children: [
+                        Icon(Icons.join_inner),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text('Похожее'),
+                      ],
+                    ),
                   ),
                 ),
-                child: const Column(
-                  children: [
-                    Icon(Icons.join_inner),
-                    SizedBox(
-                      height: 4,
+                Expanded(
+                  child: TextButton(
+                    onPressed: (topicId == null || topicId == 0)
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        CommentsPage(
+                                  topicId: topicId,
+                                ),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
+                    child: const Column(
+                      children: [
+                        Icon(Icons.topic), //chat
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'Обсуждение',
+                          // style: TextStyle(
+                          //   color: context.textTheme.bodyMedium?.color,
+                          // ),
+                        ),
+                      ],
                     ),
-                    Text('Похожее'),
-                  ],
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      _openFullscreenDialog(context);
+                    },
+                    child: const Column(
+                      children: [
+                        Icon(Icons.link),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text('Ссылки'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: TextButton(
-                onPressed: (topicId == null || topicId == 0)
-                    ? null
-                    : () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation1, animation2) =>
-                                CommentsPage(
-                              topicId: topicId,
-                            ),
-                            transitionDuration: Duration.zero,
-                            reverseTransitionDuration: Duration.zero,
-                          ),
-                        );
-                      },
-                child: const Column(
-                  children: [
-                    Icon(Icons.topic), //chat
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      'Обсуждение',
-                      // style: TextStyle(
-                      //   color: context.textTheme.bodyMedium?.color,
-                      // ),
-                    ),
-                  ],
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width >= 700
+                        ? 700
+                        : double.infinity,
+                  ),
+                  useRootNavigator: true,
+                  isScrollControlled: true,
+                  enableDrag: false,
+                  useSafeArea: true,
+                  builder: (context) {
+                    return SafeArea(
+                      child: MangaUserRateBottomSheet(
+                        manga: manga,
+                        data: data,
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ),
-            Expanded(
-              child: TextButton(
-                onPressed: () {
-                  _openFullscreenDialog(context);
-                },
-                child: const Column(
-                  children: [
-                    Icon(Icons.link),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text('Ссылки'),
-                  ],
-                ),
+                label: Text(data.userRate != null
+                    ? getStatus(data.userRate!.status ?? '', 0)
+                    : 'Добавить в список'),
+                icon: Icon(getIcon(data.userRate?.status ?? '')),
               ),
             ),
           ],
