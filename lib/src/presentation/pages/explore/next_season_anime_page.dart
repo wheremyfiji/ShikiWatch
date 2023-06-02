@@ -24,7 +24,7 @@ class NextSeasonAnimePage extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           const SliverAppBar.large(
-            title: Text('Выйдет в след. сезоне'),
+            title: Text('Выйдет в ближайшее время'), // Выйдет в след. сезоне
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -107,8 +107,9 @@ class NextSeasonAnimePageController extends ChangeNotifier {
         page: pageKey,
         limit: _limit,
         order: 'popularity',
+        status: 'anons',
+        season: nextSeason(),
         censored: 'true',
-        season: getNextSeason(),
         userToken: SecureStorageService.instance.token,
         cancelToken: cancelToken,
       );
@@ -126,4 +127,20 @@ class NextSeasonAnimePageController extends ChangeNotifier {
       _pagingController.error = error;
     }
   }
+}
+
+String nextSeason() {
+  final currentDate = DateTime.now();
+  //DateTime(2023, 8, 12);
+
+  final currentMonth = currentDate.month;
+  final currentYear =
+      //currentMonth == 12
+      [10, 11, 12].contains(currentMonth)
+          ? currentDate.year + 1
+          : currentDate.year;
+
+  final season = getSeasonEng(currentMonth + 1);
+
+  return '${season}_$currentYear,${getNextSeason(season)}_$currentYear';
 }

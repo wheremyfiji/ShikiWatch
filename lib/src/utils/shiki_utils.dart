@@ -85,16 +85,37 @@ String getSeasonEng(int month) {
   } else if ([6, 7, 8].contains(month)) {
     return 'summer';
   } else if ([9, 10, 11].contains(month)) {
-    return 'autumn';
+    return 'fall';
   } else {
     return 'winter';
   }
 }
 
-String getNextSeason() {
-  final currentYear = DateTime.now().year;
-  final currentMonth = DateTime.now().month;
-  final season = getSeasonEng(currentMonth + 1);
+String getNextSeason(String season) {
+  switch (season) {
+    case 'spring':
+      return 'summer';
 
-  return '${season}_$currentYear';
+    case 'summer':
+      return 'fall';
+
+    case 'fall':
+      return 'winter';
+
+    case 'winter':
+      return 'spring';
+    default:
+      return '';
+  }
 }
+
+// String getNextSeason() {
+//   final currentDate = DateTime.now();
+//   final currentMonth = currentDate.month;
+//   final currentYear =
+//       currentMonth == 12 ? currentDate.year + 1 : currentDate.year;
+
+//   final season = getSeasonEng(currentMonth + 1);
+
+//   return '${season}_$currentYear';
+// }
