@@ -3,11 +3,13 @@ import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 class CoolChip extends StatelessWidget {
   final String label;
+  final Widget? avatar;
   final Color? backgroundColor;
 
   const CoolChip({
     super.key,
     required this.label,
+    this.avatar,
     this.backgroundColor,
   });
 
@@ -22,6 +24,7 @@ class CoolChip extends StatelessWidget {
           ?.copyWith(color: context.theme.colorScheme.onSecondaryContainer),
       backgroundColor:
           backgroundColor ?? context.theme.colorScheme.secondaryContainer,
+      avatar: avatar,
       label: Text(label),
     );
   }

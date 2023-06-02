@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
 import 'package:shikidev/src/utils/extensions/string_ext.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
-//import '../../../domain/models/anime.dart';
 import '../../../domain/models/shiki_comment.dart';
 import '../../providers/comments_provider.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/cool_chip.dart';
 
 class CommentsPage extends ConsumerWidget {
-  //final Anime anime;
   final int topicId;
   const CommentsPage({super.key, required this.topicId});
 
@@ -34,7 +33,6 @@ class CommentsPage extends ConsumerWidget {
               title: Text('Обсуждение'),
             ),
             SliverPadding(
-              // padding: const EdgeInsets.all(16.0),
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: PagedSliverList<int, ShikiComment>(
                 pagingController: controller.pageController,
@@ -52,41 +50,41 @@ class CommentsPage extends ConsumerWidget {
       ),
     );
 
-    return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar.large(
-              forceElevated: innerBoxIsScrolled,
-              stretch: true,
-              title: const Text('Обсуждение'),
-            ),
-          ];
-        },
-        body: RefreshIndicator(
-          onRefresh: () => Future.sync(
-            () => controller.pageController.refresh(),
-          ),
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.all(16.0),
-                sliver: PagedSliverList<int, ShikiComment>(
-                  pagingController: controller.pageController,
-                  builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
-                    itemBuilder: (context, item, index) {
-                      return CommentWidget(
-                        comment: item,
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    // return Scaffold(
+    //   body: NestedScrollView(
+    //     headerSliverBuilder: (context, innerBoxIsScrolled) {
+    //       return [
+    //         SliverAppBar.large(
+    //           forceElevated: innerBoxIsScrolled,
+    //           stretch: true,
+    //           title: const Text('Обсуждение'),
+    //         ),
+    //       ];
+    //     },
+    //     body: RefreshIndicator(
+    //       onRefresh: () => Future.sync(
+    //         () => controller.pageController.refresh(),
+    //       ),
+    //       child: CustomScrollView(
+    //         slivers: [
+    //           SliverPadding(
+    //             padding: const EdgeInsets.all(16.0),
+    //             sliver: PagedSliverList<int, ShikiComment>(
+    //               pagingController: controller.pageController,
+    //               builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
+    //                 itemBuilder: (context, item, index) {
+    //                   return CommentWidget(
+    //                     comment: item,
+    //                   );
+    //                 },
+    //               ),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 
@@ -99,8 +97,9 @@ class CommentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final updatedAt =
         DateTime.tryParse(comment.updatedAt ?? '')?.toLocal() ?? DateTime(1970);
-    final date = DateFormat.yMMMMd().format(updatedAt);
-    final time = DateFormat.Hms().format(updatedAt);
+
+    //final date = DateFormat.yMMMMd().format(updatedAt);
+    //final time = DateFormat.Hms().format(updatedAt);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -137,7 +136,8 @@ class CommentWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '$date в $time',
+                          //'$date в $time',
+                          timeago.format(updatedAt, locale: 'ru'),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 import 'package:shikidev/src/utils/extensions/string_ext.dart';
 
@@ -19,10 +21,11 @@ import '../../widgets/manga_card.dart';
 import '../../widgets/title_description.dart';
 import '../anime_details/related_titles.dart';
 import '../comments/comments_page.dart';
+
 import 'widgets/manga_chips.dart';
+import 'widgets/manga_detail_fab.dart';
 import 'widgets/manga_info_header.dart';
 import 'widgets/manga_rates_statuses.dart';
-import 'widgets/user_rate_widget.dart';
 
 const double dividerHeight = 16;
 
@@ -38,38 +41,7 @@ class MangaDetailPage extends ConsumerWidget {
     return Scaffold(
       //extendBodyBehindAppBar: true,
       floatingActionButton: mangaDetails.title.when(
-        data: (data) {
-          return FloatingActionButton.extended(
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width >= 700
-                      ? 700
-                      : double.infinity,
-                ),
-                useRootNavigator: true,
-                isScrollControlled: true,
-                enableDrag: false,
-                useSafeArea: true,
-                builder: (context) {
-                  return SafeArea(
-                    child: MangaUserRateBottomSheet(
-                      manga: manga,
-                      data: data,
-                    ),
-                  );
-                },
-              );
-            },
-            label: data.userRate == null
-                ? const Text('Добавить в список')
-                : const Text('Изменить'),
-            icon: data.userRate == null
-                ? const Icon(Icons.add)
-                : const Icon(Icons.edit),
-          );
-        },
+        data: (data) => MangaDetailFAB(data: data, manga: manga),
         error: (error, stackTrace) => null,
         loading: () => null,
       ),
@@ -131,17 +103,17 @@ class MangaDetailPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                if (data.userRate != null) ...[
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: UserRateWidget(
-                        manga: manga,
-                        data: data,
-                      ),
-                    ),
-                  ),
-                ],
+                // if (data.userRate != null) ...[
+                //   SliverPadding(
+                //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                //     sliver: SliverToBoxAdapter(
+                //       child: UserRateWidget(
+                //         manga: manga,
+                //         data: data,
+                //       ),
+                //     ),
+                //   ),
+                // ],
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   sliver: SliverToBoxAdapter(

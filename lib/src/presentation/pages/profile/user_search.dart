@@ -1,11 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+
 import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
 import '../../../data/data_sources/user_data_src.dart';
@@ -101,21 +102,27 @@ class UserSearchItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final userLastOnline =
         DateTime.tryParse(user.lastOnlineAt ?? '')?.toLocal() ?? DateTime(1970);
-    final date = DateFormat.yMd().format(userLastOnline);
-    final time = DateFormat.Hm().format(userLastOnline);
+    //final date = DateFormat.yMd().format(userLastOnline);
+    //final time = DateFormat.Hm().format(userLastOnline);
 
     return ListTile(
       onTap: () => context.push('/profile/${user.id!}', extra: user),
       leading: CircleAvatar(
+        maxRadius: 32,
         backgroundColor: Colors.transparent,
-        backgroundImage: CachedNetworkImageProvider(user.avatar ?? ''),
+        backgroundImage: CachedNetworkImageProvider(user.image?.x160 ?? ''),
       ),
       title: Text(
         user.nickname ?? '',
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+      //subtitle: Text('Был(а) в сети $date в $time'),
+      subtitle: Text(
+        'Послед. онлайн ${timeago.format(userLastOnline, locale: 'ru')}',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: Text('Был(а) в сети $date в $time'),
     );
   }
 }

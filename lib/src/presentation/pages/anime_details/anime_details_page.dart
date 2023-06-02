@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../constants/config.dart';
 import '../../../domain/models/animes.dart';
@@ -21,11 +23,11 @@ import 'studio_select_page.dart';
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
+import 'widgets/details_fab.dart';
 import 'widgets/details_screenshots.dart';
 import 'widgets/info_header.dart';
 import 'widgets/rates_statuses_widget.dart';
 import '../../widgets/title_description.dart';
-import 'widgets/user_anime_rate.dart';
 
 const double dividerHeight = 16;
 
@@ -67,38 +69,7 @@ class AnimeDetailsPage extends ConsumerWidget {
     return Scaffold(
       //extendBodyBehindAppBar: true,
       floatingActionButton: titleInfo.title.when(
-        data: (data) {
-          return FloatingActionButton.extended(
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width >= 700
-                      ? 700
-                      : double.infinity,
-                ),
-                useRootNavigator: true,
-                isScrollControlled: true,
-                enableDrag: false,
-                useSafeArea: true,
-                builder: (context) {
-                  return SafeArea(
-                    child: AnimeUserRateBottomSheet(
-                      data: data,
-                      anime: animeData,
-                    ),
-                  );
-                },
-              );
-            },
-            label: data.userRate == null
-                ? const Text('Добавить в список')
-                : const Text('Изменить'),
-            icon: data.userRate == null
-                ? const Icon(Icons.add)
-                : const Icon(Icons.edit),
-          );
-        },
+        data: (data) => AnimeDetailsFAB(data: data, animeData: animeData),
         error: (error, stackTrace) => null,
         loading: () => null,
       ),

@@ -17,6 +17,7 @@ import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import 'secret.dart';
 import 'src/constants/box_types.dart';
@@ -58,6 +59,8 @@ void initApp() async {
 
   Intl.defaultLocale = 'ru_RU';
   initializeDateFormatting("ru_RU", null);
+
+  timeago.setLocaleMessages('ru', timeago.RuMessages());
 
   TargetP.init();
 
