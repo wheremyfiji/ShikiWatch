@@ -71,14 +71,14 @@ class ExploreActions extends StatelessWidget {
           icon: Icons.calendar_month_rounded, //schedule
           onTap: () => context.pushNamed('calendar'),
         ),
-        const SizedBox(
-          height: 8,
-        ),
-        CustomCardButton(
-          label: 'Выйдет в ближайшее время', // Выйдет в след. сезоне
-          icon: Icons.interests_rounded,
-          onTap: () => context.pushNamed('next_season_anime'),
-        ),
+        // const SizedBox(
+        //   height: 8,
+        // ),
+        // CustomCardButton(
+        //   label: 'Выйдет в ближайшее время', // Выйдет в след. сезоне
+        //   icon: Icons.interests_rounded,
+        //   onTap: () => context.pushNamed('next_season_anime'),
+        // ),
       ],
     );
   }
