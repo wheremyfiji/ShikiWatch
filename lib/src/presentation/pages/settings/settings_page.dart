@@ -274,7 +274,7 @@ class SettingsPage extends ConsumerWidget {
                 const SettingsOption(
                   title: 'ShikiWatch',
                   subtitle:
-                      'Неофициальное приложения для сайта shikimori.me с возможностью онлайн просмотра anime',
+                      'Неофициальное приложение для сайта shikimori.me с возможностью онлайн просмотра anime',
                   onTap: null,
                 ),
                 const VersionWidget(),

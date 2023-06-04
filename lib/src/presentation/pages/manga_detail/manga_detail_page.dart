@@ -228,7 +228,7 @@ class MangaActionsWidget extends StatelessWidget {
       'dropped': Icons.close
     };
 
-    icon = map[value] ?? Icons.edit;
+    icon = map[value] ?? Icons.add_rounded;
 
     return icon;
   }

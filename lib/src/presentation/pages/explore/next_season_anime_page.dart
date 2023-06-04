@@ -79,7 +79,7 @@ final nextSeasonAnimePageProvider = ChangeNotifierProvider.autoDispose((ref) {
   });
 
   return c;
-}, name: 'exploreTopAnimePageProvider');
+}, name: 'nextSeasonAnimePageProvider');
 
 class NextSeasonAnimePageController extends ChangeNotifier {
   NextSeasonAnimePageController({
