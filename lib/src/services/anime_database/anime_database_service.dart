@@ -102,8 +102,21 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
         ...?anime.studios?[studioIndex].episodes
             ?.where((element) => element.nubmer != episodeNumber)
       ];
-      // обновляем время
+
       anime.studios?[studioIndex!].updated = updateTime;
+
+      if (anime.studios![studioIndex!].episodes!.isEmpty) {
+        anime.studios = [
+          ...?anime.studios?.where((element) => element.id != studioId)
+        ];
+      }
+
+      if (anime.studios!.isEmpty) {
+        await isardb.animeDatabases.delete(anime.id);
+
+        return;
+      }
+
       anime.lastUpdate = updateTime;
       await isardb.animeDatabases.put(anime);
     });
