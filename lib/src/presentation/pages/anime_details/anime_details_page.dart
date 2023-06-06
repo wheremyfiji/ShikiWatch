@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-
-import '../../../constants/config.dart';
-import '../../../domain/models/animes.dart';
 import '../../../services/shared_pref/shared_preferences_provider.dart';
-import '../../../utils/shiki_utils.dart';
 import '../../providers/anime_details_provider.dart';
+import '../../../utils/extensions/buildcontext.dart';
+import '../../../domain/models/animes.dart';
+import '../../../constants/config.dart';
+import '../../../utils/shiki_utils.dart';
 import '../../widgets/error_widget.dart';
-import '../../widgets/header_appbar_title.dart';
 
 import '../../widgets/image_with_shimmer.dart';
-import 'rating_dialog.dart';
-import 'related_titles.dart';
-import 'studio_select_page.dart';
+import '../../widgets/title_description.dart';
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
 import 'widgets/details_screenshots.dart';
 import 'widgets/info_header.dart';
 import 'widgets/rates_statuses_widget.dart';
-import '../../widgets/title_description.dart';
 import 'widgets/user_anime_rate.dart';
+import 'studio_select_page.dart';
+import 'rating_dialog.dart';
+import 'related_titles.dart';
 
 const double dividerHeight = 16;
 
@@ -67,7 +66,6 @@ class AnimeDetailsPage extends ConsumerWidget {
     final titleInfo = ref.watch(titleInfoPageProvider(animeData.id!));
 
     return Scaffold(
-      //extendBodyBehindAppBar: true,
       floatingActionButton: titleInfo.title.when(
         data: (data) => data.kind == 'music'
             ? null
@@ -133,35 +131,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                 icon: const Icon(Icons.play_arrow_rounded),
                 label: const Text('Смотреть'),
               ),
-        // FloatingActionButton.extended(
-        //   onPressed: () => showModalBottomSheet<void>(
-        //     context: context,
-        //     constraints: BoxConstraints(
-        //       maxWidth: MediaQuery.of(context).size.width >= 700
-        //           ? 700
-        //           : double.infinity,
-        //     ),
-        //     useRootNavigator: true,
-        //     isScrollControlled: true,
-        //     enableDrag: false,
-        //     useSafeArea: true,
-        //     builder: (context) {
-        //       return SafeArea(
-        //         child: AnimeUserRateBottomSheet(
-        //           data: data,
-        //           anime: animeData,
-        //         ),
-        //       );
-        //     },
-        //   ),
-        //   label: data.userRate == null
-        //       ? const Text('Добавить в список')
-        //       : Text(getStatus(data.userRate!.status ?? 'Изменить',
-        //           data.userRate!.episodes)),
-        //   icon: data.userRate == null
-        //       ? const Icon(Icons.add)
-        //       : Icon(getIcon(data.userRate!.status ?? '')),
-        // ),
         error: (error, stackTrace) => null,
         loading: () => null,
       ),
@@ -169,15 +138,21 @@ class AnimeDetailsPage extends ConsumerWidget {
         onRefresh: () async =>
             ref.refresh(titleInfoPageProvider(animeData.id!)),
         child: CustomScrollView(
-          shrinkWrap: true,
+          //shrinkWrap: true,
           slivers: [
             SliverAppBar(
-              stretch: true,
               pinned: true,
-              floating: false,
-              expandedHeight: 300,
-              title: HeaderAppBarTitle(
-                text: animeData.russian ?? animeData.name ?? '[Без навзвания]',
+              expandedHeight: 280,
+              title: Text(
+                (animeData.russian == ''
+                        ? animeData.name
+                        : animeData.russian) ??
+                    '',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: context.theme.colorScheme.onBackground,
+                ),
               ),
               actions: [
                 PopupMenuButton(
@@ -207,7 +182,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                 ),
               ],
               flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
                 background: AnimeInfoHeader(
                   data: animeData,
                   duration: titleInfo.duration,
@@ -220,7 +194,7 @@ class AnimeDetailsPage extends ConsumerWidget {
             ...titleInfo.title.when(
               data: (data) => [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
                   sliver: SliverToBoxAdapter(
                     child: AnimeActionsWidget(
                       anime: data,
@@ -244,28 +218,18 @@ class AnimeDetailsPage extends ConsumerWidget {
                           );
                         },
                       ),
-                    ),
+                    ).animate().fadeIn(),
                   ),
                 ),
-                // SliverPadding(
-                //   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                //   sliver: SliverToBoxAdapter(
-                //     child: UserAnimeRateWidget(
-                //       animeData,
-                //       data,
-                //       '',
-                //     ),
-                //   ),
-                // ),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+                  padding: const EdgeInsets.only(bottom: 6),
                   sliver: SliverToBoxAdapter(
                     child: AnimeChipsWidget(
                       genres: data.genres,
                       studios: data.studios,
                       score: animeData.score,
                       rating: titleInfo.rating,
-                    ),
+                    ).animate().fade(),
                   ),
                 ),
                 if (data.description != null) ...[
@@ -275,7 +239,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                     sliver: SliverToBoxAdapter(
                       child: TitleDescription(
                         data.descriptionHtml!,
-                      ),
+                      ).animate().fade(),
                     ),
                   ),
                 ],
@@ -286,7 +250,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                     sliver: SliverToBoxAdapter(
                       child: AnimeRatesStatusesWidget(
                         statsValues: titleInfo.statsValues,
-                      ),
+                      ).animate().fade(),
                     ),
                   ),
                 ],
@@ -301,7 +265,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                     sliver: SliverToBoxAdapter(
-                      child: AnimeScreenshots(data),
+                      child: AnimeScreenshots(data).animate().fade(),
                     ),
                   ),
                 ],
@@ -310,7 +274,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                     sliver: SliverToBoxAdapter(
-                      child: AnimeVideosMobileWidget(data),
+                      child: AnimeVideosMobileWidget(data).animate().fade(),
                     ),
                   ),
                 ],
@@ -519,7 +483,7 @@ class RelatedWidget extends ConsumerWidget {
                 },
               ),
             ],
-          ),
+          ).animate().fade(),
         );
       },
       error: (error, stackTrace) {

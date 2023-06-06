@@ -76,7 +76,7 @@ class AnimeActionsWidget extends StatelessWidget {
                         SizedBox(
                           height: 4,
                         ),
-                        Text('Похожее'),
+                        Text('Похожее', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -105,9 +105,7 @@ class AnimeActionsWidget extends StatelessWidget {
                         SizedBox(
                           height: 4,
                         ),
-                        Text(
-                          'Обсуждение',
-                        ),
+                        Text('Обсуждение', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -123,7 +121,7 @@ class AnimeActionsWidget extends StatelessWidget {
                         SizedBox(
                           height: 4,
                         ),
-                        Text('Ссылки'),
+                        Text('Ссылки', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),

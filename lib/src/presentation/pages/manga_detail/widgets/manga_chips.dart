@@ -25,6 +25,9 @@ class MangaChipsWidget extends StatelessWidget {
         spacing: 8,
         runSpacing: 0,
         children: [
+          const SizedBox(
+            width: 8.0,
+          ),
           if (score != null && score != '0.0')
             Chip(
               avatar: const Icon(Icons.star),
@@ -45,43 +48,11 @@ class MangaChipsWidget extends StatelessWidget {
             ...List.generate(publishers!.length,
                 (index) => CoolChip(label: publishers![index].name ?? "")),
           ],
+          const SizedBox(
+            width: 8.0,
+          ),
         ],
       ),
     );
-
-    // return Card(
-    //   margin: EdgeInsets.zero,
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(8.0),
-    //     child: Wrap(
-    //       crossAxisAlignment: WrapCrossAlignment.end,
-    //       alignment: WrapAlignment.start,
-    //       direction: Axis.horizontal,
-    //       spacing: 8,
-    //       runSpacing: 0, //0
-    //       children: [
-    //         Chip(
-    //           avatar: const Icon(Icons.star),
-    //           padding: const EdgeInsets.all(0),
-    //           shadowColor: Colors.transparent,
-    //           elevation: 0,
-    //           side: const BorderSide(width: 0, color: Colors.transparent),
-    //           labelStyle: context.theme.textTheme.bodyMedium?.copyWith(
-    //               color: context.theme.colorScheme.onSecondaryContainer),
-    //           backgroundColor: context.theme.colorScheme.secondaryContainer,
-    //           label: Text(score ?? '0'),
-    //         ),
-    //         if (genres != null) ...[
-    //           ...List.generate(genres!.length,
-    //               (index) => CoolChip(label: genres![index].russian ?? "")),
-    //         ],
-    //         if (publishers != null) ...[
-    //           ...List.generate(publishers!.length,
-    //               (index) => CoolChip(label: publishers![index].name ?? "")),
-    //         ],
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

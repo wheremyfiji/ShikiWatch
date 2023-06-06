@@ -67,14 +67,12 @@ final GoRouter router = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       pageBuilder: (context, state) {
         AnimePlayerPageExtra data = state.extra as AnimePlayerPageExtra;
-        return CustomTransitionPage(
+
+        return FadeTransitionPage(
+          key: state.pageKey,
           child: TargetP.instance.isDesktop
               ? AnimePlayerDesktopPage(data: data)
               : AnimePlayerPage(data: data),
-          transitionsBuilder: (_, animation, __, child) =>
-              FadeTransition(opacity: animation, child: child),
-          transitionDuration: const Duration(milliseconds: 150),
-          reverseTransitionDuration: const Duration(milliseconds: 0),
         );
       },
     ),
@@ -84,12 +82,9 @@ final GoRouter router = GoRouter(
       name: 'backup',
       parentNavigatorKey: _rootNavigatorKey,
       pageBuilder: (context, state) {
-        return CustomTransitionPage(
+        return FadeTransitionPage(
+          key: state.pageKey,
           child: const LocalDatabaseManage(),
-          transitionsBuilder: (_, animation, __, child) =>
-              FadeTransition(opacity: animation, child: child),
-          transitionDuration: const Duration(milliseconds: 150),
-          reverseTransitionDuration: const Duration(milliseconds: 0),
         );
       },
     ),
@@ -132,7 +127,8 @@ final GoRouter router = GoRouter(
                   path: 'anime/:id',
                   pageBuilder: (context, state) {
                     Animes data = state.extra as Animes;
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: TargetP.instance.isDesktop
                           ? AnimeDetailsDesktopPage(
                               key: state.pageKey,
@@ -142,11 +138,6 @@ final GoRouter router = GoRouter(
                               key: state.pageKey,
                               animeData: data,
                             ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -155,16 +146,13 @@ final GoRouter router = GoRouter(
                   path: 'manga/:id',
                   pageBuilder: (context, state) {
                     MangaShort data = state.extra as MangaShort;
-                    return CustomTransitionPage(
+
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: MangaDetailPage(
                         key: state.pageKey,
                         manga: data,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -193,37 +181,30 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     final sId = state.queryParameters['studioId'];
                     final gId = state.queryParameters['genreId'];
-                    return CustomTransitionPage(
+
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: AnimeSearchPage(
                         key: state.pageKey,
                         studioId: sId == null ? null : int.tryParse(sId),
                         genreId: gId == null ? null : int.tryParse(gId),
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 50),
                     );
                   },
                   routes: [
                     GoRoute(
-                        name: 'search_filters', //AnimeSearchController
-                        path: 'filters',
-                        pageBuilder: (context, state) {
-                          SearchPageParameters p =
-                              state.extra as SearchPageParameters;
-                          return CustomTransitionPage(
-                            child: AnimeFilterPage(p),
-                            transitionsBuilder: (_, animation, __, child) =>
-                                FadeTransition(
-                                    opacity: animation, child: child),
-                            transitionDuration:
-                                const Duration(milliseconds: 150),
-                            reverseTransitionDuration:
-                                const Duration(milliseconds: 50),
-                          );
-                        }),
+                      name: 'search_filters', //AnimeSearchController
+                      path: 'filters',
+                      pageBuilder: (context, state) {
+                        SearchPageParameters p =
+                            state.extra as SearchPageParameters;
+
+                        return FadeTransitionPage(
+                          key: state.pageKey,
+                          child: AnimeFilterPage(p),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 GoRoute(
@@ -231,7 +212,9 @@ final GoRouter router = GoRouter(
                   path: r':id(\d+)',
                   pageBuilder: (context, state) {
                     Animes data = state.extra as Animes;
-                    return CustomTransitionPage(
+
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: TargetP.instance.isDesktop
                           ? AnimeDetailsDesktopPage(
                               key: state.pageKey,
@@ -241,11 +224,6 @@ final GoRouter router = GoRouter(
                               key: state.pageKey,
                               animeData: data,
                             ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -253,15 +231,11 @@ final GoRouter router = GoRouter(
                   name: 'calendar',
                   path: 'calendar',
                   pageBuilder: (context, state) {
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: CalendarPage(
                         key: state.pageKey,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -269,15 +243,11 @@ final GoRouter router = GoRouter(
                   name: 'top_anime',
                   path: 'top_anime',
                   pageBuilder: (context, state) {
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: TopAnimePage(
                         key: state.pageKey,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -285,15 +255,11 @@ final GoRouter router = GoRouter(
                   name: 'top_manga',
                   path: 'top_manga',
                   pageBuilder: (context, state) {
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: TopMangaPage(
                         key: state.pageKey,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -301,15 +267,11 @@ final GoRouter router = GoRouter(
                   name: 'next_season_anime',
                   path: 'next_season_anime',
                   pageBuilder: (context, state) {
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: NextSeasonAnimePage(
                         key: state.pageKey,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -337,16 +299,13 @@ final GoRouter router = GoRouter(
                   path: r':id(\d+)',
                   pageBuilder: (context, state) {
                     User data = state.extra as User;
-                    return CustomTransitionPage(
+
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: UserProfilePage(
                         key: state.pageKey,
                         data: data,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 150),
                     );
                   },
                 ),
@@ -354,15 +313,11 @@ final GoRouter router = GoRouter(
                   name: 'user_search',
                   path: 'user_search',
                   pageBuilder: (context, state) {
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: UserSearchPage(
                         key: state.pageKey,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 0),
                     );
                   },
                 ),
@@ -370,15 +325,11 @@ final GoRouter router = GoRouter(
                   name: 'profile_settings',
                   path: 'settings',
                   pageBuilder: (context, state) {
-                    return CustomTransitionPage(
+                    return FadeTransitionPage(
+                      key: state.pageKey,
                       child: SettingsPage(
                         key: state.pageKey,
                       ),
-                      transitionsBuilder: (_, animation, __, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                      transitionDuration: const Duration(milliseconds: 150),
-                      reverseTransitionDuration:
-                          const Duration(milliseconds: 0),
                     );
                   },
                 ),
@@ -406,3 +357,26 @@ final GoRouter router = GoRouter(
   //   ),
   // ),
 );
+
+class FadeTransitionPage extends CustomTransitionPage<void> {
+  FadeTransitionPage({
+    required ValueKey<String> key,
+    required Widget child,
+  }) : super(
+          key: key,
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 150),
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return FadeTransition(
+                opacity: animation.drive(_curveTween), child: child);
+          },
+          child: child,
+        );
+
+  static final CurveTween _curveTween = CurveTween(
+      curve: Curves
+          .easeOutCirc); //easeInOutExpo   easeInOut   easeOutCirc   easeIn
+}

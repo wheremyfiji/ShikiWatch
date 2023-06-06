@@ -30,6 +30,9 @@ class AnimeChipsWidget extends StatelessWidget {
         spacing: 8,
         runSpacing: 0,
         children: [
+          const SizedBox(
+            width: 8.0,
+          ),
           if (score != null && score != '0.0')
             Chip(
               avatar: const Icon(Icons.star),
@@ -88,7 +91,6 @@ class AnimeChipsWidget extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundColor:
                         context.theme.colorScheme.secondaryContainer,
-                    //backgroundColor: Colors.grey,
                     backgroundImage: CachedNetworkImageProvider(
                       '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
                       cacheManager: cacheManager,
@@ -99,6 +101,9 @@ class AnimeChipsWidget extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(
+            width: 8.0,
+          ),
         ],
       ),
     );

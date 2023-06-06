@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -30,38 +27,23 @@ class MangaInfoHeader extends StatelessWidget {
     final releasedDateTime = format.parse(data.releasedOn ?? '1970-01-01');
     final releasedString = DateFormat.yMMM().format(releasedDateTime);
 
-    return Center(
-      child: Stack(
-        alignment: Alignment.centerLeft,
-        children: [
-          ClipRRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
-              child: Container(
-                height: height,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    filterQuality: FilterQuality.low,
-                    image: CachedNetworkImageProvider(
-                      AppConfig.staticUrl +
-                          (data.image?.original ?? data.image?.preview ?? ''),
-                      cacheManager: cacheManager,
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
+    return Stack(
+      alignment: Alignment.centerLeft,
+      children: [
+        Positioned.fill(
+          child: CachedImage(
+            AppConfig.staticUrl +
+                (data.image?.original ?? data.image?.preview ?? ''),
+            fit: BoxFit.cover,
           ),
-          Container(
-            height: height,
-            color: Theme.of(context).colorScheme.background.withOpacity(0.9),
-            alignment: Alignment.center,
-          ),
-          Container(
-            height: height,
-            width: MediaQuery.of(context).size.width,
+        ),
+        Container(
+          color: Theme.of(context).colorScheme.background.withOpacity(0.9),
+          alignment: Alignment.center,
+        ),
+        Positioned.fill(
+          child: Container(
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -70,170 +52,150 @@ class MangaInfoHeader extends StatelessWidget {
                 ],
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                stops: const [0, 1],
               ),
             ),
           ),
-          Positioned(
-            bottom: 20,
-            right: 1,
-            left: 1,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(width: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      GestureDetector(
-                        onTap: () => showSlideUp(
-                          context,
-                          ImageViewer(
+        ),
+        Positioned(
+          bottom: 0,
+          left: 16,
+          right: 1,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  GestureDetector(
+                    onTap: () => showSlideUp(
+                      context,
+                      ImageViewer(
+                        AppConfig.staticUrl +
+                            (data.image?.original ?? data.image?.preview ?? ''),
+                        cached: true,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        height: 220,
+                        child: AspectRatio(
+                          aspectRatio: 0.703,
+                          child: CachedImage(
                             AppConfig.staticUrl +
                                 (data.image?.original ??
                                     data.image?.preview ??
                                     ''),
-                            cached: true,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        child: CachedNetworkImage(
-                          imageUrl: AppConfig.staticUrl +
-                              (data.image?.original ??
-                                  data.image?.preview ??
-                                  ''),
-                          height: height - 150,
-                          width: 145,
-                          fit: BoxFit.cover,
-                          cacheManager: cacheManager,
-                        ),
                       ),
-                      // ExtendedImage.network(
-                      //   AppConfig.staticUrl +
-                      //       (data.image?.original ?? data.image?.preview ?? ''),
-                      //   height: height - 150,
-                      //   width: 145,
-                      //   fit: BoxFit.cover,
-                      //   cache: true,
-                      // ),
-                      // if (favoured) ...[
-                      //   const Padding(
-                      //     padding: EdgeInsets.all(8.0),
-                      //     child: Icon(
-                      //       Icons.star,
-                      //       color: Colors.yellow,
-                      //     ),
-                      //   ),
-                      // ],
-                    ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Flexible(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
+                  // if (favoured) ...[
+                  //   const Padding(
+                  //     padding: EdgeInsets.all(8.0),
+                  //     child: Icon(
+                  //       Icons.star,
+                  //       color: Colors.yellow,
+                  //     ),
+                  //   ),
+                  // ],
+                ],
+              ),
+              const SizedBox(
+                width: 16.0,
+              ),
+              Flexible(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _showSheet(context),
+                      child: Text(
+                        (data.russian == '' ? data.name : data.russian) ?? '',
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleSmall!
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (data.name != null) ...[
+                      const SizedBox(
+                        height: 2,
+                      ),
                       GestureDetector(
                         onTap: () => _showSheet(context),
                         child: Text(
-                          (data.russian == '' ? data.name : data.russian) ?? '',
-                          maxLines: 3,
-                          textAlign: TextAlign.start,
+                          data.name!,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
                               .titleSmall!
-                              .copyWith(fontWeight: FontWeight.bold),
+                              .copyWith(
+                                  fontSize: 12, fontWeight: FontWeight.normal),
                         ),
                       ),
-                      if (data.name != null) ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        GestureDetector(
-                          onTap: () => _showSheet(context),
-                          child: Text(
-                            data.name!,
-                            maxLines: 2,
-                            textAlign: TextAlign.start,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(fontWeight: FontWeight.normal),
-                          ),
-                        ),
-                      ],
+                    ],
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      '${getKind(data.kind!)} • ${getStatus(data.status!)}',
+                      textAlign: TextAlign.start,
+                    ),
+                    if (data.status == 'ongoing') ...[
                       const SizedBox(
-                        height: 8,
+                        height: 2,
                       ),
                       Text(
-                        '${getKind(data.kind!)} • ${getStatus(data.status!)}',
+                        'Выходит с $airedString',
                         textAlign: TextAlign.start,
                       ),
-                      if (data.status == 'ongoing') ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          'Выходит с $airedString',
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
-                      if (data.status == 'released') ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          data.releasedOn == null
-                              ? 'Издано в $airedString'
-                              : 'Издано в $releasedString',
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
-                      if (data.volumes != null &&
-                          data.volumes != 1 &&
-                          data.volumes != 0) ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          'Тома: ${data.volumes}',
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
-                      if (data.volumes != null && data.volumes != 0) ...[
-                        const SizedBox(
-                          height: 2,
-                        ),
-                        Text(
-                          'Главы: ${data.chapters}',
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
-                      // const SizedBox(
-                      //   height: 2,
-                      // ),
-                      // Text(
-                      //   'airedOn: ${data.airedOn}',
-                      //   textAlign: TextAlign.start,
-                      // ),
-                      // Text(
-                      //   'releasedOn: ${data.releasedOn}',
-                      //   textAlign: TextAlign.start,
-                      // ),
                     ],
-                  ),
+                    if (data.status == 'released') ...[
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        data.releasedOn == null
+                            ? 'Издано в $airedString'
+                            : 'Издано в $releasedString',
+                        textAlign: TextAlign.start,
+                      ),
+                    ],
+                    if (data.volumes != null &&
+                        data.volumes != 1 &&
+                        data.volumes != 0) ...[
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        'Тома: ${data.volumes}',
+                        textAlign: TextAlign.start,
+                      ),
+                    ],
+                    if (data.volumes != null && data.volumes != 0) ...[
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        'Главы: ${data.chapters}',
+                        textAlign: TextAlign.start,
+                      ),
+                    ],
+                  ],
                 ),
-                const SizedBox(width: 16),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

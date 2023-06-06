@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-import 'package:shikidev/src/utils/extensions/string_ext.dart';
-
+import '../../../utils/extensions/buildcontext.dart';
+import '../../../utils/extensions/string_ext.dart';
 import '../../../domain/models/manga_ranobe.dart';
 import '../../../domain/models/manga_short.dart';
 import '../../../constants/config.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../providers/manga_details_provider.dart';
 import '../../widgets/error_widget.dart';
-import '../../widgets/header_appbar_title.dart';
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/manga_card.dart';
 import '../../widgets/title_description.dart';
@@ -39,19 +38,21 @@ class MangaDetailPage extends ConsumerWidget {
     final mangaDetails = ref.watch(mangaDetailsPageProvider(manga.id!));
 
     return Scaffold(
-      //extendBodyBehindAppBar: true,
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(mangaDetailsPageProvider(manga.id!)),
         child: CustomScrollView(
-          shrinkWrap: true,
+          //shrinkWrap: true,
           slivers: [
             SliverAppBar(
-              stretch: true,
               pinned: true,
-              floating: false,
-              expandedHeight: 300,
-              title: HeaderAppBarTitle(
-                text: manga.russian ?? manga.name ?? '[Без навзвания]',
+              expandedHeight: 280,
+              title: Text(
+                (manga.russian == '' ? manga.name : manga.russian) ?? '',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: context.theme.colorScheme.onBackground,
+                ),
               ),
               actions: [
                 PopupMenuButton(
@@ -81,7 +82,6 @@ class MangaDetailPage extends ConsumerWidget {
                 ),
               ],
               flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
                 background: MangaInfoHeader(
                   data: manga,
                 ),
@@ -90,7 +90,7 @@ class MangaDetailPage extends ConsumerWidget {
             ...mangaDetails.title.when(
               data: (data) => [
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   sliver: SliverToBoxAdapter(
                     child: MangaActionsWidget(
                       manga: manga,
@@ -98,25 +98,14 @@ class MangaDetailPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                // if (data.userRate != null) ...[
-                //   SliverPadding(
-                //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                //     sliver: SliverToBoxAdapter(
-                //       child: UserRateWidget(
-                //         manga: manga,
-                //         data: data,
-                //       ),
-                //     ),
-                //   ),
-                // ],
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  padding: const EdgeInsets.only(bottom: 6),
                   sliver: SliverToBoxAdapter(
                     child: MangaChipsWidget(
                       genres: data.genres,
                       publishers: data.publishers,
                       score: manga.score,
-                    ),
+                    ).animate().fadeIn(),
                   ),
                 ),
                 if (data.description != null) ...[
@@ -124,7 +113,9 @@ class MangaDetailPage extends ConsumerWidget {
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
                     sliver: SliverToBoxAdapter(
-                      child: TitleDescription(data.descriptionHtml!),
+                      child: TitleDescription(data.descriptionHtml!)
+                          .animate()
+                          .fadeIn(),
                     ),
                   ),
                 ],
@@ -135,7 +126,7 @@ class MangaDetailPage extends ConsumerWidget {
                     sliver: SliverToBoxAdapter(
                       child: MangaRatesStatusesWidget(
                         statsValues: mangaDetails.statsValues,
-                      ),
+                      ).animate().fadeIn(),
                     ),
                   ),
                 ],
@@ -181,24 +172,6 @@ class MangaActionsWidget extends StatelessWidget {
     required this.manga,
     required this.data,
   });
-
-  // String getRateStatus(String value) {
-  //   String status;
-
-  //   const map = {
-  //     'planned': 'В планах',
-  //     'watching': 'Читаю',
-  //     'rewatching': 'Перечитываю',
-  //     'completed': 'Прочитано',
-  //     'on_hold': 'Отложено',
-  //     'dropped': 'Брошено'
-  //   };
-
-  //   status = map[value] ?? '';
-
-  //   return status;
-  // }
-
   String getStatus(String value, int? c) {
     String status;
 
@@ -264,7 +237,7 @@ class MangaActionsWidget extends StatelessWidget {
                         SizedBox(
                           height: 4,
                         ),
-                        Text('Похожее'),
+                        Text('Похожее', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -293,12 +266,7 @@ class MangaActionsWidget extends StatelessWidget {
                         SizedBox(
                           height: 4,
                         ),
-                        Text(
-                          'Обсуждение',
-                          // style: TextStyle(
-                          //   color: context.textTheme.bodyMedium?.color,
-                          // ),
-                        ),
+                        Text('Обсуждение', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -314,7 +282,7 @@ class MangaActionsWidget extends StatelessWidget {
                         SizedBox(
                           height: 4,
                         ),
-                        Text('Ссылки'),
+                        Text('Ссылки', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -703,7 +671,7 @@ class RelatedWidget extends ConsumerWidget {
               ),
             ],
           ),
-        );
+        ).animate().fadeIn();
       },
       error: (error, stackTrace) {
         return const SizedBox.shrink();

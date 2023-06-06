@@ -1,8 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
-
 import 'package:flutter/material.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../constants/config.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
@@ -35,9 +36,7 @@ class LocalHistoryTab extends ConsumerWidget {
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                  //sliver: SliverFixedExtentList(
                   sliver: SliverList(
-                    //itemExtent: 180.0,
                     delegate: SliverChildBuilderDelegate(
                       childCount: data.length,
                       (BuildContext context, int index) {
@@ -69,11 +68,9 @@ class LocalHistoryTab extends ConsumerWidget {
                           return const SizedBox.shrink();
                         }
 
-                        //if (studio.episodes!.isNotEmpty) {
                         episode = studio.episodes?.last.nubmer ?? 0;
                         final ts = studio.episodes?.last.timeStamp;
-                        //}
-                        //final episode = studio.episodes?.last.nubmer;
+
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
                           child: HistoryItem(
@@ -126,12 +123,12 @@ class HistoryItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //String formattedDate = DateFormat('yyyy-MM-dd в kk:mm').format(update);
-    //final current_mon = update.month;
-    //final day = update.day;
-    //final monthName = months[update.month - 1];
     final time = DateFormat('HH:mm').format(update); //kk
     final date = DateFormat.MMMd().format(update); //MMMEd  MMMMd
+
+    final lastUpdate =
+        timeago.format(update, locale: 'ru', allowFromNow: false);
+
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -155,7 +152,7 @@ class HistoryItem extends ConsumerWidget {
               ),
             ),
             const SizedBox(
-              width: 8,
+              width: 16,
             ),
             Expanded(
               child: Column(
@@ -175,7 +172,7 @@ class HistoryItem extends ConsumerWidget {
                   ),
                   Text('$episode серия • $studioName'),
                   if (timeStamp != null) Text(timeStamp!),
-                  Text('$date в $time'),
+                  Text('$date в $time ($lastUpdate)'),
                 ],
               ),
             ),
