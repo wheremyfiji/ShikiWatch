@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../constants/config.dart';
+import '../../../domain/models/pages_extra.dart';
 import '../../../domain/models/related_title.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../widgets/image_with_shimmer.dart';
@@ -70,12 +71,19 @@ class RelatedTitles extends StatelessWidget {
                                 extra: title,
                               );
                             } else {
+                              final extra = AnimeDetailsPageExtra(
+                                id: title.id!,
+                                label: (title.russian == ''
+                                        ? title.name
+                                        : title.russian) ??
+                                    '',
+                              );
                               context.pushNamed(
                                 'library_anime',
                                 pathParameters: <String, String>{
                                   'id': (title!.id!).toString(),
                                 },
-                                extra: title,
+                                extra: extra,
                               );
                             }
                           },

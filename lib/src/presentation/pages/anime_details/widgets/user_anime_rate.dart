@@ -1098,65 +1098,6 @@ class _AnimeUserRateBottomSheetState
                 const SizedBox(
                   height: 16,
                 ),
-                // Card(
-                //   clipBehavior: Clip.antiAlias,
-                //   shadowColor: Colors.transparent,
-                //   margin: EdgeInsets.zero,
-                //   child: Padding(
-                //     padding: const EdgeInsets.symmetric(
-                //       vertical: 8,
-                //       horizontal: 16,
-                //     ),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //       children: [
-                //         Wrap(
-                //           children: [
-                //             const Text('Эпизоды:'),
-                //             const SizedBox(
-                //               width: 4,
-                //             ),
-                //             Text(
-                //               '$progress/${epCount.toString()}',
-                //             ),
-                //           ],
-                //         ),
-                //         Wrap(
-                //           children: [
-                //             IconButton(
-                //               onPressed: () {
-                //                 if (progress == 0) {
-                //                   return;
-                //                 }
-                //                 setState(() {
-                //                   progress = progress - 1;
-                //                 });
-                //               },
-                //               icon: const Icon(Icons.remove),
-                //             ),
-                //             const SizedBox(
-                //               width: 4,
-                //             ),
-                //             IconButton(
-                //               onPressed: () {
-                //                 if (progress >= epCount) {
-                //                   return;
-                //                 }
-                //                 setState(() {
-                //                   progress = progress + 1;
-                //                 });
-                //               },
-                //               icon: const Icon(Icons.add),
-                //             ),
-                //           ],
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(
-                //   height: 16,
-                // ),
                 Card(
                   clipBehavior: Clip.antiAlias,
                   shadowColor: Colors.transparent,

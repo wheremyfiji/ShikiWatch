@@ -1,8 +1,8 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
@@ -42,6 +42,8 @@ class ShikiApp extends ConsumerWidget {
     if ((environment.sdkVersion ?? 0) > 28) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
+
+    //----------------------------------------------------------------------------------
 
     // return DynamicColorBuilder(
     //   builder: (lightDynamic, darkDynamic) {
@@ -94,14 +96,17 @@ class ShikiApp extends ConsumerWidget {
     //   },
     // );
 
+    //----------------------------------------------------------------------------------
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (environment.sdkVersion ?? 0) > 28 ? customStyle : defaultStyle,
       child: ValueListenableBuilder<Box>(
         valueListenable: Hive.box(BoxType.settings.name).listenable(
-          keys: [oledModeKey, themeModeKey],
+          keys: [oledModeKey, themeModeKey, dynamicThemeKey],
         ),
         builder: (context, value, child) {
           final bool isOled = value.get(oledModeKey, defaultValue: false);
+          final bool isDynamic = value.get(dynamicThemeKey, defaultValue: true);
 
           final ThemeMode themeMode = ThemeMode.values[value.get(
             themeModeKey,
@@ -119,9 +124,9 @@ class ShikiApp extends ConsumerWidget {
               return AppThemeBuilder(
                 dynamicLight: lightDynamic,
                 dynamicDark: darkDynamic,
+                isDynamic: isDynamic,
                 builder: (context, appTheme) => MaterialApp.router(
-                  themeAnimationDuration: Duration.zero,
-                  //useInheritedMediaQuery: true,
+                  //themeAnimationDuration: Duration.zero,
                   debugShowCheckedModeBanner: false,
 
                   //showPerformanceOverlay: true,
@@ -156,42 +161,6 @@ class ShikiApp extends ConsumerWidget {
               );
             },
           );
-
-          // return AppThemeBuilder(
-          //   builder: (context, appTheme) => MaterialApp.router(
-          //     //useInheritedMediaQuery: true,
-          //     debugShowCheckedModeBanner: false,
-
-          //     //showPerformanceOverlay: true,
-          //     //checkerboardOffscreenLayers: true,
-          //     //checkerboardRasterCacheImages: true,
-
-          //     theme: appTheme.day,
-          //     darkTheme: isOled ? appTheme.midnight : appTheme.night,
-          //     title: appTitle,
-          //     themeMode: themeMode,
-          //     routerConfig: router,
-          //     builder: (context, child) {
-          //       if (!kDebugMode) {
-          //         ErrorWidget.builder = (FlutterErrorDetails error) {
-          //           return const Center(
-          //             child: Text('Произошла ошибка'),
-          //           );
-          //         };
-          //       }
-
-          //       /// fix high textScaleFactor
-          //       final mediaQuery = MediaQuery.of(context);
-          //       final scale =
-          //           mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
-
-          //       return MediaQuery(
-          //         data: mediaQuery.copyWith(textScaleFactor: scale),
-          //         child: child!,
-          //       );
-          //     },
-          //   ),
-          // );
         },
       ),
     );

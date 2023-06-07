@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:tinycolor2/tinycolor2.dart';
 
 final appThemeDataProvider = Provider.autoDispose<AppThemeDataNotifier>((ref) {
   return AppThemeDataNotifier();
@@ -49,7 +48,7 @@ class AppThemeDataNotifier {
     final defScheme = isDark ? defDarkScheme : defLightScheme;
     final harmonized = useMonet ? scheme?.harmonized() ?? defScheme : defScheme;
     final colorScheme = harmonized.copyWith(
-      background: harmonized.surface.shade(isDark ? 30 : 3),
+      //background: harmonized.surface.shade(isDark ? 30 : 3),
       outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
     );
     final origin = isDark
@@ -78,15 +77,12 @@ class AppThemeDataNotifier {
         shadowColor: Colors.transparent,
       ),
       snackBarTheme: origin.snackBarTheme.copyWith(
-        backgroundColor: colorScheme.surfaceVariant,
-        contentTextStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+        backgroundColor: colorScheme.secondaryContainer,
+        contentTextStyle: TextStyle(color: colorScheme.onSecondaryContainer),
         behavior: SnackBarBehavior.floating,
-        // shape: const RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.only(
-        //     topLeft: Radius.circular(11),
-        //     topRight: Radius.circular(11),
-        //   ),
-        // ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+        ),
         //backgroundColor: colorScheme.primaryContainer,
         //contentTextStyle: TextStyle(color: colorScheme.onPrimaryContainer),
       ),

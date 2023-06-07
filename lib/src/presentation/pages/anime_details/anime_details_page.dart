@@ -414,12 +414,19 @@ class RelatedWidget extends ConsumerWidget {
                               extra: title,
                             );
                           } else {
+                            final extra = AnimeDetailsPageExtra(
+                              id: title.id!,
+                              label: (title.russian == ''
+                                      ? title.name
+                                      : title.russian) ??
+                                  '',
+                            );
                             context.pushNamed(
                               'library_anime',
                               pathParameters: <String, String>{
                                 'id': (title!.id!).toString(),
                               },
-                              extra: title,
+                              extra: extra,
                             );
                           }
                         },

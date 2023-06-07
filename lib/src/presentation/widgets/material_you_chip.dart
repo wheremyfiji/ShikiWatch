@@ -18,13 +18,15 @@ class MaterialYouChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius =
-        isSelected ? BorderRadius.circular(28) : BorderRadius.circular(12);
+        isSelected ? BorderRadius.circular(24) : BorderRadius.circular(12);
+
     final colorPrimary = isSelected
         ? context.theme.colorScheme.primaryContainer
-        : context.theme.colorScheme.surfaceVariant;
+        : context.theme.colorScheme.secondaryContainer;
+
     final colorOnPrimary = isSelected
         ? context.theme.colorScheme.onPrimaryContainer
-        : context.theme.colorScheme.onSurfaceVariant;
+        : context.theme.colorScheme.onSecondaryContainer;
 
     return GestureDetector(
       onTap: onPressed,

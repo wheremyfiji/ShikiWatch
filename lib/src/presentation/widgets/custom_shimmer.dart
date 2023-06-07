@@ -11,11 +11,11 @@ class CustomShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final baseColor = context.isLightThemed
-        ? context.colorScheme.background.desaturate(50).darken(2)
-        : context.colorScheme.surface;
+        ? context.colorScheme.background.desaturate(50).darken(5)
+        : context.colorScheme.surfaceVariant;
     final highlightColor = context.isLightThemed
-        ? context.colorScheme.background.desaturate(50).lighten(2)
-        : context.colorScheme.surface.lighten(5);
+        ? context.colorScheme.background.desaturate(50).lighten(5)
+        : context.colorScheme.surfaceVariant.lighten(5);
 
     return Shimmer(
       gradient: LinearGradient(
