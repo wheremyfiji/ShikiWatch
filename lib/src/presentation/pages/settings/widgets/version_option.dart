@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:shikidev/src/services/anime_database/anime_database_provider.dart';
 
 import '../../../../../build_date_time.dart';
@@ -24,7 +25,11 @@ class VersionWidget extends ConsumerWidget {
 
     final version = environment.packageInfo.version;
     final build = environment.packageInfo.buildNumber;
-    final appname = environment.packageInfo.packageName;
+    //final appname = environment.packageInfo.packageName;
+
+    DateTime appBuildTime = DateTime.parse(appBuildDateTime);
+    final dateString = DateFormat.yMMMMd().format(appBuildTime);
+    final timeString = DateFormat.Hm().format(appBuildTime);
 
     return Pashalka(
       callback: () async {
@@ -44,7 +49,8 @@ class VersionWidget extends ConsumerWidget {
       },
       child: SettingsOption(
         title: 'Версия: $version ($build)',
-        subtitle: appname,
+        //subtitle: appname,
+        subtitle: 'от $dateString ($timeString)',
         onTap: null,
       ),
     );

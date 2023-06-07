@@ -14,5 +14,6 @@ void main(List<String> args) async {
   final buildDateTime = DateTime.now();
 
   await file.writeAsString(
-      "const String appBuildDateTime = '${buildDateTime.toString()}';");
+      //"const String appBuildDateTime = '${buildDateTime.toString()}';");
+      "const String appBuildDateTime = '${buildDateTime.toIso8601String()}';");
 }
