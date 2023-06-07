@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../constants/config.dart';
 import '../../domain/models/animes.dart';
+import '../../domain/models/pages_extra.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/shiki_utils.dart';
 import '../../utils/target_platform.dart';
@@ -38,12 +39,21 @@ class AnimeCard extends StatelessWidget {
             splashFactory: NoSplash.splashFactory,
             onTap: () {
               FocusScope.of(context).unfocus();
+
+              final extra = AnimeDetailsPageExtra(
+                id: data.anime!.id!,
+                label: (data.anime!.russian == ''
+                        ? data.anime!.name
+                        : data.anime!.russian) ??
+                    '',
+              );
+
               context.pushNamed(
                 'library_anime',
                 pathParameters: <String, String>{
                   'id': (data.anime?.id!).toString(),
                 },
-                extra: data.anime,
+                extra: extra,
               );
             },
             child: Column(
@@ -137,7 +147,15 @@ class AnimeTileExp extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           splashFactory: NoSplash.splashFactory,
-          onTap: () => context.push('/explore/${data.id!}', extra: data),
+          //onTap: () => context.push('/explore/${data.id!}', extra: data),
+          onTap: () {
+            final extra = AnimeDetailsPageExtra(
+              id: data.id!,
+              label: (data.russian == '' ? data.name : data.russian) ?? '',
+            );
+
+            context.push('/explore/${data.id!}', extra: extra);
+          },
           child: Column(
             children: [
               SizedBox(

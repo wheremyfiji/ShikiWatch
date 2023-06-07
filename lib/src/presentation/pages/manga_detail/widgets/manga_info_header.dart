@@ -19,8 +19,6 @@ class MangaInfoHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double height = 350;
-
     DateFormat format = DateFormat("yyyy-MM-dd");
     final airedDateTime = format.parse(data.airedOn ?? '');
     final airedString = DateFormat.yMMM().format(airedDateTime);

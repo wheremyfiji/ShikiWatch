@@ -333,7 +333,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
         return SafeArea(
           child: AnimeUserRateBottomSheet(
             data: data,
-            anime: anime,
+            //anime: anime,
           ),
         );
       },
@@ -383,7 +383,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
     required int progress,
     int? rewatches,
     String? text,
-    required Animes anime,
+    required Anime anime,
     required VoidCallback onFinally,
   }) async {
     try {
@@ -396,12 +396,27 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             status: selectedStatus,
           );
 
+      final animeShort = Animes(
+        id: anime.id,
+        name: anime.name,
+        russian: anime.russian,
+        url: anime.url,
+        image: anime.image,
+        kind: anime.kind,
+        score: anime.score,
+        status: anime.status,
+        episodes: anime.episodes,
+        episodesAired: anime.episodesAired,
+        airedOn: anime.airedOn,
+        releasedOn: anime.releasedOn,
+      );
+
       switch (rate.status) {
         case 'watching':
           {
             ref.read(watchingTabPageProvider).addAnime(
                   animeId: anime.id!,
-                  anime: anime,
+                  anime: animeShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -416,7 +431,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           {
             ref.read(plannedTabPageProvider).addAnime(
                   animeId: anime.id!,
-                  anime: anime,
+                  anime: animeShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -431,7 +446,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           {
             ref.read(completedTabPageProvider).addAnime(
                   animeId: anime.id!,
-                  anime: anime,
+                  anime: animeShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -446,7 +461,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           {
             ref.read(rewatchingTabPageProvider).addAnime(
                   animeId: anime.id!,
-                  anime: anime,
+                  anime: animeShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -461,7 +476,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           {
             ref.read(onHoldTabPageProvider).addAnime(
                   animeId: anime.id!,
-                  anime: anime,
+                  anime: animeShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -476,7 +491,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           {
             ref.read(droppedTabPageProvider).addAnime(
                   animeId: anime.id!,
-                  anime: anime,
+                  anime: animeShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -520,7 +535,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
     required int progress,
     int? rewatches,
     String? text,
-    required Animes anime,
+    required Anime anime,
     required VoidCallback onFinally,
   }) async {
     try {
@@ -535,6 +550,21 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             rewatches: rewatches,
             text: text,
           );
+
+      final animeShort = Animes(
+        id: anime.id,
+        name: anime.name,
+        russian: anime.russian,
+        url: anime.url,
+        image: anime.image,
+        kind: anime.kind,
+        score: anime.score,
+        status: anime.status,
+        episodes: anime.episodes,
+        episodesAired: anime.episodesAired,
+        airedOn: anime.airedOn,
+        releasedOn: anime.releasedOn,
+      );
 
       /// если статус изменился
       if (rate.status != initStatus) {
@@ -576,7 +606,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             {
               ref.read(watchingTabPageProvider).addAnime(
                     animeId: animeId,
-                    anime: anime,
+                    anime: animeShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -591,7 +621,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             {
               ref.read(plannedTabPageProvider).addAnime(
                     animeId: animeId,
-                    anime: anime,
+                    anime: animeShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -606,7 +636,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             {
               ref.read(completedTabPageProvider).addAnime(
                     animeId: animeId,
-                    anime: anime,
+                    anime: animeShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -621,7 +651,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             {
               ref.read(rewatchingTabPageProvider).addAnime(
                     animeId: animeId,
-                    anime: anime,
+                    anime: animeShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -636,7 +666,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             {
               ref.read(onHoldTabPageProvider).addAnime(
                     animeId: animeId,
-                    anime: anime,
+                    anime: animeShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -651,7 +681,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             {
               ref.read(droppedTabPageProvider).addAnime(
                     animeId: animeId,
-                    anime: anime,
+                    anime: animeShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -808,12 +838,12 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
 
 class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
   final Anime data;
-  final Animes anime;
+  //final Animes anime;
 
   const AnimeUserRateBottomSheet({
     super.key,
     required this.data,
-    required this.anime,
+    // required this.anime,
   });
 
   @override
@@ -1315,7 +1345,7 @@ class _AnimeUserRateBottomSheetState
                                     .read(
                                         updateAnimeRateButtonProvider.notifier)
                                     .createRate(
-                                      anime: widget.anime,
+                                      anime: widget.data,
                                       selectedStatus: convertStatusIntToString(
                                           selectedStatus!),
                                       currentScore: currentScore ?? 0,
@@ -1340,7 +1370,7 @@ class _AnimeUserRateBottomSheetState
                                     .updateRate(
                                       rateId: widget.data.userRate!.id!,
                                       animeId: widget.data.id!,
-                                      anime: widget.anime,
+                                      anime: widget.data,
                                       selectedStatus: convertStatusIntToString(
                                           selectedStatus!),
                                       initStatus: initStatus!,

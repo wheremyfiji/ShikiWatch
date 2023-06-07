@@ -4,11 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
-import '../domain/models/animes.dart';
 import '../domain/models/manga_short.dart';
+import '../domain/models/pages_extra.dart';
 import '../domain/models/user.dart';
 
-import '../presentation/pages/anime_details/anime_details_desktop_page.dart';
 import '../presentation/pages/calendar/calendar_page.dart';
 import '../presentation/pages/explore/next_season_anime_page.dart';
 import '../presentation/pages/explore/top_anime_page.dart';
@@ -126,18 +125,24 @@ final GoRouter router = GoRouter(
                   name: 'library_anime',
                   path: 'anime/:id',
                   pageBuilder: (context, state) {
-                    Animes data = state.extra as Animes;
+                    //Animes data = state.extra as Animes;
+                    final extra = state.extra as AnimeDetailsPageExtra;
+
                     return FadeTransitionPage(
                       key: state.pageKey,
-                      child: TargetP.instance.isDesktop
-                          ? AnimeDetailsDesktopPage(
-                              key: state.pageKey,
-                              animeData: data,
-                            )
-                          : AnimeDetailsPage(
-                              key: state.pageKey,
-                              animeData: data,
-                            ),
+                      child: AnimeDetailsPage(
+                        key: state.pageKey,
+                        extra: extra,
+                      ),
+                      // child: TargetP.instance.isDesktop
+                      //     ? AnimeDetailsDesktopPage(
+                      //         key: state.pageKey,
+                      //         animeData: data,
+                      //       )
+                      //     : AnimeDetailsPage(
+                      //         key: state.pageKey,
+                      //         animeData: data,
+                      //       ),
                     );
                   },
                 ),
@@ -211,20 +216,38 @@ final GoRouter router = GoRouter(
                   name: 'explore_id',
                   path: r':id(\d+)',
                   pageBuilder: (context, state) {
-                    Animes data = state.extra as Animes;
+                    final extra = state.extra as AnimeDetailsPageExtra;
 
                     return FadeTransitionPage(
                       key: state.pageKey,
-                      child: TargetP.instance.isDesktop
-                          ? AnimeDetailsDesktopPage(
-                              key: state.pageKey,
-                              animeData: data,
-                            )
-                          : AnimeDetailsPage(
-                              key: state.pageKey,
-                              animeData: data,
-                            ),
+                      child: AnimeDetailsPage(
+                        key: state.pageKey,
+                        extra: extra,
+                      ),
+                      // child: TargetP.instance.isDesktop
+                      //     ? AnimeDetailsDesktopPage(
+                      //         key: state.pageKey,
+                      //         animeData: data,
+                      //       )
+                      //     : AnimeDetailsPage(
+                      //         key: state.pageKey,
+                      //         animeData: data,
+                      //       ),
                     );
+
+                    //Animes data = state.extra as Animes;
+                    // return FadeTransitionPage(
+                    //   key: state.pageKey,
+                    //   child: TargetP.instance.isDesktop
+                    //       ? AnimeDetailsDesktopPage(
+                    //           key: state.pageKey,
+                    //           animeData: data,
+                    //         )
+                    //       : AnimeDetailsPage(
+                    //           key: state.pageKey,
+                    //           animeData: data,
+                    //         ),
+                    // );
                   },
                 ),
                 GoRoute(

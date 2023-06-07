@@ -1,4 +1,5 @@
 import 'genre.dart';
+import 'shiki_image.dart';
 import 'studio.dart';
 import 'user_rate.dart';
 
@@ -6,7 +7,7 @@ class Anime {
   int? id;
   String? name;
   String? russian;
-  Image? image;
+  ShikiImage? image;
   String? url;
   String? kind;
   String? score;
@@ -90,7 +91,7 @@ class Anime {
     id = json['id'];
     name = json['name'];
     russian = json['russian'];
-    image = json['image'] != null ? Image.fromJson(json['image']) : null;
+    image = json['image'] != null ? ShikiImage.fromJson(json['image']) : null;
     url = json['url'];
     kind = json['kind'];
     score = json['score'];
@@ -193,21 +194,21 @@ class Anime {
   }
 }
 
-class Image {
-  String? original;
-  String? preview;
-  String? x96;
-  String? x48;
+// class Image {
+//   String? original;
+//   String? preview;
+//   String? x96;
+//   String? x48;
 
-  Image({this.original, this.preview, this.x96, this.x48});
+//   Image({this.original, this.preview, this.x96, this.x48});
 
-  Image.fromJson(Map<String, dynamic> json) {
-    original = json['original'];
-    preview = json['preview'];
-    x96 = json['x96'];
-    x48 = json['x48'];
-  }
-}
+//   Image.fromJson(Map<String, dynamic> json) {
+//     original = json['original'];
+//     preview = json['preview'];
+//     x96 = json['x96'];
+//     x48 = json['x48'];
+//   }
+// }
 
 class RatesScoresStats {
   int? name;

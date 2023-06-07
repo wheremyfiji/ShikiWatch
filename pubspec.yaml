@@ -59,7 +59,7 @@ dependencies:
   #network
   http: ^0.13.6
   connectivity_plus: ^4.0.1
-  dio: ^5.1.2
+  dio: ^5.2.0+1
   dio_smart_retry: ^5.0.0
   #native_dio_adapter: ^0.1.0
   pretty_dio_logger: ^1.3.1
@@ -91,7 +91,7 @@ dependencies:
   package_info_plus: ^3.0.3
   device_info_plus: ^8.2.1
   share_plus: ^6.3.4
-  permission_handler: ^10.2.0
+  permission_handler: ^10.3.0
   file_picker: ^5.2.10
 
   #transparent_image: ^2.0.1
@@ -105,8 +105,8 @@ dependencies:
   #copy_with_extension: ^5.0.2
 
   #appmetrica_plugin: ^1.1.0
-  sentry_flutter: ^7.6.3
-  sentry_dio: ^7.6.3
+  sentry_flutter: ^7.7.0
+  sentry_dio: ^7.7.0
   loggy: ^2.0.3
 
 dev_dependencies:

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../constants/config.dart';
+import '../../../../domain/models/pages_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/utils.dart';
 import '../../../providers/library_local_history_provider.dart';
@@ -24,7 +26,7 @@ class LocalHistoryTab extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'В истории пусто', //'В истории пусто. Надо чето посмотреть..',
+                  'В истории пусто',
                   style: Theme.of(context)
                       .textTheme
                       .headlineSmall!
@@ -33,59 +35,56 @@ class LocalHistoryTab extends ConsumerWidget {
               ),
             )
           : CustomScrollView(
+              key: const PageStorageKey<String>('LocalHistoryTab'),
               slivers: [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      childCount: data.length,
-                      (BuildContext context, int index) {
-                        final anime = data[index];
+                  sliver: SliverList.separated(
+                    itemCount: data.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final anime = data[index];
 
-                        var studios = anime.studios;
+                      var studios = anime.studios;
 
-                        if (studios == null || studios.isEmpty) {
-                          return null;
-                        }
+                      if (studios == null || studios.isEmpty) {
+                        return null;
+                      }
 
-                        studios = [
-                          ...studios
-                              .where((element) => element.episodes!.isNotEmpty)
-                        ];
+                      studios = [
+                        ...studios
+                            .where((element) => element.episodes!.isNotEmpty)
+                      ];
 
-                        studios
-                            .sort((a, b) => a.updated!.compareTo(b.updated!));
+                      studios.sort((a, b) => a.updated!.compareTo(b.updated!));
 
-                        if (studios.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
+                      if (studios.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
 
-                        final studio = studios.last;
+                      final studio = studios.last;
 
-                        int episode = 0;
+                      int episode = 0;
 
-                        if (studio.episodes!.isEmpty) {
-                          return const SizedBox.shrink();
-                        }
+                      if (studio.episodes!.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
 
-                        episode = studio.episodes?.last.nubmer ?? 0;
-                        final ts = studio.episodes?.last.timeStamp;
+                      episode = studio.episodes?.last.nubmer ?? 0;
+                      final ts = studio.episodes?.last.timeStamp;
 
-                        return Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-                          child: HistoryItem(
-                            animeName: anime.animeName ?? '',
-                            image: anime.imageUrl ?? '',
-                            update: anime.lastUpdate ?? DateTime(2000),
-                            studioName: studio.name ?? '',
-                            episode: episode,
-                            timeStamp: ts,
-                            shikimoriId: anime.shikimoriId,
-                            studioId: studio.id ?? 0,
-                          ),
-                        );
-                      },
-                    ),
+                      return HistoryItem(
+                        animeName: anime.animeName ?? '',
+                        image: anime.imageUrl ?? '',
+                        update: anime.lastUpdate ?? DateTime(2000),
+                        studioName: studio.name ?? '',
+                        episode: episode,
+                        timeStamp: ts,
+                        shikimoriId: anime.shikimoriId,
+                        studioId: studio.id ?? 0,
+                      );
+                    },
                   ),
                 ),
               ],
@@ -129,101 +128,117 @@ class HistoryItem extends ConsumerWidget {
     final lastUpdate =
         timeago.format(update, locale: 'ru', allowFromNow: false);
 
-    return Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              width: 16,
-            ),
-            SizedBox(
-              width: 100, //120
-              child: AspectRatio(
-                aspectRatio: 0.703,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8), //12
-                  child: CachedNetworkImage(
-                    imageUrl: AppConfig.staticUrl + image,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+    return InkWell(
+      onTap: () {
+        final extra = AnimeDetailsPageExtra(
+          id: shikimoriId,
+          label: animeName,
+        );
+
+        context.pushNamed(
+          'library_anime',
+          pathParameters: <String, String>{
+            'id': shikimoriId.toString(),
+          },
+          extra: extra,
+        );
+      },
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                width: 16,
               ),
-            ),
-            const SizedBox(
-              width: 16,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    animeName,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+              SizedBox(
+                width: 100, //120
+                child: AspectRatio(
+                  aspectRatio: 0.703,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8), //12
+                    child: CachedNetworkImage(
+                      imageUrl: AppConfig.staticUrl + image,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text('$episode серия • $studioName'),
-                  if (timeStamp != null) Text(timeStamp!),
-                  Text('$date в $time ($lastUpdate)'),
-                ],
-              ),
-            ),
-          ],
-          // ),
-        ),
-        Positioned(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Material(
-              child: InkWell(
-                child: const Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Icon(
-                    Icons.delete,
-                  ),
                 ),
-                onTap: () =>
-                    showSnackBar(ctx: context, msg: 'Удерживайте для удаления'),
-                onLongPress: () {
-                  ref
-                      .read(animeDatabaseProvider)
-                      .deleteEpisode(
-                          shikimoriId: shikimoriId,
-                          studioId: studioId,
-                          episodeNumber: episode!)
-                      .then((value) => showSnackBar(
-                          ctx: context, msg: 'Серия $episode удалена'));
-                },
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      animeName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text('$episode серия • $studioName'),
+                    if (timeStamp != null) Text(timeStamp!),
+                    Text('$date в $time ($lastUpdate)'),
+                  ],
+                ),
+              ),
+            ],
+            // ),
+          ),
+          Positioned(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Material(
+                child: InkWell(
+                  child: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(
+                      Icons.delete,
+                    ),
+                  ),
+                  onTap: () => showSnackBar(
+                      ctx: context, msg: 'Удерживайте для удаления'),
+                  onLongPress: () {
+                    ref
+                        .read(animeDatabaseProvider)
+                        .deleteEpisode(
+                            shikimoriId: shikimoriId,
+                            studioId: studioId,
+                            episodeNumber: episode!)
+                        .then((value) => showSnackBar(
+                            ctx: context, msg: 'Серия $episode удалена'));
+                  },
+                ),
               ),
             ),
-          ),
 
-          //     Tooltip(
-          //   message: 'Удалить эпизод',
-          //   child: IconButton(
-          //     onPressed: () {
-          //       ref
-          //           .read(animeDatabaseProvider)
-          //           .deleteEpisode(
-          //               shikimoriId: shikimoriId,
-          //               studioId: studioId,
-          //               episodeNumber: episode!)
-          //           .then((value) => showSnackBar(
-          //               ctx: context, msg: 'Серия $episode удалена'));
-          //     },
-          //     icon: const Icon(Icons.delete),
-          //   ),
-          // ),
-        ),
-      ],
+            //     Tooltip(
+            //   message: 'Удалить эпизод',
+            //   child: IconButton(
+            //     onPressed: () {
+            //       ref
+            //           .read(animeDatabaseProvider)
+            //           .deleteEpisode(
+            //               shikimoriId: shikimoriId,
+            //               studioId: studioId,
+            //               episodeNumber: episode!)
+            //           .then((value) => showSnackBar(
+            //               ctx: context, msg: 'Серия $episode удалена'));
+            //     },
+            //     icon: const Icon(Icons.delete),
+            //   ),
+            // ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:shimmer/shimmer.dart';
+import 'custom_shimmer.dart';
 
 class LoadingGrid extends StatelessWidget {
   const LoadingGrid({super.key});
@@ -70,22 +70,6 @@ class GridLoadingElement extends StatelessWidget {
           ],
         );
       },
-    );
-  }
-}
-
-class CustomShimmer extends StatelessWidget {
-  const CustomShimmer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      //baseColor: Theme.of(context).colorScheme.surface,
-      baseColor: Theme.of(context).colorScheme.surfaceVariant,
-      highlightColor: Theme.of(context).colorScheme.onInverseSurface,
-      child: Container(
-        color: Colors.black,
-      ),
     );
   }
 }

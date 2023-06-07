@@ -7,10 +7,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../domain/models/pages_extra.dart';
 import '../../../services/shared_pref/shared_preferences_provider.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
-import '../../../domain/models/animes.dart';
 import '../../../constants/config.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../widgets/error_widget.dart';
@@ -31,11 +31,11 @@ import 'related_titles.dart';
 const double dividerHeight = 16;
 
 class AnimeDetailsPage extends ConsumerWidget {
-  final Animes animeData;
+  final AnimeDetailsPageExtra extra;
 
   const AnimeDetailsPage({
     super.key,
-    required this.animeData,
+    required this.extra,
   });
 
   void pushStudioSelectPage({
@@ -63,7 +63,7 @@ class AnimeDetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleInfo = ref.watch(titleInfoPageProvider(animeData.id!));
+    final titleInfo = ref.watch(titleInfoPageProvider(extra.id));
 
     return Scaffold(
       floatingActionButton: titleInfo.title.when(
@@ -91,40 +91,35 @@ class AnimeDetailsPage extends ConsumerWidget {
                         // ignore: use_build_context_synchronously
                         pushStudioSelectPage(
                           ctx: context,
-                          id: animeData.id ?? 0,
-                          name: (animeData.russian == ''
-                                  ? animeData.name
-                                  : animeData.russian) ??
-                              '',
+                          id: data.id ?? 0,
+                          name:
+                              (data.russian == '' ? data.name : data.russian) ??
+                                  '',
                           ep: titleInfo.currentProgress,
-                          imgUrl: animeData.image?.original ?? '',
+                          imgUrl: data.image?.original ?? '',
                         );
                       }
                     } else {
                       pushStudioSelectPage(
                         ctx: context,
-                        id: animeData.id ?? 0,
-                        name: (animeData.russian == ''
-                                ? animeData.name
-                                : animeData.russian) ??
+                        id: data.id ?? 0,
+                        name: (data.russian == '' ? data.name : data.russian) ??
                             '',
                         ep: titleInfo.currentProgress,
-                        imgUrl: animeData.image?.original ?? '',
+                        imgUrl: data.image?.original ?? '',
                       );
                     }
                   } else {
                     pushStudioSelectPage(
                       ctx: context,
-                      id: animeData.id ?? 0,
-                      name: (animeData.russian == ''
-                              ? animeData.name
-                              : animeData.russian) ??
-                          '',
+                      id: data.id ?? 0,
+                      name:
+                          (data.russian == '' ? data.name : data.russian) ?? '',
                       // animeData.russian ??
                       //     animeData.name ??
                       //     '[Без навзвания]',
                       ep: titleInfo.currentProgress,
-                      imgUrl: animeData.image?.original ?? '',
+                      imgUrl: data.image?.original ?? '',
                     );
                   }
                 },
@@ -135,63 +130,69 @@ class AnimeDetailsPage extends ConsumerWidget {
         loading: () => null,
       ),
       body: RefreshIndicator(
-        onRefresh: () async =>
-            ref.refresh(titleInfoPageProvider(animeData.id!)),
+        onRefresh: () async => ref.invalidate(titleInfoPageProvider(extra.id)),
         child: CustomScrollView(
-          //shrinkWrap: true,
           slivers: [
             SliverAppBar(
               pinned: true,
-              expandedHeight: 280,
+              stretch: true,
+              expandedHeight: titleInfo.title.valueOrNull == null ? null : 280,
               title: Text(
-                (animeData.russian == ''
-                        ? animeData.name
-                        : animeData.russian) ??
-                    '',
+                // (animeData.russian == ''
+                //         ? animeData.name
+                //         : animeData.russian) ??
+                //     '',
+                extra.label,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: context.theme.colorScheme.onBackground,
                 ),
               ),
-              actions: [
-                PopupMenuButton(
-                  tooltip: '',
-                  itemBuilder: (context) {
-                    return [
-                      const PopupMenuItem<int>(
-                        value: 0,
-                        child: Text("Открыть в браузере"),
+              actions: titleInfo.title.valueOrNull == null
+                  ? null
+                  : [
+                      PopupMenuButton(
+                        tooltip: '',
+                        itemBuilder: (context) {
+                          return [
+                            const PopupMenuItem<int>(
+                              value: 0,
+                              child: Text("Открыть в браузере"),
+                            ),
+                            const PopupMenuItem<int>(
+                              value: 1,
+                              child: Text("Поделиться"),
+                            ),
+                          ];
+                        },
+                        onSelected: (value) {
+                          if (value == 0) {
+                            launchUrlString(
+                              '${AppConfig.staticUrl}/animes/${extra.id}',
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else if (value == 1) {
+                            Share.share(AppConfig.staticUrl +
+                                (titleInfo.title.valueOrNull!.url ?? ''));
+                          }
+                        },
                       ),
-                      const PopupMenuItem<int>(
-                        value: 1,
-                        child: Text("Поделиться"),
-                      ),
-                    ];
-                  },
-                  onSelected: (value) {
-                    if (value == 0) {
-                      launchUrlString(
-                        '${AppConfig.staticUrl}/animes/${animeData.id}',
-                        mode: LaunchMode.externalApplication,
-                      );
-                    } else if (value == 1) {
-                      Share.share(AppConfig.staticUrl + (animeData.url ?? ''));
-                    }
-                  },
-                ),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                background: AnimeInfoHeader(
-                  data: animeData,
-                  duration: titleInfo.duration,
-                  favoured: titleInfo.isFavor,
-                  nextEp: titleInfo.nextEp ?? '',
-                  rating: titleInfo.rating,
-                ),
-              ),
+                    ],
+              flexibleSpace: titleInfo.title.valueOrNull == null
+                  ? null
+                  : FlexibleSpaceBar(
+                      background: AnimeInfoHeader(
+                        titleInfo.title.value!,
+                        duration: titleInfo.duration,
+                        favoured: titleInfo.isFavor,
+                        nextEp: titleInfo.nextEp ?? '',
+                        rating: titleInfo.rating,
+                      ).animate().fade(),
+                    ),
             ),
             ...titleInfo.title.when(
+              skipLoadingOnRefresh: false,
               data: (data) => [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
@@ -213,7 +214,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                           return SafeArea(
                             child: AnimeUserRateBottomSheet(
                               data: data,
-                              anime: animeData,
+                              //anime: animeData,
                             ),
                           );
                         },
@@ -227,7 +228,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                     child: AnimeChipsWidget(
                       genres: data.genres,
                       studios: data.studios,
-                      score: animeData.score,
+                      score: data.score,
                       rating: titleInfo.rating,
                     ).animate().fade(),
                   ),
@@ -283,20 +284,12 @@ class AnimeDetailsPage extends ConsumerWidget {
               error: (err, stack) => [
                 SliverFillRemaining(
                   child: CustomErrorWidget(err.toString(),
-                      () => ref.refresh(titleInfoPageProvider(animeData.id!))),
+                      () => ref.invalidate(titleInfoPageProvider(extra.id))),
                 ),
               ],
               loading: () => [
-                SliverToBoxAdapter(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 130),
-                          child: const CircularProgressIndicator()),
-                    ),
-                  ),
-                )
+                const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator())),
               ],
             ),
           ],
@@ -490,8 +483,6 @@ class RelatedWidget extends ConsumerWidget {
         return const SizedBox.shrink();
       },
       loading: () {
-        //return const SizedBox.shrink();
-
         return Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
           child: Column(
@@ -511,7 +502,6 @@ class RelatedWidget extends ConsumerWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
-                  //width: 200.0,
                   height: 100.0,
                   child: Shimmer.fromColors(
                     baseColor: Theme.of(context).colorScheme.surface,
@@ -527,10 +517,6 @@ class RelatedWidget extends ConsumerWidget {
           ),
         );
       },
-      //error: ((error, stackTrace) => Center(child: Text(error.toString()))),
-      // loading: () => const Center(
-      //   child: CircularProgressIndicator(),
-      // ),
     );
   }
 }
