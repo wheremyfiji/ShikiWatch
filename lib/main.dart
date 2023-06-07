@@ -80,15 +80,13 @@ void initApp() async {
   //   //GestureBinding.instance.resamplingEnabled = true;
   // }
 
+  await SecureStorageService.initialize();
+
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
     MediaKit.ensureInitialized();
     DiscordRPC.initialize();
-  }
 
-  await SecureStorageService.initialize();
-
-  if (Platform.isWindows) {
     WindowOptions windowOptions = const WindowOptions(
       //size: Size(1200, 1200 / (16 / 9)),
       size: Size(1200, 800),
@@ -101,6 +99,7 @@ void initApp() async {
       title: 'ShikiWatch',
       //alwaysOnTop: true,
     );
+
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();

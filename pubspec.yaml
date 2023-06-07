@@ -39,9 +39,9 @@ dependencies:
   #desktop
   window_manager: ^0.3.4
   path: ^1.8.2
-  media_kit: ^0.0.7+1
-  media_kit_video: ^0.0.9
-  media_kit_native_event_loop: ^1.0.3
+  media_kit: ^0.0.11
+  media_kit_video: ^0.0.12
+  media_kit_native_event_loop: ^1.0.4
   media_kit_libs_windows_video: ^1.0.2
   dart_discord_rpc:
     git:

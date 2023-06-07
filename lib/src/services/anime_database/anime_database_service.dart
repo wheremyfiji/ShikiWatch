@@ -90,7 +90,7 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
       return;
     }
 
-    final updateTime = DateTime.now();
+    //final updateTime = DateTime.now();
 
     await isardb.writeTxn(() async {
       // удаляем эпизод
@@ -103,7 +103,7 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
             ?.where((element) => element.nubmer != episodeNumber)
       ];
 
-      anime.studios?[studioIndex!].updated = updateTime;
+      //anime.studios?[studioIndex!].updated = updateTime;
 
       if (anime.studios![studioIndex!].episodes!.isEmpty) {
         anime.studios = [
@@ -117,7 +117,7 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
         return;
       }
 
-      anime.lastUpdate = updateTime;
+      //anime.lastUpdate = updateTime;
       await isardb.animeDatabases.put(anime);
     });
   }

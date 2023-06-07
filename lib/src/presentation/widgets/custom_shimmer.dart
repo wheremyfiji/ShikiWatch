@@ -17,19 +17,21 @@ class CustomShimmer extends StatelessWidget {
         ? context.colorScheme.background.desaturate(50).lighten(5)
         : context.colorScheme.surfaceVariant.lighten(5);
 
-    return Shimmer(
-      gradient: LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: <Color>[
-          baseColor,
-          baseColor,
-          highlightColor,
-          baseColor,
-          baseColor
-        ],
-        stops: const <double>[0.0, 0.35, 0.5, 0.65, 1.0],
-      ),
+    return Shimmer.fromColors(
+      // gradient: LinearGradient(
+      //   begin: Alignment.centerLeft,
+      //   end: Alignment.centerRight,
+      //   colors: <Color>[
+      //     baseColor,
+      //     baseColor,
+      //     highlightColor,
+      //     baseColor,
+      //     baseColor
+      //   ],
+      //   stops: const <double>[0.0, 0.35, 0.5, 0.65, 1.0],
+      // ),
+      baseColor: baseColor,
+      highlightColor: highlightColor,
       child: Container(
         color: Colors.black,
         child: const SizedBox.expand(),

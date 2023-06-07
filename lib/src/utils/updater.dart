@@ -1,11 +1,14 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:version/version.dart';
+
+import 'target_platform.dart';
 
 class Update {
   final String? version;
@@ -39,9 +42,11 @@ class _UpdaterWidgetState extends State<UpdaterWidget> {
   bool d = false;
 
   checkLatestVersion() async {
-    //await Future.delayed(const Duration(seconds: 5));
-
     if (kDebugMode) {
+      return;
+    }
+
+    if (TargetP.instance.isDesktop) {
       return;
     }
 

@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../providers/environment_provider.dart';
+import '../../../utils/target_platform.dart';
 import '../../../utils/utils.dart';
 
 class LocalDatabaseManage extends StatelessWidget {
@@ -14,6 +15,15 @@ class LocalDatabaseManage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (TargetP.instance.isDesktop) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: const Center(
+          child: Text('W.I.P'),
+        ),
+      );
+    }
+
     return const Scaffold(
       body: CustomScrollView(
         slivers: [

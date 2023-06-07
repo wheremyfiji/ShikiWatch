@@ -13,7 +13,7 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(12),
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       clipBehavior: Clip.antiAlias,
       elevation: 0,
       color: Theme.of(context).colorScheme.background,
@@ -28,7 +28,7 @@ class SettingsGroup extends StatelessWidget {
         ),
       ),
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: [

@@ -1,15 +1,18 @@
-import 'package:dynamic_color/dynamic_color.dart';
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 
-import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:hive_flutter/adapters.dart';
 
+import '../utils/extensions/buildcontext.dart';
 import '../constants/box_types.dart';
 import '../constants/hive_keys.dart';
 import '../utils/router.dart';
+
 import 'providers/environment_provider.dart';
 import 'widgets/app_theme_builder.dart';
 
@@ -138,6 +141,7 @@ class ShikiApp extends ConsumerWidget {
                   title: appTitle,
                   themeMode: themeMode,
                   routerConfig: router,
+                  scrollBehavior: ScrollBehavior(),
                   builder: (context, child) {
                     if (!kDebugMode) {
                       ErrorWidget.builder = (FlutterErrorDetails error) {
@@ -165,4 +169,13 @@ class ShikiApp extends ConsumerWidget {
       ),
     );
   }
+}
+
+class ScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

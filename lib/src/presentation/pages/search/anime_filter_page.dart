@@ -419,8 +419,8 @@ class GenresBottomSheet extends ConsumerWidget {
 
     return DraggableScrollableSheet(
       expand: false,
-      snap: false,
-      maxChildSize: 0.75,
+      snap: true,
+      //maxChildSize: 0.75,
       builder: (context, scrollController) => SafeArea(
         child: SingleChildScrollView(
           controller: scrollController,

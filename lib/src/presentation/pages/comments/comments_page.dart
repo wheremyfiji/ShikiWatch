@@ -34,8 +34,10 @@ class CommentsPage extends ConsumerWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: PagedSliverList<int, ShikiComment>(
+              sliver: PagedSliverList<int, ShikiComment>.separated(
                 pagingController: controller.pageController,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 16),
                 builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
                   itemBuilder: (context, item, index) {
                     return CommentWidget(
@@ -49,42 +51,6 @@ class CommentsPage extends ConsumerWidget {
         ),
       ),
     );
-
-    // return Scaffold(
-    //   body: NestedScrollView(
-    //     headerSliverBuilder: (context, innerBoxIsScrolled) {
-    //       return [
-    //         SliverAppBar.large(
-    //           forceElevated: innerBoxIsScrolled,
-    //           stretch: true,
-    //           title: const Text('Обсуждение'),
-    //         ),
-    //       ];
-    //     },
-    //     body: RefreshIndicator(
-    //       onRefresh: () => Future.sync(
-    //         () => controller.pageController.refresh(),
-    //       ),
-    //       child: CustomScrollView(
-    //         slivers: [
-    //           SliverPadding(
-    //             padding: const EdgeInsets.all(16.0),
-    //             sliver: PagedSliverList<int, ShikiComment>(
-    //               pagingController: controller.pageController,
-    //               builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
-    //                 itemBuilder: (context, item, index) {
-    //                   return CommentWidget(
-    //                     comment: item,
-    //                   );
-    //                 },
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }
 
@@ -98,25 +64,22 @@ class CommentWidget extends StatelessWidget {
     final updatedAt =
         DateTime.tryParse(comment.updatedAt ?? '')?.toLocal() ?? DateTime(1970);
 
-    //final date = DateFormat.yMMMMd().format(updatedAt);
-    //final time = DateFormat.Hms().format(updatedAt);
-
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: () {
-                context.push('/profile/${comment.user!.id!}',
-                    extra: comment.user);
-              },
+      clipBehavior: Clip.hardEdge,
+      margin: const EdgeInsets.all(0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () => context.push(
+              '/profile/${comment.user!.id!}',
+              extra: comment.user,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Row(
                 children: [
                   CircleAvatar(
-                    //radius: 24,
                     backgroundColor: Colors.transparent,
                     backgroundImage: CachedNetworkImageProvider(
                       comment.user?.avatar ?? '',
@@ -144,28 +107,29 @@ class CommentWidget extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (comment.isOfftopic ?? false)
+                    const CoolChip(label: 'Оффтоп'),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     launchUrlString(
+                  //       'https://shikimori.me/comments/${comment.id}',
+                  //       mode: LaunchMode.externalApplication,
+                  //     );
+                  //   },
+                  //   icon: const Icon(Icons.more_vert),
+                  //   tooltip: 'Открыть в браузере',
+                  // ),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                //CoolChip(label: '${comment.id}'),
-                if (comment.isOfftopic ?? false) ...[
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  const CoolChip(label: 'Оффтоп'),
-                ],
-              ],
-            ),
-            // Text(
-            //   '${comment.body}',
-            //   //maxLines: 4,
-            // ),
-            Html(
+          ),
+          // Text(
+          //   '${comment.body}',
+          //   //maxLines: 4,
+          // ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+            child: Html(
               data: comment.htmlBody,
               onLinkTap: (url, attributes, element) {
                 //print(url);
@@ -179,55 +143,15 @@ class CommentWidget extends StatelessWidget {
                 );
               },
             ),
-            // BBCodeText(
-            //   data: comment.body ?? '',
-            //   stylesheet: defaultBBStylesheet(
-            //     textStyle: context.textTheme.bodyMedium,
-            //   ),
-            // ),
-          ],
-        ),
+          ),
+          // BBCodeText(
+          //   data: comment.body ?? '',
+          //   stylesheet: defaultBBStylesheet(
+          //     textStyle: context.textTheme.bodyMedium,
+          //   ),
+          // ),
+        ],
       ),
     );
-
-    // return Card(
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(8.0),
-    //     child: Row(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         CircleAvatar(
-    //           radius: 24,
-    //           backgroundColor: Colors.transparent,
-    //           backgroundImage: ExtendedNetworkImageProvider(
-    //             comment.user?.avatar ?? '',
-    //             cache: true,
-    //           ),
-    //         ),
-    //         Expanded(
-    //           child: Column(
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               Text(
-    //                 '${comment.user?.nickname}',
-    //                 maxLines: 1,
-    //                 overflow: TextOverflow.ellipsis,
-    //               ),
-    //               Text(
-    //                 '${comment.updatedAt}',
-    //                 maxLines: 1,
-    //                 overflow: TextOverflow.ellipsis,
-    //               ),
-    //               Text(
-    //                 '${comment.body}',
-    //                 //maxLines: 4,
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

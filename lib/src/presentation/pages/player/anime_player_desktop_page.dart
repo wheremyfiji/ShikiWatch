@@ -5,20 +5,19 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shikidev/src/constants/config.dart';
-//import 'package:super_clipboard/super_clipboard.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:dart_discord_rpc/dart_discord_rpc.dart';
+import 'package:media_kit_video/media_kit_video.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:wakelock/wakelock.dart';
 
+import '../../../constants/config.dart';
 import '../../../../kodik/kodik.dart';
 import '../../../../secret.dart';
 import '../../../constants/box_types.dart';
@@ -31,6 +30,7 @@ import '../../widgets/auto_hide.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/scrollable_slider.dart';
 
+import 'mobile/animated_play_pause.dart';
 import 'continue_dialog.dart';
 
 DiscordRPC rpc = DiscordRPC(
@@ -55,14 +55,14 @@ class _AnimePlayerDesktopPageState
   bool _disposed = false;
   bool shaders = false;
 
-  final Player player = Player(
+  late final Player player = Player(
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
       logLevel: MPVLogLevel.warn,
     ),
   );
 
-  VideoController? controller;
+  late final controller = VideoController(player);
 
   Directory? appDir;
   SharedPreferences? prefs;
@@ -115,7 +115,6 @@ class _AnimePlayerDesktopPageState
     isSetRpc = true;
   }
 
-  // void toggleShaders(BuildContext ctx) async {
   void toggleShaders() async {
     if (shaders) {
       await (player.platform as libmpvPlayer).setProperty('glsl-shaders', '');
@@ -170,24 +169,18 @@ class _AnimePlayerDesktopPageState
     final key = event.logicalKey.keyLabel;
 
     if (event is KeyDownEvent) {
-      //print("Key down: $key");
     } else if (event is KeyUpEvent) {
       if (key == ' ') {
         player.playOrPause();
-        //print("Key up: $key");
       }
       if (key == 'K') {
         player.playOrPause();
-        //print("Key up: $key");
       }
       if (key == 'J') {
         seekBack();
-        //print("Key up: $key");
       }
       if (key == 'L') {
         seekForward();
-        //player.seek(position + const Duration(seconds: 5));
-        //print("Key up: $key");
       }
       if (key == 'S' && !isLoading) {
         toggleShaders();
@@ -204,10 +197,7 @@ class _AnimePlayerDesktopPageState
       if (key == 'F11' && !isLoading) {
         toggleFullScreen();
       }
-      //print("Key up: $key");
-    } else if (event is KeyRepeatEvent) {
-      //print("Key repeat: $key");
-    }
+    } else if (event is KeyRepeatEvent) {}
 
     return false;
   }
@@ -240,8 +230,6 @@ class _AnimePlayerDesktopPageState
 
     pipeLogsToConsole(player);
 
-    //setRpc(widget.data!.animeName);
-
     var box = Hive.box(BoxType.settings.name);
     bool dr = box.get(
       playerDiscordRpc,
@@ -251,12 +239,6 @@ class _AnimePlayerDesktopPageState
     if (dr) {
       setRpc(widget.data!.animeName);
     }
-
-    //hideController = AutoHideController(
-    //  duration: const Duration(seconds: 3),
-    //);
-
-    //hideController!.addListener(hideCallback);
 
     Future.microtask(() async {
       appDir = await getApplicationSupportDirectory();
@@ -282,7 +264,6 @@ class _AnimePlayerDesktopPageState
       //await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
       //await windowManager.setAlignment(Alignment.bottomRight);
 
-      //await getHLSLink(widget.data!.episodeLink);
       final list = await ref
           .read(kodikVideoProvider)
           .getHLSLink(episodeLink: widget.data!.episodeLink);
@@ -290,9 +271,6 @@ class _AnimePlayerDesktopPageState
       streamHd = list.video720!;
       streamSd = list.video480!;
       streamLow = list.video720!;
-
-      controller = await VideoController.create(player,
-          enableHardwareAcceleration: true);
 
       await windowManager.setTitle(
           '${widget.data!.animeName} - Серия ${widget.data!.episodeNumber}');
@@ -321,7 +299,7 @@ class _AnimePlayerDesktopPageState
           context: context,
           builder: (context) => const ContinueDialog(),
         );
-        //print('Dialog returned value ---> $dialogValue');
+
         if (dialogValue ?? false) {
           await (player.platform as libmpvPlayer).setProperty(
             "start",
@@ -379,7 +357,6 @@ class _AnimePlayerDesktopPageState
   }
 
   @override
-  //void dispose() {
   Future<void> dispose() async {
     ServicesBinding.instance.keyboard.removeHandler(_onKey);
     _disposed = true;
@@ -393,7 +370,6 @@ class _AnimePlayerDesktopPageState
     //       .then((value) => print('niggers ${widget.data!.shikimoriId}'));
     // });
 
-    //Future.microtask(() async {
     Future.delayed(Duration.zero, () async {
       await windowManager.setTitle(oldTitle ?? '');
       await player.pause();
@@ -408,7 +384,7 @@ class _AnimePlayerDesktopPageState
       //await windowManager.setAlignment(Alignment.center);
       //await windowManager.setPosition(oldPos!);
       debugPrint('Disposing [Player] and [VideoController]...');
-      await controller?.dispose();
+      //await controller?.dispose();
       await player.dispose();
     });
     for (final s in subscriptions) {
@@ -424,18 +400,11 @@ class _AnimePlayerDesktopPageState
     bool isCompl = false;
     String timeStamp = 'Просмотрено до ${formatDuration(currentPosDuration)}';
 
-    // log('time stamp: ${formatDuration(currentPosDuration)}',
-    //     name: 'PlayerController');
-
     if (durationSec / currentPosDuration.inSeconds < 1.2) {
-      //1.3
-      //1.03
       log('completed', name: 'PlayerController');
       isCompl = true;
       timeStamp = 'Просмотрено полностью';
     }
-
-    //if (mounted) {
     ref.read(animeDatabaseProvider).updateEpisode(
           complete: isCompl,
           shikimoriId: widget.data!.shikimoriId,
@@ -448,7 +417,6 @@ class _AnimePlayerDesktopPageState
           episodeNumber: widget.data!.episodeNumber,
           position: position.toString(),
         );
-    //}
   }
 
   @override
@@ -892,20 +860,6 @@ class _PlayerControlsState extends State<PlayerControls> {
     await widget.prefs!.setDouble('player_volume', value.roundToDouble());
   }
 
-  // Future<void> takescrshot() {
-  //   return Future.delayed(const Duration(milliseconds: 20), () async {
-  //     RenderRepaintBoundary? boundary = playerKey.currentContext!
-  //         .findRenderObject() as RenderRepaintBoundary?;
-  //     ui.Image image = await boundary!.toImage();
-  //     ByteData? byteData =
-  //         await image.toByteData(format: ui.ImageByteFormat.png);
-  //     Uint8List pngBytes = byteData!.buffer.asUint8List();
-  //     final item = DataWriterItem();
-  //     item.add(Formats.png(pngBytes));
-  //     await ClipboardWriter.instance.write([item]);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -1017,14 +971,14 @@ class _PlayerControlsState extends State<PlayerControls> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        onPressed:
-                            widget.isLoading ? null : widget.player.playOrPause,
-                        icon: Icon(
-                          playing ? Icons.pause : Icons.play_arrow,
-                        ),
                         color: Colors.white,
                         iconSize: 48.0,
-                        //tooltip: '',
+                        icon: AnimatedPlayPause(
+                          playing: playing,
+                          color: Colors.white,
+                        ),
+                        onPressed:
+                            widget.isLoading ? null : widget.player.playOrPause,
                       ),
                     ],
                   ),
@@ -1046,25 +1000,6 @@ class _PlayerControlsState extends State<PlayerControls> {
                       const SizedBox(
                         width: 8.0,
                       ),
-
-                      // IconButton(
-                      //   padding: const EdgeInsets.all(0),
-                      //   onPressed: widget.isLoading
-                      //       ? null
-                      //       : () async {
-                      //           await takescrshot();
-                      //           if (mounted) {
-                      //             showSnackBar(
-                      //                 ctx: context,
-                      //                 msg: 'Скриншот скопирован в буфер обмена',
-                      //                 dur: const Duration(seconds: 2));
-                      //           }
-                      //         },
-                      //   icon: const Icon(Icons.screenshot_monitor),
-                      //   color: Colors.white,
-                      //   iconSize: 24.0,
-                      //   tooltip: 'Сделать скриншот',
-                      // ),
                       IconButton(
                         padding: const EdgeInsets.all(0),
                         onPressed: widget.isLoading
@@ -1138,26 +1073,18 @@ class QualityTextWidget extends StatelessWidget {
 }
 
 void pipeLogsToConsole(Player player) {
-  player.streams.log.listen((event) {
-    if (kDebugMode) {
-      log('${event.prefix}: ${event.level}: ${event.text}', name: 'mpv player');
-      //print("mpv: ${event.prefix}: ${event.level}: ${event.text}");
-    }
-  });
+  player.streams.log.listen(
+    (event) {
+      if (kDebugMode) {
+        log('${event.prefix}: ${event.level}: ${event.text}',
+            name: 'mpv player');
+      }
+    },
+  );
 }
 
 Future<void> toggleFullScreen({bool p = false}) async {
   bool full = await windowManager.isFullScreen();
-
-  // if (p) {
-  //   await windowManager.setFullScreen(false);
-  //   await Future.delayed(const Duration(milliseconds: 200));
-  //   await windowManager.setBounds((await windowManager.getBounds()).inflate(1));
-  //   await windowManager
-  //       .setBounds((await windowManager.getBounds()).inflate(-1));
-
-  //   return;
-  // }
 
   if (full || p) {
     if (!full) {
