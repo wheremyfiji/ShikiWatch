@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class EmptyList extends StatelessWidget {
   const EmptyList({Key? key}) : super(key: key);
@@ -14,6 +15,6 @@ class EmptyList extends StatelessWidget {
               Theme.of(context).textTheme.headlineSmall!.copyWith(fontSize: 16),
         ),
       ),
-    );
+    ).animate().fade();
   }
 }

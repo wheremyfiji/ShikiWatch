@@ -37,13 +37,13 @@ class LocalHistoryTab extends ConsumerWidget {
           : CustomScrollView(
               key: const PageStorageKey<String>('LocalHistoryTab'),
               slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                  sliver: SliverList.separated(
-                    itemCount: data.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
+                const SliverPadding(
+                  padding: EdgeInsets.only(top: 16.0),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: data.length,
+                    (context, index) {
                       final anime = data[index];
 
                       var studios = anime.studios;
@@ -128,116 +128,99 @@ class HistoryItem extends ConsumerWidget {
     final lastUpdate =
         timeago.format(update, locale: 'ru', allowFromNow: false);
 
-    return InkWell(
-      onTap: () {
-        final extra = AnimeDetailsPageExtra(
-          id: shikimoriId,
-          label: animeName,
-        );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Material(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.transparent,
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: () {
+            final extra = AnimeDetailsPageExtra(
+              id: shikimoriId,
+              label: animeName,
+            );
 
-        context.pushNamed(
-          'library_anime',
-          pathParameters: <String, String>{
-            'id': shikimoriId.toString(),
+            context.pushNamed(
+              'library_anime',
+              pathParameters: <String, String>{
+                'id': shikimoriId.toString(),
+              },
+              extra: extra,
+            );
           },
-          extra: extra,
-        );
-      },
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
+            alignment: Alignment.bottomRight,
             children: [
-              const SizedBox(
-                width: 16,
-              ),
-              SizedBox(
-                width: 100, //120
-                child: AspectRatio(
-                  aspectRatio: 0.703,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8), //12
-                    child: CachedNetworkImage(
-                      imageUrl: AppConfig.staticUrl + image,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      animeName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 100, //120
+                    child: AspectRatio(
+                      aspectRatio: 0.703,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8), //12
+                        child: CachedNetworkImage(
+                          imageUrl: AppConfig.staticUrl + image,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 4,
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          animeName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text('$episode серия • $studioName'),
+                        if (timeStamp != null) Text(timeStamp!),
+                        Text('$date в $time ($lastUpdate)'),
+                      ],
                     ),
-                    Text('$episode серия • $studioName'),
-                    if (timeStamp != null) Text(timeStamp!),
-                    Text('$date в $time ($lastUpdate)'),
-                  ],
-                ),
+                  ),
+                ],
+                // ),
               ),
-            ],
-            // ),
-          ),
-          Positioned(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Material(
+              Positioned(
                 child: InkWell(
+                  onTap: () => showSnackBar(
+                      ctx: context, msg: 'Удерживайте для удаления'),
+                  onLongPress: () => ref
+                      .read(animeDatabaseProvider)
+                      .deleteEpisode(
+                          shikimoriId: shikimoriId,
+                          studioId: studioId,
+                          episodeNumber: episode!)
+                      .then(
+                        (value) => showSnackBar(
+                            ctx: context, msg: 'Серия $episode удалена'),
+                      ),
                   child: const Padding(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.delete,
                     ),
                   ),
-                  onTap: () => showSnackBar(
-                      ctx: context, msg: 'Удерживайте для удаления'),
-                  onLongPress: () {
-                    ref
-                        .read(animeDatabaseProvider)
-                        .deleteEpisode(
-                            shikimoriId: shikimoriId,
-                            studioId: studioId,
-                            episodeNumber: episode!)
-                        .then((value) => showSnackBar(
-                            ctx: context, msg: 'Серия $episode удалена'));
-                  },
                 ),
               ),
-            ),
-
-            //     Tooltip(
-            //   message: 'Удалить эпизод',
-            //   child: IconButton(
-            //     onPressed: () {
-            //       ref
-            //           .read(animeDatabaseProvider)
-            //           .deleteEpisode(
-            //               shikimoriId: shikimoriId,
-            //               studioId: studioId,
-            //               episodeNumber: episode!)
-            //           .then((value) => showSnackBar(
-            //               ctx: context, msg: 'Серия $episode удалена'));
-            //     },
-            //     icon: const Icon(Icons.delete),
-            //   ),
-            // ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

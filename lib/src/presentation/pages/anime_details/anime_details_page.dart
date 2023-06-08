@@ -321,6 +321,41 @@ class RelatedWidget extends ConsumerWidget {
 
         final dataList = data.toList();
         final hasMore = dataList.length > 3;
+
+        // return Padding(
+        //   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+        //   child: Column(
+        //     mainAxisSize: MainAxisSize.min,
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: [
+        //       Text(
+        //         'Связанное',
+        //         style: Theme.of(context)
+        //             .textTheme
+        //             .bodyLarge!
+        //             .copyWith(fontWeight: FontWeight.bold),
+        //       ),
+        //       const SizedBox(
+        //         height: 8,
+        //       ),
+        //       ClipRRect(
+        //         borderRadius: BorderRadius.circular(12),
+        //         child: SizedBox(
+        //           height: 100.0,
+        //           child: Shimmer.fromColors(
+        //             baseColor: Theme.of(context).colorScheme.surface,
+        //             highlightColor:
+        //                 Theme.of(context).colorScheme.onInverseSurface,
+        //             child: Container(
+        //               color: Colors.black,
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // );
+
         return Padding(
           padding: padding
               ? const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight)
@@ -479,11 +514,11 @@ class RelatedWidget extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  );
+                  ).animate().fade();
                 },
               ),
             ],
-          ).animate().fade(),
+          ),
         );
       },
       error: (error, stackTrace) {

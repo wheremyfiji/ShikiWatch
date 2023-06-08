@@ -137,7 +137,7 @@ class PlayerController extends flutter.ChangeNotifier {
   bool enableSwipe = false;
   bool expandVideo = false;
 
-  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  //ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -345,9 +345,8 @@ class PlayerController extends flutter.ChangeNotifier {
       return;
     }
 
-    _connectionStatus = result;
-
-    log(_connectionStatus.toString(), name: 'connectionStatus');
+    //_connectionStatus = result;
+    //log(_connectionStatus.toString(), name: 'connectionStatus');
 
     if (result.name == 'none') {
       hasConnection = false;

@@ -182,117 +182,137 @@ class SeriesSelectPage extends ConsumerWidget {
             //     ),
             //   ),
             // ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    final seria = sortedSeriesList[index];
-                    final epList = episodesList(studioId);
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  final seria = sortedSeriesList[index];
+                  final epList = episodesList(studioId);
 
-                    final epIndex = epList?.indexWhere(
-                        (e) => e.nubmer == int.parse(seria.number ?? ''));
+                  final epIndex = epList?.indexWhere(
+                      (e) => e.nubmer == int.parse(seria.number ?? ''));
 
-                    final Episode? episode;
+                  final Episode? episode;
 
-                    if (epIndex == -1) {
-                      episode = null;
-                    } else {
-                      episode = epList?[epIndex!];
-                    }
+                  if (epIndex == -1) {
+                    episode = null;
+                  } else {
+                    episode = epList?[epIndex!];
+                  }
 
-                    final int seriaNum = int.parse(seria.number ?? '0');
+                  final int seriaNum = int.parse(seria.number ?? '0');
 
-                    final isComp = seriaNum <= episodeWatched;
-                    return ListTile(
-                      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                      onTap: () async {
-                        String sp = '';
-                        if (!TargetP.instance.isDesktop &&
-                            episode?.position != null) {
-                          bool? dialogValue = await showDialog<bool>(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) => const ContinueDialog(),
-                          );
-
-                          if (dialogValue ?? false) {
-                            sp = episode?.position ?? '';
-                          }
-                        }
-                        AnimePlayerPageExtra data = AnimePlayerPageExtra(
-                          studioId: studioId,
-                          shikimoriId: shikimoriId,
-                          episodeNumber: int.parse(seria.number ?? ''),
-                          animeName: animeName,
-                          studioName: studioName,
-                          studioType: studioType,
-                          episodeLink: seria.link ?? '',
-                          additInfo: seria.type ?? '',
-                          position: episode?.position,
-                          imageUrl: imageUrl,
-                          startPosition: sp,
+                  final isComp = seriaNum <= episodeWatched;
+                  return ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    onTap: () async {
+                      String startPosition = '';
+                      if (!TargetP.instance.isDesktop &&
+                          episode?.position != null &&
+                          seria.type == null) {
+                        bool? dialogValue = await showDialog<bool>(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) => const ContinueDialog(),
                         );
 
-                        // ignore: use_build_context_synchronously
-                        GoRouter.of(context).pushNamed('player', extra: data);
-                        // ignore: use_build_context_synchronously
-                        GoRouter.of(context).addListener(watchRouteChange);
-                        debugPrint('addListener watchRouteChange');
-                      },
-                      title: seria.type != null
-                          ? Text("Серия ${seria.number} (${seria.type})")
-                          : Text("Серия ${seria.number}"),
-                      subtitle: episode != null
-                          ? Text(episode.timeStamp ?? '')
-                          : null,
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (episode != null && !isComp) ...[
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.done),
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                          ],
-                          if (isComp) ...[
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.check_circle_rounded),
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                          ],
-                          if (episode != null) ...[
-                            IconButton(
-                              onPressed: () {
-                                removeEpisode(int.parse(seria.number ?? ''));
-                              },
-                              icon: const Icon(Icons.delete),
-                              color:
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.dark
-                                      ? Colors.red.shade200
-                                      : Colors.red.shade600,
+                        if (dialogValue ?? false) {
+                          startPosition = episode?.position ?? '';
+                        }
+                      }
+                      AnimePlayerPageExtra data = AnimePlayerPageExtra(
+                        studioId: studioId,
+                        shikimoriId: shikimoriId,
+                        episodeNumber: int.parse(seria.number ?? ''),
+                        animeName: animeName,
+                        studioName: studioName,
+                        studioType: studioType,
+                        episodeLink: seria.link ?? '',
+                        additInfo: seria.type ?? '',
+                        position: episode?.position,
+                        imageUrl: imageUrl,
+                        startPosition: startPosition,
+                      );
+
+                      // ignore: use_build_context_synchronously
+                      GoRouter.of(context).pushNamed('player', extra: data);
+                      // ignore: use_build_context_synchronously
+                      GoRouter.of(context).addListener(watchRouteChange);
+                      debugPrint('addListener watchRouteChange');
+                    },
+                    // title: seria.type != null
+                    //     ? Text("Серия ${seria.number} (${seria.type})")
+                    //     : Text("Серия ${seria.number}"),
+                    title: Text("Серия ${seria.number}"),
+                    subtitle: seria.type == null
+                        ? (episode != null
+                            ? Text(
+                                episode.timeStamp ?? '',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground
+                                      .withOpacity(0.8),
+                                ),
+                              )
+                            : null)
+                        : Text(
+                            seria.type!,
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground
+                                  .withOpacity(0.8),
                             ),
-                          ] else ...[
-                            IconButton(
-                              onPressed: () {
-                                addEpisode(int.parse(seria.number ?? ''));
-                              },
-                              icon: const Icon(Icons.add),
-                              color: context.colorScheme.onSurfaceVariant,
-                            ),
-                          ],
-                        ],
-                      ),
-                    );
-                  },
-                  childCount: sortedSeriesList.length,
-                ),
+                          ),
+                    trailing: seria.type != null
+                        ? null
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (episode != null && !isComp) ...[
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.done),
+                                  color: Theme.of(context).colorScheme.primary,
+                                )
+                              ],
+                              if (isComp) ...[
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.check_circle_rounded),
+                                  color: Theme.of(context).colorScheme.primary,
+                                )
+                              ],
+                              if (episode != null) ...[
+                                IconButton(
+                                  onPressed: () {
+                                    removeEpisode(
+                                        int.parse(seria.number ?? ''));
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                  color: Theme.of(context).colorScheme.error,
+                                  // MediaQuery.of(context).platformBrightness ==
+                                  //         Brightness.dark
+                                  //     ? Colors.red.shade200
+                                  //     : Colors.red.shade600,
+                                ),
+                              ] else ...[
+                                IconButton(
+                                  onPressed: () {
+                                    addEpisode(int.parse(seria.number ?? ''));
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  color: context.colorScheme.onSurfaceVariant,
+                                ),
+                              ],
+                            ],
+                          ),
+                  );
+                },
+                childCount: sortedSeriesList.length,
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 60)),
+            //const SliverToBoxAdapter(child: SizedBox(height: 60)),
           ],
         ),
       ),
@@ -311,33 +331,36 @@ class SeriesSelectPage extends ConsumerWidget {
       context: context,
       builder: (context) {
         return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                RadioListTile<EpisodeSortType>(
-                  title: const Text(
-                    'По старым',
-                  ),
-                  value: EpisodeSortType.oldest,
-                  groupValue: currentSort,
-                  onChanged: (value) {
-                    setSortType(EpisodeSortType.oldest);
-                  },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                  'Сортировка списка серий',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
-                RadioListTile<EpisodeSortType>(
-                  title: const Text(
-                    'По новым',
-                  ),
-                  value: EpisodeSortType.newest,
-                  groupValue: currentSort,
-                  onChanged: (value) {
-                    setSortType(EpisodeSortType.newest);
-                  },
+              ),
+              RadioListTile<EpisodeSortType>(
+                title: const Text(
+                  'По старым',
                 ),
-              ],
-            ),
+                value: EpisodeSortType.oldest,
+                groupValue: currentSort,
+                onChanged: (value) {
+                  setSortType(EpisodeSortType.oldest);
+                },
+              ),
+              RadioListTile<EpisodeSortType>(
+                title: const Text(
+                  'По новым',
+                ),
+                value: EpisodeSortType.newest,
+                groupValue: currentSort,
+                onChanged: (value) {
+                  setSortType(EpisodeSortType.newest);
+                },
+              ),
+            ],
           ),
         );
       },
