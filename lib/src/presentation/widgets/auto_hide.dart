@@ -41,6 +41,11 @@ class AutoHideController extends ChangeNotifier {
     _isVisible = false;
     notifyListeners();
   }
+
+  void permShow() {
+    _isVisible = true;
+    notifyListeners();
+  }
 }
 
 class AutoHide extends StatelessWidget {

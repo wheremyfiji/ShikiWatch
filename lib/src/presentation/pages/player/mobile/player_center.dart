@@ -55,10 +55,13 @@ class PlayerCenter extends StatelessWidget {
             // ),
           ],
           if (isError) ...[
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Ошибка\nвоспроизведения'),
+              label: const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Text('Ошибка\nвоспроизведения'),
+              ),
             ),
           ],
         ],

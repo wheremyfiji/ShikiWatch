@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:flutter/material.dart' as flutter;
@@ -76,6 +78,33 @@ final playerControllerProvider = ChangeNotifierProvider.family
 );
 
 class PlayerController extends flutter.ChangeNotifier {
+  PlayerController(
+      this._ref,
+      int stdId,
+      int shikiId,
+      int epNumber,
+      String anmName,
+      String imgUrl,
+      String stdName,
+      String stdType,
+      String epLink,
+      String addInfo,
+      String pos)
+      : studioId = stdId,
+        shikimoriId = shikiId,
+        episodeNumber = epNumber,
+        animeName = anmName,
+        imageUrl = imgUrl,
+        studioName = stdName,
+        studioType = stdType,
+        episodeLink = epLink,
+        episodeAdditInfo = addInfo,
+        playPos = pos,
+        streamAsync = const AsyncValue.loading(),
+        hideController = AutoHideController(
+          duration: const Duration(seconds: 3),
+        );
+
   final Ref _ref;
   bool _disposed = false;
   int playBackTime = 0;
@@ -108,62 +137,16 @@ class PlayerController extends flutter.ChangeNotifier {
   bool enableSwipe = false;
   bool expandVideo = false;
 
-  PlayerController(
-      this._ref,
-      int stdId,
-      int shikiId,
-      int epNumber,
-      String anmName,
-      String imgUrl,
-      String stdName,
-      String stdType,
-      String epLink,
-      String addInfo,
-      String pos)
-      : studioId = stdId,
-        shikimoriId = shikiId,
-        episodeNumber = epNumber,
-        animeName = anmName,
-        imageUrl = imgUrl,
-        studioName = stdName,
-        studioType = stdType,
-        episodeLink = epLink,
-        episodeAdditInfo = addInfo,
-        playPos = pos,
-        streamAsync = const AsyncValue.loading(),
-        hideController = AutoHideController(
-          duration: const Duration(seconds: 3),
-        );
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  String? get getStreamLink {
-    switch (streamQuality) {
-      case 0:
-        return streamHd;
-      case 1:
-        return streamSd;
-      case 2:
-        return streamLow;
-      default:
-        return streamHd;
-    }
-  }
-
-  Duration parseDuration(String s) {
-    int hours = 0;
-    int minutes = 0;
-    int micros;
-    List<String> parts = s.split(':');
-    if (parts.length > 2) {
-      hours = int.parse(parts[parts.length - 3]);
-    }
-    if (parts.length > 1) {
-      minutes = int.parse(parts[parts.length - 2]);
-    }
-    micros = (double.parse(parts[parts.length - 1]) * 1000000).round();
-    return Duration(hours: hours, minutes: minutes, microseconds: micros);
-  }
+  bool hasConnection = true;
 
   Future<void> initState() async {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
     streamAsync = await AsyncValue.guard(
       () async {
         final links = await _ref
@@ -240,116 +223,59 @@ class PlayerController extends flutter.ChangeNotifier {
     });
   }
 
-  formatDuration(Duration d) {
-    String tmp = d.toString().split('.').first.padLeft(8, "0");
-    return tmp.replaceFirst('00:', '');
-  }
-
   Future<void> disposeState() async {
     _disposed = true;
 
-    streamAsync.whenData((value) async {
-      final currentPosDuration = playerController.value.position;
-      final duration = playerController.value.duration.inSeconds;
+    _connectivitySubscription.cancel();
 
-      log('Current pos: ${currentPosDuration.inSeconds}',
-          name: 'PlayerController');
-      log('duration: $duration', name: 'PlayerController');
+    streamAsync.whenData(
+      (value) async {
+        final currentPosDuration = playerController.value.position;
+        final duration = playerController.value.duration.inSeconds;
 
-      bool isCompl = false;
-      String timeStamp = 'Просмотрено до ${formatDuration(currentPosDuration)}';
+        bool isCompl = false;
+        String timeStamp =
+            'Просмотрено до ${formatDuration(currentPosDuration)}';
 
-      log('time stamp: ${formatDuration(currentPosDuration)}',
-          name: 'PlayerController');
+        if (duration / currentPosDuration.inSeconds < 1.2) {
+          //1.3
+          //1.03
+          isCompl = true;
+          timeStamp = 'Просмотрено полностью';
+        }
 
-      if (duration / currentPosDuration.inSeconds < 1.2) {
-        //1.3
-        //1.03
-        log('completed', name: 'PlayerController');
-        isCompl = true;
-        timeStamp = 'Просмотрено полностью';
-      }
+        await SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.edgeToEdge,
+          //overlays: [SystemUiOverlay.top],
+        );
 
-      await _ref.read(animeDatabaseProvider).updateEpisode(
-            complete: isCompl,
-            shikimoriId: shikimoriId,
-            animeName: animeName,
-            imageUrl: imageUrl,
-            timeStamp: timeStamp,
-            studioId: studioId,
-            studioName: studioName,
-            studioType: studioType,
-            episodeNumber: episodeNumber,
-            position: playerController.value.position.toString(),
-          );
+        await Wakelock.disable();
 
-      // await SystemChrome.setEnabledSystemUIMode(
-      //   SystemUiMode.manual,
-      //   overlays: SystemUiOverlay.values,
-      // );
+        playerController.pause().then(
+          (value) {
+            playerController.dispose();
+            log('PlayerController disposed!', name: 'PlayerController');
+          },
+        );
 
-      await SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.edgeToEdge,
-        //overlays: [SystemUiOverlay.top],
-      );
+        if (isError) {
+          return;
+        }
 
-      await Wakelock.disable();
-
-      playerController.pause().then((value) {
-        playerController.dispose();
-        log('PlayerController disposed!', name: 'PlayerController');
-      });
-    });
-
-    // final currentPosDuration = playerController.value.position;
-    // final duration = playerController.value.duration.inSeconds;
-
-    // log('Current pos: ${currentPosDuration.inSeconds}',
-    //     name: 'PlayerController');
-    // log('duration: $duration', name: 'PlayerController');
-
-    // bool isCompl = false;
-    // String timeStamp = 'Просмотрено до ${formatDuration(currentPosDuration)}';
-
-    // log('time stamp: ${formatDuration(currentPosDuration)}',
-    //     name: 'PlayerController');
-
-    // if (duration / currentPosDuration.inSeconds < 1.2) {
-    //   //1.3
-    //   //1.03
-    //   log('completed', name: 'PlayerController');
-    //   isCompl = true;
-    //   timeStamp = 'Просмотрено полностью';
-    // }
-
-    // await _ref.read(animeDatabaseProvider).updateEpisode(
-    //       complete: isCompl,
-    //       shikimoriId: shikimoriId,
-    //       animeName: animeName,
-    //       imageUrl: imageUrl,
-    //       timeStamp: timeStamp,
-    //       studioId: studioId,
-    //       studioName: studioName,
-    //       studioType: studioType,
-    //       episodeNumber: episodeNumber,
-    //       position: playerController.value.position.toString(),
-    //     );
-
-    // // await SystemChrome.setEnabledSystemUIMode(
-    // //   SystemUiMode.manual,
-    // //   overlays: SystemUiOverlay.values,
-    // // );
-
-    // await SystemChrome.setEnabledSystemUIMode(
-    //   SystemUiMode.edgeToEdge,
-    //   overlays: [SystemUiOverlay.top],
-    // );
-    // await Wakelock.disable();
-
-    // playerController.pause().then((value) {
-    //   playerController.dispose();
-    //   log('PlayerController disposed!', name: 'PlayerController');
-    // });
+        await _ref.read(animeDatabaseProvider).updateEpisode(
+              complete: isCompl,
+              shikimoriId: shikimoriId,
+              animeName: animeName,
+              imageUrl: imageUrl,
+              timeStamp: timeStamp,
+              studioId: studioId,
+              studioName: studioName,
+              studioType: studioType,
+              episodeNumber: episodeNumber,
+              position: playerController.value.position.toString(),
+            );
+      },
+    );
   }
 
   Future<void> hideCallback() async {
@@ -381,18 +307,88 @@ class PlayerController extends flutter.ChangeNotifier {
 
     if (playerController.value.hasError) {
       isError = true;
-      //hideController.toggle();
+      hideController.permShow();
       //newCurrentPosition = playerController.value.position;
 
-      //log(newCurrentPosition.toString(),
-      //    name: 'PlayerController newCurrentPosition');
       log(playerController.value.errorDescription ?? '',
           name: 'PlayerController');
+
+      Sentry.captureException(
+        playerController.value.errorDescription,
+        //stackTrace: stackTrace,
+        withScope: (scope) {
+          scope.setContexts(
+            'context',
+            {
+              'shikimoriId': shikimoriId,
+              'shikimoriName': animeName,
+              'studioId': studioId,
+              'studioName': studioName,
+              'episodeNumber': episodeNumber,
+              'episodeAdditInfo': episodeAdditInfo,
+              'episodeLink': episodeLink,
+            },
+          );
+          //scope.setTag('my-tag', 'my value');
+          scope.level = SentryLevel.error;
+        },
+      );
 
       //notifyListeners();
     }
 
     notifyListeners();
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    if (_disposed) {
+      return;
+    }
+
+    _connectionStatus = result;
+
+    log(_connectionStatus.toString(), name: 'connectionStatus');
+
+    if (result.name == 'none') {
+      hasConnection = false;
+    } else {
+      hasConnection = true;
+    }
+
+    notifyListeners();
+  }
+
+  String? get getStreamLink {
+    switch (streamQuality) {
+      case 0:
+        return streamHd;
+      case 1:
+        return streamSd;
+      case 2:
+        return streamLow;
+      default:
+        return streamHd;
+    }
+  }
+
+  formatDuration(Duration d) {
+    String tmp = d.toString().split('.').first.padLeft(8, "0");
+    return tmp.replaceFirst('00:', '');
+  }
+
+  Duration parseDuration(String s) {
+    int hours = 0;
+    int minutes = 0;
+    int micros;
+    List<String> parts = s.split(':');
+    if (parts.length > 2) {
+      hours = int.parse(parts[parts.length - 3]);
+    }
+    if (parts.length > 1) {
+      minutes = int.parse(parts[parts.length - 2]);
+    }
+    micros = (double.parse(parts[parts.length - 1]) * 1000000).round();
+    return Duration(hours: hours, minutes: minutes, microseconds: micros);
   }
 
   void seekTo(Duration position) {
@@ -438,6 +434,12 @@ class PlayerController extends flutter.ChangeNotifier {
   }
 
   Future<void> retryPlay() async {
+    if (!hasConnection) {
+      return;
+    }
+
+    hideController.hide();
+
     newCurrentPosition = playerController.value.position;
     Future.delayed(const Duration(milliseconds: 200), () {
       _clearPrevious().then((_) {
@@ -482,10 +484,13 @@ class PlayerController extends flutter.ChangeNotifier {
   }
 
   Future<void> _startPlay(String videoPath) async {
-    Future.delayed(const Duration(milliseconds: 200), () {
-      _clearPrevious().then((_) {
-        _initializePlay(videoPath);
-      });
-    });
+    Future.delayed(
+      const Duration(milliseconds: 200),
+      () {
+        _clearPrevious().then((_) {
+          _initializePlay(videoPath);
+        });
+      },
+    );
   }
 }

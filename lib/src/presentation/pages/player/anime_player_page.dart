@@ -51,6 +51,37 @@ class AnimePlayerPage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      // bottomNavigationBar: controller.hasConnection
+      //     ? null
+      //     : const BottomAppBar(
+      //         child: Text('Отсутствует подключение к интернету'),
+      //       ),
+      bottomNavigationBar: AnimatedContainer(
+        curve: Curves.easeInOutExpo,
+        duration: const Duration(milliseconds: 300),
+        height: controller.hasConnection ? 0 : 80.0,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.errorContainer,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(12),
+          ),
+        ),
+        child: BottomAppBar(
+          color: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          clipBehavior: Clip.hardEdge,
+          child: Center(
+            child: Text(
+              'Отсутствует подключение к интернету',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      ),
       body: controller.streamAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => PlayerError(e.toString()),
@@ -60,7 +91,8 @@ class AnimePlayerPage extends HookConsumerWidget {
             bottom: false,
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
-              onTap: controller.hideController.toggle,
+              onTap:
+                  controller.isError ? null : controller.hideController.toggle,
               child: Stack(
                 children: [
                   Align(
