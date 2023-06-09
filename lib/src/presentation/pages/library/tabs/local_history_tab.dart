@@ -160,7 +160,7 @@ class HistoryItem extends ConsumerWidget {
                     child: AspectRatio(
                       aspectRatio: 0.703,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8), //12
+                        borderRadius: BorderRadius.circular(12), //12
                         child: CachedNetworkImage(
                           imageUrl: AppConfig.staticUrl + image,
                           fit: BoxFit.cover,
@@ -181,7 +181,7 @@ class HistoryItem extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(

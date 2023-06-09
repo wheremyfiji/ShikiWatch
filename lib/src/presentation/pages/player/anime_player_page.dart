@@ -51,11 +51,29 @@ class AnimePlayerPage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      // bottomNavigationBar: controller.hasConnection
-      //     ? null
-      //     : const BottomAppBar(
-      //         child: Text('Отсутствует подключение к интернету'),
-      //       ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        title: AutoHide(
+          switchDuration: switchDuration,
+          controller: controller.hideController,
+          child: PlayerHeader(
+            animeName: data.animeName,
+            episodeNumber: data.episodeNumber,
+            studioName: data.studioName,
+            streamQuality: controller.streamQuality,
+            onQualitySelect: (int qual) {
+              controller.streamQuality = qual;
+              controller.getValuesAndPlay(qual);
+            },
+            isInit: (controller.streamAsync.valueOrNull != null) &&
+                controller.playerController.value.isInitialized &&
+                !controller.isError,
+          ),
+        ),
+      ),
       bottomNavigationBar: AnimatedContainer(
         curve: Curves.easeInOutExpo,
         duration: const Duration(milliseconds: 300),
@@ -86,90 +104,84 @@ class AnimePlayerPage extends HookConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => PlayerError(e.toString()),
         data: (video) {
-          return SafeArea(
-            top: false,
-            bottom: false,
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap:
-                  controller.isError ? null : controller.hideController.toggle,
-              child: Stack(
-                children: [
-                  Align(
-                    child: controller.playerController.value.isInitialized
-                        ? VideoWidget(
-                            controller.playerController,
-                            enableSwipe: controller.enableSwipe,
-                            expandVideo: controller.expandVideo,
-                            aspectRatio:
-                                controller.playerController.value.aspectRatio,
-                            currentPosition:
-                                controller.playerController.value.position,
-                            onBack: controller.back,
-                            onForward: controller.forward,
-                          )
-                        : Container(),
-                  ),
-                  AutoHide(
-                    switchDuration: switchDuration,
-                    controller: controller.hideController,
-                    child: Container(color: Colors.black54),
-                  ),
-                  if (controller.playerController.value.isBuffering)
-                    const Align(child: CircularProgressIndicator()),
-                  AutoHide(
-                    switchDuration: switchDuration,
-                    controller: controller.hideController,
-                    child: Stack(
-                      children: [
-                        PlayerHeader(
-                          animeName: data.animeName,
-                          episodeNumber: data.episodeNumber,
-                          studioName: data.studioName,
-                          streamQuality: controller.streamQuality,
-                          onQualitySelect: (int qual) {
-                            controller.streamQuality = qual;
-                            controller.getValuesAndPlay(qual);
-                          },
-                        ),
-                        PlayerCenter(
-                          isError: controller.isError,
-                          isPlaying:
-                              controller.playerController.value.isPlaying,
-                          onPlayPause:
-                              controller.playerController.value.isPlaying
-                                  ? controller.playerController.pause
-                                  : controller.playerController.play,
-                          onRetry: controller.retryPlay,
-                        ),
-                        PlayerBottom(
-                          progress: controller.playerController.value.position,
-                          total: controller.playerController.value.duration,
-                          buffered: controller
-                                  .playerController.value.buffered.isNotEmpty
-                              ? controller
-                                  .playerController.value.buffered.last.end
-                              : null,
-                          onDragUpdate: () {
-                            if (controller.hideController.isVisible) {
-                              controller.hideController.show();
-                            }
-                          },
-                          onSeek: controller.seekTo,
-                          opSkip: () {
-                            controller.seekTo(
-                              controller.playerController.value.position +
-                                  const Duration(seconds: 85),
-                            );
-                          },
+          return GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: controller.isError ? null : controller.hideController.toggle,
+            child: Stack(
+              children: [
+                Align(
+                  child: controller.playerController.value.isInitialized &&
+                          !controller.isError
+                      ? VideoWidget(
+                          controller.playerController,
+                          enableSwipe: controller.enableSwipe,
                           expandVideo: controller.expandVideo,
-                          onExpand: controller.toggleExpand,
-                        ),
-                      ],
-                    ),
+                          aspectRatio:
+                              controller.playerController.value.aspectRatio,
+                          currentPosition:
+                              controller.playerController.value.position,
+                          onBack: controller.back,
+                          onForward: controller.forward,
+                        )
+                      : Container(),
+                ),
+                AutoHide(
+                  switchDuration: switchDuration,
+                  controller: controller.hideController,
+                  child: Container(color: Colors.black54),
+                ),
+                if (controller.playerController.value.isBuffering)
+                  const Align(child: CircularProgressIndicator()),
+                AutoHide(
+                  switchDuration: switchDuration,
+                  controller: controller.hideController,
+                  child: Stack(
+                    children: [
+                      // PlayerHeader(
+                      //   animeName: data.animeName,
+                      //   episodeNumber: data.episodeNumber,
+                      //   studioName: data.studioName,
+                      //   streamQuality: controller.streamQuality,
+                      //   onQualitySelect: (int qual) {
+                      //     controller.streamQuality = qual;
+                      //     controller.getValuesAndPlay(qual);
+                      //   },
+                      // ),
+                      PlayerCenter(
+                        isError: controller.isError,
+                        isPlaying: controller.playerController.value.isPlaying,
+                        onPlayPause: controller.playerController.value.isPlaying
+                            ? controller.playerController.pause
+                            : controller.playerController.play,
+                        onRetry: controller.retryPlay,
+                      ),
+                      PlayerBottom(
+                        progress: controller.playerController.value.position,
+                        total: controller.playerController.value.duration,
+                        buffered: controller
+                                .playerController.value.buffered.isNotEmpty
+                            ? controller
+                                .playerController.value.buffered.last.end
+                            : null,
+                        onDragUpdate: () {
+                          if (controller.hideController.isVisible) {
+                            controller.hideController.show();
+                          }
+                        },
+                        onSeek: controller.seekTo,
+                        opSkip: () {
+                          controller.seekTo(
+                            controller.playerController.value.position +
+                                const Duration(seconds: 85),
+                          );
+                        },
+                        expandVideo: controller.expandVideo,
+                        onExpand: controller.toggleExpand,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

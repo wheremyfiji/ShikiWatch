@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PlayerHeader extends StatelessWidget {
   final String animeName;
@@ -6,6 +7,7 @@ class PlayerHeader extends StatelessWidget {
   final String studioName;
   final int streamQuality;
   final Function(int) onQualitySelect;
+  final bool isInit;
 
   const PlayerHeader({
     super.key,
@@ -14,44 +16,92 @@ class PlayerHeader extends StatelessWidget {
     required this.studioName,
     required this.streamQuality,
     required this.onQualitySelect,
+    required this.isInit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0), //15 kToolbarHeight
-        child: ListTile(
-          leading: const BackButton(
-            color: Colors.white,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          tooltip: 'Назад',
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                animeName,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(
+                height: 4.0,
+              ),
+              Text(
+                'Серия $episodeNumber • $studioName',
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
-          title: Text(
-            animeName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-          subtitle: Text(
-            'Серия $episodeNumber • $studioName',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-          trailing: QualityButton(
+        ),
+        const SizedBox(
+          width: 16.0,
+        ),
+        if (isInit)
+          QualityButton(
             streamQuality: streamQuality,
             onSelected: onQualitySelect,
           ),
-        ),
-      ),
+      ],
     );
+
+    // return Align(
+    //   alignment: Alignment.topLeft,
+    //   child: Padding(
+    //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0), //15 kToolbarHeight
+    //     child: ListTile(
+    //       leading: const BackButton(
+    //         color: Colors.white,
+    //       ),
+    //       title: Text(
+    //         animeName,
+    //         style: const TextStyle(
+    //           color: Colors.white,
+    //           fontSize: 16,
+    //           fontWeight: FontWeight.bold,
+    //         ),
+    //         overflow: TextOverflow.ellipsis,
+    //         maxLines: 1,
+    //       ),
+    //       subtitle: Text(
+    //         'Серия $episodeNumber • $studioName',
+    //         style: const TextStyle(
+    //           color: Colors.white70,
+    //           fontSize: 14,
+    //         ),
+    //         overflow: TextOverflow.ellipsis,
+    //         maxLines: 1,
+    //       ),
+    //       trailing: QualityButton(
+    //         streamQuality: streamQuality,
+    //         onSelected: onQualitySelect,
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 

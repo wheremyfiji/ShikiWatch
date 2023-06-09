@@ -556,7 +556,7 @@ class RelatedWidget extends ConsumerWidget {
                 ),
               ),
             ],
-          ),
+          ).animate().fade(),
         );
       },
     );

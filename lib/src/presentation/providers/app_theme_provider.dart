@@ -56,7 +56,7 @@ class AppThemeDataNotifier {
         : ThemeData.light(useMaterial3: true);
     return origin.copyWith(
       //pageTransitionsTheme: NoTransitions(),
-      visualDensity: VisualDensity.adaptivePlatformDensity,
+      visualDensity: VisualDensity.standard,
       useMaterial3: true,
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
