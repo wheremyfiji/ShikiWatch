@@ -1,21 +1,23 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shikidev/src/services/secure_storage/secure_storage_service.dart';
-import 'package:shikidev/src/utils/extensions/theme_mode.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../domain/enums/library_state.dart';
+import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/extensions/buildcontext.dart';
+import '../../../utils/extensions/theme_mode.dart';
+import '../../providers/environment_provider.dart';
+import '../../../domain/enums/library_state.dart';
+import '../../../utils/target_platform.dart';
 import '../../../constants/box_types.dart';
 import '../../../constants/hive_keys.dart';
-import '../../../utils/target_platform.dart';
-import '../../providers/environment_provider.dart';
+
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
 import 'widgets/library_start_fragment.dart';
@@ -188,12 +190,14 @@ class SettingsPage extends ConsumerWidget {
               title: 'Данные', // импорт/экспорт локальных отметок
               options: [
                 const ClearCacheWidget(),
+
                 SettingsOption(
                   title: 'Резервное копирование',
                   subtitle:
                       'Импорт/экспорт/удаление локальных отметок просмотра аниме',
                   onTap: () => context.pushNamed('backup'),
                 ),
+
                 // SettingsOption(
                 //   title: 'Сброс настроек',
                 //   subtitle:

@@ -28,7 +28,7 @@ class StudioSelectPage extends ConsumerWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async => ref.refresh(kodikAnimeProvider(shikimoriId)),
+        onRefresh: () => ref.refresh(kodikAnimeProvider(shikimoriId).future),
         child: CustomScrollView(
           slivers: [
             SliverAppBar.medium(
@@ -143,7 +143,6 @@ class StudioSelectPage extends ConsumerWidget {
                 );
               },
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 60)),
           ],
         ),
       ),

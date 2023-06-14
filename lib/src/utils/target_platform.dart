@@ -1,16 +1,23 @@
 import 'dart:io';
 
 class TargetP {
-  static TargetP instance = TargetP();
+  TargetP._();
+
+  static final TargetP _instance = TargetP._();
+
+  static TargetP get instance => _instance;
 
   late bool isDesktop;
   late String userAgent;
+  late String appCachePath;
 
-  static init() {
-    instance.isDesktop =
+  static init(Directory appCacheDir) {
+    _instance.appCachePath = appCacheDir.path;
+
+    _instance.isDesktop =
         Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
-    instance.userAgent = instance.isDesktop
+    _instance.userAgent = _instance.isDesktop
         ? 'Shikimori Flutter Windows App'
         : 'Shikimori Flutter App';
   }

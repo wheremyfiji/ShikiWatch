@@ -33,7 +33,7 @@ class SettingsGroup extends StatelessWidget {
         shrinkWrap: true,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Text(
               title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(

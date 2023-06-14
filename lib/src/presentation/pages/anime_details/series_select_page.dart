@@ -140,8 +140,8 @@ class SeriesSelectPage extends ConsumerWidget {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async =>
-            ref.refresh(isAnimeInDataBaseProvider(shikimoriId)),
+        onRefresh: () =>
+            ref.refresh(isAnimeInDataBaseProvider(shikimoriId).future),
         child: CustomScrollView(
           slivers: [
             SliverAppBar.medium(

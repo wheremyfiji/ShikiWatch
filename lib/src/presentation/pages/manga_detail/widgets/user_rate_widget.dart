@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -68,36 +69,36 @@ class UserRateWidget extends StatelessWidget {
       ),
     );
 
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        child: Wrap(
-          direction: Axis.horizontal,
-          alignment: WrapAlignment.start,
-          crossAxisAlignment: WrapCrossAlignment.start, //end
-          spacing: 8,
-          runSpacing: 0,
-          children: [
-            CoolChip(
-              label: getRateStatus(data.userRate!.status!),
-            ),
-            // CoolChip(
-            //   label: 'Тома: ${data.userRate!.volumes.toString()}',
-            // ),
-            CoolChip(
-              label: 'Главы: ${data.userRate!.chapters.toString()}',
-            ),
-            CoolChip(
-              label: 'Оценка: ${data.userRate!.score.toString()}',
-            ),
-            CoolChip(
-              label: 'Перечитано: ${data.userRate!.rewatches.toString()}',
-            ),
-          ],
-        ),
-      ),
-    );
+    // return Card(
+    //   margin: EdgeInsets.zero,
+    //   child: Padding(
+    //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+    //     child: Wrap(
+    //       direction: Axis.horizontal,
+    //       alignment: WrapAlignment.start,
+    //       crossAxisAlignment: WrapCrossAlignment.start, //end
+    //       spacing: 8,
+    //       runSpacing: 0,
+    //       children: [
+    //         CoolChip(
+    //           label: getRateStatus(data.userRate!.status!),
+    //         ),
+    //         // CoolChip(
+    //         //   label: 'Тома: ${data.userRate!.volumes.toString()}',
+    //         // ),
+    //         CoolChip(
+    //           label: 'Главы: ${data.userRate!.chapters.toString()}',
+    //         ),
+    //         CoolChip(
+    //           label: 'Оценка: ${data.userRate!.score.toString()}',
+    //         ),
+    //         CoolChip(
+    //           label: 'Перечитано: ${data.userRate!.rewatches.toString()}',
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
 

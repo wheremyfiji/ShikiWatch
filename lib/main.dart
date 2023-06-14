@@ -59,10 +59,10 @@ void initApp() async {
 
   Intl.defaultLocale = 'ru_RU';
   initializeDateFormatting("ru_RU", null);
-
   timeago.setLocaleMessages('ru', timeago.RuMessages());
 
-  TargetP.init();
+  final appCacheDir = await path_prov.getTemporaryDirectory();
+  TargetP.init(appCacheDir);
 
   Loggy.initLoggy(
     logPrinter: const PrettyPrinter(),

@@ -8,7 +8,7 @@ class RatingDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text('Подтверждение возраста'),
       content: const Text(
-          'Для продолжения необходимо подтвердить,\nчто тебе уже исполнилось 18 лет'),
+          'Для продолжения необходимо подтвердить, что тебе уже исполнилось 18 лет'),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),

@@ -155,28 +155,32 @@ class AnimePlayerPage extends HookConsumerWidget {
                             : controller.playerController.play,
                         onRetry: controller.retryPlay,
                       ),
-                      PlayerBottom(
-                        progress: controller.playerController.value.position,
-                        total: controller.playerController.value.duration,
-                        buffered: controller
-                                .playerController.value.buffered.isNotEmpty
-                            ? controller
-                                .playerController.value.buffered.last.end
-                            : null,
-                        onDragUpdate: () {
-                          if (controller.hideController.isVisible) {
-                            controller.hideController.show();
-                          }
-                        },
-                        onSeek: controller.seekTo,
-                        opSkip: () {
-                          controller.seekTo(
-                            controller.playerController.value.position +
-                                const Duration(seconds: 85),
-                          );
-                        },
-                        expandVideo: controller.expandVideo,
-                        onExpand: controller.toggleExpand,
+                      SafeArea(
+                        top: false,
+                        bottom: false,
+                        child: PlayerBottom(
+                          progress: controller.playerController.value.position,
+                          total: controller.playerController.value.duration,
+                          buffered: controller
+                                  .playerController.value.buffered.isNotEmpty
+                              ? controller
+                                  .playerController.value.buffered.last.end
+                              : null,
+                          onDragUpdate: () {
+                            if (controller.hideController.isVisible) {
+                              controller.hideController.show();
+                            }
+                          },
+                          onSeek: controller.seekTo,
+                          opSkip: () {
+                            controller.seekTo(
+                              controller.playerController.value.position +
+                                  const Duration(seconds: 85),
+                            );
+                          },
+                          expandVideo: controller.expandVideo,
+                          onExpand: controller.toggleExpand,
+                        ),
                       ),
                     ],
                   ),
