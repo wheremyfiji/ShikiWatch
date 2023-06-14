@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../domain/models/pages_extra.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../utils/extensions/string_ext.dart';
 import '../../../domain/models/manga_ranobe.dart';
@@ -348,62 +349,56 @@ class MangaExternalLinksWidget extends ConsumerWidget {
     final links = ref.watch(externalLinksMangaProvider(mangaId));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ссылки'),
-        centerTitle: false,
-        // automaticallyImplyLeading: false,
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.close),
-        //     onPressed: () => Navigator.of(context).pop(),
-        //   ),
-        // ],
-      ),
-      body: links.when(
-        data: (data) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
+      body: CustomScrollView(
+        slivers: [
+          const SliverAppBar.large(
+            title: Text('Ссылки'),
+          ),
+          ...links.when(
+            data: (data) => [
+              SliverList.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) {
                   final link = data.toList()[index];
                   final enable = link.url != null;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Card(
-                      clipBehavior: Clip.hardEdge,
-                      margin: const EdgeInsets.all(0),
-                      child: ListTile(
-                        enabled: enable,
-                        title: Text(
-                          link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
-                        ),
-                        //subtitle: Text('${link.updatedAt}'),
-                        trailing: const Icon(
-                          Icons.open_in_browser,
-                        ),
-                        onTap: () {
-                          launchUrlString(
-                            link.url!,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        },
-                      ),
+                  return ListTile(
+                    enabled: enable,
+                    title: Text(
+                      link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
                     ),
+                    trailing: const Icon(
+                      Icons.open_in_browser,
+                    ),
+                    onTap: () {
+                      launchUrlString(
+                        link.url!,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
                   );
                 },
               ),
-            ),
-          );
-        },
-        error: (err, stack) => CustomErrorWidget(err.toString(),
-            () => ref.refresh(externalLinksMangaProvider(mangaId))),
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+              const SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 16.0,
+                ),
+              ),
+            ],
+            error: (error, stackTrace) => [
+              SliverFillRemaining(
+                child: CustomErrorWidget(
+                  error.toString(),
+                  () => ref.refresh(externalLinksMangaProvider(mangaId)),
+                ),
+              ),
+            ],
+            loading: () => [
+              const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -608,12 +603,20 @@ class RelatedWidget extends ConsumerWidget {
                               extra: title,
                             );
                           } else {
+                            final extra = AnimeDetailsPageExtra(
+                              id: title.id!,
+                              label: (title.russian == ''
+                                      ? title.name
+                                      : title.russian) ??
+                                  '',
+                            );
+
                             context.pushNamed(
                               'library_anime',
                               pathParameters: <String, String>{
                                 'id': (title!.id!).toString(),
                               },
-                              extra: title,
+                              extra: extra,
                             );
                           }
                         },
