@@ -36,7 +36,7 @@ class AnimeSearchPage extends ConsumerWidget {
       child: Scaffold(
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () => context.pushNamed('search_filters', extra: t),
-          icon: const Icon(Icons.tune), //tune  filter_list  done_all
+          icon: const Icon(Icons.tune), //tune  filter_list
           label: const Text('Фильтры'),
         ),
         appBar: AppBar(
@@ -61,6 +61,14 @@ class AnimeSearchPage extends ConsumerWidget {
                       },
                     )
                   : null,
+            ),
+          ),
+          bottom: AppBar(
+            automaticallyImplyLeading: false,
+            primary: false,
+            title: const SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SearchTypeChips(),
             ),
           ),
           // actions: const [
@@ -88,7 +96,7 @@ class AnimeSearchPage extends ConsumerWidget {
               slivers: [
                 if (controller.filterCount.isNotEmpty)
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                     sliver: SliverToBoxAdapter(
                       child: Text(
                         'Кол-во фильтров: ${controller.filterCount.length}',
@@ -156,7 +164,6 @@ class AnimeSearchPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SliverToBoxAdapter(child: SizedBox(height: 60)),
               ],
             );
           },
@@ -166,35 +173,73 @@ class AnimeSearchPage extends ConsumerWidget {
   }
 }
 
-class SearchTypeWidget extends ConsumerWidget {
-  const SearchTypeWidget({super.key});
+// class SearchTypeWidget extends ConsumerWidget {
+//   const SearchTypeWidget({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final state = ref.watch(searchTypeProvider);
+//     return PopupMenuButton<SearchState>(
+//       tooltip: 'Выбор поиска',
+//       initialValue: state,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(12),
+//       ),
+//       itemBuilder: (context) => const [
+//         PopupMenuItem(
+//           value: SearchState.anime,
+//           child: Text('Аниме'),
+//         ),
+//         PopupMenuItem(
+//           value: SearchState.manga,
+//           child: Text('Манга'),
+//         ),
+//         PopupMenuItem(
+//           value: SearchState.ranobe,
+//           child: Text('Ранобе'),
+//         ),
+//       ],
+//       onSelected: (value) {
+//         ref.read(searchTypeProvider.notifier).state = value;
+//       },
+//     );
+//   }
+// }
+
+class SearchTypeChips extends ConsumerWidget {
+  const SearchTypeChips({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(searchTypeProvider);
-    return PopupMenuButton<SearchState>(
-      tooltip: 'Выбор поиска',
-      initialValue: state,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      itemBuilder: (context) => const [
-        PopupMenuItem(
-          value: SearchState.anime,
-          child: Text('Аниме'),
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 0,
+      children: [
+        ChoiceChip(
+          selected: state == SearchState.anime,
+          //labelPadding: const EdgeInsets.all(0),
+          label: const Text('Аниме'),
+          onSelected: (bool selected) {
+            ref.read(searchTypeProvider.notifier).state = SearchState.anime;
+          },
         ),
-        PopupMenuItem(
-          value: SearchState.manga,
-          child: Text('Манга'),
+        ChoiceChip(
+          selected: state == SearchState.manga,
+          label: const Text('Манга'),
+          onSelected: (bool selected) {
+            ref.read(searchTypeProvider.notifier).state = SearchState.manga;
+          },
         ),
-        PopupMenuItem(
-          value: SearchState.ranobe,
-          child: Text('Ранобе'),
+        ChoiceChip(
+          selected: state == SearchState.ranobe,
+          label: const Text('Ранобе'),
+          onSelected: (bool selected) {
+            ref.read(searchTypeProvider.notifier).state = SearchState.ranobe;
+          },
         ),
       ],
-      onSelected: (value) {
-        ref.read(searchTypeProvider.notifier).state = value;
-      },
     );
   }
 }
@@ -212,8 +257,50 @@ class AnimeSearchHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                child: Text(
+                  'История поиска',
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        fontSize: 14,
+                      ),
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                onPressed: history.isEmpty ? null : () => clear(),
+                child: const Text('Очистить'),
+              ),
+            ],
+          ),
+        ),
+        if (history.isNotEmpty)
+          SliverList.builder(
+            itemCount: history.length,
+            itemBuilder: (context, index) {
+              final e = history[index];
+              return ListTile(
+                onTap: () => search(e),
+                leading: const Icon(Icons.history),
+                title: Text(
+                  e,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            },
+          ),
+      ],
+    );
+
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -231,9 +318,9 @@ class AnimeSearchHistory extends StatelessWidget {
               onPressed: history.isEmpty ? null : () => clear(),
               child: const Text('Очистить'),
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            // const SizedBox(
+            //   width: 16,
+            // ),
           ],
         ),
         if (history.isNotEmpty)
