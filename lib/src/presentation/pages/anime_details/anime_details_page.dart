@@ -263,8 +263,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                 if (data.screenshots != null &&
                     data.screenshots!.isNotEmpty) ...[
                   SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                    padding: const EdgeInsets.only(bottom: dividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: AnimeScreenshots(data).animate().fade(),
                     ),
@@ -272,8 +271,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                 ],
                 if (data.videos != null && data.videos!.isNotEmpty) ...[
                   SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                    padding: const EdgeInsets.only(bottom: dividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: AnimeVideosMobileWidget(data).animate().fade(),
                     ),

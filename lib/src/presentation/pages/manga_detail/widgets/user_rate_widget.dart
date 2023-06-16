@@ -407,7 +407,8 @@ class _MangaUserRateBottomSheetState
                 NumberField(
                   label: 'Главы:',
                   initial: progress,
-                  maxValue: chaptersCount,
+                  maxValue:
+                      widget.data.status == 'released' ? chaptersCount : null,
                   onChanged: (value) {
                     setState(() {
                       progress = value;
