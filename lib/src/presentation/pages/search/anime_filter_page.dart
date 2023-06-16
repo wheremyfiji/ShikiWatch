@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shikidev/src/domain/enums/search_state.dart';
 
 import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
@@ -26,49 +27,50 @@ class AnimeFilterPage extends ConsumerWidget {
             title: Text('Фильтры'),
           ),
 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: ListTile(
-                horizontalTitleGap: 8, //def = 16?
-                contentPadding: EdgeInsets.zero,
-                leading: Text(
-                  'Жанр',
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+          if (c.searchType == SearchType.anime)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: ListTile(
+                  horizontalTitleGap: 8, //def = 16?
+                  contentPadding: EdgeInsets.zero,
+                  leading: Text(
+                    'Жанр',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                  title: (c.selectedGenres?.isEmpty ?? true)
+                      ? null
+                      : Text(
+                          c.selectedGenres!.join(', '),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall,
+                          //textAlign: TextAlign.start,
+                        ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        tooltip: 'Выбрать жанры',
+                        onPressed: () => showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          useRootNavigator: true,
+                          showDragHandle: true,
+                          useSafeArea: true,
+                          //backgroundColor: Colors.transparent,
+                          builder: (context) => GenresBottomSheet(t),
+                        ),
+                        icon: const Icon(Icons.add),
                       ),
-                ),
-                title: (c.selectedGenres?.isEmpty ?? true)
-                    ? null
-                    : Text(
-                        c.selectedGenres!.join(', '),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        //textAlign: TextAlign.start,
-                      ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      tooltip: 'Выбрать жанры',
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        useRootNavigator: true,
-                        showDragHandle: true,
-                        useSafeArea: true,
-                        //backgroundColor: Colors.transparent,
-                        builder: (context) => GenresBottomSheet(t),
-                      ),
-                      icon: const Icon(Icons.add),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
           // SliverPadding(
           //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -149,39 +151,40 @@ class AnimeFilterPage extends ConsumerWidget {
           //   ),
           // ),
 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Тип',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+          if (c.searchType == SearchType.anime)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Тип',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        ...List.generate(
+                          animeStatusList.length,
+                          (index) {
+                            final kind = animeKindList[index];
+                            return CustomFilterChip(
+                              label: kind.russian,
+                              selected: c.isKindSelected(kind),
+                              onSelected: (b) => c.toggleKind(k: kind, t: b),
+                            );
+                          },
                         ),
-                  ),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      ...List.generate(
-                        animeStatusList.length,
-                        (index) {
-                          final kind = animeKindList[index];
-                          return CustomFilterChip(
-                            label: kind.russian,
-                            selected: c.isKindSelected(kind),
-                            onSelected: (b) => c.toggleKind(k: kind, t: b),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
 
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -221,42 +224,43 @@ class AnimeFilterPage extends ConsumerWidget {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Длительность эпизода',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+          if (c.searchType == SearchType.anime)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Длительность эпизода',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    // const SizedBox(
+                    //   height: 4,
+                    // ),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        ...List.generate(
+                          animeEpisodeDurationList.length,
+                          (index) {
+                            final e = animeEpisodeDurationList[index];
+                            return CustomFilterChip(
+                              label: e.russian,
+                              selected: c.isEpDurationSelected(e),
+                              onSelected: (b) => c.toggleEpDuration(e: e, t: b),
+                            );
+                          },
                         ),
-                  ),
-                  // const SizedBox(
-                  //   height: 4,
-                  // ),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      ...List.generate(
-                        animeEpisodeDurationList.length,
-                        (index) {
-                          final e = animeEpisodeDurationList[index];
-                          return CustomFilterChip(
-                            label: e.russian,
-                            selected: c.isEpDurationSelected(e),
-                            onSelected: (b) => c.toggleEpDuration(e: e, t: b),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
           // SliverPadding(
           //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           //   sliver: SliverToBoxAdapter(

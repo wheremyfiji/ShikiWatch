@@ -1,7 +1,8 @@
+import 'animes.dart';
+import 'manga_short.dart';
 import 'shiki_image.dart';
-import 'shiki_title.dart';
 
-class Animes {
+class ShikiTitle {
   final int? id;
   final String? name;
   final String? russian;
@@ -12,10 +13,12 @@ class Animes {
   final String? status;
   final int? episodes;
   final int? episodesAired;
+  final int? volumes;
+  final int? chapters;
   final String? airedOn;
   final String? releasedOn;
 
-  Animes(
+  ShikiTitle(
       {required this.id,
       required this.name,
       required this.russian,
@@ -26,10 +29,12 @@ class Animes {
       required this.status,
       required this.episodes,
       required this.episodesAired,
+      required this.volumes,
+      required this.chapters,
       required this.airedOn,
       required this.releasedOn});
 
-  Animes.fromJson(Map<String, dynamic> json)
+  ShikiTitle.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
         russian = json['russian'],
@@ -41,12 +46,14 @@ class Animes {
         status = json['status'],
         episodes = json['episodes'],
         episodesAired = json['episodes_aired'],
+        volumes = json['episodes'],
+        chapters = json['episodes_aired'],
         airedOn = json['aired_on'],
         releasedOn = json['released_on'];
 }
 
-extension AnimesExtension on Animes {
-  ShikiTitle get toShikiTitle => ShikiTitle(
+extension ShikiTitleExtension on ShikiTitle {
+  Animes get toAnimes => Animes(
         id: id,
         name: name,
         russian: russian,
@@ -55,11 +62,24 @@ extension AnimesExtension on Animes {
         kind: kind,
         score: score,
         status: status,
-        episodes: episodes,
-        episodesAired: episodesAired,
         airedOn: airedOn,
         releasedOn: releasedOn,
-        volumes: null,
-        chapters: null,
+        episodes: episodes,
+        episodesAired: episodes,
+      );
+
+  MangaShort get toMangaShort => MangaShort(
+        id: id,
+        name: name,
+        russian: russian,
+        url: url,
+        image: image,
+        kind: kind,
+        score: score,
+        status: status,
+        airedOn: airedOn,
+        releasedOn: releasedOn,
+        volumes: volumes,
+        chapters: chapters,
       );
 }

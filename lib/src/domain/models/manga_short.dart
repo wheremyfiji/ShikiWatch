@@ -1,4 +1,5 @@
 import 'shiki_image.dart';
+import 'shiki_title.dart';
 
 class MangaShort {
   int? id;
@@ -42,4 +43,23 @@ class MangaShort {
     airedOn = json['aired_on'];
     releasedOn = json['released_on'];
   }
+}
+
+extension MangaShortExtension on MangaShort {
+  ShikiTitle get toShikiTitle => ShikiTitle(
+        id: id,
+        name: name,
+        russian: russian,
+        url: url,
+        image: image,
+        kind: kind,
+        score: score,
+        status: status,
+        airedOn: airedOn,
+        releasedOn: releasedOn,
+        volumes: volumes,
+        chapters: chapters,
+        episodes: null,
+        episodesAired: null,
+      );
 }

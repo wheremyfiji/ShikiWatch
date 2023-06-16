@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:shikidev/src/domain/models/shiki_title.dart';
+import 'package:shikidev/src/presentation/widgets/manga_card.dart';
+import 'package:shikidev/src/utils/shiki_utils.dart';
 
 import '../../../domain/enums/search_state.dart';
-import '../../../domain/models/animes.dart';
 import '../../providers/anime_search_provider.dart';
 import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';
-
-final searchTypeProvider = StateProvider<SearchState>((ref) {
-  return SearchState.anime;
-}, name: 'searchTypeProvider');
 
 class AnimeSearchPage extends ConsumerWidget {
   final int? studioId;
@@ -25,7 +23,7 @@ class AnimeSearchPage extends ConsumerWidget {
         SearchPageParameters(studioId: studioId ?? 0, genreId: genreId ?? 0);
     final controller = ref.watch(animeSearchProvider(t));
 
-    final seatchTypeState = ref.watch(searchTypeProvider);
+    final currentSearchType = controller.searchType;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -52,7 +50,7 @@ class AnimeSearchPage extends ConsumerWidget {
               filled: false,
               //contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
-              hintText: seatchTypeState.searchHintText,
+              hintText: currentSearchType.searchHintText,
               suffixIcon: controller.textEditingController.text.isNotEmpty
                   ? GestureDetector(
                       child: const Icon(Icons.close),
@@ -66,17 +64,11 @@ class AnimeSearchPage extends ConsumerWidget {
           bottom: AppBar(
             automaticallyImplyLeading: false,
             primary: false,
-            title: const SingleChildScrollView(
+            title: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: SearchTypeChips(),
+              child: SearchTypeChips(t),
             ),
           ),
-          // actions: const [
-          //   Padding(
-          //     padding: EdgeInsets.all(8.0),
-          //     child: SearchTypeWidget(),
-          //   ),
-          // ],
         ),
         body: Builder(
           builder: (context) {
@@ -108,7 +100,7 @@ class AnimeSearchPage extends ConsumerWidget {
                   ),
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  sliver: PagedSliverGrid<int, Animes>(
+                  sliver: PagedSliverGrid<int, ShikiTitle>(
                     addAutomaticKeepAlives: true,
                     showNewPageErrorIndicatorAsGridChild: false,
                     //showNoMoreItemsIndicatorAsGridChild: false,
@@ -120,9 +112,14 @@ class AnimeSearchPage extends ConsumerWidget {
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
                     ),
-                    builderDelegate: PagedChildBuilderDelegate<Animes>(
+                    builderDelegate: PagedChildBuilderDelegate<ShikiTitle>(
                       itemBuilder: (context, item, index) {
-                        return AnimeTileExp(item);
+                        if (kindIsManga(item.kind!)) {
+                          final t = item.toMangaShort;
+                          return MangaCardEx(t);
+                        }
+                        final t = item.toAnimes;
+                        return AnimeTileExp(t);
                       },
                       firstPageErrorIndicatorBuilder: (context) {
                         return CustomErrorWidget(
@@ -173,70 +170,41 @@ class AnimeSearchPage extends ConsumerWidget {
   }
 }
 
-// class SearchTypeWidget extends ConsumerWidget {
-//   const SearchTypeWidget({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final state = ref.watch(searchTypeProvider);
-//     return PopupMenuButton<SearchState>(
-//       tooltip: 'Выбор поиска',
-//       initialValue: state,
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(12),
-//       ),
-//       itemBuilder: (context) => const [
-//         PopupMenuItem(
-//           value: SearchState.anime,
-//           child: Text('Аниме'),
-//         ),
-//         PopupMenuItem(
-//           value: SearchState.manga,
-//           child: Text('Манга'),
-//         ),
-//         PopupMenuItem(
-//           value: SearchState.ranobe,
-//           child: Text('Ранобе'),
-//         ),
-//       ],
-//       onSelected: (value) {
-//         ref.read(searchTypeProvider.notifier).state = value;
-//       },
-//     );
-//   }
-// }
-
 class SearchTypeChips extends ConsumerWidget {
-  const SearchTypeChips({super.key});
+  final SearchPageParameters t;
+
+  const SearchTypeChips(this.t, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(searchTypeProvider);
+    final searchType = ref.watch(animeSearchProvider(t)).searchType;
 
     return Wrap(
       spacing: 8,
       runSpacing: 0,
       children: [
         ChoiceChip(
-          selected: state == SearchState.anime,
+          selected: searchType == SearchType.anime,
           //labelPadding: const EdgeInsets.all(0),
           label: const Text('Аниме'),
           onSelected: (bool selected) {
-            ref.read(searchTypeProvider.notifier).state = SearchState.anime;
+            ref.read(animeSearchProvider(t)).changeSearchType(SearchType.anime);
           },
         ),
         ChoiceChip(
-          selected: state == SearchState.manga,
+          selected: searchType == SearchType.manga,
           label: const Text('Манга'),
           onSelected: (bool selected) {
-            ref.read(searchTypeProvider.notifier).state = SearchState.manga;
+            ref.read(animeSearchProvider(t)).changeSearchType(SearchType.manga);
           },
         ),
         ChoiceChip(
-          selected: state == SearchState.ranobe,
+          selected: searchType == SearchType.ranobe,
           label: const Text('Ранобе'),
           onSelected: (bool selected) {
-            ref.read(searchTypeProvider.notifier).state = SearchState.ranobe;
+            ref
+                .read(animeSearchProvider(t))
+                .changeSearchType(SearchType.ranobe);
           },
         ),
       ],
@@ -294,52 +262,6 @@ class AnimeSearchHistory extends StatelessWidget {
                 ),
               );
             },
-          ),
-      ],
-    );
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-              child: Text(
-                'История поиска',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      fontSize: 14,
-                    ),
-              ),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: history.isEmpty ? null : () => clear(),
-              child: const Text('Очистить'),
-            ),
-            // const SizedBox(
-            //   width: 16,
-            // ),
-          ],
-        ),
-        if (history.isNotEmpty)
-          Expanded(
-            child: ListView.builder(
-              itemCount: history.length,
-              itemBuilder: (context, index) {
-                final e = history[index];
-                return ListTile(
-                  onTap: () => search(e),
-                  leading: const Icon(Icons.history),
-                  title: Text(
-                    e,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              },
-            ),
           ),
       ],
     );

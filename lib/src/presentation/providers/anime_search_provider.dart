@@ -1,21 +1,31 @@
 //import 'dart:async';
+import 'dart:developer';
 
-import 'package:dio/dio.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart' as flutter;
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:equatable/equatable.dart';
+import 'package:dio/dio.dart';
+
+import '../../data/data_sources/ranobe_data_src.dart';
+import '../../data/repositories/ranobe_repo.dart';
+import '../../domain/models/manga_short.dart';
+import '../../data/data_sources/manga_data_src.dart';
+import '../../data/repositories/manga_repo.dart';
+import '../../domain/models/animes.dart';
+import '../../domain/enums/search_state.dart';
+import '../../domain/models/shiki_title.dart';
+import '../../services/shared_pref/shared_preferences_provider.dart';
+import '../../services/secure_storage/secure_storage_service.dart';
+import '../../utils/extensions/riverpod_extensions.dart';
 import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime_filter.dart';
-import '../../domain/models/animes.dart';
-import '../../domain/models/genre.dart';
-import '../../services/secure_storage/secure_storage_service.dart';
-import '../../services/shared_pref/shared_preferences_provider.dart';
-import '../../utils/debouncer.dart';
 import '../pages/search/anime_genres.dart';
+//import '../../domain/models/animes.dart';
+import '../../domain/models/genre.dart';
+import '../../utils/debouncer.dart';
 
 const String animeSearchHistoryKey = 'anime_search_history';
 
@@ -35,12 +45,23 @@ class SearchPageParameters extends Equatable {
       ];
 }
 
+// final searchTypeProvider = StateProvider<SearchState>((ref) {
+//   return SearchState.anime;
+// }, name: 'searchTypeProvider');
+
 final animeSearchProvider = ChangeNotifierProvider.autoDispose
     .family<AnimeSearchController, SearchPageParameters>((ref, i) {
   final cancelToken = ref.cancelToken();
 
-  final c = AnimeSearchController(ref, ref.read(animeDataSourceProvider),
-      cancelToken, i.genreId, i.studioId);
+  final c = AnimeSearchController(
+    ref,
+    animeRepository: ref.read(animeDataSourceProvider),
+    mangaRepository: ref.read(mangaDataSourceProvider),
+    ranobeRepository: ref.read(ranobeDataSourceProvider),
+    cancelToken: cancelToken,
+    initGenre: i.genreId,
+    initStudio: i.studioId,
+  );
 
   c.initState();
 
@@ -55,28 +76,38 @@ final animeSearchProvider = ChangeNotifierProvider.autoDispose
 }, name: 'animeSearchProvider');
 
 class AnimeSearchController extends flutter.ChangeNotifier {
-  AnimeSearchController(this._ref, this.animeRepository, this.cancelToken,
-      this.initGenre, this.initStudio)
+  AnimeSearchController(this._ref,
+      {required this.animeRepository,
+      required this.mangaRepository,
+      required this.ranobeRepository,
+      required this.cancelToken,
+      required this.initGenre,
+      required this.initStudio})
       : textEditingController = flutter.TextEditingController(),
         debouncer = Debouncer(delay: const Duration(milliseconds: 800));
 
   final Ref _ref;
   final CancelToken cancelToken;
   final Debouncer debouncer;
+
   final AnimeRepository animeRepository;
+  final MangaRepository mangaRepository;
+  final RanobeRepository ranobeRepository;
 
   final int initGenre;
   int initStudio = 0;
 
   final flutter.TextEditingController textEditingController;
 
-  final PagingController<int, Animes> _pagingController =
+  final PagingController<int, ShikiTitle> _pagingController =
       PagingController(firstPageKey: 1);
 
   late flutter.FocusNode _focusNode;
 
   List<String> searchHistory = [];
   static const _limit = 25;
+
+  SearchType _searchType = SearchType.anime;
 
   // что это
   bool f = false;
@@ -97,7 +128,8 @@ class AnimeSearchController extends flutter.ChangeNotifier {
 
   //bool disableSearch = false;
 
-  PagingController<int, Animes> get pageController => _pagingController;
+  PagingController<int, ShikiTitle> get pageController => _pagingController;
+  SearchType get searchType => _searchType;
 
   flutter.FocusNode get focusNode => _focusNode;
 
@@ -127,6 +159,17 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       return;
     }
     _focusNode.requestFocus();
+  }
+
+  changeSearchType(SearchType s) {
+    _searchType = s;
+
+    if (textEditingController.text.isNotEmpty ||
+        _pagingController.itemList != null) {
+      _pagingController.refresh();
+    }
+
+    notifyListeners();
   }
 
   toggleStatus({required AnimeFilter s, required bool t}) {
@@ -374,40 +417,117 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       g = t;
     }
 
+    // TODO что это
     int? score;
-
     minimalScore = 0;
-
     if (minimalScore > 0) {
       score = minimalScore;
     }
 
+    //final searchType = _ref.read(searchTypeProvider);
+
+    log(searchType.name, name: 'searchType');
+
     try {
-      final data = await animeRepository.getAnimes(
-        page: pageKey,
-        limit: _limit,
-        order: selectedSortType,
-        kind: selectedKind,
-        status: selectedStatus,
-        score: score,
-        duration: selectedEpDuration,
-        //rating: ,
-        genre: g?.join(','),
-        studio: initStudio != 0 ? '$initStudio' : null,
-        mylist: selectedMyList,
-        censored: 'true',
-        search: textEditingController.text != ''
-            ? textEditingController.text
-            : null,
-        userToken: SecureStorageService.instance.token,
-        cancelToken: cancelToken,
-      );
-      final animes = data.toList();
-      final isLastPage = animes.length < _limit;
+      // боже чел, что это
+      List<ShikiTitle> titles = [];
+
+      switch (_searchType) {
+        case SearchType.anime:
+          final data = await animeRepository.getAnimes(
+            page: pageKey,
+            limit: _limit,
+            order: selectedSortType,
+            kind: selectedKind,
+            status: selectedStatus,
+            score: score,
+            duration: selectedEpDuration,
+            //rating: ,
+            genre: g?.join(','),
+            studio: initStudio != 0 ? '$initStudio' : null,
+            mylist: selectedMyList,
+            censored: 'true',
+            search: textEditingController.text != ''
+                ? textEditingController.text
+                : null,
+            userToken: SecureStorageService.instance.token,
+            cancelToken: cancelToken,
+          );
+          for (var e in data) {
+            final t = e.toShikiTitle;
+            titles.add(t);
+          }
+          break;
+        case SearchType.manga:
+          final data = await mangaRepository.getMangas(
+            page: pageKey,
+            limit: _limit,
+            order: selectedSortType,
+            //kind: selectedKind,
+            status: selectedStatus,
+            mylist: selectedMyList,
+            censored: 'true',
+            search: textEditingController.text != ''
+                ? textEditingController.text
+                : null,
+            userToken: SecureStorageService.instance.token,
+            cancelToken: cancelToken,
+          );
+          for (var e in data) {
+            final t = e.toShikiTitle;
+            titles.add(t);
+          }
+          break;
+        case SearchType.ranobe:
+          final data = await ranobeRepository.getRanobe(
+            page: pageKey,
+            limit: _limit,
+            order: selectedSortType,
+            //kind: selectedKind,
+            status: selectedStatus,
+            mylist: selectedMyList,
+            censored: 'true',
+            search: textEditingController.text != ''
+                ? textEditingController.text
+                : null,
+            userToken: SecureStorageService.instance.token,
+            cancelToken: cancelToken,
+          );
+          for (var e in data) {
+            final t = e.toShikiTitle;
+            titles.add(t);
+          }
+          break;
+        default:
+      }
+
+      // final data = await animeRepository.getAnimes(
+      //   page: pageKey,
+      //   limit: _limit,
+      //   order: selectedSortType,
+      //   kind: selectedKind,
+      //   status: selectedStatus,
+      //   score: score,
+      //   duration: selectedEpDuration,
+      //   //rating: ,
+      //   genre: g?.join(','),
+      //   studio: initStudio != 0 ? '$initStudio' : null,
+      //   mylist: selectedMyList,
+      //   censored: 'true',
+      //   search: textEditingController.text != ''
+      //       ? textEditingController.text
+      //       : null,
+      //   userToken: SecureStorageService.instance.token,
+      //   cancelToken: cancelToken,
+      // );
+
+      //final titles = data.toList();
+
+      final isLastPage = titles.length < _limit;
       if (isLastPage) {
-        _pagingController.appendLastPage(animes);
+        _pagingController.appendLastPage(titles);
       } else {
-        _pagingController.appendPage(animes, pageKey + 1);
+        _pagingController.appendPage(titles, pageKey + 1);
       }
     } catch (error) {
       _pagingController.error = error;

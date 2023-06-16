@@ -1,21 +1,21 @@
-enum SearchState {
+enum SearchType {
   anime,
   manga,
   ranobe,
-  character,
+  //character,
 }
 
-extension SearchStateEx on SearchState {
+extension SearchTypeExtension on SearchType {
   String get searchHintText {
     switch (this) {
-      case SearchState.anime:
+      case SearchType.anime:
         return 'Поиск аниме';
-      case SearchState.manga:
+      case SearchType.manga:
         return 'Поиск манги';
-      case SearchState.ranobe:
+      case SearchType.ranobe:
         return 'Поиск ранобе';
-      case SearchState.character:
-        return 'Поиск персонажа';
+      //case SearchType.character:
+      //  return 'Поиск персонажа';
     }
   }
 }
