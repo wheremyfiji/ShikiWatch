@@ -81,7 +81,7 @@ final GoRouter router = GoRouter(
       name: 'backup',
       parentNavigatorKey: _rootNavigatorKey,
       pageBuilder: (context, state) {
-        return FadeTransitionPage(
+        return SharedAxisTransition(
           key: state.pageKey,
           child: const LocalDatabaseManage(),
         );
@@ -128,7 +128,7 @@ final GoRouter router = GoRouter(
                     //Animes data = state.extra as Animes;
                     final extra = state.extra as AnimeDetailsPageExtra;
 
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: AnimeDetailsPage(
                         key: state.pageKey,
@@ -152,7 +152,7 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     MangaShort data = state.extra as MangaShort;
 
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: MangaDetailPage(
                         key: state.pageKey,
@@ -204,7 +204,7 @@ final GoRouter router = GoRouter(
                         SearchPageParameters p =
                             state.extra as SearchPageParameters;
 
-                        return FadeTransitionPage(
+                        return SharedAxisTransition(
                           key: state.pageKey,
                           child: AnimeFilterPage(p),
                         );
@@ -218,7 +218,7 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     final extra = state.extra as AnimeDetailsPageExtra;
 
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: AnimeDetailsPage(
                         key: state.pageKey,
@@ -254,7 +254,7 @@ final GoRouter router = GoRouter(
                   name: 'calendar',
                   path: 'calendar',
                   pageBuilder: (context, state) {
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: CalendarPage(
                         key: state.pageKey,
@@ -266,7 +266,7 @@ final GoRouter router = GoRouter(
                   name: 'top_anime',
                   path: 'top_anime',
                   pageBuilder: (context, state) {
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: TopAnimePage(
                         key: state.pageKey,
@@ -278,7 +278,7 @@ final GoRouter router = GoRouter(
                   name: 'top_manga',
                   path: 'top_manga',
                   pageBuilder: (context, state) {
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: TopMangaPage(
                         key: state.pageKey,
@@ -290,7 +290,7 @@ final GoRouter router = GoRouter(
                   name: 'next_season_anime',
                   path: 'next_season_anime',
                   pageBuilder: (context, state) {
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: NextSeasonAnimePage(
                         key: state.pageKey,
@@ -323,7 +323,7 @@ final GoRouter router = GoRouter(
                   pageBuilder: (context, state) {
                     User data = state.extra as User;
 
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: UserProfilePage(
                         key: state.pageKey,
@@ -336,7 +336,7 @@ final GoRouter router = GoRouter(
                   name: 'user_search',
                   path: 'user_search',
                   pageBuilder: (context, state) {
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: UserSearchPage(
                         key: state.pageKey,
@@ -348,7 +348,7 @@ final GoRouter router = GoRouter(
                   name: 'profile_settings',
                   path: 'settings',
                   pageBuilder: (context, state) {
-                    return FadeTransitionPage(
+                    return SharedAxisTransition(
                       key: state.pageKey,
                       child: SettingsPage(
                         key: state.pageKey,
@@ -402,4 +402,43 @@ class FadeTransitionPage extends CustomTransitionPage<void> {
   static final CurveTween _curveTween = CurveTween(
       curve: Curves
           .easeOutCirc); //easeInOutExpo   easeInOut   easeOutCirc   easeIn
+}
+
+class SharedAxisTransition extends CustomTransitionPage<void> {
+  SharedAxisTransition({
+    required ValueKey<String> key,
+    required Widget child,
+  }) : super(
+          key: key,
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 150),
+          transitionsBuilder: (BuildContext context,
+              Animation<double> animation,
+              Animation<double> secondaryAnimation,
+              Widget child) {
+            return FadeTransition(
+              opacity: _fadeInTransition.animate(animation),
+              child: AnimatedBuilder(
+                animation: animation,
+                builder: (BuildContext context, Widget? child) {
+                  return Transform.translate(
+                    offset: slideInTransition.evaluate(animation),
+                    child: child,
+                  );
+                },
+                child: child,
+              ),
+            );
+          },
+          child: child,
+        );
+
+  static final Animatable<double> _fadeInTransition = CurveTween(
+    curve: decelerateEasing,
+  ).chain(CurveTween(curve: const Interval(0.3, 1.0)));
+
+  static final Animatable<Offset> slideInTransition = Tween<Offset>(
+    begin: const Offset(30.0, 0.0),
+    end: Offset.zero,
+  ).chain(CurveTween(curve: standardEasing));
 }
