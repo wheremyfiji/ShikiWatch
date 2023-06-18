@@ -22,11 +22,11 @@ class MaterialYouChip extends StatelessWidget {
 
     final colorPrimary = isSelected
         ? context.theme.colorScheme.primaryContainer
-        : context.theme.colorScheme.secondaryContainer;
+        : context.theme.colorScheme.tertiaryContainer;
 
     final colorOnPrimary = isSelected
         ? context.theme.colorScheme.onPrimaryContainer
-        : context.theme.colorScheme.onSecondaryContainer;
+        : context.theme.colorScheme.onTertiaryContainer;
 
     return GestureDetector(
       onTap: onPressed,
@@ -35,7 +35,7 @@ class MaterialYouChip extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius,
         ),
-        clipBehavior: Clip.antiAlias,
+        //clipBehavior: Clip.antiAlias,
         color: colorPrimary,
         elevation: 0.0,
         child: Padding(

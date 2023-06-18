@@ -404,24 +404,42 @@ class _MangaUserRateBottomSheetState
                 //     ),
                 //   ),
                 // ),
-                NumberField(
-                  label: 'Главы:',
-                  initial: progress,
-                  maxValue:
-                      widget.data.status == 'released' ? chaptersCount : null,
-                  onChanged: (value) {
-                    setState(() {
-                      progress = value;
-                    });
-                  },
+                Card(
+                  margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 7,
+                      horizontal: 16,
+                    ),
+                    child: NumberField(
+                      label: 'Главы:',
+                      initial: progress,
+                      maxValue: widget.data.status == 'released'
+                          ? chaptersCount
+                          : null,
+                      onChanged: (value) {
+                        setState(() {
+                          progress = value;
+                        });
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
                 Card(
-                  clipBehavior: Clip.antiAlias,
                   shadowColor: Colors.transparent,
                   margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.zero),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8,
@@ -472,12 +490,17 @@ class _MangaUserRateBottomSheetState
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
                 Card(
-                  clipBehavior: Clip.antiAlias,
                   shadowColor: Colors.transparent,
                   margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8,

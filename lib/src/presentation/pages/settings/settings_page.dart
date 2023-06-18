@@ -233,7 +233,7 @@ class SettingsPage extends ConsumerWidget {
               options: [
                 SettingsOption(
                   title: 'Github',
-                  subtitle: 'Ссылка на гитхаб приложения',
+                  subtitle: 'Открыть репозиторий приложения',
                   onTap: () => launchUrlString(
                     'https://github.com/wheremyfiji/ShikiWatch',
                     //'https://github.com/NozhkiBaal',

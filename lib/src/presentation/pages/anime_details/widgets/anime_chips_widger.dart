@@ -84,8 +84,8 @@ class AnimeChipsWidget extends StatelessWidget {
                 elevation: 0,
                 side: const BorderSide(width: 0, color: Colors.transparent),
                 labelStyle: context.theme.textTheme.bodyMedium?.copyWith(
-                    color: context.theme.colorScheme.onSecondaryContainer),
-                backgroundColor: context.theme.colorScheme.secondaryContainer,
+                    color: context.theme.colorScheme.onTertiaryContainer),
+                backgroundColor: context.theme.colorScheme.tertiaryContainer,
                 avatar: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: CircleAvatar(

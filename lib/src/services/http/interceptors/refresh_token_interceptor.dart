@@ -13,7 +13,7 @@ class RefreshTokenInterceptor extends Interceptor {
   RefreshTokenInterceptor(this.dio);
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response == null) {
       return handler.next(err);
     }

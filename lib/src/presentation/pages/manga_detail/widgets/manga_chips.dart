@@ -45,8 +45,12 @@ class MangaChipsWidget extends StatelessWidget {
                 (index) => CoolChip(label: genres![index].russian ?? "")),
           ],
           if (publishers != null) ...[
-            ...List.generate(publishers!.length,
-                (index) => CoolChip(label: publishers![index].name ?? "")),
+            ...List.generate(
+                publishers!.length,
+                (index) => CoolChip(
+                      label: publishers![index].name ?? "",
+                      useTertiaryColors: true,
+                    )),
           ],
           const SizedBox(
             width: 8.0,

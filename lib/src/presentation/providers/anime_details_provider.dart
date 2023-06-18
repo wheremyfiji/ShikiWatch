@@ -51,7 +51,7 @@ final relatedTitlesAnimeProvider = FutureProvider.autoDispose
 
   final token = ref.cancelToken();
 
-  await Future.delayed(const Duration(milliseconds: 250));
+  //await Future.delayed(const Duration(milliseconds: 250));
 
   return ref
       .read(animeDataSourceProvider)

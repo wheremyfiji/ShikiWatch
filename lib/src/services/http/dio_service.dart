@@ -30,23 +30,6 @@ class DioHttpService implements HttpService {
     //   dio.httpClientAdapter = NativeAdapter();
     // }
 
-    // if (kDebugMode) {
-    //   dio.interceptors.add(LogInterceptor());
-    // }
-    // if (kDebugMode) {
-    //   dio.interceptors.add(PrettyDioLogger(
-    //     requestHeader: true,
-    //     requestBody: true,
-    //     responseBody: false,
-    //     responseHeader: true,
-    //     error: true,
-    //     compact: true,
-    //     maxWidth: 100,
-    //     logPrint: (object) {
-    //       log(object.toString(), name: 'PrettyDioLogger');
-    //     },
-    //   ));
-    // }
     dio.interceptors.add(RetryInterceptor(
       dio: dio,
       logPrint: log,
@@ -56,6 +39,7 @@ class DioHttpService implements HttpService {
       ],
     ));
 
+    //dio.interceptors.add(RequestLimitInterceptor());
     dio.interceptors.add(RefreshTokenInterceptor(dio));
     dio.interceptors.add(RequestInterceptors(dio));
 

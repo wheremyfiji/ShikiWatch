@@ -1085,23 +1085,40 @@ class _AnimeUserRateBottomSheetState
                 const SizedBox(
                   height: 16,
                 ),
-                NumberField(
-                  label: 'Эпизоды:',
-                  initial: progress,
-                  maxValue: epCount,
-                  onChanged: (value) {
-                    setState(() {
-                      progress = value;
-                    });
-                  },
+                Card(
+                  margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      topRight: Radius.circular(12),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 7,
+                      horizontal: 16,
+                    ),
+                    child: NumberField(
+                      label: 'Эпизоды:',
+                      initial: progress,
+                      maxValue: epCount,
+                      onChanged: (value) {
+                        setState(() {
+                          progress = value;
+                        });
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
                 Card(
-                  clipBehavior: Clip.antiAlias,
                   shadowColor: Colors.transparent,
                   margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.zero),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8,
@@ -1149,12 +1166,17 @@ class _AnimeUserRateBottomSheetState
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
                 Card(
-                  clipBehavior: Clip.antiAlias,
                   shadowColor: Colors.transparent,
                   margin: EdgeInsets.zero,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8,

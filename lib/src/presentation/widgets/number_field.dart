@@ -50,72 +50,130 @@ class NumberFieldState extends State<NumberField> {
   }
 
   @override
-  Widget build(BuildContext context) => Card(
-        clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.transparent,
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 7,
-            horizontal: 16,
-          ),
-          child: Row(
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(widget.label),
+        const SizedBox(
+          width: 4,
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.label),
-              const SizedBox(
-                width: 4,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      maxLines: 1,
-                      minLines: 1,
-                      controller: _ctrl,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      textAlign: TextAlign.start,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.all(0),
-                      ),
-                      onChanged: _validateInput,
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Wrap(
-                children: [
-                  IconButton(
-                    onPressed: _ctrl.text == '0'
-                        ? null
-                        : () => _validateInput(_ctrl.text, -1),
-                    icon: const Icon(Icons.remove),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  IconButton(
-                    onPressed: (widget.maxValue != null &&
-                            _ctrl.text == '${widget.maxValue}')
-                        ? null
-                        : () => _validateInput(_ctrl.text, 1),
-                    icon: const Icon(Icons.add),
-                  ),
+              TextField(
+                maxLines: 1,
+                minLines: 1,
+                controller: _ctrl,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
                 ],
+                textAlign: TextAlign.start,
+                style: Theme.of(context).textTheme.bodyMedium,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(0),
+                ),
+                onChanged: _validateInput,
+              ),
+              const SizedBox(
+                height: 2,
               ),
             ],
           ),
         ),
-      );
+        const Spacer(),
+        Wrap(
+          children: [
+            IconButton(
+              onPressed: _ctrl.text == '0'
+                  ? null
+                  : () => _validateInput(_ctrl.text, -1),
+              icon: const Icon(Icons.remove),
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            IconButton(
+              onPressed: (widget.maxValue != null &&
+                      _ctrl.text == '${widget.maxValue}')
+                  ? null
+                  : () => _validateInput(_ctrl.text, 1),
+              icon: const Icon(Icons.add),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shadowColor: Colors.transparent,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 7,
+          horizontal: 16,
+        ),
+        child: Row(
+          children: [
+            Text(widget.label),
+            const SizedBox(
+              width: 4,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    maxLines: 1,
+                    minLines: 1,
+                    controller: _ctrl,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    textAlign: TextAlign.start,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(0),
+                    ),
+                    onChanged: _validateInput,
+                  ),
+                  const SizedBox(
+                    height: 2,
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(),
+            Wrap(
+              children: [
+                IconButton(
+                  onPressed: _ctrl.text == '0'
+                      ? null
+                      : () => _validateInput(_ctrl.text, -1),
+                  icon: const Icon(Icons.remove),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                IconButton(
+                  onPressed: (widget.maxValue != null &&
+                          _ctrl.text == '${widget.maxValue}')
+                      ? null
+                      : () => _validateInput(_ctrl.text, 1),
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _validateInput(String value, [int add = 0]) {
     int result;

@@ -182,10 +182,10 @@ class LibraryPopUp extends ConsumerWidget {
         heightFactor: isPortrait ? 0.5 : 1.0,
         widthFactor: isPortrait ? 1 : 0.6,
         child: Material(
-          color: Theme.of(context).colorScheme.surface,
-          surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+          color: Theme.of(context).colorScheme.background,
+          //surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
           shadowColor: Colors.transparent,
-          elevation: 1,
+          elevation: 0,
           borderRadius: BorderRadius.circular(24),
           clipBehavior: Clip.hardEdge,
           child: SingleChildScrollView(
@@ -200,14 +200,14 @@ class LibraryPopUp extends ConsumerWidget {
                 // ),
                 Card(
                   margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  color: Theme.of(context).colorScheme.background,
+                  //color: Theme.of(context).colorScheme.background,
+                  //elevation: 0,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
                       topRight: Radius.circular(24),
                     ),
                   ),
-                  elevation: 0,
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.transparent,
@@ -235,14 +235,14 @@ class LibraryPopUp extends ConsumerWidget {
                 ),
                 Card(
                   margin: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-                  color: Theme.of(context).colorScheme.background,
+                  //color: Theme.of(context).colorScheme.background,
+                  //elevation: 0,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(24),
                       bottomRight: Radius.circular(24),
                     ),
                   ),
-                  elevation: 0,
                   child: Column(
                     children: [
                       RadioListTile<LibraryState>(
