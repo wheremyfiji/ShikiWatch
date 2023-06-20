@@ -6,21 +6,20 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/extensions/buildcontext.dart';
-import '../../../utils/extensions/theme_mode.dart';
 import '../../providers/environment_provider.dart';
-import '../../../domain/enums/library_state.dart';
 import '../../../utils/target_platform.dart';
-import '../../../constants/box_types.dart';
-import '../../../constants/hive_keys.dart';
 
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
+import 'widgets/dynamic_colors.dart';
+import 'widgets/library_layout.dart';
 import 'widgets/library_start_fragment.dart';
+import 'widgets/oled_mode.dart';
+import 'widgets/player_discord_rpc.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/version_option.dart';
@@ -84,42 +83,14 @@ class SettingsPage extends ConsumerWidget {
                 ],
               ),
             ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: SettingsGroup(
               title: 'Внешний вид',
               options: [
                 //SettingsOption(title: ''),
-                ValueListenableBuilder(
-                  valueListenable: Hive.box(BoxType.settings.name).listenable(
-                    keys: [themeModeKey],
-                  ),
-                  builder: (context, value, child) {
-                    final currentTheme = ThemeMode
-                        .values[value.get(themeModeKey, defaultValue: 0)];
-
-                    return SettingsOption(
-                      title: 'Тема приложения',
-                      subtitle: currentTheme.themeName,
-                      onTap: () {
-                        showModalBottomSheet(
-                          useRootNavigator: true,
-                          showDragHandle: true,
-                          context: context,
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width >= 700
-                                ? 700
-                                : double.infinity,
-                          ),
-                          builder: (context) => CurrentThemeWidget(
-                            currentTheme: currentTheme,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                const DynamicColorsWidget(),
-                const OledModeWidget(),
+                CurrentThemeOption(),
+                DynamicColorsOption(),
+                OledModeOption(),
                 // if (!TargetP.instance.isDesktop)
                 //   SwitchListTile(
                 //     value: false,
@@ -139,48 +110,16 @@ class SettingsPage extends ConsumerWidget {
               child: SettingsGroup(
                 title: 'Плеер',
                 options: [
-                  PlayerDiscordRpc(),
+                  PlayerDiscordRpcOption(),
                 ],
               ),
             ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: SettingsGroup(
               title: 'Библиотека', //   Приложение
               options: [
-                SettingsOption(
-                  title: 'Способ отображения',
-                  subtitle: 'Список',
-                  onTap: () {},
-                ),
-                ValueListenableBuilder(
-                  valueListenable: Hive.box(BoxType.settings.name).listenable(
-                    keys: [libraryStartFragmentKey],
-                  ),
-                  builder: (context, value, child) {
-                    final currentFragment = LibraryState.values[
-                        value.get(libraryStartFragmentKey, defaultValue: 0)];
-                    return SettingsOption(
-                      title: 'Раздел по умолчанию', // кого раздел то..
-                      subtitle: currentFragment.name,
-                      onTap: () {
-                        showModalBottomSheet(
-                          useRootNavigator: true,
-                          showDragHandle: true,
-                          context: context,
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width >= 700
-                                ? 700
-                                : double.infinity,
-                          ),
-                          builder: (context) => LibraryStartFragment(
-                            fragment: currentFragment,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-
+                LibraryLayoutOption(),
+                LibraryStartFragmentOption(),
                 // SwitchListTile(
                 //   value: false,
                 //   onChanged: (value) {},
@@ -203,24 +142,6 @@ class SettingsPage extends ConsumerWidget {
                       'Импорт/экспорт/удаление локальных отметок просмотра аниме',
                   onTap: () => context.pushNamed('backup'),
                 ),
-
-                // SettingsOption(
-                //   title: 'Сброс настроек',
-                //   subtitle:
-                //       'Сброс настроек приложения до значений по умолчанию',
-                //   onTap: () async {
-                //     var box = Hive.box(BoxType.settings.name);
-                //     await box.clear();
-                //     if (context.mounted) {
-                //       context.scaffoldMessenger.showSnackBar(
-                //         const SnackBar(
-                //           content: Text('Настройки сброшены'),
-                //           duration: Duration(milliseconds: 1500),
-                //         ),
-                //       );
-                //     }
-                //   },
-                // ),
                 // if (TargetP.instance.isDesktop)
                 //   SettingsOption(
                 //     title: 'Экспорт отметок',
@@ -242,7 +163,6 @@ class SettingsPage extends ConsumerWidget {
                   subtitle: 'Открыть репозиторий приложения',
                   onTap: () => launchUrlString(
                     'https://github.com/wheremyfiji/ShikiWatch',
-                    //'https://github.com/NozhkiBaal',
                     mode: LaunchMode.externalApplication,
                   ),
                 ),
@@ -321,99 +241,8 @@ class SettingsPage extends ConsumerWidget {
           //     ],
           //   ),
           // ),
-
-          //const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
-    );
-  }
-}
-
-class PlayerDiscordRpc extends StatelessWidget {
-  const PlayerDiscordRpc({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<Box<dynamic>>(
-      valueListenable: Hive.box(BoxType.settings.name).listenable(
-        keys: [playerDiscordRpc],
-      ),
-      builder: (context, value, child) {
-        final bool b = value.get(
-          playerDiscordRpc,
-          defaultValue: false,
-        );
-        return SwitchListTile(
-          title: const Text('Discord RPC'),
-          subtitle: const Text('Отображать текущую активность в Discord'),
-          value: b,
-          onChanged: (value) {
-            Hive.box(BoxType.settings.name).put(playerDiscordRpc, value);
-          },
-        );
-      },
-    );
-  }
-}
-
-class OledModeWidget extends StatelessWidget {
-  const OledModeWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<Box<dynamic>>(
-      valueListenable: Hive.box(BoxType.settings.name).listenable(
-        keys: [oledModeKey],
-      ),
-      builder: (context, value, child) {
-        final bool isOled = value.get(
-          oledModeKey,
-          defaultValue: false,
-        );
-        return SwitchListTile(
-          title: const Text('AMOLED-тема'),
-          subtitle: const Text('Полносью чёрная тема'),
-          value: isOled,
-          onChanged: (value) {
-            Hive.box(BoxType.settings.name).put(oledModeKey, value);
-          },
-        );
-      },
-    );
-  }
-}
-
-class DynamicColorsWidget extends ConsumerWidget {
-  const DynamicColorsWidget({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final environment = ref.watch(environmentProvider);
-
-    if ((environment.sdkVersion ?? 0) < 31 && !TargetP.instance.isDesktop) {
-      return const SizedBox.shrink();
-    }
-
-    return ValueListenableBuilder<Box<dynamic>>(
-      valueListenable: Hive.box(BoxType.settings.name).listenable(
-        keys: [dynamicThemeKey],
-      ),
-      builder: (context, value, child) {
-        final bool isDynamic = value.get(
-          dynamicThemeKey,
-          defaultValue: true,
-        );
-        return SwitchListTile(
-          title: const Text('Динамические цвета'),
-          subtitle: TargetP.instance.isDesktop
-              ? null
-              : const Text('Динамические цвета на основе обоев телефона'),
-          value: isDynamic,
-          onChanged: (value) {
-            Hive.box(BoxType.settings.name).put(dynamicThemeKey, value);
-          },
-        );
-      },
     );
   }
 }

@@ -1,64 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shikidev/src/utils/extensions/theme_mode.dart';
 
-import '../../../../constants/box_types.dart';
-import '../../../../constants/hive_keys.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CurrentThemeWidget extends StatefulWidget {
-  final ThemeMode currentTheme;
+import '../../../../utils/extensions/theme_mode.dart';
+import '../../../providers/settings_provider.dart';
+import 'setting_option.dart';
 
-  const CurrentThemeWidget({super.key, required this.currentTheme});
-
-  @override
-  State<CurrentThemeWidget> createState() => _CurrentThemeWidgetState();
-}
-
-class _CurrentThemeWidgetState extends State<CurrentThemeWidget> {
-  late ThemeMode selectedTheme = widget.currentTheme;
+class CurrentThemeOption extends ConsumerWidget {
+  const CurrentThemeOption({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          ListTile(
-            title: Text(
-              'Выбор темы приложения',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeMode currentTheme =
+        ref.watch(settingsProvider.select((settings) => settings.theme));
+
+    return SettingsOption(
+      title: 'Тема приложения',
+      subtitle: currentTheme.themeName,
+      onTap: () => showModalBottomSheet(
+          useRootNavigator: true,
+          showDragHandle: true,
+          context: context,
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width >= 700
+                ? 700
+                : double.infinity,
           ),
-          ...ThemeMode.values
-              .map(
-                (e) => RadioListTile(
-                  value: e,
-                  activeColor: Theme.of(context).colorScheme.primary,
-                  groupValue: selectedTheme,
-                  onChanged: (value) {
-                    selectedTheme = value!;
-
-                    setState(() {});
-
-                    Hive.box(BoxType.settings.name).put(
-                      themeModeKey,
-                      value.index,
-                    );
-
-                    Navigator.pop(context);
-                  },
-                  title: Text(
-                    e.themeName,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
+          builder: (context) {
+            return SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ListTile(
+                    title: Text(
+                      'Выбор темы приложения',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                ),
-              )
-              .toList(),
-        ],
-      ),
+                  ...ThemeMode.values
+                      .map(
+                        (e) => RadioListTile(
+                          value: e,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          groupValue: currentTheme,
+                          onChanged: (theme) async {
+                            if (theme == null) {
+                              return;
+                            }
+
+                            await ref
+                                .read(settingsProvider.notifier)
+                                .setTheme(theme);
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          },
+                          title: Text(
+                            e.themeName,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

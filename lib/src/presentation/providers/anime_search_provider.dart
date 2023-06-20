@@ -16,8 +16,8 @@ import '../../data/repositories/manga_repo.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/enums/search_state.dart';
 import '../../domain/models/shiki_title.dart';
-import '../../services/shared_pref/shared_preferences_provider.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
+import '../../services/preferences/preferences_service.dart';
 import '../../utils/extensions/riverpod_extensions.dart';
 import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
@@ -139,10 +139,17 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     _pagingController.addPageRequestListener((pageKey) {
       _fetch(pageKey);
     });
+    // searchHistory = _ref
+    //         .read(sharedPreferencesProvider)
+    //         .getStringList(animeSearchHistoryKey) ??
+    //     [];
+
     searchHistory = _ref
-            .read(sharedPreferencesProvider)
+            .read(preferencesProvider)
+            .sharedPreferences
             .getStringList(animeSearchHistoryKey) ??
         [];
+
     if (initGenre != 0 || initStudio != 0) {
       //disableSearch = true;
 
@@ -539,7 +546,9 @@ class AnimeSearchController extends flutter.ChangeNotifier {
       return;
     }
 
-    final prefs = _ref.read(sharedPreferencesProvider);
+    //final prefs = _ref.read(sharedPreferencesProvider);
+
+    final prefs = _ref.read(preferencesProvider).sharedPreferences;
 
     //Use `Set` to avoid duplication of recentSearches
     Set<String> allSearches =
@@ -565,7 +574,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
   }
 
   void clearHistory() {
-    final prefs = _ref.read(sharedPreferencesProvider);
+    final prefs = _ref.read(preferencesProvider).sharedPreferences;
 
     prefs.remove(animeSearchHistoryKey);
     searchHistory = [];

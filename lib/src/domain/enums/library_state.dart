@@ -1,14 +1,14 @@
-enum LibraryState {
+enum LibraryFragmentMode {
   anime,
   manga,
 }
 
-extension LibraryStateName on LibraryState {
+extension LibraryFragmentModeName on LibraryFragmentMode {
   String get name {
     switch (this) {
-      case LibraryState.anime:
+      case LibraryFragmentMode.anime:
         return 'Аниме';
-      case LibraryState.manga:
+      case LibraryFragmentMode.manga:
         return 'Манга и ранобе';
     }
   }

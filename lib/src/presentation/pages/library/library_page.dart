@@ -45,13 +45,13 @@ class LibraryPage extends HookConsumerWidget {
             return [
               LibraryPageAppBar(
                 innerBoxIsScrolled: innerBoxIsScrolled,
-                tabController: state == LibraryState.manga
+                tabController: state == LibraryFragmentMode.manga
                     ? mangaTabController
                     : animeTabController,
               )
             ];
           },
-          body: state == LibraryState.manga
+          body: state == LibraryFragmentMode.manga
               ? SafeArea(
                   top: false,
                   bottom: false,

@@ -1,22 +1,23 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../../constants/config.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../domain/models/anime.dart' show Videos, Screenshots;
-import '../../../domain/models/animes.dart';
-import '../../../services/shared_pref/shared_preferences_provider.dart';
-import '../../../utils/shiki_utils.dart';
-import '../../../utils/utils.dart';
+import '../../../services/preferences/preferences_service.dart';
 import '../../providers/anime_details_provider.dart';
-import '../../widgets/cached_image.dart';
-import '../../widgets/error_widget.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/title_description.dart';
+import '../../../domain/models/animes.dart';
+import '../../../utils/shiki_utils.dart';
+import '../../widgets/cached_image.dart';
+import '../../widgets/error_widget.dart';
+import '../../../constants/config.dart';
+import '../../../utils/utils.dart';
 
 import 'anime_details_page.dart';
 import 'rating_dialog.dart';
@@ -641,7 +642,8 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
               onPressed: () async {
                 if (titleInfo.rating == '18+') {
                   final allowExp = ref
-                          .read(sharedPreferencesProvider)
+                          .read(preferencesProvider)
+                          .sharedPreferences
                           .getBool('allowExpContent') ??
                       false;
 
@@ -654,7 +656,8 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
 
                     if (dialogValue ?? false) {
                       await ref
-                          .read(sharedPreferencesProvider)
+                          .read(preferencesProvider)
+                          .sharedPreferences
                           .setBool('allowExpContent', true);
                       // ignore: use_build_context_synchronously
                       pushStudioSelectPage(

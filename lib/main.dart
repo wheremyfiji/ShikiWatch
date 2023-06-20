@@ -2,34 +2,32 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:dart_discord_rpc/dart_discord_rpc.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:loggy/loggy.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/material.dart';
+
 import 'package:path_provider/path_provider.dart' as path_prov;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-import 'secret.dart';
-import 'src/constants/box_types.dart';
-import 'src/data/data_sources/environment_data_src.dart';
-import 'src/presentation/providers/environment_provider.dart';
-import 'src/presentation/shiki.dart';
-import 'src/services/secure_storage/secure_storage_service.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:loggy/loggy.dart';
+import 'package:intl/intl.dart';
 
 import 'src/services/anime_database/anime_database_provider.dart';
 import 'src/services/anime_database/anime_database_service.dart';
-import 'src/services/shared_pref/shared_preferences_provider.dart';
+import 'src/services/secure_storage/secure_storage_service.dart';
+import 'src/presentation/providers/environment_provider.dart';
+import 'src/services/preferences/preferences_service.dart';
+import 'src/data/data_sources/environment_data_src.dart';
 import 'src/utils/target_platform.dart';
+import 'src/presentation/shiki.dart';
+
+import 'secret.dart';
 
 Future<void> main() async {
   if (kReleaseMode) {
@@ -106,15 +104,10 @@ void initApp() async {
     });
   }
 
-  final hiveDir = await path_prov.getApplicationSupportDirectory();
-
-  await Hive.initFlutter(hiveDir.path);
-  await Hive.openBox<dynamic>(BoxType.settings.name);
-
   final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
   //await animeDatabase.migration();
 
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final preferencesService = await PreferencesService.initialize();
 
   final packageInfo = await PackageInfo.fromPlatform();
 
@@ -144,8 +137,8 @@ void initApp() async {
             windowsInfo: windowsInfo,
           ),
         ),
-        sharedPreferencesProvider.overrideWithValue(prefs),
         animeDatabaseProvider.overrideWithValue(animeDatabase),
+        preferencesProvider.overrideWithValue(preferencesService),
       ],
       // child: WindowWatcher(
       //   child: const ShikiApp(),

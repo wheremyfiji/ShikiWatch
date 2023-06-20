@@ -90,8 +90,6 @@ class DioHttpService implements HttpService {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    dio.options.extra[AppConfig.dioNeedToCacheKey] = false;
-    dio.options.extra[AppConfig.dioCacheForceRefreshKey] = true;
     try {
       var response = await dio.get(
         endpoint,
@@ -116,7 +114,6 @@ class DioHttpService implements HttpService {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    dio.options.extra[AppConfig.dioNeedToCacheKey] = false;
     try {
       var response = await dio.post(
         endpoint,
@@ -146,7 +143,6 @@ class DioHttpService implements HttpService {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    dio.options.extra[AppConfig.dioNeedToCacheKey] = false;
     try {
       var response = await dio.patch(
         endpoint,
@@ -174,7 +170,6 @@ class DioHttpService implements HttpService {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    dio.options.extra[AppConfig.dioNeedToCacheKey] = false;
     return await dio
         .delete(endpoint, options: options)
         .then((value) => value.statusCode?.clamp(200, 299) == value.statusCode)

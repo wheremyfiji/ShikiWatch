@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../domain/enums/library_state.dart';
+import '../../../../domain/enums/library_layout_mode.dart';
 import '../../../providers/settings_provider.dart';
+
 import 'setting_option.dart';
 
-class LibraryStartFragmentOption extends ConsumerWidget {
-  const LibraryStartFragmentOption({super.key});
+class LibraryLayoutOption extends ConsumerWidget {
+  const LibraryLayoutOption({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final LibraryFragmentMode currentFragment = ref
-        .watch(settingsProvider.select((settings) => settings.libraryFragment));
+    final LibraryLayoutMode libraryLayout = ref
+        .watch(settingsProvider.select((settings) => settings.libraryLayout));
 
     return SettingsOption(
-      title: 'Раздел по умолчанию', // рял, а кого раздел то.. одевайся давай
-      subtitle: currentFragment.name,
+      title: 'Способ отображения',
+      subtitle: libraryLayout.name,
       onTap: () => showModalBottomSheet(
         useRootNavigator: true,
         showDragHandle: true,
@@ -33,16 +34,16 @@ class LibraryStartFragmentOption extends ConsumerWidget {
               children: [
                 ListTile(
                   title: Text(
-                    'Выбор раздела библиотеки по умолчанию',
+                    'Выбор способа отображения карточек аниме',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                ...LibraryFragmentMode.values
+                ...LibraryLayoutMode.values
                     .map(
                       (e) => RadioListTile(
                         value: e,
                         activeColor: Theme.of(context).colorScheme.primary,
-                        groupValue: currentFragment,
+                        groupValue: libraryLayout,
                         onChanged: (value) async {
                           if (value == null) {
                             return;
@@ -50,7 +51,7 @@ class LibraryStartFragmentOption extends ConsumerWidget {
 
                           await ref
                               .read(settingsProvider.notifier)
-                              .setLibraryStartFragment(value);
+                              .setLibraryLayout(value);
 
                           if (context.mounted) {
                             Navigator.pop(context);

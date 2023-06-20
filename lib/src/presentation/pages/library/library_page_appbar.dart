@@ -2,22 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../constants/box_types.dart';
-import '../../../constants/hive_keys.dart';
 import '../../../domain/enums/library_state.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
 
-final libraryStateProvider = StateProvider<LibraryState>((ref) {
-  int value = Hive.box(BoxType.settings.name).get(
-    libraryStartFragmentKey,
-    defaultValue: 0,
-  );
+final libraryStateProvider = StateProvider<LibraryFragmentMode>((ref) {
+  // int value = Hive.box(BoxType.settings.name).get(
+  //   libraryStartFragmentKey,
+  //   defaultValue: 0,
+  // );
 
-  return LibraryState.values[value];
+  final LibraryFragmentMode currentFragment = ref
+      .watch(settingsProvider.select((settings) => settings.libraryFragment));
+
+  return currentFragment;
 }, name: 'libraryProvider');
 
 class LibraryPageAppBar extends ConsumerWidget {
@@ -39,7 +40,7 @@ class LibraryPageAppBar extends ConsumerWidget {
       pinned: true,
       floating: true,
       snap: false,
-      title: state == LibraryState.manga
+      title: state == LibraryFragmentMode.manga
           ? const Text('Манга и ранобе')
           : const Text('Аниме'),
       actions: [
@@ -106,7 +107,7 @@ class LibraryPageAppBar extends ConsumerWidget {
                 : Colors.transparent;
           },
         ),
-        tabs: state == LibraryState.manga
+        tabs: state == LibraryFragmentMode.manga
             ? const [
                 Tab(
                   text: 'Читаю',
@@ -245,19 +246,19 @@ class LibraryPopUp extends ConsumerWidget {
                   ),
                   child: Column(
                     children: [
-                      RadioListTile<LibraryState>(
+                      RadioListTile<LibraryFragmentMode>(
                         title: const Text(
                           'Аниме',
                         ),
-                        value: LibraryState.anime,
+                        value: LibraryFragmentMode.anime,
                         groupValue: state,
                         onChanged: (value) {
                           ref.read(libraryStateProvider.notifier).state =
-                              LibraryState.anime;
+                              LibraryFragmentMode.anime;
                           Navigator.pop(context);
                         },
                       ),
-                      RadioListTile<LibraryState>(
+                      RadioListTile<LibraryFragmentMode>(
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(24),
@@ -267,11 +268,11 @@ class LibraryPopUp extends ConsumerWidget {
                         title: const Text(
                           'Манга и ранобе',
                         ),
-                        value: LibraryState.manga,
+                        value: LibraryFragmentMode.manga,
                         groupValue: state,
                         onChanged: (value) {
                           ref.read(libraryStateProvider.notifier).state =
-                              LibraryState.manga;
+                              LibraryFragmentMode.manga;
                           Navigator.pop(context);
                         },
                       ),

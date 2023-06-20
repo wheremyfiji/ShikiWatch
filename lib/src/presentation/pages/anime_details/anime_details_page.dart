@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../domain/models/pages_extra.dart';
-import '../../../services/shared_pref/shared_preferences_provider.dart';
+import '../../../services/preferences/preferences_service.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/config.dart';
@@ -73,7 +73,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                 onPressed: () async {
                   if (titleInfo.rating == '18+') {
                     final allowExp = ref
-                            .read(sharedPreferencesProvider)
+                            .read(preferencesProvider)
+                            .sharedPreferences
                             .getBool('allowExpContent') ??
                         false;
 
@@ -86,7 +87,8 @@ class AnimeDetailsPage extends ConsumerWidget {
 
                       if (dialogValue ?? false) {
                         await ref
-                            .read(sharedPreferencesProvider)
+                            .read(preferencesProvider)
+                            .sharedPreferences
                             .setBool('allowExpContent', true);
                         // ignore: use_build_context_synchronously
                         pushStudioSelectPage(

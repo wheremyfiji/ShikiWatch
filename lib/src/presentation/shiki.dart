@@ -6,14 +6,12 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:hive_flutter/adapters.dart';
 
 import '../utils/extensions/buildcontext.dart';
-import '../constants/box_types.dart';
-import '../constants/hive_keys.dart';
 import '../utils/router.dart';
 
 import 'providers/environment_provider.dart';
+import 'providers/settings_provider.dart';
 import 'widgets/app_theme_builder.dart';
 
 // const _appMainColor = Colors.orange;
@@ -27,6 +25,15 @@ class ShikiApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final environment = ref.watch(environmentProvider);
+
+    final ThemeMode themeMode =
+        ref.watch(settingsProvider.select((settings) => settings.theme));
+
+    final bool dynamicColors = ref
+        .watch(settingsProvider.select((settings) => settings.dynamicColors));
+
+    final bool oledMode =
+        ref.watch(settingsProvider.select((settings) => settings.oledMode));
 
     final isDarkMode = context.brightness == Brightness.dark;
     final brightness = isDarkMode ? Brightness.light : Brightness.dark;
@@ -103,67 +110,52 @@ class ShikiApp extends ConsumerWidget {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (environment.sdkVersion ?? 0) > 28 ? customStyle : defaultStyle,
-      child: ValueListenableBuilder<Box>(
-        valueListenable: Hive.box(BoxType.settings.name).listenable(
-          keys: [oledModeKey, themeModeKey, dynamicThemeKey],
-        ),
-        builder: (context, value, child) {
-          final bool isOled = value.get(oledModeKey, defaultValue: false);
-          final bool isDynamic = value.get(dynamicThemeKey, defaultValue: true);
+      child: DynamicColorBuilder(
+        builder: (lightDynamic, darkDynamic) {
+          if (environment.androidInfo != null &&
+              lightDynamic == null &&
+              environment.sdkVersion! > 30) {
+            return const SizedBox.shrink();
+          }
 
-          final ThemeMode themeMode = ThemeMode.values[value.get(
-            themeModeKey,
-            defaultValue: 0,
-          )];
+          return AppThemeBuilder(
+            dynamicLight: lightDynamic,
+            dynamicDark: darkDynamic,
+            isDynamic: dynamicColors,
+            builder: (context, appTheme) => MaterialApp.router(
+              //themeAnimationDuration: Duration.zero,
+              debugShowCheckedModeBanner: false,
 
-          return DynamicColorBuilder(
-            builder: (lightDynamic, darkDynamic) {
-              if (environment.androidInfo != null &&
-                  lightDynamic == null &&
-                  environment.sdkVersion! > 30) {
-                return const SizedBox.shrink();
-              }
+              //showPerformanceOverlay: true,
+              //checkerboardOffscreenLayers: true,
+              //checkerboardRasterCacheImages: true,
 
-              return AppThemeBuilder(
-                dynamicLight: lightDynamic,
-                dynamicDark: darkDynamic,
-                isDynamic: isDynamic,
-                builder: (context, appTheme) => MaterialApp.router(
-                  //themeAnimationDuration: Duration.zero,
-                  debugShowCheckedModeBanner: false,
-
-                  //showPerformanceOverlay: true,
-                  //checkerboardOffscreenLayers: true,
-                  //checkerboardRasterCacheImages: true,
-
-                  theme: appTheme.day,
-                  darkTheme: isOled ? appTheme.midnight : appTheme.night,
-                  title: appTitle,
-                  themeMode: themeMode,
-                  routerConfig: router,
-                  scrollBehavior: ScrollBehavior(),
-                  builder: (context, child) {
-                    if (!kDebugMode) {
-                      ErrorWidget.builder = (FlutterErrorDetails error) {
-                        return const Center(
-                          child: Text('Произошла ошибка'),
-                        );
-                      };
-                    }
-
-                    /// fix high textScaleFactor
-                    final mediaQuery = MediaQuery.of(context);
-                    final scale =
-                        mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
-
-                    return MediaQuery(
-                      data: mediaQuery.copyWith(textScaleFactor: scale),
-                      child: child!,
+              theme: appTheme.day,
+              darkTheme: oledMode ? appTheme.midnight : appTheme.night,
+              title: appTitle,
+              themeMode: themeMode,
+              routerConfig: router,
+              scrollBehavior: ScrollBehavior(),
+              builder: (context, child) {
+                if (!kDebugMode) {
+                  ErrorWidget.builder = (FlutterErrorDetails error) {
+                    return const Center(
+                      child: Text('Произошла ошибка'),
                     );
-                  },
-                ),
-              );
-            },
+                  };
+                }
+
+                /// fix high textScaleFactor
+                final mediaQuery = MediaQuery.of(context);
+                final scale =
+                    mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+                return MediaQuery(
+                  data: mediaQuery.copyWith(textScaleFactor: scale),
+                  child: child!,
+                );
+              },
+            ),
           );
         },
       ),

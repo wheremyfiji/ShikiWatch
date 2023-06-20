@@ -12,7 +12,6 @@ import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:wakelock/wakelock.dart';
@@ -20,12 +19,11 @@ import 'package:wakelock/wakelock.dart';
 import '../../../constants/config.dart';
 import '../../../../kodik/kodik.dart';
 import '../../../../secret.dart';
-import '../../../constants/box_types.dart';
-import '../../../constants/hive_keys.dart';
 import '../../../domain/models/anime_player_page_extra.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../utils/shaders.dart';
 import '../../../utils/utils.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/auto_hide.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/scrollable_slider.dart';
@@ -230,11 +228,14 @@ class _AnimePlayerDesktopPageState
 
     pipeLogsToConsole(player);
 
-    var box = Hive.box(BoxType.settings.name);
-    bool dr = box.get(
-      playerDiscordRpc,
-      defaultValue: false,
-    );
+    // var box = Hive.box(BoxType.settings.name);
+    // bool dr = box.get(
+    //   playerDiscordRpc,
+    //   defaultValue: false,
+    // );
+
+    final dr = ref
+        .read(settingsProvider.select((settings) => settings.playerDiscordRpc));
 
     if (dr) {
       setRpc(widget.data!.animeName);
