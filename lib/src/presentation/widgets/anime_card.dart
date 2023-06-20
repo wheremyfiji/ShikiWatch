@@ -10,7 +10,198 @@ import '../../domain/models/pages_extra.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/shiki_utils.dart';
 import '../../utils/target_platform.dart';
+import '../pages/anime_details/widgets/user_anime_rate.dart';
 import '../widgets/image_with_shimmer.dart';
+import 'custom_linear_progress_indicator.dart';
+
+class AnimeListTile extends StatelessWidget {
+  final UserAnimeRates data;
+
+  const AnimeListTile(this.data, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final epCount = data.anime?.status == 'released'
+        ? data.anime?.episodes
+        : data.anime?.episodesAired;
+
+    final releasedOnDateTime =
+        DateTime.parse(data.anime!.releasedOn ?? '1917-10-25').toLocal();
+    final releasedOn = DateFormat('yyyy').format(releasedOnDateTime);
+
+    final airedOnDateTime =
+        DateTime.parse(data.anime!.airedOn ?? '1917-10-25').toLocal();
+    final airedOn = DateFormat('yyyy-MM-dd').format(airedOnDateTime);
+
+    return Material(
+      borderRadius: BorderRadius.circular(12),
+      color: Colors.transparent,
+      clipBehavior: Clip.hardEdge,
+      child: InkWell(
+        onLongPress: () {
+          FocusScope.of(context).unfocus();
+
+          final t = data.toAnime;
+
+          showModalBottomSheet<void>(
+            context: context,
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width >= 700
+                  ? 700
+                  : double.infinity,
+            ),
+            useRootNavigator: true,
+            isScrollControlled: true,
+            enableDrag: false,
+            useSafeArea: true,
+            builder: (context) {
+              return SafeArea(
+                child: AnimeUserRateBottomSheet(
+                  data: t,
+                  needUpdate: false,
+                  //anime: animeData,
+                ),
+              );
+            },
+          );
+        },
+        onTap: () {
+          FocusScope.of(context).unfocus();
+
+          final extra = AnimeDetailsPageExtra(
+            id: data.anime!.id!,
+            label: (data.anime!.russian == ''
+                    ? data.anime!.name
+                    : data.anime!.russian) ??
+                '',
+          );
+
+          context.pushNamed(
+            'library_anime',
+            pathParameters: <String, String>{
+              'id': (data.anime?.id!).toString(),
+            },
+            extra: extra,
+          );
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 100,
+              child: AspectRatio(
+                aspectRatio: 0.703,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: ImageWithShimmerWidget(
+                    imageUrl: AppConfig.staticUrl +
+                        (data.anime?.image?.original ?? ''),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 16,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (data.anime?.russian == ''
+                            ? data.anime?.name
+                            : data.anime?.russian) ??
+                        '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        data.anime?.status == 'released'
+                            ? '${releasedOn != '1917' ? releasedOn : airedOn.split('-')[0]} • '
+                            : '${getStatus(data.anime?.status ?? '')} • ',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall!.color,
+                        ),
+                      ),
+                      Text(
+                        data.anime?.episodes == 0
+                            ? getKind(data.anime?.kind ?? '')
+                            : '${getKind(data.anime?.kind ?? '')} • ${data.anime?.episodes} эп.',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall!.color,
+                        ),
+                      ),
+                      if (data.anime?.score != '0.0') ...[
+                        Text(
+                          ' • ${data.anime?.score}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodySmall!.color,
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 2),
+                          child: Icon(
+                            Icons.star_rounded,
+                            size: 10,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (data.anime?.status != 'anons') ...[
+                    if (epCount != null && epCount > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 2),
+                        child: CustomLinearProgressIndicator(
+                          value: data.episodes ?? 0,
+                          maxValue: epCount,
+                        ),
+                      ),
+                    Text(
+                      '${data.episodes.toString()} из $epCount эп.',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodySmall!.color,
+                      ),
+                    ),
+                  ],
+                  if (data.anime?.status == 'anons' &&
+                      data.anime!.airedOn != null)
+                    Text(
+                      'Выйдет $airedOn',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodySmall!.color,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class AnimeCard extends StatelessWidget {
   final UserAnimeRates data;
@@ -32,7 +223,7 @@ class AnimeCard extends StatelessWidget {
           waitDuration: TargetP.instance.isDesktop
               ? const Duration(seconds: 1)
               : const Duration(milliseconds: 0),
-          message: 'Изменено: $updateString\nСоздано: $createString',
+          message: 'Создано: $createString\nИзменено: $updateString',
           child: InkWell(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,

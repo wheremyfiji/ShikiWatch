@@ -16,6 +16,84 @@ class RewatchingTab extends ConsumerWidget {
     final controller = ref.watch(rewatchingTabPageProvider);
 
     return controller.animes.when(
+      data: (data) {
+        if (data.isEmpty) {
+          return RefreshIndicator(
+            onRefresh: () async => ref.refresh(rewatchingTabPageProvider),
+            child: Stack(
+              children: <Widget>[ListView(), const EmptyList()],
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async => ref.refresh(rewatchingTabPageProvider),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SearchWidget(
+                  controller: controller.textEditingController,
+                  text: 'controller.query',
+                  onChanged: controller.onSearchChanged,
+                  hintText: 'Поиск (${data.length} всего)',
+                ),
+              ),
+              if (controller.searchAnimes.isEmpty &&
+                  controller.textEditingController.text.isNotEmpty) ...[
+                const SliverPadding(
+                  padding: EdgeInsets.all(16.0),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(
+                      child: Text(
+                        'В этом списке пусто\nПопробуй поискать в другом',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              SliverList.builder(
+                itemCount: controller.searchAnimes.isEmpty
+                    ? data.length
+                    : controller.searchAnimes.length,
+                itemBuilder: (context, index) {
+                  data.sort((a, b) {
+                    String adate = a.updatedAt!;
+                    String bdate = b.updatedAt!;
+                    return -adate.compareTo(bdate);
+                  });
+                  final sortedData = controller.searchAnimes.isEmpty &&
+                          controller.textEditingController.text.isEmpty
+                      ? data
+                      : controller.searchAnimes;
+
+                  if (sortedData.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final model = sortedData[index];
+
+                  final lastElement = index == (data.length - 1);
+
+                  return Padding(
+                    padding:
+                        EdgeInsets.fromLTRB(16, 0, 16, lastElement ? 16 : 8),
+                    child: AnimeListTile(model),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => CustomErrorWidget(
+        err.toString(),
+        () => ref.refresh(rewatchingTabPageProvider),
+      ),
+    );
+
+    return controller.animes.when(
       data: (data) => data.isEmpty
           ? RefreshIndicator(
               onRefresh: () async => ref.refresh(rewatchingTabPageProvider),

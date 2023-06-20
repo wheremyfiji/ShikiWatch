@@ -332,6 +332,7 @@ class UserAnimeRateWidget extends HookConsumerWidget {
       builder: (context) {
         return SafeArea(
           child: AnimeUserRateBottomSheet(
+            needUpdate: true,
             data: data,
             //anime: anime,
           ),
@@ -378,6 +379,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
   final AnimeRepository animeRepository;
 
   Future<void> createRate({
+    required bool needUpdate,
     required String selectedStatus,
     required int currentScore,
     required int progress,
@@ -505,17 +507,19 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
         default:
       }
 
-      ref.read(titleInfoPageProvider(anime.id!)).addRate(
-            rateId: rate.id!,
-            updatedAt: rate.updatedAt!,
-            status: rate.status!,
-            score: rate.score,
-            episodes: rate.episodes,
-            rewatches: rate.rewatches,
-            text: rate.text,
-            textHtml: rate.textHtml,
-            createdAt: rate.createdAt,
-          );
+      if (needUpdate) {
+        ref.read(titleInfoPageProvider(anime.id!)).addRate(
+              rateId: rate.id!,
+              updatedAt: rate.updatedAt!,
+              status: rate.status!,
+              score: rate.score,
+              episodes: rate.episodes,
+              rewatches: rate.rewatches,
+              text: rate.text,
+              textHtml: rate.textHtml,
+              createdAt: rate.createdAt,
+            );
+      }
 
       onFinally();
     } catch (e, s) {
@@ -527,6 +531,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
   }
 
   Future<void> updateRate({
+    required bool needUpdate,
     required int rateId,
     required int animeId,
     required String selectedStatus,
@@ -694,17 +699,19 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             break;
           default:
         }
-        ref.read(titleInfoPageProvider(animeId)).updateRate(
-              rateId: rate.id!,
-              updatedAt: rate.updatedAt!,
-              status: rate.status!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-              text: rate.text,
-              textHtml: rate.textHtml,
-              createdAt: rate.createdAt,
-            );
+        if (needUpdate) {
+          ref.read(titleInfoPageProvider(animeId)).updateRate(
+                rateId: rate.id!,
+                updatedAt: rate.updatedAt!,
+                status: rate.status!,
+                score: rate.score,
+                episodes: rate.episodes,
+                rewatches: rate.rewatches,
+                text: rate.text,
+                textHtml: rate.textHtml,
+                createdAt: rate.createdAt,
+              );
+        }
 
         onFinally();
 
@@ -768,17 +775,19 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           break;
         default:
       }
-      ref.read(titleInfoPageProvider(animeId)).updateRate(
-            rateId: rate.id!,
-            updatedAt: rate.updatedAt!,
-            status: rate.status!,
-            score: rate.score,
-            episodes: rate.episodes,
-            rewatches: rate.rewatches,
-            text: rate.text,
-            textHtml: rate.textHtml,
-            createdAt: rate.createdAt,
-          );
+      if (needUpdate) {
+        ref.read(titleInfoPageProvider(animeId)).updateRate(
+              rateId: rate.id!,
+              updatedAt: rate.updatedAt!,
+              status: rate.status!,
+              score: rate.score,
+              episodes: rate.episodes,
+              rewatches: rate.rewatches,
+              text: rate.text,
+              textHtml: rate.textHtml,
+              createdAt: rate.createdAt,
+            );
+      }
       onFinally();
     } catch (e, s) {
       state = AsyncValue.error('Ошибка при обновлении', s);
@@ -789,6 +798,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
   }
 
   Future<void> deleteRate({
+    required bool needUpdate,
     required int rateId,
     required int animeId,
     required String status,
@@ -824,7 +834,7 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
         default:
       }
 
-      ref.read(titleInfoPageProvider(animeId)).deleteRate();
+      if (needUpdate) ref.read(titleInfoPageProvider(animeId)).deleteRate();
 
       onFinally();
     } catch (e, s) {
@@ -838,11 +848,13 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
 
 class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
   final Anime data;
+  final bool needUpdate;
   //final Animes anime;
 
   const AnimeUserRateBottomSheet({
     super.key,
     required this.data,
+    required this.needUpdate,
     // required this.anime,
   });
 
@@ -1308,6 +1320,7 @@ class _AnimeUserRateBottomSheetState
                                     .read(
                                         updateAnimeRateButtonProvider.notifier)
                                     .createRate(
+                                      needUpdate: widget.needUpdate,
                                       anime: widget.data,
                                       selectedStatus: convertStatusIntToString(
                                           selectedStatus!),
@@ -1331,6 +1344,7 @@ class _AnimeUserRateBottomSheetState
                                     .read(
                                         updateAnimeRateButtonProvider.notifier)
                                     .updateRate(
+                                      needUpdate: widget.needUpdate,
                                       rateId: widget.data.userRate!.id!,
                                       animeId: widget.data.id!,
                                       anime: widget.data,
@@ -1387,6 +1401,7 @@ class _AnimeUserRateBottomSheetState
                         ref
                             .read(updateAnimeRateButtonProvider.notifier)
                             .deleteRate(
+                              needUpdate: widget.needUpdate,
                               rateId: widget.data.userRate!.id!,
                               animeId: widget.data.id!,
                               status: initStatus ?? '',

@@ -214,6 +214,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                           return SafeArea(
                             child: AnimeUserRateBottomSheet(
                               data: data,
+                              needUpdate: true,
                               //anime: animeData,
                             ),
                           );

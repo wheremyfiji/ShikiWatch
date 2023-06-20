@@ -89,8 +89,8 @@ class AnimeChipsWidget extends StatelessWidget {
                 avatar: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
                   child: CircleAvatar(
-                    backgroundColor:
-                        context.theme.colorScheme.secondaryContainer,
+                    backgroundColor: Colors.transparent,
+                    //context.theme.colorScheme.secondaryContainer,
                     backgroundImage: CachedNetworkImageProvider(
                       '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
                       cacheManager: cacheManager,

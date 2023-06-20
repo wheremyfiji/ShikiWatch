@@ -145,8 +145,13 @@ class SettingsPage extends ConsumerWidget {
             ),
           SliverToBoxAdapter(
             child: SettingsGroup(
-              title: 'Приложение', // Библиотека
+              title: 'Библиотека', //   Приложение
               options: [
+                SettingsOption(
+                  title: 'Способ отображения',
+                  subtitle: 'Список',
+                  onTap: () {},
+                ),
                 ValueListenableBuilder(
                   valueListenable: Hive.box(BoxType.settings.name).listenable(
                     keys: [libraryStartFragmentKey],
@@ -175,6 +180,7 @@ class SettingsPage extends ConsumerWidget {
                     );
                   },
                 ),
+
                 // SwitchListTile(
                 //   value: false,
                 //   onChanged: (value) {},

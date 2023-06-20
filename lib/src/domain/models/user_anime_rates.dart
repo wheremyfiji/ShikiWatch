@@ -1,3 +1,6 @@
+import 'package:shikidev/src/domain/models/user_rate.dart';
+
+import 'anime.dart';
 import 'animes.dart';
 import 'manga_short.dart';
 import 'user.dart';
@@ -50,4 +53,34 @@ class UserAnimeRates {
         anime = json['anime'] == null ? null : Animes.fromJson(json['anime']),
         manga =
             json['manga'] == null ? null : MangaShort.fromJson(json['manga']);
+}
+
+extension UserAnimeRatesExtension on UserAnimeRates {
+  Anime get toAnime => Anime(
+        id: anime!.id,
+        name: anime!.name,
+        russian: anime!.russian,
+        url: anime!.url,
+        image: anime!.image,
+        kind: anime!.kind,
+        score: anime!.score,
+        status: anime!.status,
+        airedOn: anime!.airedOn,
+        releasedOn: anime!.releasedOn,
+        episodes: anime!.episodes,
+        episodesAired: anime!.episodes,
+        userRate: UserRate(
+          id: id,
+          score: score,
+          status: status,
+          text: text,
+          episodes: episodes,
+          chapters: chapters,
+          volumes: volumes,
+          textHtml: textHtml,
+          rewatches: rewatches,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        ),
+      );
 }

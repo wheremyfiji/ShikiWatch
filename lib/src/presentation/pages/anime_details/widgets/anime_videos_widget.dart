@@ -47,7 +47,7 @@ class AnimeVideosMobileWidget extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.all(0),
-            itemCount: data.screenshots!.length,
+            itemCount: data.videos!.length,
             itemBuilder: (context, index) {
               final isFirstItem = index == 0;
               final model = data.videos![index];

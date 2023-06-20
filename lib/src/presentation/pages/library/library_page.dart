@@ -52,28 +52,36 @@ class LibraryPage extends HookConsumerWidget {
             ];
           },
           body: state == LibraryState.manga
-              ? TabBarView(
-                  controller: mangaTabController,
-                  children: const [
-                    ReadingMangaTab(),
-                    PlannedMangaTab(),
-                    CompletedMangaTab(),
-                    ReReadingMangaTab(),
-                    OnHoldMangaTab(),
-                    DroppedMangaTab(),
-                  ],
+              ? SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: TabBarView(
+                    controller: mangaTabController,
+                    children: const [
+                      ReadingMangaTab(),
+                      PlannedMangaTab(),
+                      CompletedMangaTab(),
+                      ReReadingMangaTab(),
+                      OnHoldMangaTab(),
+                      DroppedMangaTab(),
+                    ],
+                  ),
                 )
-              : TabBarView(
-                  controller: animeTabController,
-                  children: const [
-                    LocalHistoryTab(),
-                    WatchingTab(),
-                    PlannedTab(),
-                    CompletedTab(),
-                    RewatchingTab(),
-                    OnHoldTab(),
-                    DroppedTab(),
-                  ],
+              : SafeArea(
+                  top: false,
+                  bottom: false,
+                  child: TabBarView(
+                    controller: animeTabController,
+                    children: const [
+                      LocalHistoryTab(),
+                      WatchingTab(),
+                      PlannedTab(),
+                      CompletedTab(),
+                      RewatchingTab(),
+                      OnHoldTab(),
+                      DroppedTab(),
+                    ],
+                  ),
                 ),
         ),
       ),
