@@ -87,7 +87,7 @@ class LibraryPageAppBar extends ConsumerWidget {
         //   ),
         // ),
         const SizedBox(
-          width: 8,
+          width: 16,
         ),
       ],
       bottom: TabBar(
