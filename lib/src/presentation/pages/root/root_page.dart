@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:shikidev/src/utils/target_platform.dart';
+
+import '../../../services/updater/update_service.dart';
+import '../../../utils/utils.dart';
+import '../../widgets/app_update_bottom_sheet.dart';
 
 const _allDestinations = [
   NavigationRailDestination(
@@ -25,7 +30,7 @@ const _allDestinations = [
   ),
 ];
 
-class ScaffoldWithNavBar extends StatelessWidget {
+class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   const ScaffoldWithNavBar({
@@ -34,8 +39,26 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ext = MediaQuery.of(context).size.width > 1600; //1200
+
+    ref.listen(
+      appReleaseProvider,
+      (_, state) => state.whenOrNull(
+        data: (data) {
+          if (data == null) {
+            return;
+          }
+          AppUpdateBottomSheet.show(context: context, release: data);
+        },
+        error: (error, stackTrace) {
+          showErrorSnackBar(
+            ctx: context,
+            msg: 'Возникла ошибка при поиске обновлений',
+          );
+        },
+      ),
+    );
 
     return TargetP.instance.isDesktop
         ? Scaffold(

@@ -21,4 +21,7 @@ class EnvironmentDataSource implements EnvironmentRepo {
 
   @override
   int? get sdkVersion => androidInfo?.version.sdkInt;
+
+  @override
+  String get appVersion => packageInfo.version;
 }

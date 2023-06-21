@@ -6,4 +6,5 @@ abstract class EnvironmentRepo {
   AndroidDeviceInfo? get androidInfo;
   WindowsDeviceInfo? get windowsInfo;
   int? get sdkVersion;
+  String get appVersion;
 }

@@ -22,6 +22,7 @@ import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
+import 'widgets/settings_header.dart';
 import 'widgets/version_option.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -35,6 +36,9 @@ class SettingsPage extends ConsumerWidget {
         slivers: [
           const SliverAppBar.large(
             title: Text('Настройки'),
+          ),
+          const SliverToBoxAdapter(
+            child: SettingsHeader(),
           ),
           if (SecureStorageService.instance.token != '')
             SliverToBoxAdapter(

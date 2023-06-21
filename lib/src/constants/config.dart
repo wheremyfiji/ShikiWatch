@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class AppConfig {
   AppConfig._();
 
@@ -6,4 +8,18 @@ class AppConfig {
 
   static const String baseUrl = 'https://shikimori.me/api/';
   static const String staticUrl = 'https://shikimori.me';
+}
+
+String get kAppArch {
+  switch (Abi.current()) {
+    case Abi.androidX64:
+      return 'x86_64';
+    case Abi.androidArm64:
+      return 'arm64-v8a';
+    case Abi.androidIA32:
+    case Abi.androidArm:
+      return 'armeabi-v7a';
+    default:
+      return Abi.current().toString();
+  }
 }

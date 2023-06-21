@@ -31,7 +31,6 @@ import '../presentation/pages/settings/local_database_manage_page.dart';
 
 import '../presentation/providers/anime_search_provider.dart';
 import 'target_platform.dart';
-import 'updater.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -364,9 +363,7 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state,
           StatefulNavigationShell navigationShell) {
         return ExcludeSemantics(
-          child: UpdaterWidget(
-            child: ScaffoldWithNavBar(navigationShell: navigationShell),
-          ),
+          child: ScaffoldWithNavBar(navigationShell: navigationShell),
         );
       },
     ),
