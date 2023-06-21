@@ -54,7 +54,7 @@ class AppReleaseNotifier extends AsyncNotifier<AppRelease?> {
 
     final env = ref.read(environmentProvider);
 
-    if (!_checkAppSig(env.packageInfo.buildSignature)) {
+    if (_checkAppSig(env.packageInfo.buildSignature)) {
       return null;
     }
 
