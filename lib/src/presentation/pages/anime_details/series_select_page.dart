@@ -10,15 +10,10 @@ import '../../../domain/models/anime_player_page_extra.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../utils/target_platform.dart';
 import '../../../utils/utils.dart';
+import '../../providers/anime_details_provider.dart';
 import '../player/continue_dialog.dart';
 
 enum EpisodeSortType { newest, oldest }
-
-final isAnimeInDataBaseProvider =
-    FutureProvider.family.autoDispose<AnimeDatabase?, int>((ref, id) {
-  final anime = ref.read(animeDatabaseProvider).getAnime(shikimoriId: id);
-  return anime;
-}, name: 'isAnimeInDataBaseProvider');
 
 final episodeSortTypeProvider =
     StateProvider<EpisodeSortType>((ref) => EpisodeSortType.oldest);

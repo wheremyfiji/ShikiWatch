@@ -4,9 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import '../../domain/models/anime_database.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/models/external_link.dart';
 import '../../domain/models/user_rate.dart';
+import '../../services/anime_database/anime_database_provider.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
@@ -19,6 +21,12 @@ import '../../domain/models/related_title.dart';
 
 //   return ref.watch(shikimoriRepositoryProvider).getAnimeFranchise(id: id);
 // }, name: 'franchiseProvider');
+
+final isAnimeInDataBaseProvider =
+    FutureProvider.family.autoDispose<AnimeDatabase?, int>((ref, id) {
+  final anime = ref.read(animeDatabaseProvider).getAnime(shikimoriId: id);
+  return anime;
+}, name: 'isAnimeInDataBaseProvider');
 
 final similarTitlesAnimeProvider =
     FutureProvider.autoDispose.family<Iterable<Animes>, int>((ref, id) async {
