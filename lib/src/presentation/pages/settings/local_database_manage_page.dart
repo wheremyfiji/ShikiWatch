@@ -57,9 +57,16 @@ class _ImportDBState extends ConsumerState<ImportDB> {
     PermissionStatus permissionStatus = PermissionStatus.denied;
     Permission p = Permission.storage;
 
-    if (sdkVer > 29) {
-      p = Permission.manageExternalStorage;
+    if (sdkVer >= 33) {
+      //p = Permission.manageExternalStorage;
+      return true;
+    } else {
+      p = Permission.storage;
     }
+
+    // if (sdkVer > 29) {
+    //   p = Permission.manageExternalStorage;
+    // }
 
     permissionStatus = await p.request();
 
@@ -178,9 +185,16 @@ class _ExportDBState extends ConsumerState<ExportDB> {
     PermissionStatus permissionStatus = PermissionStatus.denied;
     Permission p = Permission.storage;
 
-    if (sdkVer > 29) {
-      p = Permission.manageExternalStorage;
+    if (sdkVer >= 33) {
+      //p = Permission.manageExternalStorage;
+      return true;
+    } else {
+      p = Permission.storage;
     }
+
+    // if (sdkVer > 29) {
+    //   p = Permission.manageExternalStorage;
+    // }
 
     permissionStatus = await p.request();
 
