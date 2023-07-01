@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+const List<double> _examplePlaybackRates = <double>[
+  0.25,
+  0.5,
+  0.75,
+  1.0,
+  1.25,
+  1.5,
+  1.75,
+  2.0,
+];
+
 class PlayerHeader extends StatelessWidget {
   final String animeName;
   final int episodeNumber;
@@ -8,6 +19,8 @@ class PlayerHeader extends StatelessWidget {
   final int streamQuality;
   final Function(int) onQualitySelect;
   final bool isInit;
+  final double playbackSpeed;
+  final Function(double) onSelectedSpeed;
 
   const PlayerHeader({
     super.key,
@@ -17,6 +30,8 @@ class PlayerHeader extends StatelessWidget {
     required this.streamQuality,
     required this.onQualitySelect,
     required this.isInit,
+    required this.playbackSpeed,
+    required this.onSelectedSpeed,
   });
 
   @override
@@ -60,11 +75,42 @@ class PlayerHeader extends StatelessWidget {
         const SizedBox(
           width: 16.0,
         ),
-        if (isInit)
+        if (isInit) ...[
+          PopupMenuButton<double>(
+            initialValue: playbackSpeed,
+            tooltip: 'Скорость воспроизведения',
+            onSelected: onSelectedSpeed,
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuItem<double>>[
+                for (final double speed in _examplePlaybackRates)
+                  PopupMenuItem<double>(
+                    value: speed,
+                    child: Text('${speed}x'),
+                  )
+              ];
+            },
+            child: Padding(
+              // padding: const EdgeInsets.symmetric(
+              //   vertical: 12,
+              //   horizontal: 16,
+              // ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                '${playbackSpeed}x',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ),
           QualityButton(
             streamQuality: streamQuality,
             onSelected: onQualitySelect,
           ),
+        ],
       ],
     );
 

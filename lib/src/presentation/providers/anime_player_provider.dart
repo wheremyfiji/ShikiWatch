@@ -137,6 +137,8 @@ class PlayerController extends flutter.ChangeNotifier {
   bool enableSwipe = false;
   bool expandVideo = false;
 
+  double playbackSpeed = 1.0;
+
   //ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
@@ -188,8 +190,8 @@ class PlayerController extends flutter.ChangeNotifier {
 
       //enableSwipe = true;
 
-      playerController = VideoPlayerController.network(
-        streamHd ?? streamSd ?? streamLow!,
+      playerController = VideoPlayerController.networkUrl(
+        Uri.parse(streamHd ?? streamSd ?? streamLow!),
       );
 
       playerController.addListener(playerCallback);
@@ -304,6 +306,8 @@ class PlayerController extends flutter.ChangeNotifier {
     if (_disposed) return;
 
     playBackTime = playerController.value.position.inSeconds;
+
+    playbackSpeed = playerController.value.playbackSpeed;
 
     if (playerController.value.hasError) {
       isError = true;

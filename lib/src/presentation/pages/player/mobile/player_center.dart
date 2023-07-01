@@ -5,6 +5,7 @@ import 'animated_play_pause.dart';
 class PlayerCenter extends StatelessWidget {
   final bool isError;
   final bool isPlaying;
+  final bool showPlayPauseButton;
 
   final VoidCallback onPlayPause;
   final VoidCallback onRetry;
@@ -13,6 +14,7 @@ class PlayerCenter extends StatelessWidget {
     super.key,
     required this.isError,
     required this.isPlaying,
+    required this.showPlayPauseButton,
     required this.onPlayPause,
     required this.onRetry,
   });
@@ -33,16 +35,17 @@ class PlayerCenter extends StatelessWidget {
             //     onPressed: controller.back,
             //   ),
             // ),
-            IconButton(
-              color: Colors.white,
-              iconSize: 48,
-              icon: AnimatedPlayPause(
-                playing: isPlaying,
-                size: 48,
+            if (showPlayPauseButton)
+              IconButton(
                 color: Colors.white,
+                iconSize: 48,
+                icon: AnimatedPlayPause(
+                  playing: isPlaying,
+                  size: 48,
+                  color: Colors.white,
+                ),
+                onPressed: onPlayPause,
               ),
-              onPressed: onPlayPause,
-            ),
             // GestureDetector(
             //   onLongPress: controller.forwardMore,
             //   //onDoubleTap: controller.forwardMore,

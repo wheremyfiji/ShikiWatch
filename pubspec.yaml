@@ -36,7 +36,7 @@ dependencies:
   device_info_plus: ^9.0.2
   dio: ^5.2.1+1
   dio_smart_retry: ^5.0.0
-  double_tap_player_view: ^2.0.3
+  #double_tap_player_view: ^2.0.3
   dynamic_color: ^1.6.5
   equatable: ^2.0.5
   expandable_text: ^2.3.0
