@@ -23,7 +23,6 @@ class RelatedTitles extends StatelessWidget {
               forceElevated: innerBoxIsScrolled,
               stretch: true,
               title: const Text(
-                // 'Связанное (${related.length})',
                 'Связанное',
               ),
             ),
@@ -32,7 +31,7 @@ class RelatedTitles extends StatelessWidget {
         body: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   childCount: related.length,
@@ -50,9 +49,9 @@ class RelatedTitles extends StatelessWidget {
                     final kind = getKind(title.kind ?? '');
                     final isManga = kindIsManga(title!.kind ?? '');
 
-                    final airedOn = DateTime.tryParse(title!.airedOn ?? '') ??
-                        DateTime(1970);
-                    final year = airedOn.year;
+                    final DateTime? airedOn =
+                        DateTime.tryParse(title!.airedOn ?? '');
+                    final int? year = airedOn?.year;
 
                     return Padding(
                       padding: const EdgeInsets.only(top: 8),
@@ -125,10 +124,15 @@ class RelatedTitles extends StatelessWidget {
                                     const SizedBox(
                                       height: 4,
                                     ),
-                                    Text(
-                                      '$year год • $kind • $relation',
-                                      style: context.textTheme.bodySmall,
-                                    ),
+                                    year == null
+                                        ? Text(
+                                            'Анонс • $kind • $relation',
+                                            style: context.textTheme.bodySmall,
+                                          )
+                                        : Text(
+                                            '$year год • $kind • $relation',
+                                            style: context.textTheme.bodySmall,
+                                          ),
                                   ],
                                 ),
                               ),

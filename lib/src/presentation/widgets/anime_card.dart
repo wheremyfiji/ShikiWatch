@@ -19,6 +19,19 @@ class AnimeListTile extends StatelessWidget {
 
   const AnimeListTile(this.data, {super.key});
 
+  List<String>? getDate(String? airedOn) {
+    String? date = airedOn;
+
+    if (date == null) {
+      return null;
+    }
+
+    final splitted = date.split('-');
+    var month = int.parse(splitted[1]);
+
+    return [splitted[0], getSeason(month)];
+  }
+
   @override
   Widget build(BuildContext context) {
     final epCount = data.anime?.status == 'released'
@@ -32,6 +45,10 @@ class AnimeListTile extends StatelessWidget {
     final airedOnDateTime =
         DateTime.parse(data.anime!.airedOn ?? '1917-10-25').toLocal();
     final airedOn = DateFormat('yyyy-MM-dd').format(airedOnDateTime);
+
+    final date = getDate(data.anime?.airedOn);
+    final year = date?[0];
+    final season = date?[1];
 
     return Material(
       borderRadius: BorderRadius.circular(12),
@@ -183,9 +200,11 @@ class AnimeListTile extends StatelessWidget {
                     ),
                   ],
                   if (data.anime?.status == 'anons' &&
-                      data.anime!.airedOn != null)
+                      data.anime!.airedOn != null &&
+                      data.anime!.airedOn!.isNotEmpty)
                     Text(
-                      'Выйдет $airedOn',
+                      //'Выйдет $airedOn',
+                      '$season $year',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

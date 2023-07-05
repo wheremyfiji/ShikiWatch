@@ -26,11 +26,12 @@ class AnimeInfoHeader extends StatelessWidget {
     required this.rating,
   });
 
-  List<String> getDate(String? airedOn, String? releasedOn) {
+  List<String>? getDate(String? airedOn, String? releasedOn) {
     String? date = airedOn;
 
     if (date == null) {
-      return ['n/d', ''];
+      //return ['n/d', ''];
+      return null;
     }
 
     final splitted = date.split('-');
@@ -42,8 +43,8 @@ class AnimeInfoHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = getDate(data.airedOn, data.releasedOn);
-    final year = date[0];
-    final season = date[1];
+    final year = date?[0];
+    final season = date?[1];
 
     return Stack(
       alignment: Alignment.centerLeft,
@@ -163,7 +164,8 @@ class AnimeInfoHeader extends StatelessWidget {
                     const SizedBox(
                       height: 8,
                     ),
-                    Text('$year • $season', textAlign: TextAlign.start),
+                    if (date != null)
+                      Text('$year • $season', textAlign: TextAlign.start),
                     Text(
                       '${getKind(data.kind!)} • ${getStatus(data.status!)}', // • $rating
                       textAlign: TextAlign.start,

@@ -17,6 +17,7 @@ import '../../widgets/error_widget.dart';
 
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/title_description.dart';
+import 'related_titles.dart';
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
@@ -26,7 +27,6 @@ import 'widgets/rates_statuses_widget.dart';
 import 'widgets/user_anime_rate.dart';
 import 'studio_select_page.dart';
 import 'rating_dialog.dart';
-import 'related_titles.dart';
 
 const double dividerHeight = 16;
 
@@ -89,17 +89,17 @@ class AnimeDetailsPage extends ConsumerWidget {
                         await ref
                             .read(preferencesProvider)
                             .sharedPreferences
-                            .setBool('allowExpContent', true);
-                        // ignore: use_build_context_synchronously
-                        pushStudioSelectPage(
-                          ctx: context,
-                          id: data.id ?? 0,
-                          name:
-                              (data.russian == '' ? data.name : data.russian) ??
-                                  '',
-                          ep: titleInfo.currentProgress,
-                          imgUrl: data.image?.original ?? '',
-                        );
+                            .setBool('allowExpContent', true)
+                            .then((value) => pushStudioSelectPage(
+                                  ctx: context,
+                                  id: data.id ?? 0,
+                                  name: (data.russian == ''
+                                          ? data.name
+                                          : data.russian) ??
+                                      '',
+                                  ep: titleInfo.currentProgress,
+                                  imgUrl: data.image?.original ?? '',
+                                ));
                       }
                     } else {
                       pushStudioSelectPage(
@@ -302,12 +302,10 @@ class AnimeDetailsPage extends ConsumerWidget {
 
 class RelatedWidget extends ConsumerWidget {
   final int id;
-  final bool padding;
 
   const RelatedWidget({
     super.key,
     required this.id,
-    this.padding = true,
   });
 
   @override
@@ -323,44 +321,10 @@ class RelatedWidget extends ConsumerWidget {
         final dataList = data.toList();
         final hasMore = dataList.length > 3;
 
-        // return Padding(
-        //   padding: const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-        //   child: Column(
-        //     mainAxisSize: MainAxisSize.min,
-        //     crossAxisAlignment: CrossAxisAlignment.start,
-        //     children: [
-        //       Text(
-        //         'Связанное',
-        //         style: Theme.of(context)
-        //             .textTheme
-        //             .bodyLarge!
-        //             .copyWith(fontWeight: FontWeight.bold),
-        //       ),
-        //       const SizedBox(
-        //         height: 8,
-        //       ),
-        //       ClipRRect(
-        //         borderRadius: BorderRadius.circular(12),
-        //         child: SizedBox(
-        //           height: 100.0,
-        //           child: Shimmer.fromColors(
-        //             baseColor: Theme.of(context).colorScheme.surface,
-        //             highlightColor:
-        //                 Theme.of(context).colorScheme.onInverseSurface,
-        //             child: Container(
-        //               color: Colors.black,
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // );
-
         return Padding(
-          padding: padding
-              ? const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight)
-              : const EdgeInsets.all(0),
+          padding: hasMore
+              ? const EdgeInsets.only(left: 16)
+              : const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,33 +348,25 @@ class RelatedWidget extends ConsumerWidget {
                   ),
                   if (hasMore) ...[
                     const Spacer(),
-                    // TextButton(
-                    //   onPressed: () {},
-                    //   child: const Text('Ещё'),
-                    // ),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation1, animation2) =>
-                                RelatedTitles(related: dataList),
-                            transitionDuration: Duration.zero,
-                            reverseTransitionDuration: Duration.zero,
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Ещё',
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.theme.colorScheme.primary,
+                    TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              RelatedTitles(related: dataList),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
                         ),
                       ),
+                      child: const Text('Ещё'),
                     ),
                   ],
                 ],
               ),
+              if (!hasMore)
+                const SizedBox(
+                  height: 8.0,
+                ),
               ListView.builder(
                 padding: const EdgeInsets.all(0),
                 physics: const NeverScrollableScrollPhysics(),
@@ -429,12 +385,16 @@ class RelatedWidget extends ConsumerWidget {
                   final kind = getKind(title.kind ?? '');
                   final isManga = kindIsManga(title!.kind ?? '');
 
-                  final airedOn =
-                      DateTime.tryParse(title!.airedOn ?? '') ?? DateTime(1970);
-                  final year = airedOn.year;
+                  final DateTime? airedOn =
+                      DateTime.tryParse(title!.airedOn ?? '');
+                  final int? year = airedOn?.year;
+
+                  final firstElement = index == 0;
 
                   return Padding(
-                    padding: const EdgeInsets.only(top: 8),
+                    padding: firstElement
+                        ? const EdgeInsets.only(top: 0)
+                        : const EdgeInsets.only(top: 8),
                     child: Material(
                       borderRadius: BorderRadius.circular(8),
                       color: Colors.transparent,
@@ -504,10 +464,15 @@ class RelatedWidget extends ConsumerWidget {
                                   const SizedBox(
                                     height: 4,
                                   ),
-                                  Text(
-                                    '$relation • $kind • $year год',
-                                    style: context.textTheme.bodySmall,
-                                  ),
+                                  year == null
+                                      ? Text(
+                                          'Анонс • $kind • $relation',
+                                          style: context.textTheme.bodySmall,
+                                        )
+                                      : Text(
+                                          '$year год • $kind • $relation',
+                                          style: context.textTheme.bodySmall,
+                                        ),
                                 ],
                               ),
                             ),

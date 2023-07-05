@@ -580,7 +580,6 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
                   // ),
                   RelatedWidget(
                     id: animeData.id!,
-                    padding: false,
                   ),
                   const SizedBox(
                     height: 70,

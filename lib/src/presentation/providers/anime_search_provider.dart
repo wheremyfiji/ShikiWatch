@@ -573,10 +573,10 @@ class AnimeSearchController extends flutter.ChangeNotifier {
     _pagingController.refresh();
   }
 
-  void clearHistory() {
+  void clearHistory() async {
     final prefs = _ref.read(preferencesProvider).sharedPreferences;
 
-    prefs.remove(animeSearchHistoryKey);
+    await prefs.remove(animeSearchHistoryKey);
     searchHistory = [];
     notifyListeners();
   }
