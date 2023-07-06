@@ -8,7 +8,6 @@ import '../../../../kodik/models/kodik_anime.dart';
 import '../../../domain/models/anime_database.dart';
 import '../../../domain/models/anime_player_page_extra.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
-import '../../../utils/target_platform.dart';
 import '../../../utils/utils.dart';
 import '../../providers/anime_details_provider.dart';
 import '../player/continue_dialog.dart';
@@ -201,9 +200,9 @@ class SeriesSelectPage extends ConsumerWidget {
                     contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                     onTap: () async {
                       String startPosition = '';
-                      if (!TargetP.instance.isDesktop &&
-                          episode?.position != null &&
-                          seria.type == null) {
+                      if (
+                          //!TargetP.instance.isDesktop &&
+                          episode?.position != null && seria.type == null) {
                         bool? dialogValue = await showDialog<bool>(
                           barrierDismissible: false,
                           context: context,

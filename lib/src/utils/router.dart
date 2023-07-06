@@ -15,8 +15,8 @@ import '../presentation/pages/explore/top_manga_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/login/login_desktop_page.dart';
 import '../presentation/pages/manga_detail/manga_detail_page.dart';
+import '../presentation/pages/player/desktop/desktop_player_page.dart';
 import '../presentation/pages/profile/my_profile_page.dart';
-import '../presentation/pages/player/anime_player_desktop_page.dart';
 import '../presentation/pages/player/anime_player_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
 import '../presentation/pages/profile/user_search.dart';
@@ -69,7 +69,8 @@ final GoRouter router = GoRouter(
         return FadeTransitionPage(
           key: state.pageKey,
           child: TargetP.instance.isDesktop
-              ? AnimePlayerDesktopPage(data: data)
+              ? DesktopPlayerPage(extra: data)
+              //AnimePlayerDesktopPage(data: data)
               : AnimePlayerPage(data: data),
         );
       },
