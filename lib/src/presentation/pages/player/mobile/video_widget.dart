@@ -4,7 +4,6 @@ import 'package:video_player/video_player.dart';
 //import 'package:double_tap_player_view/double_tap_player_view.dart';
 
 class VideoWidget extends StatelessWidget {
-  final bool enableSwipe;
   final bool expandVideo;
   final double aspectRatio;
   final Duration currentPosition;
@@ -15,7 +14,6 @@ class VideoWidget extends StatelessWidget {
   const VideoWidget(
     this.playerController, {
     super.key,
-    required this.enableSwipe,
     required this.expandVideo,
     required this.aspectRatio,
     required this.currentPosition,

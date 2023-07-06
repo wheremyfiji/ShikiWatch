@@ -14,6 +14,7 @@ import 'mobile/video_widget.dart';
 import 'player_error.dart';
 
 const Duration switchDuration = Duration(milliseconds: 300);
+const double _seekOffset = 80.0;
 
 // static const List<double> _examplePlaybackRates = <double>[
 //   0.25,
@@ -39,6 +40,7 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
   AnimePlayerPageExtra get data => widget.data;
 
   bool _seek = false;
+  bool _seekShowUI = false;
   bool _controllerWasPlaying = false;
 
   double _startDx = 0;
@@ -160,25 +162,58 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                   return;
                 }
 
+                _currentDx = 0;
+                _seekToDuration = Duration.zero;
+
+                // if (details.localPosition.dx < 100) {
+                //   return;
+                // }
+
                 _controllerWasPlaying =
                     controller.playerController.value.isPlaying;
 
-                _seek = true;
-                controller.hideController.permShow();
-
                 _startDx = details.localPosition.dx;
 
-                if (_controllerWasPlaying) {
-                  controller.playerController.pause();
-                }
+                _seek = true;
+                //_seekShowUI = true;
+
+                // controller.hideController.permShow();
+
+                // if (_controllerWasPlaying) {
+                //   controller.playerController.pause();
+                // }
               },
               onHorizontalDragUpdate: (DragUpdateDetails details) {
                 if (controller.isError ||
                     !controller.playerController.value.isInitialized) {
+                  _seek = false;
+                  _seekShowUI = false;
                   return;
                 }
 
-                _currentDx = details.localPosition.dx;
+                // print(
+                //   'currentDx: ${(details.localPosition.dx - _startDx).abs()}',
+                // );
+
+                if ((details.localPosition.dx - _startDx).abs() < _seekOffset) {
+                  return;
+                }
+
+                if (_seek) {
+                  _seek = false;
+                  _seekShowUI = true;
+                  controller.hideController.permShow();
+                  if (_controllerWasPlaying) {
+                    controller.playerController.pause();
+                  }
+                }
+
+                if ((details.localPosition.dx - _startDx).isNegative) {
+                  _currentDx = details.localPosition.dx + _seekOffset;
+                } else {
+                  _currentDx = details.localPosition.dx - _seekOffset;
+                }
+
                 // controller.hideController.permShow();
 
                 seekToPosition(
@@ -189,11 +224,24 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
               onHorizontalDragEnd: (DragEndDetails details) {
                 if (controller.isError ||
                     !controller.playerController.value.isInitialized) {
+                  _seek = false;
+                  _seekShowUI = false;
                   return;
                 }
 
                 _seek = false;
+                _seekShowUI = false;
                 controller.hideController.hide();
+
+                if (_seekToDuration ==
+                        controller.playerController.value.position ||
+                    _seekToDuration == Duration.zero) {
+                  if (_controllerWasPlaying) {
+                    controller.playerController.play();
+                  }
+
+                  return;
+                }
 
                 controller.playerController
                     .seekTo(_seekToDuration)
@@ -212,7 +260,6 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                             !controller.isError
                         ? VideoWidget(
                             controller.playerController,
-                            enableSwipe: controller.enableSwipe,
                             expandVideo: controller.expandVideo,
                             aspectRatio:
                                 controller.playerController.value.aspectRatio,
@@ -231,8 +278,8 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                   if (controller.playerController.value.isBuffering)
                     const Align(child: CircularProgressIndicator()),
                   AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
-                    child: _seek
+                    duration: const Duration(milliseconds: 50),
+                    child: _seekShowUI
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -271,13 +318,13 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                                   ? controller.playerController.pause
                                   : controller.playerController.play,
                           onRetry: controller.retryPlay,
-                          showPlayPauseButton: !_seek,
+                          showPlayPauseButton: !_seekShowUI,
                         ),
                         SafeArea(
                           top: false,
                           bottom: false,
                           child: PlayerBottom(
-                            progress: _seek
+                            progress: _seekShowUI
                                 ? _seekToDuration
                                 : controller.playerController.value.position,
                             total: controller.playerController.value.duration,

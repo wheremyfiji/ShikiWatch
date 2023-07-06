@@ -134,12 +134,10 @@ class PlayerController extends flutter.ChangeNotifier {
   String? streamLow;
 
   int streamQuality = 0;
-  bool enableSwipe = false;
   bool expandVideo = false;
 
   double playbackSpeed = 1.0;
 
-  //ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
@@ -187,8 +185,6 @@ class PlayerController extends flutter.ChangeNotifier {
       streamLow = value.video360;
       streamSd = value.video480;
       streamHd = value.video720;
-
-      //enableSwipe = true;
 
       playerController = VideoPlayerController.networkUrl(
         Uri.parse(streamHd ?? streamSd ?? streamLow!),
@@ -284,6 +280,18 @@ class PlayerController extends flutter.ChangeNotifier {
     if (_disposed) return;
 
     notifyListeners();
+
+    if (hideController.isVisible) {
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.edgeToEdge,
+        overlays: [SystemUiOverlay.top],
+      );
+    } else {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    }
+
+    //-----------------
+
     // if (hideController.isVisible) {
     //   // await SystemChrome.setEnabledSystemUIMode(
     //   //   SystemUiMode.manual,
@@ -423,7 +431,10 @@ class PlayerController extends flutter.ChangeNotifier {
   }
 
   Future<void> _initializePlay(String videoPath) async {
-    playerController = VideoPlayerController.network(videoPath);
+    playerController = VideoPlayerController.networkUrl(
+      Uri.parse(videoPath),
+    );
+
     playerController.addListener(playerCallback);
     // playerController.addListener(() {
     //   setState(() {
@@ -446,8 +457,9 @@ class PlayerController extends flutter.ChangeNotifier {
     newCurrentPosition = playerController.value.position;
     Future.delayed(const Duration(milliseconds: 200), () {
       _clearPrevious().then((_) {
-        playerController =
-            VideoPlayerController.network(streamHd ?? streamSd ?? streamLow!);
+        playerController = VideoPlayerController.networkUrl(
+          Uri.parse(streamHd ?? streamSd ?? streamLow!),
+        );
         playerController.addListener(playerCallback);
         playerController.initialize().then((_) {
           playerController.seekTo(newCurrentPosition);
