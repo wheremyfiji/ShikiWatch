@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../domain/models/user.dart';
 import '../../domain/models/user_anime_rates.dart';
+import '../../domain/models/user_history.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/user_rate_resp.dart';
 
@@ -43,6 +44,16 @@ abstract class UserRepository {
     int? limit,
     String? status,
     String? censored,
+    CancelToken? cancelToken,
+  });
+
+  Future<Iterable<UserHistory>> getHistory({
+    required String id,
+    required String token,
+    required int page,
+    required int limit,
+    int? targetId,
+    String? targetType,
     CancelToken? cancelToken,
   });
 

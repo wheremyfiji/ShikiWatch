@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../domain/models/user.dart';
 import '../../domain/models/user_anime_rates.dart';
+import '../../domain/models/user_history.dart';
 import '../../domain/models/user_rate_resp.dart';
 import '../repositories/user_repo.dart';
 import '../repositories/http_service.dart';
@@ -121,6 +122,31 @@ class UserDataSource implements UserRepository {
         ));
 
     return [for (final e in response) UserAnimeRates.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<UserHistory>> getHistory({
+    required String id,
+    required String token,
+    required int page,
+    required int limit,
+    int? targetId,
+    String? targetType,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get('users/$id/history',
+        cancelToken: cancelToken,
+        queryParameters: {
+          'page': page.toString(),
+          'limit': limit.toString(),
+          if (targetId != null) 'target_id': targetType,
+          if (targetType != null) 'target_type': targetType,
+        },
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }));
+
+    return [for (final e in response) UserHistory.fromJson(e)];
   }
 
   @override

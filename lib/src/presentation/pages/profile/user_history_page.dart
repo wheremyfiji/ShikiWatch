@@ -1,0 +1,260 @@
+import 'package:flutter/material.dart';
+
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_html/flutter_html.dart';
+import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
+
+import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../../utils/extensions/riverpod_extensions.dart';
+import '../../../data/data_sources/user_data_src.dart';
+import '../../../utils/extensions/buildcontext.dart';
+import '../../../data/repositories/user_repo.dart';
+import '../../../domain/models/user_history.dart';
+import '../../../domain/models/shiki_title.dart';
+import '../../../domain/models/pages_extra.dart';
+import '../../../utils/shiki_utils.dart';
+import '../../widgets/image_with_shimmer.dart';
+import '../../widgets/error_widget.dart';
+import '../../../constants/config.dart';
+
+class UserHistoryPage extends ConsumerWidget {
+  final String userId;
+
+  const UserHistoryPage(this.userId, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.watch(userHistoryPageProvider(userId));
+
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          const SliverAppBar.large(
+            title: Text('История'),
+          ),
+          PagedSliverList<int, UserHistory>(
+            pagingController: controller.pageController,
+            builderDelegate: PagedChildBuilderDelegate<UserHistory>(
+              firstPageErrorIndicatorBuilder: (context) {
+                return CustomErrorWidget(
+                  controller.pageController.error.toString(),
+                  () => controller.pageController.refresh(),
+                );
+              },
+              newPageErrorIndicatorBuilder: (context) {
+                return CustomErrorWidget(
+                  controller.pageController.error.toString(),
+                  () => controller.pageController.retryLastFailedRequest(),
+                );
+              },
+              itemBuilder: (context, historyItem, index) {
+                if (historyItem.target != null) {
+                  return HistoryTargetItem(historyItem);
+                }
+
+                return ListTile(
+                  leading: const Icon(Icons.info),
+                  title: const Text(
+                    'Импортировано аниме - 522 записи',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  subtitle: Text(
+                    timeago.format(
+                      historyItem.createdAt!,
+                      locale: 'ru',
+                    ),
+                    style: context.textTheme.bodyMedium,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HistoryTargetItem extends StatelessWidget {
+  final UserHistory historyItem;
+
+  const HistoryTargetItem(this.historyItem, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // final createdAtString = DateFormat('yyyy-MM-dd в HH:mm')
+    //     .format(historyItem.createdAt!.toLocal());
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Material(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.transparent,
+        clipBehavior: Clip.hardEdge,
+        child: InkWell(
+          onTap: historyItem.target!.kind == null
+              ? null
+              : () {
+                  if (kindIsManga(historyItem.target!.kind!)) {
+                    final extra = historyItem.target!.toMangaShort;
+                    GoRouter.of(context).pushNamed(
+                      'library_manga',
+                      pathParameters: <String, String>{
+                        'id': (historyItem.target!.id!).toString(),
+                      },
+                      extra: extra,
+                    );
+
+                    return;
+                  }
+                  final extra = AnimeDetailsPageExtra(
+                    id: historyItem.target!.id!,
+                    label: (historyItem.target!.russian == ''
+                            ? historyItem.target!.name
+                            : historyItem.target!.russian) ??
+                        '',
+                  );
+
+                  GoRouter.of(context).pushNamed(
+                    'library_anime',
+                    pathParameters: <String, String>{
+                      'id': (historyItem.target!.id!).toString(),
+                    },
+                    extra: extra,
+                  );
+                },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 100,
+                child: AspectRatio(
+                  aspectRatio: 0.703,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: ImageWithShimmerWidget(
+                      imageUrl: AppConfig.staticUrl +
+                          (historyItem.target!.image?.original ??
+                              historyItem.target!.image?.preview ??
+                              ''),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (historyItem.target!.russian == ''
+                              ? historyItem.target!.name
+                              : historyItem.target!.russian) ??
+                          '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 4.0,
+                    ),
+                    Html(
+                      data: historyItem.description,
+                      style: {
+                        "body": Style(
+                          margin: Margins.all(0),
+                        ),
+                      },
+                    ),
+                    Text(
+                      //createdAtString,
+                      timeago.format(
+                        historyItem.createdAt!,
+                        locale: 'ru',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+final userHistoryPageProvider = ChangeNotifierProvider.autoDispose
+    .family<UserHistoryNotifier, String>((ref, id) {
+  final token = ref.cancelToken();
+
+  final c = UserHistoryNotifier(
+    userId: id,
+    userRepository: ref.read(userDataSourceProvider),
+    cancelToken: token,
+  );
+
+  ref.onDispose(() {
+    c.pageController.dispose();
+  });
+
+  return c;
+}, name: 'userHistoryPageProvider');
+
+class UserHistoryNotifier extends ChangeNotifier {
+  UserHistoryNotifier({
+    required this.userId,
+    required this.userRepository,
+    required this.cancelToken,
+  }) {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchApi(pageKey);
+    });
+  }
+  final String userId;
+  final UserRepository userRepository;
+  final CancelToken cancelToken;
+
+  final PagingController<int, UserHistory> _pagingController =
+      PagingController(firstPageKey: 1);
+
+  static const _limit = 30;
+
+  PagingController<int, UserHistory> get pageController => _pagingController;
+
+  Future<void> _fetchApi(int pageKey) async {
+    try {
+      final resp = await userRepository.getHistory(
+        id: userId,
+        token: SecureStorageService.instance.token,
+        page: pageKey,
+        limit: _limit,
+        cancelToken: cancelToken,
+      );
+
+      final data = resp.toList();
+
+      final isLastPage = data.length < _limit;
+
+      if (isLastPage) {
+        _pagingController.appendLastPage(data);
+      } else {
+        _pagingController.appendPage(data, pageKey + 1);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+}
