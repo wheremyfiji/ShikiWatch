@@ -1,57 +1,38 @@
 import 'package:flutter/material.dart';
 
-Color getStatElementColor({required BuildContext ctx, required int index}) {
+import '../../utils/extensions/buildcontext.dart';
+
+Color getStatElementColor({required bool dark, required int index}) {
   switch (index) {
     case 0:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.lime.shade300
-          : Colors.lime.shade400;
+      return dark ? Colors.lime.shade300 : Colors.lime.shade400;
     case 1:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.green.shade300
-          : Colors.green.shade400;
+      return dark ? Colors.green.shade300 : Colors.green.shade400;
     case 2:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.deepPurple.shade300
-          : Colors.deepPurple.shade400;
+      return dark ? Colors.deepPurple.shade300 : Colors.deepPurple.shade400;
     case 3:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.red.shade300
-          : Colors.red.shade400;
+      return dark ? Colors.red.shade300 : Colors.red.shade400;
     case 4:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.blue.shade300
-          : Colors.blue.shade400;
+      return dark ? Colors.blue.shade300 : Colors.blue.shade400;
 
     default:
       return Colors.white;
   }
 }
 
-Color getStatElementColorUserProfile(
-    {required BuildContext ctx, required int index}) {
+Color getStatElementColorUserProfile({required bool dark, required int index}) {
   switch (index) {
     case 0:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.lime.shade300
-          : Colors.lime.shade400;
+      return dark ? Colors.lime.shade300 : Colors.lime.shade400;
     case 1:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.deepPurple.shade300
-          : Colors.deepPurple.shade400;
+      return dark ? Colors.deepPurple.shade300 : Colors.deepPurple.shade400;
     case 2:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.green.shade300
-          : Colors.green.shade400;
+      return dark ? Colors.green.shade300 : Colors.green.shade400;
 
     case 3:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.blue.shade300
-          : Colors.blue.shade400;
+      return dark ? Colors.blue.shade300 : Colors.blue.shade400;
     case 4:
-      return MediaQuery.of(ctx).platformBrightness == Brightness.dark
-          ? Colors.red.shade300
-          : Colors.red.shade400;
+      return dark ? Colors.red.shade300 : Colors.red.shade400;
 
     default:
       return Colors.white;
@@ -103,8 +84,9 @@ class CustomElementBar extends StatelessWidget {
                       height: height,
                       color: p
                           ? getStatElementColorUserProfile(
-                              ctx: context, index: index)
-                          : getStatElementColor(ctx: context, index: index),
+                              dark: context.isDarkThemed, index: index)
+                          : getStatElementColor(
+                              dark: context.isDarkThemed, index: index),
                     );
                   },
                 ),

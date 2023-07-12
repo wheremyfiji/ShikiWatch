@@ -11,7 +11,6 @@ class DescWithTextElement extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
-      //crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 16,

@@ -16,12 +16,9 @@ const _allDestinations = [
     selectedIcon: Icon(Icons.book),
   ),
   NavigationRailDestination(
-    // label: 'Главная',
-    // icon: Icon(Icons.explore_outlined),
-    // selectedIcon: Icon(Icons.explore),
-    label: Text('Поиск'),
-    icon: Icon(Icons.search_outlined), //explore
-    selectedIcon: Icon(Icons.search),
+    label: Text('Главная'),
+    icon: Icon(Icons.home_outlined),
+    selectedIcon: Icon(Icons.home_rounded),
   ),
   NavigationRailDestination(
     label: Text('Профиль'),

@@ -125,6 +125,7 @@ class OAuthService {
         (scope) => scope.setUser(
           SentryUser(
             id: data.id.toString(),
+            username: data.nickname,
           ),
         ),
       );

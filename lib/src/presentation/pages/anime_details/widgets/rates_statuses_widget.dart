@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/custom_element_bar.dart';
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/desc_with_text_element.dart';
+import '../../../widgets/custom_element_bar.dart';
 
 const List<String> names = [
   'Запланировано',
@@ -56,7 +57,8 @@ class AnimeRatesStatusesWidget extends StatelessWidget {
               (index) {
                 return DescWithTextElement(
                   text: '${names[index]}: ${statsValues[index]}',
-                  color: getStatElementColor(ctx: context, index: index),
+                  color: getStatElementColor(
+                      dark: context.isDarkThemed, index: index),
                 );
               },
             ),

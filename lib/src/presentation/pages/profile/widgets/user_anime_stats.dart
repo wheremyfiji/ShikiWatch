@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../widgets/custom_element_bar.dart';
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/desc_with_text_element.dart';
+import '../../../widgets/custom_element_bar.dart';
 
 const List<String> animeNames = [
   'В планах',
@@ -18,7 +19,6 @@ class UserAnimeStatsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //return const SizedBox.shrink();
     int sum = list.reduce((a, b) => a + b);
 
     return Column(
@@ -30,16 +30,12 @@ class UserAnimeStatsWidget extends StatelessWidget {
             Text(
               'Аниме',
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    //fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
             ),
             Text(
               'Всего: $sum',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  //fontSize: 15,
-                  //fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),
@@ -67,7 +63,7 @@ class UserAnimeStatsWidget extends StatelessWidget {
                 return DescWithTextElement(
                   text: '${animeNames[index]}: ${list[index]}',
                   color: getStatElementColorUserProfile(
-                      ctx: context, index: index),
+                      dark: context.isDarkThemed, index: index),
                 );
               },
             ),
