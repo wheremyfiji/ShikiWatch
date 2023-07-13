@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shikidev/src/presentation/pages/profile/user_clubs_page.dart';
 import 'package:shikidev/src/presentation/pages/profile/user_history_page.dart';
 
 class ProfileActions extends StatelessWidget {
@@ -14,10 +15,20 @@ class ProfileActions extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Expanded(
+            Expanded(
               child: TextButton(
-                onPressed: null,
-                child: Column(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          UserClubsPage(userId),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
+                },
+                child: const Column(
                   children: [
                     Icon(Icons.groups),
                     SizedBox(
@@ -28,20 +39,20 @@ class ProfileActions extends StatelessWidget {
                 ),
               ),
             ),
-            const Expanded(
-              child: TextButton(
-                onPressed: null,
-                child: Column(
-                  children: [
-                    Icon(Icons.favorite),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text('Избранное', overflow: TextOverflow.ellipsis),
-                  ],
-                ),
-              ),
-            ),
+            // const Expanded(
+            //   child: TextButton(
+            //     onPressed: null,
+            //     child: Column(
+            //       children: [
+            //         Icon(Icons.favorite),
+            //         SizedBox(
+            //           height: 4,
+            //         ),
+            //         Text('Избранное', overflow: TextOverflow.ellipsis),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             Expanded(
               child: TextButton(
                 onPressed: () {

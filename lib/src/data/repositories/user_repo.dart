@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../domain/models/shiki_club.dart';
 import '../../domain/models/user.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../domain/models/user_history.dart';
@@ -54,6 +55,12 @@ abstract class UserRepository {
     required int limit,
     int? targetId,
     String? targetType,
+    CancelToken? cancelToken,
+  });
+
+  Future<Iterable<ShikiClub>> getClubs({
+    required String id,
+    required String token,
     CancelToken? cancelToken,
   });
 

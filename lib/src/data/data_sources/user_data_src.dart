@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../domain/models/shiki_club.dart';
 import '../../domain/models/user.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../domain/models/user_history.dart';
@@ -147,6 +148,21 @@ class UserDataSource implements UserRepository {
         }));
 
     return [for (final e in response) UserHistory.fromJson(e)];
+  }
+
+  @override
+  Future<Iterable<ShikiClub>> getClubs({
+    required String id,
+    required String token,
+    CancelToken? cancelToken,
+  }) async {
+    final response = await dio.get('users/$id/clubs',
+        cancelToken: cancelToken,
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }));
+
+    return [for (final e in response) ShikiClub.fromJson(e)];
   }
 
   @override
