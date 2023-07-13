@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../secret.dart';
 import '../../../services/oauth/oauth_service.dart';
-import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../../../secret.dart';
 
+import '../../../utils/router.dart';
 import 'disclaimer_dialog.dart';
 
 Future<void> _launchUrl() async {
@@ -18,19 +19,31 @@ Future<void> _launchUrl() async {
   }
 }
 
-class LoginDesktopPage extends StatefulWidget {
+class LoginDesktopPage extends ConsumerStatefulWidget {
   const LoginDesktopPage({super.key});
 
   @override
-  State<LoginDesktopPage> createState() => _LoginDesktopPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _LoginDesktopPageState();
 }
 
-class _LoginDesktopPageState extends State<LoginDesktopPage> {
-  bool showSplash = true;
+class _LoginDesktopPageState extends ConsumerState<LoginDesktopPage> {
   bool isLoading = false;
   bool showInput = false;
 
   late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _showSnackbar(String msg, int dur) {
     final snackBar = SnackBar(
@@ -44,6 +57,7 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
   }
 
   void goToHome() {
+    ref.read(routerNotifierProvider.notifier).userLogin = true;
     GoRouter.of(context).go('/library'); //library explore
   }
 
@@ -84,42 +98,7 @@ class _LoginDesktopPageState extends State<LoginDesktopPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-    if (SecureStorageService.instance.token != '') {
-      Sentry.configureScope(
-        (scope) => scope.setUser(
-          SentryUser(
-            id: SecureStorageService.instance.userId,
-          ),
-        ),
-      );
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        goToHome();
-      });
-    } else {
-      setState(() {
-        showSplash = false;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (showSplash) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(

@@ -1,9 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../utils/router.dart';
 import '../../../utils/target_platform.dart';
 import '../../oauth/oauth_service.dart';
 
@@ -24,9 +22,10 @@ class RefreshTokenInterceptor extends Interceptor {
         await _retry(err.requestOptions, res);
         return handler.resolve(await _retry(err.requestOptions, res));
       } else {
+        // TODO fix this
         log('RefreshTokenInterceptor:: refreshToken() == null');
-        final ctx = router.routerDelegate.navigatorKey.currentContext;
-        GoRouter.of(ctx!).go('/login');
+        //final ctx = router.routerDelegate.navigatorKey.currentContext;
+        //GoRouter.of(ctx!).go('/login');
       }
     }
     return handler.next(err);

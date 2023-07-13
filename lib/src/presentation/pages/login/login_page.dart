@@ -1,48 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import '../../../../secret.dart';
-import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../../services/oauth/oauth_service.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../services/oauth/oauth_service.dart';
+import '../../../../secret.dart';
+
+import '../../../utils/router.dart';
 import 'disclaimer_dialog.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  bool showSplash = true;
+class _LoginPageState extends ConsumerState<LoginPage> {
   bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    if (SecureStorageService.instance.token != '') {
-      Sentry.configureScope(
-        (scope) => scope.setUser(
-          SentryUser(
-            id: SecureStorageService.instance.userId,
-          ),
-        ),
-      );
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        goToHome();
-      });
-    } else {
-      setState(() {
-        showSplash = false;
-      });
-    }
-  }
-
   void goToHome() {
+    ref.read(routerNotifierProvider.notifier).userLogin = true;
+
     GoRouter.of(context).go('/library');
   }
 
@@ -109,14 +90,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (showSplash) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(),
       body: Container(

@@ -24,6 +24,7 @@ class ShikiApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
     final environment = ref.watch(environmentProvider);
 
     final ThemeMode themeMode =
