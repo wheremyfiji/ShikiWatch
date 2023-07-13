@@ -30,50 +30,88 @@ class UserHistoryPage extends ConsumerWidget {
     final controller = ref.watch(userHistoryPageProvider(userId));
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('История'),
-          ),
-          PagedSliverList<int, UserHistory>(
-            pagingController: controller.pageController,
-            builderDelegate: PagedChildBuilderDelegate<UserHistory>(
-              firstPageErrorIndicatorBuilder: (context) {
-                return CustomErrorWidget(
-                  controller.pageController.error.toString(),
-                  () => controller.pageController.refresh(),
-                );
-              },
-              newPageErrorIndicatorBuilder: (context) {
-                return CustomErrorWidget(
-                  controller.pageController.error.toString(),
-                  () => controller.pageController.retryLastFailedRequest(),
-                );
-              },
-              itemBuilder: (context, historyItem, index) {
-                if (historyItem.target != null) {
-                  return HistoryTargetItem(historyItem);
-                }
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(
+          () => controller.pageController.refresh(),
+        ),
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('История'),
+            ),
+            PagedSliverList<int, UserHistory>(
+              pagingController: controller.pageController,
+              builderDelegate: PagedChildBuilderDelegate<UserHistory>(
+                noItemsFoundIndicatorBuilder: (context) {
+                  return const Center(child: Text('В истории пусто'));
+                },
+                firstPageErrorIndicatorBuilder: (context) {
+                  return CustomErrorWidget(
+                    controller.pageController.error.toString(),
+                    () => controller.pageController.refresh(),
+                  );
+                },
+                newPageErrorIndicatorBuilder: (context) {
+                  return CustomErrorWidget(
+                    controller.pageController.error.toString(),
+                    () => controller.pageController.retryLastFailedRequest(),
+                  );
+                },
+                itemBuilder: (context, historyItem, index) {
+                  if (historyItem.target != null) {
+                    return HistoryTargetItem(historyItem);
+                  }
 
-                return ListTile(
-                  leading: const Icon(Icons.info),
-                  title: const Text(
-                    'Импортировано аниме - 522 записи',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                    ),
+                  return HistoryInfoItem(historyItem);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HistoryInfoItem extends StatelessWidget {
+  final UserHistory historyItem;
+
+  const HistoryInfoItem(this.historyItem, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.info,
+            size: 32,
+          ),
+          const SizedBox(
+            width: 16.0,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  historyItem.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
                   ),
-                  subtitle: Text(
-                    timeago.format(
-                      historyItem.createdAt!,
-                      locale: 'ru',
-                    ),
-                    style: context.textTheme.bodyMedium,
+                ),
+                Text(
+                  timeago.format(
+                    historyItem.createdAt!,
+                    locale: 'ru',
                   ),
-                );
-              },
+                  style: context.textTheme.bodyMedium,
+                ),
+              ],
             ),
           ),
         ],

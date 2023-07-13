@@ -1,15 +1,15 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/constants/config.dart';
-import 'package:shikidev/src/data/data_sources/user_data_src.dart';
-import 'package:shikidev/src/services/secure_storage/secure_storage_service.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../../utils/extensions/riverpod_extensions.dart';
+import '../../../data/data_sources/user_data_src.dart';
 import '../../../domain/models/shiki_club.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
+import '../../../constants/config.dart';
 
 final userClubsProvider = FutureProvider.autoDispose
     .family<List<ShikiClub>, String>((ref, userId) async {
@@ -68,6 +68,8 @@ class UserClubsPage extends ConsumerWidget {
                     ),
                     title: Text(
                       club.name ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     trailing: (club.isCensored != null && club.isCensored!)
                         ? const Icon(Icons.eighteen_up_rating_rounded)

@@ -13,18 +13,21 @@ class UserProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         CircleAvatar(
-          radius: 72, //64
+          radius: 64, //72
           backgroundImage: CachedNetworkImageProvider(
             data.image?.x160 ?? data.avatar ?? '',
             cacheManager: cacheManager,
           ),
         ),
+        const SizedBox(
+          width: 16.0,
+        ),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //Tooltip(
               //message: 'gender: ${data.commonInfo![0]}',

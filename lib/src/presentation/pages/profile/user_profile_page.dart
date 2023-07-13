@@ -6,6 +6,7 @@ import '../../providers/user_profile_provider.dart';
 import '../../../domain/models/user.dart';
 import '../../widgets/error_widget.dart';
 
+import 'widgets/profile_actions.dart';
 import 'widgets/user_anime_stats.dart';
 import 'widgets/user_friends.dart';
 import 'widgets/user_manga_stats.dart';
@@ -86,6 +87,13 @@ class UserProfilePage extends ConsumerWidget {
                         const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: UserProfileHeader(data: data),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                    sliver: SliverToBoxAdapter(
+                      child: ProfileActions(data.id!.toString()),
                     ),
                   ),
                   // SliverPadding(
