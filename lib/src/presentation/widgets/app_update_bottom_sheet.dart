@@ -37,19 +37,22 @@ class AppUpdateBottomSheet extends ConsumerWidget {
           const SizedBox(
             height: 8,
           ),
-          Card(
-            margin: const EdgeInsets.all(0),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: MarkdownBody(
-                data: release.description,
-                onTapLink: (text, href, title) {
-                  if (href == null) {
-                    return;
-                  }
+          SizedBox(
+            width: double.infinity,
+            child: Card(
+              margin: const EdgeInsets.all(0),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: MarkdownBody(
+                  data: release.description,
+                  onTapLink: (text, href, title) {
+                    if (href == null) {
+                      return;
+                    }
 
-                  launchUrlString(href, mode: LaunchMode.externalApplication);
-                },
+                    launchUrlString(href, mode: LaunchMode.externalApplication);
+                  },
+                ),
               ),
             ),
           ),
