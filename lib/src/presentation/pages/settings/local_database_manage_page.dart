@@ -53,28 +53,6 @@ class ImportDB extends ConsumerStatefulWidget {
 }
 
 class _ImportDBState extends ConsumerState<ImportDB> {
-  Future<bool> requestPermission(int sdkVer) async {
-    PermissionStatus permissionStatus = PermissionStatus.denied;
-    Permission p = Permission.storage;
-
-    if (sdkVer >= 33) {
-      //p = Permission.manageExternalStorage;
-      return true;
-    } else {
-      p = Permission.storage;
-    }
-
-    // if (sdkVer > 29) {
-    //   p = Permission.manageExternalStorage;
-    // }
-
-    permissionStatus = await p.request();
-
-    debugPrint('requestPermission: $permissionStatus');
-
-    return permissionStatus.isGranted;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -117,17 +95,7 @@ class _ImportDBState extends ConsumerState<ImportDB> {
           return;
         }
 
-        final p = await requestPermission(sdkVer);
-
-        if (!p) {
-          showErrorSnackBar(
-            ctx: context,
-            msg: 'Разрешение не получено',
-            dur: const Duration(seconds: 5),
-          );
-          Navigator.of(context).pop();
-          return;
-        }
+        await Permission.storage.request();
 
         final FilePickerResult? result = await FilePicker.platform.pickFiles(
           type: sdkVer < 29 ? FileType.any : FileType.custom,
@@ -181,28 +149,6 @@ class ExportDB extends ConsumerStatefulWidget {
 }
 
 class _ExportDBState extends ConsumerState<ExportDB> {
-  Future<bool> requestPermission(int sdkVer) async {
-    PermissionStatus permissionStatus = PermissionStatus.denied;
-    Permission p = Permission.storage;
-
-    if (sdkVer >= 33) {
-      //p = Permission.manageExternalStorage;
-      return true;
-    } else {
-      p = Permission.storage;
-    }
-
-    // if (sdkVer > 29) {
-    //   p = Permission.manageExternalStorage;
-    // }
-
-    permissionStatus = await p.request();
-
-    debugPrint('requestPermission: $permissionStatus');
-
-    return permissionStatus.isGranted;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -245,16 +191,7 @@ class _ExportDBState extends ConsumerState<ExportDB> {
           return;
         }
 
-        final p = await requestPermission(sdkVer);
-        if (!p) {
-          Navigator.of(context).pop();
-          showErrorSnackBar(
-            ctx: context,
-            msg: 'Разрешение не получено',
-            dur: const Duration(seconds: 5),
-          );
-          return;
-        }
+        await Permission.storage.request();
 
         final path = await FilePicker.platform.getDirectoryPath();
         if (path == null) {
