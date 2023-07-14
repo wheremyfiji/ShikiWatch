@@ -72,8 +72,7 @@ class MyProfilePage extends ConsumerWidget {
                     controller.friends.hasValue &&
                     controller.friends.asData!.value.isNotEmpty)
                   SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     sliver: SliverToBoxAdapter(
                       child: UserFriendsWidget(
                         data: controller.friends.asData?.value ?? [],
@@ -83,7 +82,8 @@ class MyProfilePage extends ConsumerWidget {
                 if (data.stats?.statuses?.anime != null &&
                     controller.animeStat.isNotEmpty)
                   SliverPadding(
-                    padding: const EdgeInsets.all(16),
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: UserAnimeStatsWidget(
                         list: controller.animeStat,
@@ -93,7 +93,8 @@ class MyProfilePage extends ConsumerWidget {
                 if (data.stats?.statuses?.manga != null &&
                     controller.mangaRanobeStat.isNotEmpty)
                   SliverPadding(
-                    padding: const EdgeInsets.all(16),
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
                       child: UserMangaStatsWidget(
                         list: controller.mangaRanobeStat,

@@ -19,6 +19,7 @@ class UserFriendsWidget extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           'Друзья',
@@ -28,60 +29,54 @@ class UserFriendsWidget extends StatelessWidget {
               .copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(
-          height: 4,
+          height: 8,
         ),
         SizedBox(
-          height: 110,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-            ),
+          height: 120,
+          child: ListView.separated(
             shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
             itemCount: data.length,
+            scrollDirection: Axis.horizontal,
+            separatorBuilder: (context, index) => const SizedBox(
+              width: 16,
+            ),
             itemBuilder: (context, index) {
               final friend = data[index];
+
               return Material(
-                surfaceTintColor: Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
                 color: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                clipBehavior: Clip.antiAlias,
-                shadowColor: Colors.transparent,
+                clipBehavior: Clip.hardEdge,
                 child: InkWell(
-                  //onTap: () {},
                   onTap: friend.id.toString() ==
                           SecureStorageService.instance.userId
                       ? null
                       : () =>
                           context.push('/profile/${friend.id!}', extra: friend),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundImage: CachedNetworkImageProvider(
-                            friend.image?.x160 ?? friend.avatar ?? '',
-                            cacheManager: cacheManager,
-                          ),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 42,
+                        backgroundImage: CachedNetworkImageProvider(
+                          friend.image?.x160 ?? friend.avatar ?? '',
+                          cacheManager: cacheManager,
                         ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        SizedBox(
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Expanded(
+                        child: SizedBox(
                           width: 80,
                           child: Text(
                             friend.nickname ?? '',
-                            textAlign: TextAlign.center,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );

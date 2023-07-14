@@ -24,9 +24,11 @@ class UserProfilePage extends ConsumerWidget {
     final p = ref.watch(userProfileProvider(data.id.toString()));
 
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
+      body: RefreshIndicator(
+        onRefresh: () async =>
+            ref.refresh(userProfileProvider(data.id.toString())),
+        child: CustomScrollView(
+          slivers: [
             SliverAppBar.large(
               title: Text(data.nickname ?? ''),
               actions: [
@@ -51,38 +53,10 @@ class UserProfilePage extends ConsumerWidget {
                 ),
               ],
             ),
-          ];
-        },
-        body: RefreshIndicator(
-          onRefresh: () async =>
-              ref.refresh(userProfileProvider(data.id.toString())),
-          child: CustomScrollView(
-            slivers: [
-              ...p.profile.when(
-                error: (error, stackTrace) {
-                  return [
-                    SliverFillRemaining(
-                      child: CustomErrorWidget(
-                        error.toString(),
-                        () => ref
-                            .refresh(userProfileProvider(data.id.toString())),
-                        //p.fetch(),
-                      ),
-                    ),
-                  ];
-                },
-                loading: () {
-                  return [
-                    const SliverFillRemaining(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  ];
-                },
-                data: (data) => [
+            ...p.profile.when(
+              data: (data) {
+                return [
                   SliverPadding(
-                    // padding: const EdgeInsets.all(16),
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
@@ -96,7 +70,67 @@ class UserProfilePage extends ConsumerWidget {
                       child: ProfileActions(data.id!.toString()),
                     ),
                   ),
-                  // SliverPadding(
+                  if (!p.friends.isLoading &&
+                      !p.friends.hasError &&
+                      p.friends.hasValue &&
+                      p.friends.asData!.value.isNotEmpty)
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: UserFriendsWidget(
+                          data: p.friends.asData?.value ?? [],
+                        ),
+                      ),
+                    ),
+                  if (data.stats?.statuses?.anime != null &&
+                      p.animeStat.isNotEmpty)
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: UserAnimeStatsWidget(
+                          list: p.animeStat,
+                        ),
+                      ),
+                    ),
+                  if (data.stats?.statuses?.manga != null &&
+                      p.mangaRanobeStat.isNotEmpty)
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: UserMangaStatsWidget(
+                          list: p.mangaRanobeStat,
+                        ),
+                      ),
+                    ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 60)),
+                ];
+              },
+              loading: () => [
+                const SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              ],
+              error: (error, stackTrace) => [
+                SliverFillRemaining(
+                  child: CustomErrorWidget(
+                      error.toString(),
+                      () =>
+                          ref.refresh(userProfileProvider(data.id.toString()))),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// SliverPadding(
                   //   padding:
                   //       const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                   //   sliver: SliverToBoxAdapter(
@@ -142,47 +176,3 @@ class UserProfilePage extends ConsumerWidget {
                   //     ),
                   //   ),
                   // ),
-                  if (!p.friends.isLoading &&
-                      !p.friends.hasError &&
-                      p.friends.hasValue &&
-                      p.friends.asData!.value.isNotEmpty)
-                    SliverPadding(
-                      padding:
-                          const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                      //padding: const EdgeInsets.fromLTRB(8, 0, 8, kDividerHeight),
-                      sliver: SliverToBoxAdapter(
-                        child: UserFriendsWidget(
-                          data: p.friends.asData?.value ?? [],
-                        ),
-                      ),
-                    ),
-                  if (data.stats?.statuses?.anime != null &&
-                      p.animeStat.isNotEmpty)
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverToBoxAdapter(
-                        child: UserAnimeStatsWidget(
-                          list: p.animeStat,
-                        ),
-                      ),
-                    ),
-                  if (data.stats?.statuses?.manga != null &&
-                      p.mangaRanobeStat.isNotEmpty)
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverToBoxAdapter(
-                        child: UserMangaStatsWidget(
-                          list: p.mangaRanobeStat,
-                        ),
-                      ),
-                    ),
-                  //const SliverToBoxAdapter(child: SizedBox(height: 60)),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
