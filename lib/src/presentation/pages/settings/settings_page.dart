@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/extensions/buildcontext.dart';
+import '../../../utils/router.dart';
 import '../../providers/environment_provider.dart';
 import '../../../utils/target_platform.dart';
 
@@ -30,6 +31,8 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userLogin = ref.watch(routerNotifierProvider.notifier).userLogin;
+
     return Scaffold(
       body: CustomScrollView(
         shrinkWrap: true,
@@ -40,7 +43,7 @@ class SettingsPage extends ConsumerWidget {
           const SliverToBoxAdapter(
             child: SettingsHeader(),
           ),
-          if (SecureStorageService.instance.token != '')
+          if (SecureStorageService.instance.token != '' && userLogin)
             SliverToBoxAdapter(
               child: SettingsGroup(
                 title: 'Аккаунт',
@@ -71,9 +74,11 @@ class SettingsPage extends ConsumerWidget {
                         return;
                       }
 
-                      // await extended_image.clearDiskCachedImages();
-                      // extended_image.clearMemoryImageCache();
                       await SecureStorageService.instance.deleteAll();
+
+                      ref.read(routerNotifierProvider.notifier).userLogin =
+                          false;
+
                       if (context.mounted) {
                         context.scaffoldMessenger.showSnackBar(
                           const SnackBar(
@@ -81,6 +86,7 @@ class SettingsPage extends ConsumerWidget {
                             duration: Duration(seconds: 5),
                           ),
                         );
+                        GoRouter.of(context).goNamed('login');
                       }
                     },
                   ),
@@ -133,6 +139,7 @@ class SettingsPage extends ConsumerWidget {
               ],
             ),
           ),
+
           SliverToBoxAdapter(
             child: SettingsGroup(
               // Хранилище
@@ -140,12 +147,13 @@ class SettingsPage extends ConsumerWidget {
               options: [
                 const ClearCacheWidget(),
 
-                SettingsOption(
-                  title: 'Резервное копирование',
-                  subtitle:
-                      'Импорт/экспорт/удаление локальных отметок просмотра аниме',
-                  onTap: () => context.pushNamed('backup'),
-                ),
+                if (userLogin)
+                  SettingsOption(
+                    title: 'Резервное копирование',
+                    subtitle:
+                        'Импорт/экспорт/удаление локальных отметок просмотра аниме',
+                    onTap: () => context.pushNamed('backup'),
+                  ),
                 // if (TargetP.instance.isDesktop)
                 //   SettingsOption(
                 //     title: 'Экспорт отметок',
