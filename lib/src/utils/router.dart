@@ -48,6 +48,7 @@ final routerProvider = Provider.autoDispose<GoRouter>((ref) {
     debugLogDiagnostics: true,
     observers: [
       SentryNavigatorObserver(),
+      HeroController(),
     ],
     navigatorKey: _rootNavigatorKey,
     refreshListenable: notifier,
@@ -166,6 +167,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
             StatefulShellBranch(
               observers: [
                 SentryNavigatorObserver(),
+                HeroController(),
               ],
               navigatorKey: _tabNavigatorKey,
               routes: <RouteBase>[
@@ -225,6 +227,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
             StatefulShellBranch(
               observers: [
                 SentryNavigatorObserver(),
+                HeroController(),
               ],
               routes: <RouteBase>[
                 GoRoute(
@@ -362,6 +365,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
             StatefulShellBranch(
               observers: [
                 SentryNavigatorObserver(),
+                HeroController(),
               ],
               routes: <RouteBase>[
                 GoRoute(

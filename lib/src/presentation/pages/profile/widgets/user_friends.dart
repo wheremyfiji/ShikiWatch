@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
 import '../../../../domain/models/user.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
@@ -21,12 +22,30 @@ class UserFriendsWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          'Друзья',
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(fontWeight: FontWeight.bold),
+        // Text(
+        //   'Друзья (${data.length})',
+        //   style: Theme.of(context)
+        //       .textTheme
+        //       .bodyLarge!
+        //       .copyWith(fontWeight: FontWeight.bold),
+        // ),
+        Row(
+          children: [
+            Text(
+              'Друзья',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge!
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Text(
+                '(${data.length})',
+                style: context.textTheme.bodySmall,
+              ),
+            ),
+          ],
         ),
         const SizedBox(
           height: 8,

@@ -1,4 +1,6 @@
+import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../constants/config.dart';
@@ -46,6 +48,8 @@ class AnimeInfoHeader extends StatelessWidget {
     final year = date?[0];
     final season = date?[1];
 
+    final location = GoRouter.of(context).location;
+
     return Stack(
       alignment: Alignment.centerLeft,
       children: [
@@ -86,26 +90,39 @@ class AnimeInfoHeader extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 children: [
                   GestureDetector(
-                    onTap: () => showSlideUp(
-                      context,
-                      ImageViewer(
-                        AppConfig.staticUrl +
-                            (data.image?.original ?? data.image?.preview ?? ''),
-                        cached: true,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: SizedBox(
-                        height: 220,
-                        child: AspectRatio(
-                          aspectRatio: 0.703,
-                          child: CachedImage(
-                            AppConfig.staticUrl +
-                                (data.image?.original ??
-                                    data.image?.preview ??
-                                    ''),
-                            fit: BoxFit.cover,
+                    onTap: () {
+                      context.pushTransparentRoute(
+                        ImageViewerPage(
+                          AppConfig.staticUrl +
+                              (data.image?.original ??
+                                  data.image?.preview ??
+                                  ''),
+                          tag: AppConfig.staticUrl +
+                              (data.image?.original ??
+                                  data.image?.preview ??
+                                  '') +
+                              location,
+                        ),
+                        rootNavigator: true,
+                      );
+                    },
+                    child: Hero(
+                      tag: AppConfig.staticUrl +
+                          (data.image?.original ?? data.image?.preview ?? '') +
+                          location,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          height: 220,
+                          child: AspectRatio(
+                            aspectRatio: 0.703,
+                            child: CachedImage(
+                              AppConfig.staticUrl +
+                                  (data.image?.original ??
+                                      data.image?.preview ??
+                                      ''),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),

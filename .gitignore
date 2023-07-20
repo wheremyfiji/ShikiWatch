@@ -37,6 +37,7 @@ lib/secret.dart
 /build/
 
 /lib/kodik/
+/lib/anilibria/
 
 # Symbolication related
 app.*.symbols

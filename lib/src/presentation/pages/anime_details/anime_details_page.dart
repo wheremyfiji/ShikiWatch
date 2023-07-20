@@ -70,6 +70,8 @@ class AnimeDetailsPage extends ConsumerWidget {
         data: (data) => data.kind == 'music'
             ? null
             : FloatingActionButton.extended(
+                //heroTag: UniqueKey(),
+                heroTag: null,
                 onPressed: () async {
                   if (titleInfo.rating == '18+') {
                     final allowExp = ref
