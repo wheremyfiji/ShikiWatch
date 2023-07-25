@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/presentation/widgets/error_widget.dart';
+
+import 'error_widget.dart';
 
 // https://codewithandrea.com/articles/async-value-widget-riverpod/
 

@@ -1,4 +1,4 @@
-import 'package:shikidev/src/domain/models/user_rate.dart';
+import 'user_rate.dart';
 
 import 'anime.dart';
 import 'animes.dart';

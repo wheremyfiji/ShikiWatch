@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+
+import '../../utils/extensions/buildcontext.dart';
 
 class MaterialYouChip extends StatelessWidget {
   const MaterialYouChip({

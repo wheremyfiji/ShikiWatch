@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import 'package:go_router/go_router.dart';
+
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/config.dart';
 import '../../../domain/models/pages_extra.dart';
 import '../../../domain/models/related_title.dart';

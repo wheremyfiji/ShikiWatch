@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/domain/enums/search_state.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-
+import '../../../domain/enums/search_state.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../domain/models/studio.dart';
 import '../../providers/anime_search_provider.dart';
+
 import 'anime_genres.dart';
 
 class AnimeFilterPage extends ConsumerWidget {

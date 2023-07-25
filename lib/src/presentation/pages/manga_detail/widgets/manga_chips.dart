@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/models/genre.dart';
 import '../../../../domain/models/publisher.dart';
 import '../../../widgets/cool_chip.dart';

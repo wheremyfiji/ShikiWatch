@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import '../../utils/extensions/riverpod_extensions.dart';
 import '../../domain/models/anime_database.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/models/external_link.dart';

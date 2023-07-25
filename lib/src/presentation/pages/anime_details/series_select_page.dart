@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../../kodik/models/kodik_anime.dart';
 import '../../../domain/models/anime_database.dart';
 import '../../../domain/models/anime_player_page_extra.dart';

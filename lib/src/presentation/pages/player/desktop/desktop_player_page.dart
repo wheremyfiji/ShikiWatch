@@ -1,18 +1,19 @@
 import 'dart:async';
 
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:shikidev/src/utils/utils.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../mobile/animated_play_pause.dart';
+import '../../../../utils/utils.dart';
 import '../player_error.dart';
+
 import 'components/player_info_header.dart';
 import 'components/player_volume_slider.dart';
 import 'desktop_player_provider.dart';

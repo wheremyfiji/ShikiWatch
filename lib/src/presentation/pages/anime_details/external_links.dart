@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-import 'package:shikidev/src/utils/extensions/string_ext.dart';
 
 import '../../providers/anime_details_provider.dart';
+import '../../../utils/extensions/string_ext.dart';
 import '../../widgets/error_widget.dart';
 
 class ExternalLinksWidget extends ConsumerWidget {

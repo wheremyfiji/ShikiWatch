@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../domain/models/animes.dart';
 import '../../providers/explore_page_provider.dart';
 import '../../widgets/anime_card.dart';

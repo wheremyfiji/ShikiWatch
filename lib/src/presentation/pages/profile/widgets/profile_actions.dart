@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/presentation/pages/profile/user_clubs_page.dart';
-import 'package:shikidev/src/presentation/pages/profile/user_history_page.dart';
+
+import '../user_clubs_page.dart';
+import '../user_history_page.dart';
 
 class ProfileActions extends StatelessWidget {
   final String userId;

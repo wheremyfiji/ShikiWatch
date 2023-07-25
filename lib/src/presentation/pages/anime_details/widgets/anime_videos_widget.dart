@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/image_with_shimmer.dart';
 import '../../../../domain/models/anime.dart';
 

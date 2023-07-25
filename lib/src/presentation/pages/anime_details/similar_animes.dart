@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';

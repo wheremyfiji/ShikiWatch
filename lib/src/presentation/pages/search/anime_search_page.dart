@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shikidev/src/domain/models/shiki_title.dart';
-import 'package:shikidev/src/presentation/widgets/manga_card.dart';
-import 'package:shikidev/src/utils/shiki_utils.dart';
 
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../domain/models/shiki_title.dart';
+import '../../widgets/manga_card.dart';
+import '../../../utils/shiki_utils.dart';
 import '../../../domain/enums/search_state.dart';
 import '../../providers/anime_search_provider.dart';
 import '../../widgets/anime_card.dart';

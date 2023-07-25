@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+
+import '../../../../utils/extensions/buildcontext.dart';
 
 import 'anilibria_source_page.dart';
 import 'kodik_source_page.dart';

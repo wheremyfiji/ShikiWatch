@@ -1,9 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shikidev/src/constants/config.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../constants/config.dart';
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/models/studio.dart';
 import '../../../../domain/models/genre.dart';
 import '../../../widgets/cached_image.dart';

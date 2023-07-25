@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+
+import '../../utils/extensions/buildcontext.dart';
 
 class HeaderAppBarTitle extends StatelessWidget {
   final String text;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shikidev/src/utils/utils.dart';
 
+import '../../../../utils/utils.dart';
 import '../../../../data/data_sources/anime_data_src.dart';
 import '../../../../data/data_sources/user_data_src.dart';
 import '../../../../data/repositories/anime_repo.dart';

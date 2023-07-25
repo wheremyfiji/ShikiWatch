@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
+
+import '../../utils/extensions/buildcontext.dart';
 
 const errorFaces = [
   'Σ(ಠ_ಠ)',

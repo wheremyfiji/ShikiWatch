@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import '../../utils/extensions/riverpod_extensions.dart';
 import '../../data/data_sources/comment_data_src.dart';
 import '../../data/repositories/comment_repo.dart';
 import '../../domain/models/shiki_comment.dart';

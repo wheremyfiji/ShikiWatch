@@ -1,4 +1,4 @@
-import 'package:shikidev/src/utils/extensions/string_ext.dart';
+import '../../utils/extensions/string_ext.dart';
 
 import 'animes.dart';
 

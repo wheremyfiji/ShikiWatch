@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
-import 'package:shikidev/src/presentation/pages/anime_details/anime_soures/anilibria_source_page.dart';
+
+import 'anilibria_source_page.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../../kodik/kodik.dart';

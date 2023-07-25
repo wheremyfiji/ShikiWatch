@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/domain/models/manga_short.dart';
 
+import '../../domain/models/manga_short.dart';
 import '../../data/data_sources/user_data_src.dart';
 import '../../data/repositories/user_repo.dart';
 import '../../domain/models/user_anime_rates.dart';

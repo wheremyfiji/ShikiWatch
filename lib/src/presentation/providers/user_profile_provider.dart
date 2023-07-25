@@ -1,8 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' as fl;
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
 
+import 'package:dio/dio.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../../utils/extensions/riverpod_extensions.dart';
 import '../../data/data_sources/user_data_src.dart';
 import '../../data/repositories/user_repo.dart';
 import '../../domain/models/user.dart';

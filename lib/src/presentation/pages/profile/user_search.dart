@@ -7,8 +7,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
-
+import '../../../utils/extensions/riverpod_extensions.dart';
 import '../../../data/data_sources/user_data_src.dart';
 import '../../../data/repositories/user_repo.dart';
 import '../../../domain/models/user.dart';

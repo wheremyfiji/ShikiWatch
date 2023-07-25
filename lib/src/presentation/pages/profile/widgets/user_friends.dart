@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/models/user.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../widgets/cached_image.dart';

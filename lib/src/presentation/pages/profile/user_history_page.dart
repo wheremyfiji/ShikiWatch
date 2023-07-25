@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:shikidev/src/utils/extensions/date_time_ext.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 
+import '../../../utils/extensions/date_time_ext.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/extensions/riverpod_extensions.dart';
 import '../../../data/data_sources/user_data_src.dart';

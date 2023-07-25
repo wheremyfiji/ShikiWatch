@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shikidev/src/services/anime_database/anime_database_provider.dart';
 
-import '../../../../../build_date_time.dart';
+import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../providers/environment_provider.dart';
+import '../../../../../build_date_time.dart';
 import 'setting_option.dart';
 
 final dbSizeProvider = FutureProvider.autoDispose<double>((ref) async {

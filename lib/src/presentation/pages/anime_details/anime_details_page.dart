@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:shikidev/src/domain/enums/anime_source.dart';
+
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -16,9 +16,10 @@ import '../../../constants/config.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/error_widget.dart';
-
+import '../../../domain/enums/anime_source.dart';
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/title_description.dart';
+
 import 'anime_soures/anilibria_source_page.dart';
 import 'anime_soures/kodik_source_page.dart';
 import 'anime_soures/source_modal_sheet.dart';

@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-import 'package:shikidev/src/utils/extensions/date_time_ext.dart';
-import 'package:shikidev/src/utils/extensions/riverpod_extensions.dart';
-import 'package:shikidev/src/utils/extensions/string_ext.dart';
-
+import '../../../utils/extensions/buildcontext.dart';
+import '../../../utils/extensions/date_time_ext.dart';
+import '../../../utils/extensions/riverpod_extensions.dart';
+import '../../../utils/extensions/string_ext.dart';
 import '../../../data/data_sources/anime_data_src.dart';
 import '../../../domain/models/shiki_calendar.dart';
 import '../../widgets/anime_card.dart';

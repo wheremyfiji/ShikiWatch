@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:shikidev/src/utils/target_platform.dart';
-
+import '../../../utils/target_platform.dart';
 import '../../../services/updater/update_service.dart';
 import '../../../utils/utils.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
