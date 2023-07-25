@@ -15,9 +15,9 @@
 
 #### Android
 
-| <img src="screenshots/scr-andr-library.jpg?raw=true" width="200"/> | <img src="screenshots/scr-andr-anime_info.jpg?raw=true" width="200"/> | <img src="screenshots/scr-andr-search-filters.jpg?raw=true" width="200"/> |<img src="screenshots/scr-andr-local_history.jpg" width="200"/> |
+| <img src="screenshots/scr-andr-library.jpg?raw=true" width="200"/> | <img src="screenshots/scr-andr-anime_info.jpg?raw=true" width="200"/> | <img src="screenshots/scr-andr-search-filters.jpg?raw=true" width="200"/> |<img src="screenshots/scr-andr-exp_page.jpg" width="200"/> |
 | :--: | :--: | :--: | :--: |
-|Библиотека|Аниме|Фильтры поиска|Локальная история|
+|Библиотека|Аниме|Фильтры поиска|Главная|
 
 #### Windows
 soon
