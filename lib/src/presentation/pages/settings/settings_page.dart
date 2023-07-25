@@ -14,6 +14,7 @@ import '../../../utils/router.dart';
 import '../../providers/environment_provider.dart';
 import '../../../utils/target_platform.dart';
 
+import 'widgets/anime_source_option.dart';
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
 import 'widgets/dynamic_colors.dart';
@@ -115,15 +116,16 @@ class SettingsPage extends ConsumerWidget {
               ],
             ),
           ),
-          if (TargetP.instance.isDesktop)
-            const SliverToBoxAdapter(
-              child: SettingsGroup(
-                title: 'Плеер',
-                options: [
-                  PlayerDiscordRpcOption(),
-                ],
-              ),
+
+          SliverToBoxAdapter(
+            child: SettingsGroup(
+              title: 'Плеер',
+              options: [
+                const AnimeSourceOption(),
+                if (TargetP.instance.isDesktop) const PlayerDiscordRpcOption(),
+              ],
             ),
+          ),
           const SliverToBoxAdapter(
             child: SettingsGroup(
               title: 'Библиотека', //   Приложение

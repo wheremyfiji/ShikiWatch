@@ -18,6 +18,7 @@ import '../../../../../kodik/kodik.dart';
 import '../../../../../kodik/models/kodik_parsed_video.dart';
 import '../../../../../secret.dart';
 import '../../../../constants/config.dart';
+import '../../../../domain/enums/stream_quality.dart';
 import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/shaders.dart';
@@ -62,7 +63,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   late final playerController = VideoController(player);
   late SharedPreferences prefs;
 
-  AsyncValue<KodikParsedVideo> streamAsync;
+  AsyncValue<KodikParsedVideo?> streamAsync;
 
   final rpc = DiscordRPC(
     applicationId: kDiscordAppId,
@@ -75,6 +76,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   String? oldTitle;
   Directory? appDir;
 
+  String? streamFhd;
   String? streamHd;
   String? streamSd;
   String? streamLow;
@@ -89,17 +91,23 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   Duration buffer = Duration.zero;
   double volume = 0.0;
 
+  StreamQuality selectedQuality = StreamQuality.fhd;
+
   Future<void> initState() async {
     oldTitle = await windowManager.getTitle();
 
-    streamAsync = await AsyncValue.guard(
-      () async {
-        final links = await ref
-            .read(kodikVideoProvider)
-            .getHLSLink(episodeLink: extra.episodeLink);
-        return links;
-      },
-    );
+    if (extra.isLibria) {
+      streamAsync = const AsyncValue.data(null);
+    } else {
+      streamAsync = await AsyncValue.guard(
+        () async {
+          final links = await ref
+              .read(kodikVideoProvider)
+              .getHLSLink(episodeLink: extra.episodeLink);
+          return links;
+        },
+      );
+    }
 
     streamAsync.whenOrNull(
       error: (error, stackTrace) {
@@ -127,14 +135,45 @@ class DesktopPlayerNotifier extends ChangeNotifier {
     );
 
     streamAsync.whenData((value) async {
-      streamLow = value.video360;
-      streamSd = value.video480;
-      streamHd = value.video720;
+      streamLow = extra.isLibria ? null : value!.video360;
+      streamSd = extra.isLibria ? null : value!.video480;
+      streamHd = extra.isLibria ? extra.libriaEpisode!.hd : value!.video720;
 
-      // log('streamHd: $streamHd', name: 'DesktopPlayerNotifier');
+      if (extra.isLibria) {
+        extra.libriaEpisode!.fnd != null
+            ? streamFhd = extra.libriaEpisode!.host + extra.libriaEpisode!.fnd!
+            : streamFhd = null;
 
-      // log('startPosition: ${extra.startPosition}',
-      //     name: 'DesktopPlayerNotifier');
+        extra.libriaEpisode!.hd != null
+            ? streamHd = extra.libriaEpisode!.host + extra.libriaEpisode!.hd!
+            : streamHd = null;
+
+        streamSd = null;
+        streamLow = null;
+      } else {
+        streamFhd = null;
+        streamHd = value!.video720;
+        streamSd = value.video480;
+        streamLow = value.video360;
+      }
+
+      if (streamFhd == null) {
+        if (streamHd == null) {
+          if (streamSd == null) {
+            if (streamLow == null) {
+              // все, хана, нету качества че делать
+            } else {
+              selectedQuality = StreamQuality.low;
+            }
+          } else {
+            selectedQuality = StreamQuality.sd;
+          }
+        } else {
+          selectedQuality = StreamQuality.hd;
+        }
+      } else {
+        selectedQuality = StreamQuality.fhd;
+      }
 
       _pipeLogsToConsole(player);
 
@@ -150,26 +189,26 @@ class DesktopPlayerNotifier extends ChangeNotifier {
         _setRpc();
       }
 
-      if (player.platform is libmpvPlayer) {
-        await (player.platform as libmpvPlayer)
+      if (player.platform is NativePlayer) {
+        await (player.platform as NativePlayer)
             .setProperty("profile", 'gpu-hq');
-        await (player.platform as libmpvPlayer)
+        await (player.platform as NativePlayer)
             .setProperty("scale", 'ewa_lanczossharp');
-        await (player.platform as libmpvPlayer)
+        await (player.platform as NativePlayer)
             .setProperty("cscale", 'ewa_lanczossharp');
       }
 
       await player.open(
         Playlist(
           [
-            Media(streamHd ?? streamSd ?? streamLow!),
+            Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
           ],
         ),
         play: false,
       );
 
       if (extra.startPosition.isNotEmpty) {
-        await (player.platform as libmpvPlayer).setProperty(
+        await (player.platform as NativePlayer).setProperty(
           "start",
           extra.startPosition,
         );
@@ -188,6 +227,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
       duration = player.state.duration;
       buffer = player.state.buffer;
       volume = player.state.volume;
+
       subscriptions.addAll(
         [
           player.stream.playing.listen((event) {
@@ -259,7 +299,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
 
   Future<void> toggleShaders() async {
     if (shaders) {
-      await (player.platform as libmpvPlayer).setProperty('glsl-shaders', '');
+      await (player.platform as NativePlayer).setProperty('glsl-shaders', '');
       shaders = false;
 
       notifyListeners();
@@ -270,7 +310,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      await (player.platform as libmpvPlayer).setProperty(
+      await (player.platform as NativePlayer).setProperty(
         'glsl-shaders',
         anime4kModeAFast(appDir!.path),
       ); //  anime4kModeDoubleA  || anime4kModeAFast || anime4kModeGan

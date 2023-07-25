@@ -10,6 +10,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:shikidev/src/utils/utils.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
+import '../../../providers/anime_details_provider.dart';
 import '../mobile/animated_play_pause.dart';
 import '../player_error.dart';
 import 'components/player_info_header.dart';
@@ -35,7 +36,7 @@ class DesktopPlayerPage extends ConsumerWidget {
               Align(
                 child: Video(
                   controller: notifier.playerController,
-                  filterQuality: FilterQuality.high,
+                  //filterQuality: FilterQuality.high,
                   fill: Colors.transparent,
                   fit: BoxFit.contain,
                   controls: NoVideoControls,
@@ -218,12 +219,12 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                             await notifier.toggleFullScreen(p: true);
 
                             // update DB
-                            await notifier
-                                .updateDataBase()
-                                .then(
-                                  (value) => GoRouter.of(context).pop(),
-                                )
-                                .catchError(
+                            await notifier.updateDataBase().then(
+                              (_) {
+                                ref.invalidate(isAnimeInDataBaseProvider);
+                                GoRouter.of(context).pop();
+                              },
+                            ).catchError(
                               (e) {
                                 showErrorSnackBar(
                                     ctx: context,

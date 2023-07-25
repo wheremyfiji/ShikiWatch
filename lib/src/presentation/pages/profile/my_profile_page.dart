@@ -129,6 +129,7 @@ class _ProfilePageAppBar extends StatelessWidget {
             icon: const Icon(Icons.travel_explore),
           ),
         ],
+
         IconButton(
           tooltip: 'Искать пользователя',
           onPressed: () => context.pushNamed('user_search'),

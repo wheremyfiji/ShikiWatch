@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../domain/enums/anime_source.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 import '../../services/preferences/preferences_service.dart';
@@ -27,6 +28,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       libraryFragment: _preferencesService.getLibraryStartFragment(),
       playerDiscordRpc: _preferencesService.getPlayerDiscordRpc(),
       libraryLayout: _preferencesService.getLibraryLayout(),
+      animeSource: _preferencesService.getAnimeSource(),
     );
   }
 
@@ -69,6 +71,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setLibraryLayout(layout);
     state = state.copyWith(
       libraryLayout: layout,
+    );
+  }
+
+  Future<void> setAnimeSource(AnimeSource source) async {
+    await _preferencesService.setAnimeSource(source);
+    state = state.copyWith(
+      animeSource: source,
     );
   }
 }

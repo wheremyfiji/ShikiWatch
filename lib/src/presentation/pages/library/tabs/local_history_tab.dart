@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:go_router/go_router.dart';
 
-import '../../../../constants/config.dart';
-import '../../../../domain/models/pages_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
-import '../../../../utils/utils.dart';
 import '../../../providers/library_local_history_provider.dart';
+import '../../../../utils/extensions/date_time_ext.dart';
+import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../domain/models/pages_extra.dart';
+import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
+import '../../../../constants/config.dart';
+import '../../../../utils/utils.dart';
 
 class LocalHistoryTab extends ConsumerWidget {
   const LocalHistoryTab({super.key});
@@ -125,12 +125,6 @@ class HistoryItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final time = DateFormat('HH:mm').format(update); //kk
-    final date = DateFormat.MMMd().format(update); //MMMEd  MMMMd
-
-    final lastUpdate =
-        timeago.format(update, locale: 'ru', allowFromNow: false);
-
     return Material(
       borderRadius: BorderRadius.circular(12),
       color: Colors.transparent,
@@ -156,22 +150,23 @@ class HistoryItem extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 100, //120
-                  child: AspectRatio(
-                    aspectRatio: 0.703,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12), //12
-                      child: CachedNetworkImage(
-                        imageUrl: AppConfig.staticUrl + image,
-                        fit: BoxFit.cover,
+                if (image.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: SizedBox(
+                      width: 100, //120
+                      child: AspectRatio(
+                        aspectRatio: 0.703,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedImage(
+                            AppConfig.staticUrl + image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,15 +177,38 @@ class HistoryItem extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
+                      Text(
+                        '$episode серия • $studioName',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall!.color,
+                        ),
+                      ),
+                      if (timeStamp != null)
+                        Text(
+                          timeStamp!,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodySmall!.color,
+                          ),
+                        ),
                       const SizedBox(
                         height: 4,
                       ),
-                      Text('$episode серия • $studioName'),
-                      if (timeStamp != null) Text(timeStamp!),
-                      Text('$date в $time ($lastUpdate)'),
+                      Text(
+                        //'$date в $time ($lastUpdate)',
+                        update.convertToDaysAgo(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color:
+                              context.colorScheme.onBackground.withOpacity(0.8),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -214,7 +232,7 @@ class HistoryItem extends ConsumerWidget {
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Icon(
-                    Icons.delete,
+                    Icons.delete_outline_rounded,
                   ),
                 ),
               ),

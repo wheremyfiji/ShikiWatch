@@ -21,7 +21,7 @@ import '../../../utils/utils.dart';
 
 import 'anime_details_page.dart';
 import 'rating_dialog.dart';
-import 'studio_select_page.dart';
+
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_user_rate_dialog.dart';
 import 'widgets/rates_statuses_widget.dart';
@@ -705,20 +705,21 @@ class AnimeDetailsDesktopPage extends ConsumerWidget {
     required int ep,
     required String imgUrl,
   }) {
-    Navigator.push(
-      ctx,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => StudioSelectPage(
-          //animeId: titleInfo.id,
-          shikimoriId: id,
-          animeName: name,
-          epWatched: ep,
-          imageUrl: imgUrl,
-        ),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
+    // Navigator.push(
+    //   ctx,
+    //   PageRouteBuilder(
+    //     pageBuilder: (context, animation1, animation2) => StudioSelectPage(
+    //       //animeId: titleInfo.id,
+    //       shikimoriId: id,
+    //       animeName: name,
+    //       searchName: '',
+    //       epWatched: ep,
+    //       imageUrl: imgUrl,
+    //     ),
+    //     transitionDuration: Duration.zero,
+    //     reverseTransitionDuration: Duration.zero,
+    //   ),
+    // );
   }
 }
 

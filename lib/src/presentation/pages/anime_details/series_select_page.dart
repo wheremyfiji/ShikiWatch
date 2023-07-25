@@ -116,18 +116,18 @@ class SeriesSelectPage extends ConsumerWidget {
       context.pop();
     }
 
-    watchRouteChange() async {
-      if (!GoRouter.of(context).location.contains('/player')) {
-        await Future.delayed(const Duration(milliseconds: 500));
+    // watchRouteChange() async {
+    //   if (!GoRouter.of(context).location.contains('/player')) {
+    //     await Future.delayed(const Duration(milliseconds: 500));
 
-        ref.invalidate(isAnimeInDataBaseProvider);
-        debugPrint('invalidate isAnimeInDataBaseProvider');
-        if (context.mounted) {
-          debugPrint('removeListener watchRouteChange');
-          GoRouter.maybeOf(context)?.removeListener(watchRouteChange);
-        }
-      }
-    }
+    //     ref.invalidate(isAnimeInDataBaseProvider);
+    //     debugPrint('invalidate isAnimeInDataBaseProvider');
+    //     if (context.mounted) {
+    //       debugPrint('removeListener watchRouteChange');
+    //       GoRouter.maybeOf(context)?.removeListener(watchRouteChange);
+    //     }
+    //   }
+    // }
 
     final sortedSeriesList = ref.watch(seriesSortProvider(seriesList!));
     final currentSort = ref.watch(episodeSortTypeProvider);
@@ -225,13 +225,14 @@ class SeriesSelectPage extends ConsumerWidget {
                         position: episode?.position,
                         imageUrl: imageUrl,
                         startPosition: startPosition,
+                        isLibria: false,
                       );
 
                       // ignore: use_build_context_synchronously
                       GoRouter.of(context).pushNamed('player', extra: data);
                       // ignore: use_build_context_synchronously
-                      GoRouter.of(context).addListener(watchRouteChange);
-                      debugPrint('addListener watchRouteChange');
+                      //GoRouter.of(context).addListener(watchRouteChange);
+                      //debugPrint('addListener watchRouteChange');
                     },
                     // title: seria.type != null
                     //     ? Text("Серия ${seria.number} (${seria.type})")

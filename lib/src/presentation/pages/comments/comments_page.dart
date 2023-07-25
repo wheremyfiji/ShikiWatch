@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shikidev/src/utils/extensions/string_ext.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../utils/extensions/date_time_ext.dart';
+import '../../../utils/extensions/string_ext.dart';
 import '../../../domain/models/shiki_comment.dart';
 import '../../providers/comments_provider.dart';
 import '../../widgets/cached_image.dart';
@@ -61,8 +61,10 @@ class CommentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final updatedAt =
-        DateTime.tryParse(comment.updatedAt ?? '')?.toLocal() ?? DateTime(1970);
+    // final updatedAt =
+    //     DateTime.tryParse(comment.updatedAt ?? '')?.toLocal() ?? DateTime(1970);
+
+    final updatedAt = DateTime.tryParse(comment.updatedAt ?? '');
 
     return Card(
       clipBehavior: Clip.hardEdge,
@@ -98,12 +100,13 @@ class CommentWidget extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Text(
-                          //'$date в $time',
-                          timeago.format(updatedAt, locale: 'ru'),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        if (updatedAt != null)
+                          Text(
+                            //timeago.format(updatedAt, locale: 'ru'),
+                            updatedAt.toLocal().convertToDaysAgo(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       ],
                     ),
                   ),
@@ -128,9 +131,14 @@ class CommentWidget extends StatelessWidget {
           //   //maxLines: 4,
           // ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Html(
               data: comment.htmlBody,
+              style: {
+                "body": Style(
+                  margin: Margins.all(0),
+                ),
+              },
               onLinkTap: (url, attributes, element) {
                 //print(url);
                 if (url.isNull) {

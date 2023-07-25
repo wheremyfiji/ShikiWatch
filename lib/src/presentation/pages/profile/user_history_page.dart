@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shikidev/src/utils/extensions/date_time_ext.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
@@ -202,27 +203,29 @@ class HistoryTargetItem extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(
-                      height: 4.0,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Html(
+                        data: historyItem.description,
+                        style: {
+                          "body": Style(
+                            margin: Margins.all(0),
+                          ),
+                        },
+                      ),
                     ),
-                    Html(
-                      data: historyItem.description,
-                      style: {
-                        "body": Style(
-                          margin: Margins.all(0),
+                    if (historyItem.createdAt != null)
+                      Text(
+                        historyItem.createdAt!.convertToDaysAgo(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color:
+                              context.colorScheme.onBackground.withOpacity(0.8),
                         ),
-                      },
-                    ),
-                    Text(
-                      //createdAtString,
-                      timeago.format(
-                        historyItem.createdAt!,
-                        locale: 'ru',
                       ),
-                    ),
                   ],
                 ),
               ),

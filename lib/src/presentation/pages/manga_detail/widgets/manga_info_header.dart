@@ -1,4 +1,6 @@
+import 'package:dismissible_page/dismissible_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -7,7 +9,6 @@ import '../../../../domain/models/manga_short.dart';
 import '../../../../utils/shiki_utils.dart';
 import '../../../providers/manga_details_provider.dart';
 import '../../../widgets/cached_image.dart';
-import '../../../widgets/show_pop_up.dart';
 
 class MangaInfoHeader extends StatelessWidget {
   final MangaShort data;
@@ -24,6 +25,8 @@ class MangaInfoHeader extends StatelessWidget {
     final airedString = DateFormat.yMMM().format(airedDateTime);
     final releasedDateTime = format.parse(data.releasedOn ?? '1970-01-01');
     final releasedString = DateFormat.yMMM().format(releasedDateTime);
+
+    final location = GoRouter.of(context).location;
 
     return Stack(
       alignment: Alignment.centerLeft,
@@ -65,26 +68,35 @@ class MangaInfoHeader extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 children: [
                   GestureDetector(
-                    onTap: () => showSlideUp(
-                      context,
-                      ImageViewer(
+                    onTap: () => context.pushTransparentRoute(
+                      ImageViewerPage(
                         AppConfig.staticUrl +
                             (data.image?.original ?? data.image?.preview ?? ''),
-                        cached: true,
+                        tag: AppConfig.staticUrl +
+                            (data.image?.original ??
+                                data.image?.preview ??
+                                '') +
+                            location,
                       ),
+                      rootNavigator: true,
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: SizedBox(
-                        height: 220,
-                        child: AspectRatio(
-                          aspectRatio: 0.703,
-                          child: CachedImage(
-                            AppConfig.staticUrl +
-                                (data.image?.original ??
-                                    data.image?.preview ??
-                                    ''),
-                            fit: BoxFit.cover,
+                    child: Hero(
+                      tag: AppConfig.staticUrl +
+                          (data.image?.original ?? data.image?.preview ?? '') +
+                          location,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          height: 220,
+                          child: AspectRatio(
+                            aspectRatio: 0.703,
+                            child: CachedImage(
+                              AppConfig.staticUrl +
+                                  (data.image?.original ??
+                                      data.image?.preview ??
+                                      ''),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),

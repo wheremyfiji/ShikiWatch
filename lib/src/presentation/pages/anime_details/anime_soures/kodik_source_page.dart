@@ -1,51 +1,33 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
-import 'package:shikidev/src/utils/extensions/buildcontext.dart';
-import 'package:shikidev/src/utils/utils.dart';
+import 'package:shikidev/src/presentation/pages/anime_details/anime_soures/anilibria_source_page.dart';
 
-import '../../../../kodik/kodik.dart';
-import '../../../../kodik/models/kodik_anime.dart';
-import '../../../domain/models/anime_database.dart';
-import '../../providers/anime_details_provider.dart';
-import '../../widgets/error_widget.dart';
-import 'series_select_page.dart';
+import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../../kodik/kodik.dart';
+import '../../../../../kodik/models/kodik_anime.dart';
+import '../../../../utils/utils.dart';
+import '../../../widgets/error_widget.dart';
+import '../series_select_page.dart';
 
-final latestStudioProvider =
-    FutureProvider.family.autoDispose<Studio?, int>((ref, shikimoriId) async {
-  final anime = await ref.watch(isAnimeInDataBaseProvider(shikimoriId).future);
+import 'latest_studio.dart';
+import 'providers.dart';
 
-  if (anime == null) {
-    return null;
-  }
-
-  if (anime.studios == null || anime.studios!.isEmpty) {
-    return null;
-  }
-
-  final studios = anime.studios!;
-
-  studios.sort((a, b) => b.updated!.compareTo(a.updated!));
-
-  if (studios.first.episodes == null || studios.first.episodes!.isEmpty) {
-    return null;
-  }
-
-  return studios.first;
-}, name: 'latestStudioProvider');
-
-class StudioSelectPage extends ConsumerWidget {
+class KodikSourcePage extends ConsumerWidget {
   final int shikimoriId;
   final int epWatched;
   final String animeName;
+  final String searchName;
   final String imageUrl;
 
-  const StudioSelectPage({
+  const KodikSourcePage({
     super.key,
     required this.shikimoriId,
     required this.epWatched,
     required this.animeName,
+    required this.searchName,
     required this.imageUrl,
   });
 
@@ -65,24 +47,41 @@ class StudioSelectPage extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-            // SliverPinnedHeader(
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(8.0),
-            //     child: Card(
-            //       shadowColor: Colors.transparent,
-            //       child: Padding(
-            //         padding: const EdgeInsets.all(16.0),
-            //         child: Column(
-            //           children: [
-            //             Text(animeName),
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+              actions: [
+                PopupMenuButton(
+                  tooltip: '',
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text("Искать в AniLibria"),
+                      ),
+                    ];
+                  },
+                  onSelected: (value) {
+                    if (value == 0) {
+                      //Navigator.pop(context);
 
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              AnilibriaSourcePage(
+                            shikimoriId: shikimoriId,
+                            animeName: animeName,
+                            searchName: searchName,
+                            epWatched: epWatched,
+                            imageUrl: imageUrl,
+                          ),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
             ...studios.when(
               loading: () => [
                 const SliverFillRemaining(
@@ -224,65 +223,6 @@ class StudioSelectPage extends ConsumerWidget {
               },
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class LatestStudio extends ConsumerWidget {
-  final Studio studio;
-  final VoidCallback onContinue;
-
-  const LatestStudio({
-    super.key,
-    required this.studio,
-    required this.onContinue,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final episode = studio.episodes!.last;
-    return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-      sliver: SliverToBoxAdapter(
-        child: Card(
-          shadowColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Последнее просмотренное',
-                  // style: TextStyle(
-                  //   fontWeight: FontWeight.w500,
-                  //   fontSize: 18,
-                  // ),
-                  style: context.textTheme.titleLarge,
-                ),
-                const SizedBox(
-                  height: 8.0,
-                ),
-                Text('${studio.name} • Серия ${episode.nubmer.toString()}'),
-                if (episode.timeStamp != null) Text(episode.timeStamp!),
-                const SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Spacer(),
-                    FilledButton(
-                      onPressed: onContinue,
-                      child: const Text('Продолжить'),
-                    )
-                  ],
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );

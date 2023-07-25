@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:shikidev/src/domain/enums/anime_source.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -13,10 +14,15 @@ import '../../providers/anime_details_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/config.dart';
 import '../../../utils/shiki_utils.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/error_widget.dart';
 
 import '../../widgets/image_with_shimmer.dart';
 import '../../widgets/title_description.dart';
+import 'anime_soures/anilibria_source_page.dart';
+import 'anime_soures/kodik_source_page.dart';
+import 'anime_soures/source_modal_sheet.dart';
+import 'rating_dialog.dart';
 import 'related_titles.dart';
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
@@ -25,8 +31,6 @@ import 'widgets/details_screenshots.dart';
 import 'widgets/info_header.dart';
 import 'widgets/rates_statuses_widget.dart';
 import 'widgets/user_anime_rate.dart';
-import 'studio_select_page.dart';
-import 'rating_dialog.dart';
 
 const double dividerHeight = 16;
 
@@ -37,29 +41,6 @@ class AnimeDetailsPage extends ConsumerWidget {
     super.key,
     required this.extra,
   });
-
-  void pushStudioSelectPage({
-    required BuildContext ctx,
-    required int id,
-    required String name,
-    required int ep,
-    required String imgUrl,
-  }) {
-    Navigator.push(
-      ctx,
-      PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => StudioSelectPage(
-          //animeId: titleInfo.id,
-          shikimoriId: id,
-          animeName: name,
-          epWatched: ep,
-          imageUrl: imgUrl,
-        ),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,43 +68,75 @@ class AnimeDetailsPage extends ConsumerWidget {
                         builder: (context) => const RatingDialog(),
                       );
 
-                      if (dialogValue ?? false) {
+                      if (dialogValue == null || !dialogValue) {
+                        return;
+                      } else {
                         await ref
                             .read(preferencesProvider)
                             .sharedPreferences
-                            .setBool('allowExpContent', true)
-                            .then((value) => pushStudioSelectPage(
-                                  ctx: context,
-                                  id: data.id ?? 0,
-                                  name: (data.russian == ''
-                                          ? data.name
-                                          : data.russian) ??
-                                      '',
-                                  ep: titleInfo.currentProgress,
-                                  imgUrl: data.image?.original ?? '',
-                                ));
+                            .setBool('allowExpContent', true);
                       }
-                    } else {
-                      pushStudioSelectPage(
-                        ctx: context,
-                        id: data.id ?? 0,
-                        name: (data.russian == '' ? data.name : data.russian) ??
-                            '',
-                        ep: titleInfo.currentProgress,
-                        imgUrl: data.image?.original ?? '',
-                      );
                     }
-                  } else {
-                    pushStudioSelectPage(
-                      ctx: context,
-                      id: data.id ?? 0,
-                      name:
+                  }
+
+                  final animeSource = ref.read(settingsProvider
+                      .select((settings) => settings.animeSource));
+
+                  if (animeSource == AnimeSource.alwaysAsk) {
+                    // ignore: use_build_context_synchronously
+                    SourceModalSheet.show(
+                      context: context,
+                      shikimoriId: data.id!,
+                      epWatched: titleInfo.currentProgress,
+                      animeName:
                           (data.russian == '' ? data.name : data.russian) ?? '',
-                      // animeData.russian ??
-                      //     animeData.name ??
-                      //     '[Без навзвания]',
-                      ep: titleInfo.currentProgress,
-                      imgUrl: data.image?.original ?? '',
+                      search:
+                          data.name ?? data.english?[0] ?? data.russian ?? '',
+                      imageUrl: data.image?.original ?? '',
+                    );
+                  } else if (animeSource == AnimeSource.libria) {
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            AnilibriaSourcePage(
+                          shikimoriId: data.id!,
+                          animeName:
+                              (data.russian == '' ? data.name : data.russian) ??
+                                  '',
+                          searchName: data.name ??
+                              data.english?[0] ??
+                              data.russian ??
+                              '',
+                          epWatched: titleInfo.currentProgress,
+                          imageUrl: data.image?.original ?? '',
+                        ),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    );
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            KodikSourcePage(
+                          shikimoriId: data.id!,
+                          animeName:
+                              (data.russian == '' ? data.name : data.russian) ??
+                                  '',
+                          searchName: data.name ??
+                              data.english?[0] ??
+                              data.russian ??
+                              '',
+                          epWatched: titleInfo.currentProgress,
+                          imageUrl: data.image?.original ?? '',
+                        ),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
                     );
                   }
                 },

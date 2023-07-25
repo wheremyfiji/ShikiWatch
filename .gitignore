@@ -60,3 +60,4 @@ app.*.map.json
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 lib/build_date_time.dart
+lib/src/utils/router_old.dart

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
+import '../../domain/enums/anime_source.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 
@@ -13,6 +14,7 @@ const _oledModeKey = 'oledModeKey';
 const _libraryStartFragmentKey = 'libraryStartFragmentKey';
 const _playerDiscordRpcKey = 'playerDiscordRpcKey';
 const _libraryLayoutModeKey = 'libraryLayoutModeKey';
+const _animeSource = 'animeSourceKey';
 
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
@@ -110,5 +112,19 @@ class PreferencesService {
 
   Future<void> setLibraryLayout(LibraryLayoutMode layout) async {
     await _preferences.setString(_libraryLayoutModeKey, layout.name);
+  }
+
+  AnimeSource getAnimeSource() {
+    final value = _preferences.getString(_animeSource);
+    if (value == null) {
+      return AnimeSource.alwaysAsk;
+    }
+    return AnimeSource.values
+            .firstWhereOrNull((source) => source.name == value) ??
+        AnimeSource.alwaysAsk;
+  }
+
+  Future<void> setAnimeSource(AnimeSource layout) async {
+    await _preferences.setString(_animeSource, layout.name);
   }
 }
