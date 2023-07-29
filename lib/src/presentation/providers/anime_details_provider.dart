@@ -205,24 +205,24 @@ class TitleInfoPageController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void calcAllRates() {
-    try {
-      for (var i = 0; i < title.asData!.value.ratesScoresStats!.length; i++) {
-        allScores += title.asData!.value.ratesScoresStats![i].value!.toInt();
-      }
-    } on Exception catch (e) {
-      throw Exception(e);
-    }
+  // void calcAllRates() {
+  //   try {
+  //     for (var i = 0; i < title.asData!.value.ratesScoresStats!.length; i++) {
+  //       allScores += title.asData!.value.ratesScoresStats![i].value!.toInt();
+  //     }
+  //   }  catch (e) {
+  //     throw Exception(e);
+  //   }
 
-    try {
-      for (var i = 0; i < title.asData!.value.ratesStatusesStats!.length; i++) {
-        allStatuses +=
-            title.asData!.value.ratesStatusesStats![i].value!.toInt();
-      }
-    } on Exception catch (e) {
-      throw Exception(e);
-    }
-  }
+  //   try {
+  //     for (var i = 0; i < title.asData!.value.ratesStatusesStats!.length; i++) {
+  //       allStatuses +=
+  //           title.asData!.value.ratesStatusesStats![i].value!.toInt();
+  //     }
+  //   }  catch (e) {
+  //     throw Exception(e);
+  //   }
+  // }
 
   String getRating(String r) {
     const map = {
@@ -244,10 +244,10 @@ class TitleInfoPageController extends ChangeNotifier {
     isFavor = data.favoured ?? false;
     rating = getRating(data.rating ?? '');
 
-    if (data.ratesStatusesStats != null) {
+    if (data.ratesStatusesStats != null &&
+        data.ratesStatusesStats!.isNotEmpty) {
       for (var e in data.ratesStatusesStats!) {
         statsValues.add(e.value ?? 0);
-        //statuses.add({'domain': element.name, 'measure': element.value});
       }
     }
 

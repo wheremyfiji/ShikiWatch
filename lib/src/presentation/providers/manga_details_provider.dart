@@ -162,7 +162,8 @@ class MangaDetailsPageController extends ChangeNotifier {
   }
 
   void fillVariables(MangaRanobe data) {
-    if (data.ratesStatusesStats != null) {
+    if (data.ratesStatusesStats != null &&
+        data.ratesStatusesStats!.isNotEmpty) {
       for (var e in data.ratesStatusesStats!) {
         statsValues.add(e.value ?? 0);
       }
