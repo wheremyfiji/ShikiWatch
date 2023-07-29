@@ -146,17 +146,15 @@ class PlayerController extends flutter.ChangeNotifier {
         streamLow = value.video360;
       }
 
-      // if (streamFhd == null) {
-      //   selectedQuality = StreamQuality.hd;
-      // } else if (streamHd == null) {
-      //   selectedQuality = StreamQuality.sd;
-      // }
-
       if (streamFhd == null) {
         if (streamHd == null) {
           if (streamSd == null) {
             if (streamLow == null) {
               // все, хана, нету качества че делать
+              streamAsync =
+                  AsyncValue.error('нету качества', StackTrace.current);
+              notifyListeners();
+              return;
             } else {
               selectedQuality = StreamQuality.low;
             }
@@ -195,59 +193,57 @@ class PlayerController extends flutter.ChangeNotifier {
   Future<void> disposeState() async {
     _disposed = true;
 
-    _connectivitySubscription.cancel();
+    await _connectivitySubscription.cancel();
 
-    streamAsync.whenData(
-      (value) async {
-        final currentPosDuration = playerController.value.position;
-        final duration = playerController.value.duration.inSeconds;
-
-        bool isCompl = false;
-        String timeStamp =
-            'Просмотрено до ${_formatDuration(currentPosDuration)}';
-
-        if (duration / currentPosDuration.inSeconds < 1.2) {
-          //1.3
-          //1.03
-          isCompl = true;
-          timeStamp = 'Просмотрено полностью';
-        }
-
-        await SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.edgeToEdge,
-          //overlays: [SystemUiOverlay.top],
-        );
-
-        await Wakelock.disable();
-
-        playerController.pause().then(
-          (value) {
-            playerController.dispose();
-            log('PlayerController disposed!', name: 'PlayerController');
-          },
-        );
-
-        if (isError) {
-          return;
-        }
-
-        await ref
-            .read(animeDatabaseProvider)
-            .updateEpisode(
-              complete: isCompl,
-              shikimoriId: extra.shikimoriId,
-              animeName: extra.animeName,
-              imageUrl: extra.imageUrl,
-              timeStamp: timeStamp,
-              studioId: extra.studioId,
-              studioName: extra.studioName,
-              studioType: extra.studioType,
-              episodeNumber: extra.episodeNumber,
-              position: playerController.value.position.toString(),
-            )
-            .then((value) => ref.invalidate(isAnimeInDataBaseProvider));
-      },
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+      //overlays: [SystemUiOverlay.top],
     );
+
+    await Wakelock.disable();
+
+    streamAsync.whenData((value) async {
+      final currentPosDuration = playerController.value.position;
+      final duration = playerController.value.duration.inSeconds;
+
+      bool isCompl = false;
+      String timeStamp =
+          'Просмотрено до ${_formatDuration(currentPosDuration)}';
+
+      if (duration / currentPosDuration.inSeconds < 1.2) {
+        //1.3
+        //1.03
+        isCompl = true;
+        timeStamp = 'Просмотрено полностью';
+      }
+
+      playerController.pause().then(
+        (value) {
+          playerController.dispose();
+          log('PlayerController disposed!', name: 'PlayerController');
+        },
+      );
+
+      if (isError || currentPosDuration == Duration.zero) {
+        return;
+      }
+
+      await ref
+          .read(animeDatabaseProvider)
+          .updateEpisode(
+            complete: isCompl,
+            shikimoriId: extra.shikimoriId,
+            animeName: extra.animeName,
+            imageUrl: extra.imageUrl,
+            timeStamp: timeStamp,
+            studioId: extra.studioId,
+            studioName: extra.studioName,
+            studioType: extra.studioType,
+            episodeNumber: extra.episodeNumber,
+            position: playerController.value.position.toString(),
+          )
+          .then((value) => ref.invalidate(isAnimeInDataBaseProvider));
+    });
   }
 
   Future<void> hideCallback() async {

@@ -245,7 +245,10 @@ class DesktopPlayerNotifier extends ChangeNotifier {
             buffering = event;
             notifyListeners();
           }),
-          player.stream.position.listen((event) {
+          player.stream.position
+              .distinct(
+                  (a, b) => (a - b).abs() < const Duration(milliseconds: 200))
+              .listen((event) {
             if (_disposed) {
               return;
             }
@@ -312,7 +315,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
       }
       await (player.platform as NativePlayer).setProperty(
         'glsl-shaders',
-        anime4kModeAFast(appDir!.path),
+        anime4kModeDoubleA(appDir!.path),
       ); //  anime4kModeDoubleA  || anime4kModeAFast || anime4kModeGan
 
       shaders = true;
@@ -321,6 +324,10 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   }
 
   Future<void> updateDataBase() async {
+    if (position == Duration.zero) {
+      return;
+    }
+
     bool isCompl = false;
     String timeStamp = 'Просмотрено до ${_formatDuration(position)}';
 

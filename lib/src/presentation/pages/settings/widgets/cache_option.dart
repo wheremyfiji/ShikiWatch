@@ -129,27 +129,3 @@ class ClearCacheWidget extends ConsumerWidget {
     // );
   }
 }
-
-// class CacheSize extends ConsumerWidget {
-//   const CacheSize({super.key});
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final provider = ref.watch(cacheSizeProvider);
-
-//     return provider.when(
-//       data: (data) => SettingsOption(
-//         title: 'Размер кэша изображений',
-//         subtitle: '${data.toStringAsFixed(2)} MB',
-//       ),
-//       error: (error, stackTrace) => SettingsOption(
-//         title: 'Ошибка вычисления размера кэша',
-//         subtitle: error.toString(),
-//       ),
-//       loading: () => const SettingsOption(
-//         title: 'Размер кэша изображений',
-//         subtitle: '...',
-//       ),
-//     );
-//   }
-// }

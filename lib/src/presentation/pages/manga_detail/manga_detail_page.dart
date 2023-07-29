@@ -366,9 +366,6 @@ class MangaExternalLinksWidget extends ConsumerWidget {
                     title: Text(
                       link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
                     ),
-                    trailing: const Icon(
-                      Icons.open_in_browser,
-                    ),
                     onTap: () {
                       launchUrlString(
                         link.url!,

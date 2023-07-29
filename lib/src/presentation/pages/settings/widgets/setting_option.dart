@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
+
 class SettingsOption extends StatelessWidget {
   const SettingsOption({
     Key? key,
@@ -23,21 +25,19 @@ class SettingsOption extends StatelessWidget {
           ? null
           : Icon(
               icon,
-              color: Theme.of(context).colorScheme.onBackground,
+              color: context.colorScheme.onBackground,
             ),
       title: Text(
         title,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: context.colorScheme.onBackground,
         ),
       ),
       subtitle: subtitle != null
           ? Text(
               subtitle!,
               style: TextStyle(
-                color:
-                    Theme.of(context).colorScheme.onBackground.withOpacity(0.8),
-                //color: context.textTheme.bodySmall?.color,
+                color: context.colorScheme.onBackground.withOpacity(0.8),
               ),
             )
           : null,

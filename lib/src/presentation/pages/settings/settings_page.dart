@@ -35,227 +35,217 @@ class SettingsPage extends ConsumerWidget {
     final userLogin = ref.watch(routerNotifierProvider.notifier).userLogin;
 
     return Scaffold(
-      body: CustomScrollView(
-        shrinkWrap: true,
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Настройки'),
-          ),
-          const SliverToBoxAdapter(
-            child: SettingsHeader(),
-          ),
-          if (SecureStorageService.instance.token != '' && userLogin)
-            SliverToBoxAdapter(
-              child: SettingsGroup(
-                title: 'Аккаунт',
-                options: [
-                  SettingsOption(
-                    title: 'Выйти из аккаунта',
-                    subtitle: 'Очистить текущую авторизацию',
-                    onTap: () async {
-                      bool? dialogValue = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Выйти из аккаунта?'),
-                          //content: const Text(''),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              child: const Text('Отмена'),
-                            ),
-                            FilledButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              child: const Text('Выйти'),
-                            ),
-                          ],
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: <Widget>[
+            const SliverAppBar.medium(
+              title: Text('Настройки'),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                <Widget>[
+                  const SettingsHeader(),
+                  if (SecureStorageService.instance.token != '' && userLogin)
+                    SettingsGroup(
+                      title: 'Аккаунт',
+                      options: [
+                        SettingsOption(
+                          title: 'Выйти из аккаунта',
+                          subtitle: 'Очистить текущую авторизацию',
+                          onTap: () async {
+                            bool? dialogValue = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Выйти из аккаунта?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text('Отмена'),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text('Выйти'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (dialogValue == null || !dialogValue) {
+                              return;
+                            }
+
+                            await SecureStorageService.instance.deleteAll();
+
+                            ref
+                                .read(routerNotifierProvider.notifier)
+                                .userLogin = false;
+
+                            if (context.mounted) {
+                              context.scaffoldMessenger.showSnackBar(
+                                const SnackBar(
+                                  content: Text('Перезапустите приложение'),
+                                  duration: Duration(seconds: 5),
+                                ),
+                              );
+                              GoRouter.of(context).goNamed('login');
+                            }
+                          },
                         ),
-                      );
+                      ],
+                    ),
+                  const SettingsGroup(
+                    title: 'Внешний вид',
+                    options: [
+                      //SettingsOption(title: ''),
+                      CurrentThemeOption(),
+                      DynamicColorsOption(),
+                      OledModeOption(),
+                      // if (!TargetP.instance.isDesktop)
+                      //   SwitchListTile(
+                      //     value: false,
+                      //     onChanged: (value) {},
+                      //     title: const Text(
+                      //       'Прозрачный бар навигации',
+                      //     ),
+                      //     subtitle: const Text(
+                      //       'Если поддерживается системой (необходим перезапуск)',
+                      //     ),
+                      //   ),
+                    ],
+                  ),
+                  SettingsGroup(
+                    title: 'Плеер',
+                    options: [
+                      const AnimeSourceOption(),
+                      if (TargetP.instance.isDesktop)
+                        const PlayerDiscordRpcOption(),
+                    ],
+                  ),
+                  const SettingsGroup(
+                    title: 'Библиотека', //   Приложение
+                    options: [
+                      LibraryLayoutOption(),
+                      LibraryStartFragmentOption(),
+                      // SwitchListTile(
+                      //   value: false,
+                      //   onChanged: (value) {},
+                      //   title: const Text('NSFW-контент'),
+                      //   subtitle: const Text('Искать и показывать NSFW-контент'),
+                      // ),
+                    ],
+                  ),
+                  SettingsGroup(
+                    // Хранилище
+                    title: 'Данные', // импорт/экспорт локальных отметок
+                    options: [
+                      const ClearCacheWidget(),
 
-                      if (dialogValue == null || !dialogValue) {
-                        return;
-                      }
+                      if (userLogin)
+                        SettingsOption(
+                          title: 'Резервное копирование',
+                          subtitle:
+                              'Импорт/экспорт/удаление локальных отметок просмотра аниме',
+                          onTap: () => context.pushNamed('backup'),
+                        ),
+                      // if (TargetP.instance.isDesktop)
+                      //   SettingsOption(
+                      //     title: 'Экспорт отметок',
+                      //     subtitle:
+                      //         'Экспортировать локальные отметки просмотра в json файл',
+                      //     onTap: () {
+                      //       export();
+                      //     },
+                      //   ),
+                    ],
+                  ),
+                  SettingsGroup(
+                    title: 'Ссылки',
+                    options: [
+                      SettingsOption(
+                        title: 'Github',
+                        subtitle: 'Открыть репозиторий приложения',
+                        onTap: () => launchUrlString(
+                          'https://github.com/wheremyfiji/ShikiWatch',
+                          mode: LaunchMode.externalApplication,
+                        ),
+                      ),
+                      //const Divider(),
+                      SettingsOption(
+                        title: 'Telegram',
+                        subtitle: 'Связь с разработчиком', //Автор приложения
+                        onTap: () => launchUrlString(
+                          'https://t.me/wheremyfiji',
+                          mode: LaunchMode.externalApplication,
+                        ),
+                      ),
 
-                      await SecureStorageService.instance.deleteAll();
-
-                      ref.read(routerNotifierProvider.notifier).userLogin =
-                          false;
-
-                      if (context.mounted) {
-                        context.scaffoldMessenger.showSnackBar(
-                          const SnackBar(
-                            content: Text('Перезапустите приложение'),
-                            duration: Duration(seconds: 5),
+                      SettingsOption(
+                        title: 'Shikimori',
+                        subtitle: 'Энциклопедия аниме и манги',
+                        onTap: () => launchUrlString(
+                          'https://shikimori.me',
+                          mode: LaunchMode.externalApplication,
+                        ),
+                      ),
+                      if (TargetP.instance.isDesktop)
+                        SettingsOption(
+                          title: 'Anime4K',
+                          subtitle:
+                              'Набор высококачественных алгоритмов масштабирования / шумоподавления аниме в реальном времени с открытым исходным кодом',
+                          onTap: () => launchUrlString(
+                            'https://bloc97.github.io/Anime4K/',
+                            mode: LaunchMode.externalApplication,
                           ),
-                        );
-                        GoRouter.of(context).goNamed('login');
-                      }
-                    },
+                        ),
+                    ],
+                  ),
+                  SettingsGroup(
+                    title: 'О приложении',
+                    options: [
+                      const SettingsOption(
+                        title: 'ShikiWatch',
+                        subtitle:
+                            'Неофициальное приложение для сайта shikimori.me с возможностью онлайн просмотра anime',
+                        onTap: null,
+                      ),
+                      const VersionWidget(),
+                      if (TargetP.instance.isDesktop)
+                        const WindowsDeviceInfoWidget(),
+                      SettingsOption(
+                        title: 'Лицензии',
+                        subtitle: 'Лицензии с открытым исходным кодом',
+                        onTap: () {
+                          showLicensePage(
+                            context: context,
+                            applicationName: 'ShikiWatch',
+                            applicationVersion: 'v1.3.3.7',
+                            useRootNavigator: true,
+                          );
+                        },
+                      ),
+                      if (TargetP.instance.isDesktop)
+                        SettingsOption(
+                          title: 'распаковать pedals',
+                          onTap: () async {
+                            Directory app =
+                                await getApplicationSupportDirectory();
+                            await launchUrl(Uri.parse(app.path));
+                            //setRpc();
+                          },
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
-          const SliverToBoxAdapter(
-            child: SettingsGroup(
-              title: 'Внешний вид',
-              options: [
-                //SettingsOption(title: ''),
-                CurrentThemeOption(),
-                DynamicColorsOption(),
-                OledModeOption(),
-                // if (!TargetP.instance.isDesktop)
-                //   SwitchListTile(
-                //     value: false,
-                //     onChanged: (value) {},
-                //     title: const Text(
-                //       'Прозрачный бар навигации',
-                //     ),
-                //     subtitle: const Text(
-                //       'Если поддерживается системой (необходим перезапуск)',
-                //     ),
-                //   ),
-              ],
-            ),
-          ),
-
-          SliverToBoxAdapter(
-            child: SettingsGroup(
-              title: 'Плеер',
-              options: [
-                const AnimeSourceOption(),
-                if (TargetP.instance.isDesktop) const PlayerDiscordRpcOption(),
-              ],
-            ),
-          ),
-          const SliverToBoxAdapter(
-            child: SettingsGroup(
-              title: 'Библиотека', //   Приложение
-              options: [
-                LibraryLayoutOption(),
-                LibraryStartFragmentOption(),
-                // SwitchListTile(
-                //   value: false,
-                //   onChanged: (value) {},
-                //   title: const Text('NSFW-контент'),
-                //   subtitle: const Text('Искать и показывать NSFW-контент'),
-                // ),
-              ],
-            ),
-          ),
-
-          SliverToBoxAdapter(
-            child: SettingsGroup(
-              // Хранилище
-              title: 'Данные', // импорт/экспорт локальных отметок
-              options: [
-                const ClearCacheWidget(),
-
-                if (userLogin)
-                  SettingsOption(
-                    title: 'Резервное копирование',
-                    subtitle:
-                        'Импорт/экспорт/удаление локальных отметок просмотра аниме',
-                    onTap: () => context.pushNamed('backup'),
-                  ),
-                // if (TargetP.instance.isDesktop)
-                //   SettingsOption(
-                //     title: 'Экспорт отметок',
-                //     subtitle:
-                //         'Экспортировать локальные отметки просмотра в json файл',
-                //     onTap: () {
-                //       export();
-                //     },
-                //   ),
-              ],
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SettingsGroup(
-              title: 'Ссылки',
-              options: [
-                SettingsOption(
-                  title: 'Github',
-                  subtitle: 'Открыть репозиторий приложения',
-                  onTap: () => launchUrlString(
-                    'https://github.com/wheremyfiji/ShikiWatch',
-                    mode: LaunchMode.externalApplication,
-                  ),
-                ),
-                //const Divider(),
-                SettingsOption(
-                  title: 'Telegram',
-                  subtitle: 'Связь с разработчиком', //Автор приложения
-                  onTap: () => launchUrlString(
-                    'https://t.me/wheremyfiji',
-                    mode: LaunchMode.externalApplication,
-                  ),
-                ),
-
-                SettingsOption(
-                  title: 'Shikimori',
-                  subtitle: 'Энциклопедия аниме и манги',
-                  onTap: () => launchUrlString(
-                    'https://shikimori.me',
-                    mode: LaunchMode.externalApplication,
-                  ),
-                ),
-                if (TargetP.instance.isDesktop)
-                  SettingsOption(
-                    title: 'Anime4K',
-                    subtitle:
-                        'Набор высококачественных алгоритмов масштабирования / шумоподавления аниме в реальном времени с открытым исходным кодом',
-                    onTap: () => launchUrlString(
-                      'https://bloc97.github.io/Anime4K/',
-                      mode: LaunchMode.externalApplication,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SettingsGroup(
-              title: 'О приложении',
-              options: [
-                const SettingsOption(
-                  title: 'ShikiWatch',
-                  subtitle:
-                      'Неофициальное приложение для сайта shikimori.me с возможностью онлайн просмотра anime',
-                  onTap: null,
-                ),
-                const VersionWidget(),
-                if (TargetP.instance.isDesktop) const WindowsDeviceInfoWidget(),
-                SettingsOption(
-                  title: 'Лицензии',
-                  subtitle: 'Лицензии с открытым исходным кодом',
-                  onTap: () {
-                    showLicensePage(
-                      context: context,
-                      applicationName: 'ShikiWatch',
-                      applicationVersion: 'v1.3.3.7',
-                      useRootNavigator: true,
-                    );
-                  },
-                ),
-                if (TargetP.instance.isDesktop)
-                  SettingsOption(
-                    title: 'распаковать pedals',
-                    onTap: () async {
-                      Directory app = await getApplicationSupportDirectory();
-                      await launchUrl(Uri.parse(app.path));
-                      //setRpc();
-                    },
-                  ),
-              ],
-            ),
-          ),
-          // SliverToBoxAdapter(
-          //   child: SettingsGroup(
-          //     title: '',
-          //     options: [
-          //       SettingsOption(title: ''),
-          //     ],
-          //   ),
-          // ),
-        ],
+            SliverToBoxAdapter(
+                child: SizedBox(height: MediaQuery.of(context).padding.bottom)),
+          ],
+        ),
       ),
     );
   }

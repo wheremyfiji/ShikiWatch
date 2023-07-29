@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/target_platform.dart';
 import '../../../providers/environment_provider.dart';
 import '../../../providers/settings_provider.dart';
@@ -21,36 +22,24 @@ class DynamicColorsOption extends ConsumerWidget {
         .watch(settingsProvider.select((settings) => settings.dynamicColors));
 
     return SwitchListTile(
-      title: const Text('Динамические цвета'),
+      title: Text(
+        'Динамические цвета',
+        style: TextStyle(
+          color: context.colorScheme.onBackground,
+        ),
+      ),
       subtitle: TargetP.instance.isDesktop
           ? null
-          : const Text('Динамические цвета на основе обоев телефона'),
+          : Text(
+              'Динамические цвета на основе обоев телефона',
+              style: TextStyle(
+                color: context.colorScheme.onBackground.withOpacity(0.8),
+              ),
+            ),
       value: dynamicColors,
       onChanged: (value) async {
         await ref.read(settingsProvider.notifier).setDynamicColors(value);
       },
     );
-
-    // return ValueListenableBuilder<Box<dynamic>>(
-    //   valueListenable: Hive.box(BoxType.settings.name).listenable(
-    //     keys: [dynamicThemeKey],
-    //   ),
-    //   builder: (context, value, child) {
-    //     final bool isDynamic = value.get(
-    //       dynamicThemeKey,
-    //       defaultValue: true,
-    //     );
-    //     return SwitchListTile(
-    //       title: const Text('Динамические цвета'),
-    //       subtitle: TargetP.instance.isDesktop
-    //           ? null
-    //           : const Text('Динамические цвета на основе обоев телефона'),
-    //       value: isDynamic,
-    //       onChanged: (value) {
-    //         Hive.box(BoxType.settings.name).put(dynamicThemeKey, value);
-    //       },
-    //     );
-    //   },
-    // );
   }
 }

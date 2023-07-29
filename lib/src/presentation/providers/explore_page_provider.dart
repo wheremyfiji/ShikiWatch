@@ -42,7 +42,7 @@ class ExplorePageController extends ChangeNotifier {
         limit: _limit,
         order: 'ranked', // ranked ?? popularity
         status: 'ongoing',
-        //season: 'spring_2023', //  winter_2023
+        //season: 'summer_2023', //summer_2023
         score: 1,
         censored: 'true',
         userToken: SecureStorageService.instance.token,

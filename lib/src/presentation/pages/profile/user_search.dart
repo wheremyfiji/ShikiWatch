@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
 
+import '../../../utils/extensions/date_time_ext.dart';
 import '../../../utils/extensions/riverpod_extensions.dart';
 import '../../../data/data_sources/user_data_src.dart';
 import '../../../data/repositories/user_repo.dart';
@@ -100,9 +100,7 @@ class UserSearchItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userLastOnline =
-        DateTime.tryParse(user.lastOnlineAt ?? '')?.toLocal() ?? DateTime(1970);
-    //final date = DateFormat.yMd().format(userLastOnline);
-    //final time = DateFormat.Hm().format(userLastOnline);
+        DateTime.tryParse(user.lastOnlineAt ?? '')?.toLocal();
 
     return ListTile(
       onTap: () => context.push('/profile/${user.id!}', extra: user),
@@ -116,12 +114,13 @@ class UserSearchItem extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      //subtitle: Text('Был(а) в сети $date в $time'),
-      subtitle: Text(
-        'Послед. онлайн ${timeago.format(userLastOnline, locale: 'ru')}',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      subtitle: userLastOnline == null
+          ? null
+          : Text(
+              'онлайн ${userLastOnline.convertToDaysAgo()}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
     );
   }
 }

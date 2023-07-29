@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../providers/settings_provider.dart';
 
 class OledModeOption extends ConsumerWidget {
@@ -13,8 +14,18 @@ class OledModeOption extends ConsumerWidget {
         ref.watch(settingsProvider.select((settings) => settings.oledMode));
 
     return SwitchListTile(
-      title: const Text('AMOLED-тема'),
-      subtitle: const Text('Полносью чёрная тема'),
+      title: Text(
+        'AMOLED-тема',
+        style: TextStyle(
+          color: context.colorScheme.onBackground,
+        ),
+      ),
+      subtitle: Text(
+        'Полносью чёрная тема',
+        style: TextStyle(
+          color: context.colorScheme.onBackground.withOpacity(0.8),
+        ),
+      ),
       value: oledMode,
       onChanged: (value) async {
         await ref.read(settingsProvider.notifier).setOledMode(value);
@@ -22,30 +33,3 @@ class OledModeOption extends ConsumerWidget {
     );
   }
 }
-
-// class OledModeWidget extends StatelessWidget {
-//   const OledModeWidget({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ValueListenableBuilder<Box<dynamic>>(
-//       valueListenable: Hive.box(BoxType.settings.name).listenable(
-//         keys: [oledModeKey],
-//       ),
-//       builder: (context, value, child) {
-//         final bool isOled = value.get(
-//           oledModeKey,
-//           defaultValue: false,
-//         );
-//         return SwitchListTile(
-//           title: const Text('AMOLED-тема'),
-//           subtitle: const Text('Полносью чёрная тема'),
-//           value: isOled,
-//           onChanged: (value) {
-//             Hive.box(BoxType.settings.name).put(oledModeKey, value);
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
