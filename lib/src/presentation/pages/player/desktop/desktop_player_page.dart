@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
@@ -93,9 +93,7 @@ class DesktopPlayerPage extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: IconButton(
-                onPressed: () async {
-                  GoRouter.of(context).pop();
-                },
+                onPressed: () => GoRouter.of(context).pop(),
                 icon: const Icon(Icons.arrow_back),
                 color: Colors.white,
                 iconSize: 24.0,

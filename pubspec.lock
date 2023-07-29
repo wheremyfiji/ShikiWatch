@@ -773,18 +773,18 @@ packages:
     dependency: "direct main"
     description:
       name: media_kit
-      sha256: "1e6ea59b5f81d1db038ac5394c38cd3ad2f5e50bdf36f12154dee6fa04221bcb"
+      sha256: "272a9f1dd77ed57b48707fdb0ec0e4a048ef958feccc0d0dd751135fe924b63a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1"
   media_kit_libs_windows_video:
     dependency: "direct main"
     description:
       name: media_kit_libs_windows_video
-      sha256: "99a3a85b185ae012a8e3bd596cf0ca425834477d0bec86207548d6ff7c926254"
+      sha256: b343e644927982a2ef3db63877b36d84bdda8173d8318ca0d1c68c1ea8a35982
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.5"
   media_kit_native_event_loop:
     dependency: "direct main"
     description:
@@ -797,10 +797,10 @@ packages:
     dependency: "direct main"
     description:
       name: media_kit_video
-      sha256: "55edf96bcf08f8bd158018d77afd10d5411f9f3b657fb34a4cd5690caec91596"
+      sha256: "3ac0403d67710dfb2bf6aabfa6caff1b163e70fb7e1a88423bc1be569b4df6b3"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1"
   meta:
     dependency: transitive
     description:

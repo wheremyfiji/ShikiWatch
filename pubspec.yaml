@@ -65,10 +65,10 @@ dependencies:
   isar: *isar_version
   isar_flutter_libs: *isar_version
   loggy: ^2.0.3
-  media_kit: ^1.1.0
-  media_kit_libs_windows_video: 1.0.2
+  media_kit: ^1.1.1
+  media_kit_libs_windows_video: ^1.0.5
   media_kit_native_event_loop: ^1.0.6
-  media_kit_video: ^1.1.0
+  media_kit_video: ^1.1.1
   #nirikshak: ^0.1.0
   network_logger:
     git:
