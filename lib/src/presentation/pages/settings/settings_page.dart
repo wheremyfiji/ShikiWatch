@@ -10,9 +10,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/extensions/buildcontext.dart';
-import '../../../utils/router.dart';
 import '../../providers/environment_provider.dart';
 import '../../../utils/target_platform.dart';
+import '../../../utils/router.dart';
 
 import 'widgets/anime_source_option.dart';
 import 'widgets/cache_option.dart';
@@ -167,7 +167,7 @@ class SettingsPage extends ConsumerWidget {
                     options: [
                       SettingsOption(
                         title: 'Github',
-                        subtitle: 'Открыть репозиторий приложения',
+                        subtitle: 'Исходный код',
                         onTap: () => launchUrlString(
                           'https://github.com/wheremyfiji/ShikiWatch',
                           mode: LaunchMode.externalApplication,
@@ -176,9 +176,10 @@ class SettingsPage extends ConsumerWidget {
                       //const Divider(),
                       SettingsOption(
                         title: 'Telegram',
-                        subtitle: 'Связь с разработчиком', //Автор приложения
+                        subtitle:
+                            'Новые версии, обсуждение и прочее', //Автор приложения
                         onTap: () => launchUrlString(
-                          'https://t.me/wheremyfiji',
+                          'https://t.me/shikiwatch',
                           mode: LaunchMode.externalApplication,
                         ),
                       ),
@@ -209,7 +210,7 @@ class SettingsPage extends ConsumerWidget {
                       const SettingsOption(
                         title: 'ShikiWatch',
                         subtitle:
-                            'Неофициальное приложение для сайта shikimori.me с возможностью онлайн просмотра anime',
+                            'Неофициальное приложение для сайта shikimori.me с возможностью онлайн просмотра аниме',
                         onTap: null,
                       ),
                       const VersionWidget(),
@@ -243,7 +244,8 @@ class SettingsPage extends ConsumerWidget {
               ),
             ),
             SliverToBoxAdapter(
-                child: SizedBox(height: MediaQuery.of(context).padding.bottom)),
+              child: SizedBox(height: MediaQuery.of(context).padding.bottom),
+            ),
           ],
         ),
       ),

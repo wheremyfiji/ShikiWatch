@@ -1,9 +1,9 @@
 # ShikiWatch
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/wheremyfiji/ShikiWatch)](https://github.com/wheremyfiji/ShikiWatch/releases/latest/) [![GitHub all releases](https://img.shields.io/github/downloads/wheremyfiji/ShikiWatch/total?label=All%20Downloads)](https://github.com/wheremyfiji/ShikiWatch/releases/latest/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/wheremyfiji/ShikiWatch)](https://github.com/wheremyfiji/ShikiWatch/releases/latest/) [![GitHub all releases](https://img.shields.io/github/downloads/wheremyfiji/ShikiWatch/total?label=All%20Downloads)](https://github.com/wheremyfiji/ShikiWatch/releases/latest/) [![Static Badge](https://img.shields.io/badge/Telegram_Group-2AABEE?logo=telegram&logoColor=white)](https://t.me/shikiwatch)
 
 Неофициальное приложение для [Shikimori](https://shikimori.me/) с возможностью онлайн просмотра аниме.
 
-### STILL W.I.P.
+### Приложение находится в разработке
 
 ## Как использовать приложение
 
