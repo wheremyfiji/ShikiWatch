@@ -21,210 +21,174 @@ class AnimeFilterPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.watch(animeSearchProvider(t));
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Фильтры'),
-          ),
-
-          if (c.searchType == SearchType.anime)
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverToBoxAdapter(
-                child: ListTile(
-                  horizontalTitleGap: 8, //def = 16?
-                  contentPadding: EdgeInsets.zero,
-                  leading: Text(
-                    'Жанр',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  title: (c.selectedGenres?.isEmpty ?? true)
-                      ? null
-                      : Text(
-                          c.selectedGenres!.join(', '),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
-                          //textAlign: TextAlign.start,
-                        ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        tooltip: 'Выбрать жанры',
-                        onPressed: () => showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          useRootNavigator: true,
-                          showDragHandle: true,
-                          useSafeArea: true,
-                          //backgroundColor: Colors.transparent,
-                          builder: (context) => GenresBottomSheet(t),
-                        ),
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('Фильтры'),
             ),
 
-          // SliverPadding(
-          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          //   sliver: SliverToBoxAdapter(
-          //     child: ListTile(
-          //       contentPadding: EdgeInsets.zero,
-          //       leading: Text(
-          //         'Студия',
-          //         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          //               fontSize: 16,
-          //               fontWeight: FontWeight.w500,
-          //             ),
-          //       ),
-          //       title: Text(
-          //         '8 bit',
-          //         maxLines: 2,
-          //         overflow: TextOverflow.ellipsis,
-          //         style: Theme.of(context).textTheme.bodySmall,
-          //       ),
-          //       trailing: IconButton(
-          //         onPressed: () {
-          //           showFlexibleBottomSheet(
-          //             decoration: BoxDecoration(
-          //               color: context.theme.colorScheme.background,
-          //               borderRadius: const BorderRadius.only(
-          //                 topLeft: Radius.circular(16.0),
-          //                 topRight: Radius.circular(16.0),
-          //               ),
-          //             ),
-          //             //bottomSheetColor: context.theme.colorScheme.background,
-          //             bottomSheetColor: Colors.transparent,
-          //             minHeight: 0,
-          //             initHeight: 0.5,
-          //             maxHeight: 1,
-          //             context: context,
-          //             anchors: [0, 0.5, 1],
-          //             isSafeArea: true,
-          //             duration: const Duration(milliseconds: 250),
-          //             builder: (context, scrollController, bottomSheetOffset) {
-          //               return StudiosBottomSheet(
-          //                 scrollController: scrollController,
-          //               );
-          //             },
-          //           );
-          //         },
-          //         icon: const Icon(Icons.add),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-          // SliverPadding(
-          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          //   sliver: SliverToBoxAdapter(
-          //     child: FilterChipWidget(
-          //       canClear: true,
-          //       onClear: () => c.cleanKind(),
-          //       title: 'Тип',
-          //       chips: Wrap(
-          //         spacing: 8,
-          //         children: [
-          //           ...List.generate(
-          //             animeKindList.length,
-          //             (index) {
-          //               final kind = animeKindList[index];
-          //               return CustomFilterChip(
-          //                 label: kind.russian,
-          //                 selected: c.isKindSelected(kind),
-          //                 onSelected: (b) => ref
-          //                     .read(animeSearchProvider)
-          //                     .toggleKind(k: kind, t: b),
-          //               );
-          //             },
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
-          if (c.searchType == SearchType.anime)
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Тип',
+            if (c.searchType == SearchType.anime)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverToBoxAdapter(
+                  child: ListTile(
+                    horizontalTitleGap: 8, //def = 16?
+                    contentPadding: EdgeInsets.zero,
+                    leading: Text(
+                      'Жанр',
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
-                    Wrap(
-                      spacing: 8,
+                    title: (c.selectedGenres?.isEmpty ?? true)
+                        ? null
+                        : Text(
+                            c.selectedGenres!.join(', '),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodySmall,
+                            //textAlign: TextAlign.start,
+                          ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        ...List.generate(
-                          animeStatusList.length,
-                          (index) {
-                            final kind = animeKindList[index];
-                            return CustomFilterChip(
-                              label: kind.russian,
-                              selected: c.isKindSelected(kind),
-                              onSelected: (b) => c.toggleKind(k: kind, t: b),
-                            );
-                          },
+                        IconButton(
+                          tooltip: 'Выбрать жанры',
+                          onPressed: () => showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            useRootNavigator: true,
+                            showDragHandle: true,
+                            useSafeArea: true,
+                            //backgroundColor: Colors.transparent,
+                            builder: (context) => GenresBottomSheet(t),
+                          ),
+                          icon: const Icon(Icons.add),
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
 
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Статус',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  // const SizedBox(
-                  //   height: 8,
-                  // ),
-                  Wrap(
-                    spacing: 8,
+            // SliverPadding(
+            //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            //   sliver: SliverToBoxAdapter(
+            //     child: ListTile(
+            //       contentPadding: EdgeInsets.zero,
+            //       leading: Text(
+            //         'Студия',
+            //         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            //               fontSize: 16,
+            //               fontWeight: FontWeight.w500,
+            //             ),
+            //       ),
+            //       title: Text(
+            //         '8 bit',
+            //         maxLines: 2,
+            //         overflow: TextOverflow.ellipsis,
+            //         style: Theme.of(context).textTheme.bodySmall,
+            //       ),
+            //       trailing: IconButton(
+            //         onPressed: () {
+            //           showFlexibleBottomSheet(
+            //             decoration: BoxDecoration(
+            //               color: context.theme.colorScheme.background,
+            //               borderRadius: const BorderRadius.only(
+            //                 topLeft: Radius.circular(16.0),
+            //                 topRight: Radius.circular(16.0),
+            //               ),
+            //             ),
+            //             //bottomSheetColor: context.theme.colorScheme.background,
+            //             bottomSheetColor: Colors.transparent,
+            //             minHeight: 0,
+            //             initHeight: 0.5,
+            //             maxHeight: 1,
+            //             context: context,
+            //             anchors: [0, 0.5, 1],
+            //             isSafeArea: true,
+            //             duration: const Duration(milliseconds: 250),
+            //             builder: (context, scrollController, bottomSheetOffset) {
+            //               return StudiosBottomSheet(
+            //                 scrollController: scrollController,
+            //               );
+            //             },
+            //           );
+            //         },
+            //         icon: const Icon(Icons.add),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
+            // SliverPadding(
+            //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            //   sliver: SliverToBoxAdapter(
+            //     child: FilterChipWidget(
+            //       canClear: true,
+            //       onClear: () => c.cleanKind(),
+            //       title: 'Тип',
+            //       chips: Wrap(
+            //         spacing: 8,
+            //         children: [
+            //           ...List.generate(
+            //             animeKindList.length,
+            //             (index) {
+            //               final kind = animeKindList[index];
+            //               return CustomFilterChip(
+            //                 label: kind.russian,
+            //                 selected: c.isKindSelected(kind),
+            //                 onSelected: (b) => ref
+            //                     .read(animeSearchProvider)
+            //                     .toggleKind(k: kind, t: b),
+            //               );
+            //             },
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
+            if (c.searchType == SearchType.anime)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ...List.generate(
-                        animeStatusList.length,
-                        (index) {
-                          final s = animeStatusList[index];
-                          return CustomFilterChip(
-                            label: s.russian,
-                            selected: c.isStatusSelected(s),
-                            onSelected: (b) {
-                              c.toggleStatus(s: s, t: b);
+                      Text(
+                        'Тип',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          ...List.generate(
+                            animeStatusList.length,
+                            (index) {
+                              final kind = animeKindList[index];
+                              return CustomFilterChip(
+                                label: kind.russian,
+                                selected: c.isKindSelected(kind),
+                                onSelected: (b) => c.toggleKind(k: kind, t: b),
+                              );
                             },
-                          );
-                        },
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          if (c.searchType == SearchType.anime)
+
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: SliverToBoxAdapter(
@@ -232,26 +196,28 @@ class AnimeFilterPage extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Длительность эпизода',
+                      'Статус',
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
                     ),
                     // const SizedBox(
-                    //   height: 4,
+                    //   height: 8,
                     // ),
                     Wrap(
                       spacing: 8,
                       children: [
                         ...List.generate(
-                          animeEpisodeDurationList.length,
+                          animeStatusList.length,
                           (index) {
-                            final e = animeEpisodeDurationList[index];
+                            final s = animeStatusList[index];
                             return CustomFilterChip(
-                              label: e.russian,
-                              selected: c.isEpDurationSelected(e),
-                              onSelected: (b) => c.toggleEpDuration(e: e, t: b),
+                              label: s.russian,
+                              selected: c.isStatusSelected(s),
+                              onSelected: (b) {
+                                c.toggleStatus(s: s, t: b);
+                              },
                             );
                           },
                         ),
@@ -261,127 +227,166 @@ class AnimeFilterPage extends ConsumerWidget {
                 ),
               ),
             ),
-          // SliverPadding(
-          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          //   sliver: SliverToBoxAdapter(
-          //     child: Column(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Text(
-          //           'Возрастное ограничение',
-          //           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          //                 fontSize: 16,
-          //                 fontWeight: FontWeight.w500,
-          //               ),
-          //         ),
-          //         const SizedBox(
-          //           height: 8,
-          //         ),
-          //         Wrap(
-          //           spacing: 8,
-          //           children: const [
-          //             CustomFilterChip(
-          //               label: 'G',
-          //               selected: false,
-          //             ),
-          //             CustomFilterChip(
-          //               label: 'PG',
-          //               selected: false,
-          //             ),
-          //             CustomFilterChip(
-          //               label: 'PG13',
-          //               selected: true,
-          //             ),
-          //             CustomFilterChip(
-          //               label: 'R',
-          //               selected: false,
-          //             ),
-          //             CustomFilterChip(
-          //               label: 'R+',
-          //               selected: false,
-          //             ),
-          //             CustomFilterChip(
-          //               label: 'Rx',
-          //               selected: false,
-          //             ),
-          //           ],
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'В моём списке',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  // const SizedBox(
-                  //   height: 8,
-                  // ),
-                  Wrap(
-                    spacing: 8,
+            if (c.searchType == SearchType.anime)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ...List.generate(
-                        animeMyList.length,
-                        (index) {
-                          final l = animeMyList[index];
-                          return CustomFilterChip(
-                            label: l.russian,
-                            selected: c.isMyListSelected(l),
-                            onSelected: (b) => c.toggleMyList(l: l, t: b),
-                          );
-                        },
+                      Text(
+                        'Длительность эпизода',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      // const SizedBox(
+                      //   height: 4,
+                      // ),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          ...List.generate(
+                            animeEpisodeDurationList.length,
+                            (index) {
+                              final e = animeEpisodeDurationList[index];
+                              return CustomFilterChip(
+                                label: e.russian,
+                                selected: c.isEpDurationSelected(e),
+                                onSelected: (b) =>
+                                    c.toggleEpDuration(e: e, t: b),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Сортировать по',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+            // SliverPadding(
+            //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            //   sliver: SliverToBoxAdapter(
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Text(
+            //           'Возрастное ограничение',
+            //           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            //                 fontSize: 16,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //         ),
+            //         const SizedBox(
+            //           height: 8,
+            //         ),
+            //         Wrap(
+            //           spacing: 8,
+            //           children: const [
+            //             CustomFilterChip(
+            //               label: 'G',
+            //               selected: false,
+            //             ),
+            //             CustomFilterChip(
+            //               label: 'PG',
+            //               selected: false,
+            //             ),
+            //             CustomFilterChip(
+            //               label: 'PG13',
+            //               selected: true,
+            //             ),
+            //             CustomFilterChip(
+            //               label: 'R',
+            //               selected: false,
+            //             ),
+            //             CustomFilterChip(
+            //               label: 'R+',
+            //               selected: false,
+            //             ),
+            //             CustomFilterChip(
+            //               label: 'Rx',
+            //               selected: false,
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'В моём списке',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    // const SizedBox(
+                    //   height: 8,
+                    // ),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        ...List.generate(
+                          animeMyList.length,
+                          (index) {
+                            final l = animeMyList[index];
+                            return CustomFilterChip(
+                              label: l.russian,
+                              selected: c.isMyListSelected(l),
+                              onSelected: (b) => c.toggleMyList(l: l, t: b),
+                            );
+                          },
                         ),
-                  ),
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      ...List.generate(
-                        animeSortList.length,
-                        (index) {
-                          final sort = animeSortList[index];
-                          return CustomFilterChip(
-                            label: sort.russian,
-                            selected: c.isSortTypeSelected(sort),
-                            onSelected: (b) =>
-                                c.toggleSortType(sort: sort, t: b),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          //const SliverToBoxAdapter(child: SizedBox(height: 60)),
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Сортировать по',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        ...List.generate(
+                          animeSortList.length,
+                          (index) {
+                            final sort = animeSortList[index];
+                            return CustomFilterChip(
+                              label: sort.russian,
+                              selected: c.isSortTypeSelected(sort),
+                              onSelected: (b) =>
+                                  c.toggleSortType(sort: sort, t: b),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            //const SliverToBoxAdapter(child: SizedBox(height: 60)),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: context.theme.colorScheme.background,
