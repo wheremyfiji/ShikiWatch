@@ -39,86 +39,90 @@ class AnilibriaSourcePage extends ConsumerWidget {
     final result = ref.watch(anilibriaSearchProvider(searchName));
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.medium(
-            title: Text(
-              animeName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            pinned: true,
-            actions: [
-              IconButton(
-                onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                    //icon: const Icon(Icons.info),
-                    title: const Text('Информация'),
-                    content: const Text(
-                      'Поиск производится по названию через API АниЛибрии. Результат может НЕ совпадать с искомым аниме.\n\nНайденные серии связаны с озвучкой от Анилибрии в других источниках.',
-                    ),
-                    actions: <Widget>[
-                      FilledButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                ),
-                icon: const Icon(Icons.info_outline),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar.medium(
+              title: Text(
+                animeName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
-          ),
-          ...result.when(
-            skipLoadingOnRefresh: false,
-            data: (data) {
-              if (data.list == null ||
-                  data.list!.isEmpty ||
-                  data.list?[0].player?.playlist == null ||
-                  data.list![0].player!.playlist!.isEmpty) {
-                return [
-                  // const SliverFillRemaining(
-                  //   child: Center(child: Text('Ничего не найдено')),
-                  // )
-                  SliverFillRemaining(
-                    child: NothingFound(
-                      shikimoriId: shikimoriId,
-                      epWatched: epWatched,
-                      animeName: animeName,
-                      searchName: searchName,
-                      imageUrl: imageUrl,
+              pinned: true,
+              actions: [
+                IconButton(
+                  onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      //icon: const Icon(Icons.info),
+                      title: const Text('Информация'),
+                      content: const Text(
+                        'Поиск производится по названию через API АниЛибрии. Результат может НЕ совпадать с искомым аниме.\n\nНайденные серии связаны с озвучкой от Анилибрии в других источниках.',
+                      ),
+                      actions: <Widget>[
+                        FilledButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        ),
+                      ],
                     ),
+                  ),
+                  icon: const Icon(Icons.info_outline),
+                ),
+              ],
+            ),
+            ...result.when(
+              skipLoadingOnRefresh: false,
+              data: (data) {
+                if (data.list == null ||
+                    data.list!.isEmpty ||
+                    data.list?[0].player?.playlist == null ||
+                    data.list![0].player!.playlist!.isEmpty) {
+                  return [
+                    // const SliverFillRemaining(
+                    //   child: Center(child: Text('Ничего не найдено')),
+                    // )
+                    SliverFillRemaining(
+                      child: NothingFound(
+                        shikimoriId: shikimoriId,
+                        epWatched: epWatched,
+                        animeName: animeName,
+                        searchName: searchName,
+                        imageUrl: imageUrl,
+                      ),
+                    ),
+                  ];
+                }
+
+                final title = data.list!.first;
+
+                return [
+                  TitleInfo(title),
+                  // if (title.player?.playlist != null)
+                  TitlePlaylist(
+                    title: title,
+                    shikimoriId: shikimoriId,
+                    epWatched: epWatched,
+                    animeName: animeName,
+                    imageUrl: imageUrl,
                   ),
                 ];
-              }
-
-              final title = data.list!.first;
-
-              return [
-                TitleInfo(title),
-                // if (title.player?.playlist != null)
-                TitlePlaylist(
-                  title: title,
-                  shikimoriId: shikimoriId,
-                  epWatched: epWatched,
-                  animeName: animeName,
-                  imageUrl: imageUrl,
+              },
+              loading: () => [
+                const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator())),
+              ],
+              error: (err, stack) => [
+                SliverFillRemaining(
+                  child: CustomErrorWidget(err.toString(),
+                      () => ref.refresh(anilibriaSearchProvider(searchName))),
                 ),
-              ];
-            },
-            loading: () => [
-              const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator())),
-            ],
-            error: (err, stack) => [
-              SliverFillRemaining(
-                child: CustomErrorWidget(err.toString(),
-                    () => ref.refresh(anilibriaSearchProvider(searchName))),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

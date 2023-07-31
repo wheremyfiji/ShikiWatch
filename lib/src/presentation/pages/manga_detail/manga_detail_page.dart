@@ -41,123 +41,127 @@ class MangaDetailPage extends ConsumerWidget {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(mangaDetailsPageProvider(manga.id!)),
-        child: CustomScrollView(
-          //shrinkWrap: true,
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              expandedHeight: 280,
-              title: Text(
-                (manga.russian == '' ? manga.name : manga.russian) ?? '',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: context.theme.colorScheme.onBackground,
-                ),
-              ),
-              actions: [
-                PopupMenuButton(
-                  tooltip: '',
-                  itemBuilder: (context) {
-                    return [
-                      const PopupMenuItem<int>(
-                        value: 0,
-                        child: Text("Открыть в браузере"),
-                      ),
-                      const PopupMenuItem<int>(
-                        value: 1,
-                        child: Text("Поделиться"),
-                      ),
-                    ];
-                  },
-                  onSelected: (value) {
-                    if (value == 0) {
-                      launchUrlString(
-                        AppConfig.staticUrl + (manga.url ?? ''),
-                        mode: LaunchMode.externalApplication,
-                      );
-                    } else if (value == 1) {
-                      Share.share(AppConfig.staticUrl + (manga.url ?? ''));
-                    }
-                  },
-                ),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                background: MangaInfoHeader(
-                  data: manga,
-                ),
-              ),
-            ),
-            ...mangaDetails.title.when(
-              data: (data) => [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  sliver: SliverToBoxAdapter(
-                    child: MangaActionsWidget(
-                      manga: manga,
-                      data: data,
-                    ),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            //shrinkWrap: true,
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 280,
+                title: Text(
+                  (manga.russian == '' ? manga.name : manga.russian) ?? '',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.theme.colorScheme.onBackground,
                   ),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  sliver: SliverToBoxAdapter(
-                    child: MangaChipsWidget(
-                      genres: data.genres,
-                      publishers: data.publishers,
-                      score: manga.score,
-                    ).animate().fadeIn(),
-                  ),
-                ),
-                if (data.description != null) ...[
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: TitleDescription(data.descriptionHtml!)
-                          .animate()
-                          .fadeIn(),
-                    ),
+                actions: [
+                  PopupMenuButton(
+                    tooltip: '',
+                    itemBuilder: (context) {
+                      return [
+                        const PopupMenuItem<int>(
+                          value: 0,
+                          child: Text("Открыть в браузере"),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 1,
+                          child: Text("Поделиться"),
+                        ),
+                      ];
+                    },
+                    onSelected: (value) {
+                      if (value == 0) {
+                        launchUrlString(
+                          AppConfig.staticUrl + (manga.url ?? ''),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      } else if (value == 1) {
+                        Share.share(AppConfig.staticUrl + (manga.url ?? ''));
+                      }
+                    },
                   ),
                 ],
-                if (mangaDetails.statsValues != []) ...[
+                flexibleSpace: FlexibleSpaceBar(
+                  background: MangaInfoHeader(
+                    data: manga,
+                  ),
+                ),
+              ),
+              ...mangaDetails.title.when(
+                data: (data) => [
                   SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     sliver: SliverToBoxAdapter(
-                      child: MangaRatesStatusesWidget(
-                        statsValues: mangaDetails.statsValues,
+                      child: MangaActionsWidget(
+                        manga: manga,
+                        data: data,
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    sliver: SliverToBoxAdapter(
+                      child: MangaChipsWidget(
+                        genres: data.genres,
+                        publishers: data.publishers,
+                        score: manga.score,
                       ).animate().fadeIn(),
                     ),
                   ),
-                ],
-                SliverToBoxAdapter(
-                  child: RelatedWidget(
-                    id: data.id!,
-                  ),
-                ),
-                const SliverToBoxAdapter(child: SizedBox(height: 70)),
-              ],
-              loading: () => [
-                SliverToBoxAdapter(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 130),
-                          child: const CircularProgressIndicator()),
+                  if (data.description != null) ...[
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: TitleDescription(data.descriptionHtml!)
+                            .animate()
+                            .fadeIn(),
+                      ),
+                    ),
+                  ],
+                  if (mangaDetails.statsValues != []) ...[
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: MangaRatesStatusesWidget(
+                          statsValues: mangaDetails.statsValues,
+                        ).animate().fadeIn(),
+                      ),
+                    ),
+                  ],
+                  SliverToBoxAdapter(
+                    child: RelatedWidget(
+                      id: data.id!,
                     ),
                   ),
-                )
-              ],
-              error: (err, stack) => [
-                SliverFillRemaining(
-                  child: CustomErrorWidget(err.toString(),
-                      () => ref.refresh(mangaDetailsPageProvider(manga.id!))),
-                ),
-              ],
-            ),
-          ],
+                  const SliverToBoxAdapter(child: SizedBox(height: 70)),
+                ],
+                loading: () => [
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxHeight: 130),
+                            child: const CircularProgressIndicator()),
+                      ),
+                    ),
+                  )
+                ],
+                error: (err, stack) => [
+                  SliverFillRemaining(
+                    child: CustomErrorWidget(err.toString(),
+                        () => ref.refresh(mangaDetailsPageProvider(manga.id!))),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -349,53 +353,58 @@ class MangaExternalLinksWidget extends ConsumerWidget {
     final links = ref.watch(externalLinksMangaProvider(mangaId));
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Ссылки'),
-          ),
-          ...links.when(
-            data: (data) => [
-              SliverList.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final link = data.toList()[index];
-                  final enable = link.url != null;
-                  return ListTile(
-                    enabled: enable,
-                    title: Text(
-                      link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
-                    ),
-                    onTap: () {
-                      launchUrlString(
-                        link.url!,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    },
-                  );
-                },
-              ),
-              const SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 16.0,
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('Ссылки'),
+              pinned: true,
+            ),
+            ...links.when(
+              data: (data) => [
+                SliverList.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final link = data.toList()[index];
+                    final enable = link.url != null;
+                    return ListTile(
+                      enabled: enable,
+                      title: Text(
+                        link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
+                      ),
+                      onTap: () {
+                        launchUrlString(
+                          link.url!,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                    );
+                  },
                 ),
-              ),
-            ],
-            error: (error, stackTrace) => [
-              SliverFillRemaining(
-                child: CustomErrorWidget(
-                  error.toString(),
-                  () => ref.refresh(externalLinksMangaProvider(mangaId)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 16.0,
+                  ),
                 ),
-              ),
-            ],
-            loading: () => [
-              const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ],
-          ),
-        ],
+              ],
+              error: (error, stackTrace) => [
+                SliverFillRemaining(
+                  child: CustomErrorWidget(
+                    error.toString(),
+                    () => ref.refresh(externalLinksMangaProvider(mangaId)),
+                  ),
+                ),
+              ],
+              loading: () => [
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -411,85 +420,89 @@ class SimilarMangaPage extends ConsumerWidget {
     final similarManga = ref.watch(similarTitlesMangaProvider(mangaId));
 
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar.large(
-              forceElevated: innerBoxIsScrolled,
-              stretch: true,
-              title: const Text(
-                'Похожее',
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar.large(
+                forceElevated: innerBoxIsScrolled,
+                stretch: true,
+                title: const Text(
+                  'Похожее',
+                ),
               ),
-            ),
-          ];
-        },
-        body: similarManga.when(
-          data: (data) {
-            if (data.isEmpty) {
-              return Center(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Σ(ಠ_ಠ)',
-                          textAlign: TextAlign.center,
-                          style: context.textTheme.displayMedium,
-                        ),
-                        Text(
-                          'Похоже тут пусто..',
-                          textAlign: TextAlign.center,
-                          style: context.textTheme.bodySmall?.copyWith(
-                            fontSize: 14,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          child: const Text(
-                            'Назад',
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
-            return CustomScrollView(
-              shrinkWrap: false,
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  sliver: SliverGrid(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final manga = data.toList()[index];
-
-                        return MangaCardEx(manga);
-                      },
-                      childCount: data.length,
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 140,
-                      childAspectRatio: 0.55,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                  ),
-                ),
-              ],
-            );
+            ];
           },
-          error: (err, stack) => CustomErrorWidget(err.toString(),
-              () => ref.refresh(similarTitlesMangaProvider(mangaId))),
-          loading: () => const Center(
-            child: CircularProgressIndicator(),
+          body: similarManga.when(
+            data: (data) {
+              if (data.isEmpty) {
+                return Center(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Σ(ಠ_ಠ)',
+                            textAlign: TextAlign.center,
+                            style: context.textTheme.displayMedium,
+                          ),
+                          Text(
+                            'Похоже тут пусто..',
+                            textAlign: TextAlign.center,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              fontSize: 14,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            child: const Text(
+                              'Назад',
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return CustomScrollView(
+                shrinkWrap: false,
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final manga = data.toList()[index];
+
+                          return MangaCardEx(manga);
+                        },
+                        childCount: data.length,
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 140,
+                        childAspectRatio: 0.55,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            error: (err, stack) => CustomErrorWidget(err.toString(),
+                () => ref.refresh(similarTitlesMangaProvider(mangaId))),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
         ),
       ),

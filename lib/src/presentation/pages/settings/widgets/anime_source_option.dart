@@ -21,6 +21,8 @@ class AnimeSourceOption extends ConsumerWidget {
       onTap: () => showModalBottomSheet(
         useRootNavigator: true,
         showDragHandle: true,
+        useSafeArea: true,
+        isScrollControlled: true,
         context: context,
         constraints: BoxConstraints(
           maxWidth:

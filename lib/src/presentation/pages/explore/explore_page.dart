@@ -19,71 +19,75 @@ class ExplorePage extends ConsumerWidget {
     final controller = ref.watch(explorePageProvider);
 
     return Scaffold(
-      body: CustomScrollView(
-        //cacheExtent: 0,
-        clipBehavior: Clip.none,
-        key: const PageStorageKey<String>('ExplorePage'),
-        slivers: [
-          SliverAppBar.large(
-            title: const Text('ShikiWatch'),
-            actions: [
-              IconButton(
-                onPressed: () => context.push('/explore/search'),
-                icon: const Icon(Icons.search),
-              ),
-            ],
-          ),
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: SliverToBoxAdapter(
-              child: ExploreActions(),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          //cacheExtent: 0,
+          clipBehavior: Clip.none,
+          key: const PageStorageKey<String>('ExplorePage'),
+          slivers: [
+            SliverAppBar.large(
+              title: const Text('ShikiWatch'),
+              actions: [
+                IconButton(
+                  onPressed: () => context.push('/explore/search'),
+                  icon: const Icon(Icons.search),
+                ),
+              ],
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            sliver: SliverToBoxAdapter(
-              child: Text(
-                'Сейчас выходит',
-                style: context.textTheme.titleLarge,
+            const SliverPadding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(
+                child: ExploreActions(),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: PagedSliverGrid<int, Animes>(
-              //addRepaintBoundaries: false,
-              addSemanticIndexes: false,
-              addRepaintBoundaries: false,
-              showNewPageErrorIndicatorAsGridChild: false,
-              pagingController: controller.pageController,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 140, //150
-                //mainAxisExtent: 230,
-                childAspectRatio: 0.55,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              builderDelegate: PagedChildBuilderDelegate<Animes>(
-                firstPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.refresh(),
-                  );
-                },
-                newPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.retryLastFailedRequest(),
-                  );
-                },
-                itemBuilder: (context, item, index) {
-                  return AnimeTileExp(item);
-                },
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  'Сейчас выходит',
+                  style: context.textTheme.titleLarge,
+                ),
               ),
             ),
-          ),
-          //const SliverToBoxAdapter(child: SizedBox(height: 60)),
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: PagedSliverGrid<int, Animes>(
+                //addRepaintBoundaries: false,
+                addSemanticIndexes: false,
+                addRepaintBoundaries: false,
+                showNewPageErrorIndicatorAsGridChild: false,
+                pagingController: controller.pageController,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 140, //150
+                  //mainAxisExtent: 230,
+                  childAspectRatio: 0.55,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                builderDelegate: PagedChildBuilderDelegate<Animes>(
+                  firstPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.refresh(),
+                    );
+                  },
+                  newPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.retryLastFailedRequest(),
+                    );
+                  },
+                  itemBuilder: (context, item, index) {
+                    return AnimeTileExp(item);
+                  },
+                ),
+              ),
+            ),
+            //const SliverToBoxAdapter(child: SizedBox(height: 60)),
+          ],
+        ),
       ),
     );
   }

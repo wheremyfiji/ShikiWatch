@@ -63,85 +63,89 @@ class AnimeScreenshotsPage extends ConsumerWidget {
     final screenshots = ref.watch(animeScreenshotsProvider(id));
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Кадры'),
-          ),
-          ...screenshots.when(
-            data: (data) {
-              return [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  sliver: SliverGrid(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        final scr = data[index];
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('Кадры'),
+            ),
+            ...screenshots.when(
+              data: (data) {
+                return [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          final scr = data[index];
 
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: GestureDetector(
-                            onTap: () {
-                              final multiImageProvider = _buildList(
-                                data: data,
-                                index: index,
-                              );
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: GestureDetector(
+                              onTap: () {
+                                final multiImageProvider = _buildList(
+                                  data: data,
+                                  index: index,
+                                );
 
-                              showImageViewerPager(
-                                context,
-                                multiImageProvider,
-                                doubleTapZoomable: true,
-                                swipeDismissible: true,
-                                backgroundColor: Colors.black,
-                                closeButtonColor: Colors.white,
-                              );
-                            },
-                            child: Container(
-                              color: Colors.black,
-                              child: AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: CachedImage(
-                                  AppConfig.staticUrl + scr.original!,
-                                  fit: BoxFit.contain,
+                                showImageViewerPager(
+                                  context,
+                                  multiImageProvider,
+                                  doubleTapZoomable: true,
+                                  swipeDismissible: true,
+                                  backgroundColor: Colors.black,
+                                  closeButtonColor: Colors.white,
+                                );
+                              },
+                              child: Container(
+                                color: Colors.black,
+                                child: AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: CachedImage(
+                                    AppConfig.staticUrl + scr.original!,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                      childCount: data.length,
-                    ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 16 / 9,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
+                          );
+                        },
+                        childCount: data.length,
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 16 / 9,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                      ),
                     ),
                   ),
+                ];
+              },
+              loading: () => [
+                SliverToBoxAdapter(
+                    child: Center(
+                        child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 130),
+                      child: const CircularProgressIndicator()),
+                )))
+              ],
+              error: (err, stack) => [
+                SliverFillRemaining(
+                  child: CustomErrorWidget(
+                    err.toString(),
+                    () => ref.refresh(animeScreenshotsProvider(id)),
+                  ),
                 ),
-              ];
-            },
-            loading: () => [
-              SliverToBoxAdapter(
-                  child: Center(
-                      child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 130),
-                    child: const CircularProgressIndicator()),
-              )))
-            ],
-            error: (err, stack) => [
-              SliverFillRemaining(
-                child: CustomErrorWidget(
-                  err.toString(),
-                  () => ref.refresh(animeScreenshotsProvider(id)),
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

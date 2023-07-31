@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
-import '../utils/extensions/buildcontext.dart';
 import '../utils/router.dart';
 
 import 'providers/environment_provider.dart';
@@ -36,130 +35,57 @@ class ShikiApp extends ConsumerWidget {
     final bool oledMode =
         ref.watch(settingsProvider.select((settings) => settings.oledMode));
 
-    final isDarkMode = context.brightness == Brightness.dark;
-    final brightness = isDarkMode ? Brightness.light : Brightness.dark;
-
-    final defaultStyle =
-        (isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
-            .copyWith(statusBarColor: Colors.transparent);
-
-    final customStyle = defaultStyle.copyWith(
-      statusBarIconBrightness: brightness,
-      systemNavigationBarIconBrightness: brightness,
-      systemNavigationBarContrastEnforced: false,
-      systemNavigationBarColor: Colors.transparent,
-    );
-
     if ((environment.sdkVersion ?? 0) > 28) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
 
-    //----------------------------------------------------------------------------------
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        if (environment.androidInfo != null &&
+            lightDynamic == null &&
+            environment.sdkVersion! > 30) {
+          return const SizedBox.shrink();
+        }
 
-    // return DynamicColorBuilder(
-    //   builder: (lightDynamic, darkDynamic) {
-    //     if (environment.androidInfo != null &&
-    //         lightDynamic == null &&
-    //         (environment.sdkVersion ?? 0) > 30) {
-    //       return const SizedBox.shrink();
-    //     }
+        return AppThemeBuilder(
+          dynamicLight: lightDynamic,
+          dynamicDark: darkDynamic,
+          isDynamic: dynamicColors,
+          builder: (context, appTheme) => MaterialApp.router(
+            //themeAnimationDuration: Duration.zero,
+            debugShowCheckedModeBanner: false,
 
-    //     return MaterialApp.router(
-    //       debugShowCheckedModeBanner: false,
-    //       theme: ThemeData(
-    //         colorScheme: lightDynamic ??
-    //             ColorScheme.fromSeed(
-    //               seedColor: Colors.green,
-    //               brightness: Brightness.light,
-    //             ),
-    //         useMaterial3: true,
-    //       ),
-    //       darkTheme: ThemeData(
-    //         colorScheme: darkDynamic ??
-    //             ColorScheme.fromSeed(
-    //               seedColor: Colors.green,
-    //               brightness: Brightness.dark,
-    //             ),
-    //         useMaterial3: true,
-    //       ),
-    //       title: appTitle,
-    //       //themeMode: themeMode,
-    //       routerConfig: router,
-    //       builder: (context, child) {
-    //         if (!kDebugMode) {
-    //           ErrorWidget.builder = (FlutterErrorDetails error) {
-    //             return const Center(
-    //               child: Text('Произошла ошибка'),
-    //             );
-    //           };
-    //         }
+            //showPerformanceOverlay: true,
+            //checkerboardOffscreenLayers: true,
+            //checkerboardRasterCacheImages: true,
 
-    //         /// fix high textScaleFactor
-    //         final mediaQuery = MediaQuery.of(context);
-    //         final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+            theme: appTheme.day,
+            darkTheme: oledMode ? appTheme.midnight : appTheme.night,
+            title: appTitle,
+            themeMode: themeMode,
+            routerConfig: router,
+            scrollBehavior: ScrollBehavior(),
+            builder: (context, child) {
+              if (!kDebugMode) {
+                ErrorWidget.builder = (FlutterErrorDetails error) {
+                  return const Center(
+                    child: Text('Произошла ошибка'),
+                  );
+                };
+              }
 
-    //         return MediaQuery(
-    //           data: mediaQuery.copyWith(textScaleFactor: scale),
-    //           child: child!,
-    //         );
-    //       },
-    //     );
-    //   },
-    // );
+              /// fix high textScaleFactor
+              final mediaQuery = MediaQuery.of(context);
+              final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
 
-    //----------------------------------------------------------------------------------
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: (environment.sdkVersion ?? 0) > 28 ? customStyle : defaultStyle,
-      child: DynamicColorBuilder(
-        builder: (lightDynamic, darkDynamic) {
-          if (environment.androidInfo != null &&
-              lightDynamic == null &&
-              environment.sdkVersion! > 30) {
-            return const SizedBox.shrink();
-          }
-
-          return AppThemeBuilder(
-            dynamicLight: lightDynamic,
-            dynamicDark: darkDynamic,
-            isDynamic: dynamicColors,
-            builder: (context, appTheme) => MaterialApp.router(
-              //themeAnimationDuration: Duration.zero,
-              debugShowCheckedModeBanner: false,
-
-              //showPerformanceOverlay: true,
-              //checkerboardOffscreenLayers: true,
-              //checkerboardRasterCacheImages: true,
-
-              theme: appTheme.day,
-              darkTheme: oledMode ? appTheme.midnight : appTheme.night,
-              title: appTitle,
-              themeMode: themeMode,
-              routerConfig: router,
-              scrollBehavior: ScrollBehavior(),
-              builder: (context, child) {
-                if (!kDebugMode) {
-                  ErrorWidget.builder = (FlutterErrorDetails error) {
-                    return const Center(
-                      child: Text('Произошла ошибка'),
-                    );
-                  };
-                }
-
-                /// fix high textScaleFactor
-                final mediaQuery = MediaQuery.of(context);
-                final scale =
-                    mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
-
-                return MediaQuery(
-                  data: mediaQuery.copyWith(textScaleFactor: scale),
-                  child: child!,
-                );
-              },
-            ),
-          );
-        },
-      ),
+              return MediaQuery(
+                data: mediaQuery.copyWith(textScaleFactor: scale),
+                child: child!,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

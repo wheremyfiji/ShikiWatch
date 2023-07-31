@@ -102,6 +102,7 @@ class SourceModalSheet extends StatelessWidget {
       context: context,
       useSafeArea: true,
       showDragHandle: true,
+      isScrollControlled: true,
       backgroundColor: context.colorScheme.background,
       elevation: 0,
       constraints: BoxConstraints(

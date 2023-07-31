@@ -50,41 +50,46 @@ class UserSearchPage extends ConsumerWidget {
         ),
         body: controller.textEditingController.text.isEmpty
             ? null
-            : PagedListView<int, User>(
-                pagingController: controller.pageController,
-                builderDelegate: PagedChildBuilderDelegate<User>(
-                  itemBuilder: (context, user, index) {
-                    return UserSearchItem(user);
-                  },
-                  firstPageErrorIndicatorBuilder: (context) {
-                    return CustomErrorWidget(
-                      controller.pageController.error.toString(),
-                      () => controller.pageController.refresh(),
-                    );
-                  },
-                  newPageErrorIndicatorBuilder: (context) {
-                    return CustomErrorWidget(
-                      controller.pageController.error.toString(),
-                      () => controller.pageController.retryLastFailedRequest(),
-                    );
-                  },
-                  noItemsFoundIndicatorBuilder: (context) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 32, horizontal: 16),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Ничего не найдено',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                          ],
+            : SafeArea(
+                top: false,
+                bottom: false,
+                child: PagedListView<int, User>(
+                  pagingController: controller.pageController,
+                  builderDelegate: PagedChildBuilderDelegate<User>(
+                    itemBuilder: (context, user, index) {
+                      return UserSearchItem(user);
+                    },
+                    firstPageErrorIndicatorBuilder: (context) {
+                      return CustomErrorWidget(
+                        controller.pageController.error.toString(),
+                        () => controller.pageController.refresh(),
+                      );
+                    },
+                    newPageErrorIndicatorBuilder: (context) {
+                      return CustomErrorWidget(
+                        controller.pageController.error.toString(),
+                        () =>
+                            controller.pageController.retryLastFailedRequest(),
+                      );
+                    },
+                    noItemsFoundIndicatorBuilder: (context) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 32, horizontal: 16),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Ничего не найдено',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
       ),

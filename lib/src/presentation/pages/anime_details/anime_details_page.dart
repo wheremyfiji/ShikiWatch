@@ -149,167 +149,172 @@ class AnimeDetailsPage extends ConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(titleInfoPageProvider(extra.id)),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              stretch: true,
-              expandedHeight: titleInfo.title.valueOrNull == null ? null : 280,
-              title: Text(
-                // (animeData.russian == ''
-                //         ? animeData.name
-                //         : animeData.russian) ??
-                //     '',
-                extra.label,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: context.theme.colorScheme.onBackground,
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                stretch: true,
+                expandedHeight:
+                    titleInfo.title.valueOrNull == null ? null : 280,
+                title: Text(
+                  // (animeData.russian == ''
+                  //         ? animeData.name
+                  //         : animeData.russian) ??
+                  //     '',
+                  extra.label,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.theme.colorScheme.onBackground,
+                  ),
                 ),
-              ),
-              actions: titleInfo.title.valueOrNull == null
-                  ? null
-                  : [
-                      PopupMenuButton(
-                        tooltip: '',
-                        itemBuilder: (context) {
-                          return [
-                            const PopupMenuItem<int>(
-                              value: 0,
-                              child: Text("Открыть в браузере"),
-                            ),
-                            const PopupMenuItem<int>(
-                              value: 1,
-                              child: Text("Поделиться"),
-                            ),
-                          ];
-                        },
-                        onSelected: (value) {
-                          if (value == 0) {
-                            launchUrlString(
-                              '${AppConfig.staticUrl}/animes/${extra.id}',
-                              mode: LaunchMode.externalApplication,
-                            );
-                          } else if (value == 1) {
-                            Share.share(AppConfig.staticUrl +
-                                (titleInfo.title.valueOrNull!.url ?? ''));
-                          }
-                        },
+                actions: titleInfo.title.valueOrNull == null
+                    ? null
+                    : [
+                        PopupMenuButton(
+                          tooltip: '',
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem<int>(
+                                value: 0,
+                                child: Text("Открыть в браузере"),
+                              ),
+                              const PopupMenuItem<int>(
+                                value: 1,
+                                child: Text("Поделиться"),
+                              ),
+                            ];
+                          },
+                          onSelected: (value) {
+                            if (value == 0) {
+                              launchUrlString(
+                                '${AppConfig.staticUrl}/animes/${extra.id}',
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } else if (value == 1) {
+                              Share.share(AppConfig.staticUrl +
+                                  (titleInfo.title.valueOrNull!.url ?? ''));
+                            }
+                          },
+                        ),
+                      ],
+                flexibleSpace: titleInfo.title.valueOrNull == null
+                    ? null
+                    : FlexibleSpaceBar(
+                        background: AnimeInfoHeader(
+                          titleInfo.title.value!,
+                          duration: titleInfo.duration,
+                          favoured: titleInfo.isFavor,
+                          nextEp: titleInfo.nextEp ?? '',
+                          rating: titleInfo.rating,
+                        ).animate().fade(),
                       ),
-                    ],
-              flexibleSpace: titleInfo.title.valueOrNull == null
-                  ? null
-                  : FlexibleSpaceBar(
-                      background: AnimeInfoHeader(
-                        titleInfo.title.value!,
-                        duration: titleInfo.duration,
-                        favoured: titleInfo.isFavor,
-                        nextEp: titleInfo.nextEp ?? '',
+              ),
+              ...titleInfo.title.when(
+                skipLoadingOnRefresh: false,
+                data: (data) => [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                    sliver: SliverToBoxAdapter(
+                      child: AnimeActionsWidget(
+                        anime: data,
+                        onBtnPress: () => showModalBottomSheet<void>(
+                          context: context,
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width >= 700
+                                ? 700
+                                : double.infinity,
+                          ),
+                          useRootNavigator: true,
+                          isScrollControlled: true,
+                          enableDrag: false,
+                          useSafeArea: true,
+                          builder: (context) {
+                            return SafeArea(
+                              child: AnimeUserRateBottomSheet(
+                                data: data,
+                                needUpdate: true,
+                                //anime: animeData,
+                              ),
+                            );
+                          },
+                        ),
+                      ).animate().fadeIn(),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    sliver: SliverToBoxAdapter(
+                      child: AnimeChipsWidget(
+                        genres: data.genres,
+                        studios: data.studios,
+                        score: data.score,
                         rating: titleInfo.rating,
                       ).animate().fade(),
                     ),
-            ),
-            ...titleInfo.title.when(
-              skipLoadingOnRefresh: false,
-              data: (data) => [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-                  sliver: SliverToBoxAdapter(
-                    child: AnimeActionsWidget(
-                      anime: data,
-                      onBtnPress: () => showModalBottomSheet<void>(
-                        context: context,
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width >= 700
-                              ? 700
-                              : double.infinity,
-                        ),
-                        useRootNavigator: true,
-                        isScrollControlled: true,
-                        enableDrag: false,
-                        useSafeArea: true,
-                        builder: (context) {
-                          return SafeArea(
-                            child: AnimeUserRateBottomSheet(
-                              data: data,
-                              needUpdate: true,
-                              //anime: animeData,
-                            ),
-                          );
-                        },
+                  ),
+                  if (data.description != null) ...[
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: TitleDescription(
+                          data.descriptionHtml!,
+                        ).animate().fade(),
                       ),
-                    ).animate().fadeIn(),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  sliver: SliverToBoxAdapter(
-                    child: AnimeChipsWidget(
-                      genres: data.genres,
-                      studios: data.studios,
-                      score: data.score,
-                      rating: titleInfo.rating,
-                    ).animate().fade(),
-                  ),
-                ),
-                if (data.description != null) ...[
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: TitleDescription(
-                        data.descriptionHtml!,
-                      ).animate().fade(),
+                    ),
+                  ],
+                  if (titleInfo.statsValues != []) ...[
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: AnimeRatesStatusesWidget(
+                          statsValues: titleInfo.statsValues,
+                        ).animate().fade(),
+                      ),
+                    ),
+                  ],
+                  SliverToBoxAdapter(
+                    child: RelatedWidget(
+                      id: data.id!,
                     ),
                   ),
-                ],
-                if (titleInfo.statsValues != []) ...[
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: AnimeRatesStatusesWidget(
-                        statsValues: titleInfo.statsValues,
-                      ).animate().fade(),
+                  if (data.screenshots != null &&
+                      data.screenshots!.isNotEmpty) ...[
+                    SliverPadding(
+                      padding: const EdgeInsets.only(bottom: dividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: AnimeScreenshots(data).animate().fade(),
+                      ),
                     ),
-                  ),
-                ],
-                SliverToBoxAdapter(
-                  child: RelatedWidget(
-                    id: data.id!,
-                  ),
-                ),
-                if (data.screenshots != null &&
-                    data.screenshots!.isNotEmpty) ...[
-                  SliverPadding(
-                    padding: const EdgeInsets.only(bottom: dividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: AnimeScreenshots(data).animate().fade(),
+                  ],
+                  if (data.videos != null && data.videos!.isNotEmpty) ...[
+                    SliverPadding(
+                      padding: const EdgeInsets.only(bottom: dividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: AnimeVideosMobileWidget(data).animate().fade(),
+                      ),
                     ),
+                  ],
+                  const SliverToBoxAdapter(child: SizedBox(height: 70)),
+                ],
+                error: (err, stack) => [
+                  SliverFillRemaining(
+                    child: CustomErrorWidget(err.toString(),
+                        () => ref.invalidate(titleInfoPageProvider(extra.id))),
                   ),
                 ],
-                if (data.videos != null && data.videos!.isNotEmpty) ...[
-                  SliverPadding(
-                    padding: const EdgeInsets.only(bottom: dividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: AnimeVideosMobileWidget(data).animate().fade(),
-                    ),
-                  ),
+                loading: () => [
+                  const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator())),
                 ],
-                const SliverToBoxAdapter(child: SizedBox(height: 70)),
-              ],
-              error: (err, stack) => [
-                SliverFillRemaining(
-                  child: CustomErrorWidget(err.toString(),
-                      () => ref.invalidate(titleInfoPageProvider(extra.id))),
-                ),
-              ],
-              loading: () => [
-                const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator())),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

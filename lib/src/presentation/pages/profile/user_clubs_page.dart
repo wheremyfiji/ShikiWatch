@@ -38,57 +38,62 @@ class UserClubsPage extends ConsumerWidget {
     final clubs = ref.watch(userClubsProvider(userId));
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Клубы'),
-          ),
-          clubs.when(
-            data: (data) {
-              if (data.isEmpty) {
-                return const SliverFillRemaining(
-                  child: Center(
-                    child: Text('Пусто'),
-                  ),
-                );
-              }
-              return SliverList.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final club = data[index];
-
-                  return ListTile(
-                    leading: CircleAvatar(
-                      maxRadius: 24,
-                      backgroundColor: Colors.transparent,
-                      backgroundImage: CachedNetworkImageProvider(
-                        AppConfig.staticUrl + (club.logo?.original ?? ''),
-                        cacheManager: cacheManager,
-                      ),
-                    ),
-                    title: Text(
-                      club.name ?? '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: (club.isCensored != null && club.isCensored!)
-                        ? const Icon(Icons.eighteen_up_rating_rounded)
-                        : null,
-                  );
-                },
-              );
-            },
-            error: (error, stackTrace) => SliverFillRemaining(
-              child: CustomErrorWidget(error.toString(),
-                  () => ref.refresh(userClubsProvider(userId))),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('Клубы'),
+              pinned: true,
             ),
-            loading: () => const SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator(),
+            clubs.when(
+              data: (data) {
+                if (data.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(
+                      child: Text('Пусто'),
+                    ),
+                  );
+                }
+                return SliverList.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final club = data[index];
+
+                    return ListTile(
+                      leading: CircleAvatar(
+                        maxRadius: 24,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: CachedNetworkImageProvider(
+                          AppConfig.staticUrl + (club.logo?.original ?? ''),
+                          cacheManager: cacheManager,
+                        ),
+                      ),
+                      title: Text(
+                        club.name ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: (club.isCensored != null && club.isCensored!)
+                          ? const Icon(Icons.eighteen_up_rating_rounded)
+                          : null,
+                    );
+                  },
+                );
+              },
+              error: (error, stackTrace) => SliverFillRemaining(
+                child: CustomErrorWidget(error.toString(),
+                    () => ref.refresh(userClubsProvider(userId))),
+              ),
+              loading: () => const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

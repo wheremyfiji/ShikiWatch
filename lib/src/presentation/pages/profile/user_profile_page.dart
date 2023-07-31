@@ -27,103 +27,107 @@ class UserProfilePage extends ConsumerWidget {
       body: RefreshIndicator(
         onRefresh: () async =>
             ref.refresh(userProfileProvider(data.id.toString())),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar.large(
-              title: Text(data.nickname ?? ''),
-              actions: [
-                PopupMenuButton(
-                  tooltip: '',
-                  itemBuilder: (context) {
-                    return [
-                      const PopupMenuItem<int>(
-                        value: 0,
-                        child: Text("Открыть в браузере"),
-                      ),
-                    ];
-                  },
-                  onSelected: (value) {
-                    if (value == 0) {
-                      launchUrlString(
-                        data.url!,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-            ...p.profile.when(
-              data: (data) {
-                return [
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: UserProfileHeader(data: data),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                    sliver: SliverToBoxAdapter(
-                      child: ProfileActions(data.id!.toString()),
-                    ),
-                  ),
-                  if (!p.friends.isLoading &&
-                      !p.friends.hasError &&
-                      p.friends.hasValue &&
-                      p.friends.asData!.value.isNotEmpty)
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: UserFriendsWidget(
-                          data: p.friends.asData?.value ?? [],
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar.large(
+                title: Text(data.nickname ?? ''),
+                actions: [
+                  PopupMenuButton(
+                    tooltip: '',
+                    itemBuilder: (context) {
+                      return [
+                        const PopupMenuItem<int>(
+                          value: 0,
+                          child: Text("Открыть в браузере"),
                         ),
-                      ),
-                    ),
-                  if (data.stats?.statuses?.anime != null &&
-                      p.animeStat.isNotEmpty)
+                      ];
+                    },
+                    onSelected: (value) {
+                      if (value == 0) {
+                        launchUrlString(
+                          data.url!,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+              ...p.profile.when(
+                data: (data) {
+                  return [
                     SliverPadding(
                       padding:
                           const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                       sliver: SliverToBoxAdapter(
-                        child: UserAnimeStatsWidget(
-                          list: p.animeStat,
-                        ),
+                        child: UserProfileHeader(data: data),
                       ),
                     ),
-                  if (data.stats?.statuses?.manga != null &&
-                      p.mangaRanobeStat.isNotEmpty)
                     SliverPadding(
                       padding:
                           const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                       sliver: SliverToBoxAdapter(
-                        child: UserMangaStatsWidget(
-                          list: p.mangaRanobeStat,
-                        ),
+                        child: ProfileActions(data.id!.toString()),
                       ),
                     ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 60)),
-                ];
-              },
-              loading: () => [
-                const SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(),
+                    if (!p.friends.isLoading &&
+                        !p.friends.hasError &&
+                        p.friends.hasValue &&
+                        p.friends.asData!.value.isNotEmpty)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: UserFriendsWidget(
+                            data: p.friends.asData?.value ?? [],
+                          ),
+                        ),
+                      ),
+                    if (data.stats?.statuses?.anime != null &&
+                        p.animeStat.isNotEmpty)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(
+                            16, 0, 16, kDividerHeight),
+                        sliver: SliverToBoxAdapter(
+                          child: UserAnimeStatsWidget(
+                            list: p.animeStat,
+                          ),
+                        ),
+                      ),
+                    if (data.stats?.statuses?.manga != null &&
+                        p.mangaRanobeStat.isNotEmpty)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(
+                            16, 0, 16, kDividerHeight),
+                        sliver: SliverToBoxAdapter(
+                          child: UserMangaStatsWidget(
+                            list: p.mangaRanobeStat,
+                          ),
+                        ),
+                      ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 60)),
+                  ];
+                },
+                loading: () => [
+                  const SliverFillRemaining(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                ],
+                error: (error, stackTrace) => [
+                  SliverFillRemaining(
+                    child: CustomErrorWidget(
+                        error.toString(),
+                        () => ref
+                            .refresh(userProfileProvider(data.id.toString()))),
                   ),
-                )
-              ],
-              error: (error, stackTrace) => [
-                SliverFillRemaining(
-                  child: CustomErrorWidget(
-                      error.toString(),
-                      () =>
-                          ref.refresh(userProfileProvider(data.id.toString()))),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

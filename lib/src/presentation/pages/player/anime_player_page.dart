@@ -63,6 +63,7 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      extendBody: true,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -87,32 +88,38 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
           ),
         ),
       ),
-      bottomNavigationBar: AnimatedContainer(
-        curve: Curves.easeInOutExpo,
-        duration: const Duration(milliseconds: 300),
-        height: controller.hasConnection ? 0 : 80.0,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.errorContainer,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(12),
-          ),
-        ),
-        child: BottomAppBar(
-          color: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
-          clipBehavior: Clip.hardEdge,
-          child: Center(
-            child: Text(
-              'Отсутствует подключение к интернету',
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onErrorContainer,
-                fontWeight: FontWeight.w500,
+      bottomNavigationBar: controller.hasConnection
+          ? null
+          : AnimatedContainer(
+              curve: Curves.easeInOutExpo,
+              duration: const Duration(milliseconds: 300),
+              height: controller.hasConnection
+                  ? 0
+                  : 80.0 + MediaQuery.of(context).padding.bottom,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.errorContainer,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(12),
+                ),
+              ),
+              child: BottomAppBar(
+                color: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                clipBehavior: Clip.hardEdge,
+                child: SafeArea(
+                  child: Center(
+                    child: Text(
+                      'Отсутствует подключение к интернету',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onErrorContainer,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
       body: controller.streamAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, s) => PlayerError(e.toString()),
@@ -265,7 +272,6 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                       ),
                       SafeArea(
                         top: false,
-                        bottom: false,
                         child: PlayerBottom(
                           progress: _seekShowUI
                               ? _seekToDuration

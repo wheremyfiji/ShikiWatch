@@ -36,6 +36,8 @@ class VersionWidget extends ConsumerWidget {
         showModalBottomSheet<void>(
           showDragHandle: true,
           useRootNavigator: true,
+          useSafeArea: true,
+          isScrollControlled: true,
           context: context,
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width >= 700

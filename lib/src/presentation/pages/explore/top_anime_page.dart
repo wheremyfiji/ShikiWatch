@@ -16,46 +16,50 @@ class TopAnimePage extends ConsumerWidget {
     final controller = ref.watch(exploreTopAnimePageProvider);
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Топ аниме'),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: PagedSliverGrid<int, Animes>(
-              //addRepaintBoundaries: false,
-              addSemanticIndexes: false,
-              addRepaintBoundaries: false,
-              showNewPageErrorIndicatorAsGridChild: false,
-              pagingController: controller.pageController,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 140, //150
-                //mainAxisExtent: 230,
-                childAspectRatio: 0.55,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              builderDelegate: PagedChildBuilderDelegate<Animes>(
-                firstPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.refresh(),
-                  );
-                },
-                newPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.retryLastFailedRequest(),
-                  );
-                },
-                itemBuilder: (context, item, index) {
-                  return AnimeTileExp(item);
-                },
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('Топ аниме'),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: PagedSliverGrid<int, Animes>(
+                //addRepaintBoundaries: false,
+                addSemanticIndexes: false,
+                addRepaintBoundaries: false,
+                showNewPageErrorIndicatorAsGridChild: false,
+                pagingController: controller.pageController,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 140, //150
+                  //mainAxisExtent: 230,
+                  childAspectRatio: 0.55,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                builderDelegate: PagedChildBuilderDelegate<Animes>(
+                  firstPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.refresh(),
+                    );
+                  },
+                  newPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.retryLastFailedRequest(),
+                    );
+                  },
+                  itemBuilder: (context, item, index) {
+                    return AnimeTileExp(item);
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

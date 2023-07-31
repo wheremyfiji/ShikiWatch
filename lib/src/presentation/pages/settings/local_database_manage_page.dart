@@ -24,22 +24,28 @@ class LocalDatabaseManage extends StatelessWidget {
       );
     }
 
-    return const Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.large(
-            title: Text('Резервное копирование'),
-          ),
-          SliverToBoxAdapter(
-            child: ExportDB(),
-          ),
-          SliverToBoxAdapter(
-            child: ImportDB(),
-          ),
-          SliverToBoxAdapter(
-            child: ClearDB(),
-          ),
-        ],
+    return Scaffold(
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('Резервное копирование'),
+            ),
+            const SliverToBoxAdapter(
+              child: ExportDB(),
+            ),
+            const SliverToBoxAdapter(
+              child: ImportDB(),
+            ),
+            const SliverToBoxAdapter(
+              child: ClearDB(),
+            ),
+            SliverToBoxAdapter(
+                child: SizedBox(height: MediaQuery.of(context).padding.bottom)),
+          ],
+        ),
       ),
     );
   }

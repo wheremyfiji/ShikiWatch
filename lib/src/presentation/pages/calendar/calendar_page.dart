@@ -50,89 +50,93 @@ class CalendarPage extends ConsumerWidget {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async => ref.refresh(calendarProvider),
-        child: CustomScrollView(
-          slivers: [
-            const SliverAppBar.large(
-              title: Text(
-                'Календарь',
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            slivers: [
+              const SliverAppBar.large(
+                title: Text(
+                  'Календарь',
+                ),
               ),
-            ),
-            ...calendar.when(
-              data: (data) => [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final date = data.keys.toList()[index];
-                        final dateString =
-                            '${DateFormat.EEEE().format(date)}, ${DateFormat.MMMd().format(date)}';
-                        final items = data[date]!;
+              ...calendar.when(
+                data: (data) => [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final date = data.keys.toList()[index];
+                          final dateString =
+                              '${DateFormat.EEEE().format(date)}, ${DateFormat.MMMd().format(date)}';
+                          final items = data[date]!;
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              date.isToday()
-                                  ? 'Сегодня'
-                                  : dateString.capitalizeFirst!,
-                              style: context.textTheme.bodyLarge,
-                            ), // Выходит или вышло сегодня
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            SizedBox(
-                              height: 210,
-                              child: ListView.separated(
-                                addRepaintBoundaries: false,
-                                addSemanticIndexes: false,
-                                shrinkWrap: true,
-                                itemCount: items.length,
-                                scrollDirection: Axis.horizontal,
-                                separatorBuilder: (context, index) {
-                                  return const SizedBox(
-                                    width: 8,
-                                  );
-                                },
-                                itemBuilder: (context, index) {
-                                  final item = items[index];
-
-                                  return AspectRatio(
-                                    aspectRatio: 0.55,
-                                    child: AnimeTileExp(item.anime!),
-                                  );
-                                },
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                date.isToday()
+                                    ? 'Сегодня'
+                                    : dateString.capitalizeFirst!,
+                                style: context.textTheme.bodyLarge,
+                              ), // Выходит или вышло сегодня
+                              const SizedBox(
+                                height: 8,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                          ],
-                        );
-                      },
-                      childCount: data.length,
-                      addRepaintBoundaries: false,
-                      addSemanticIndexes: false,
+                              SizedBox(
+                                height: 210,
+                                child: ListView.separated(
+                                  addRepaintBoundaries: false,
+                                  addSemanticIndexes: false,
+                                  shrinkWrap: true,
+                                  itemCount: items.length,
+                                  scrollDirection: Axis.horizontal,
+                                  separatorBuilder: (context, index) {
+                                    return const SizedBox(
+                                      width: 8,
+                                    );
+                                  },
+                                  itemBuilder: (context, index) {
+                                    final item = items[index];
+
+                                    return AspectRatio(
+                                      aspectRatio: 0.55,
+                                      child: AnimeTileExp(item.anime!),
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                            ],
+                          );
+                        },
+                        childCount: data.length,
+                        addRepaintBoundaries: false,
+                        addSemanticIndexes: false,
+                      ),
                     ),
                   ),
-                ),
-              ],
-              error: (err, stack) => [
-                SliverFillRemaining(
-                  child: CustomErrorWidget(
-                    err.toString(),
-                    () => ref.refresh(calendarProvider),
+                ],
+                error: (err, stack) => [
+                  SliverFillRemaining(
+                    child: CustomErrorWidget(
+                      err.toString(),
+                      () => ref.refresh(calendarProvider),
+                    ),
                   ),
-                ),
-              ],
-              loading: () => [
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ],
-            ),
-          ],
+                ],
+                loading: () => [
+                  const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

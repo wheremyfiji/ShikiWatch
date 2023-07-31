@@ -27,27 +27,31 @@ class CommentsPage extends ConsumerWidget {
         onRefresh: () => Future.sync(
           () => controller.pageController.refresh(),
         ),
-        child: CustomScrollView(
-          slivers: [
-            const SliverAppBar.large(
-              title: Text('Обсуждение'),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: PagedSliverList<int, ShikiComment>.separated(
-                pagingController: controller.pageController,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 16),
-                builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
-                  itemBuilder: (context, item, index) {
-                    return CommentWidget(
-                      comment: item,
-                    );
-                  },
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            slivers: [
+              const SliverAppBar.large(
+                title: Text('Обсуждение'),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: PagedSliverList<int, ShikiComment>.separated(
+                  pagingController: controller.pageController,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 16),
+                  builderDelegate: PagedChildBuilderDelegate<ShikiComment>(
+                    itemBuilder: (context, item, index) {
+                      return CommentWidget(
+                        comment: item,
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

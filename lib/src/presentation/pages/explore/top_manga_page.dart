@@ -16,46 +16,50 @@ class TopMangaPage extends ConsumerWidget {
     final controller = ref.watch(exploreTopMangaPageProvider);
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Топ манги'),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            sliver: PagedSliverGrid<int, MangaShort>(
-              //addRepaintBoundaries: false,
-              addSemanticIndexes: false,
-              addRepaintBoundaries: false,
-              showNewPageErrorIndicatorAsGridChild: false,
-              pagingController: controller.pageController,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 140, //150
-                //mainAxisExtent: 230,
-                childAspectRatio: 0.55,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              builderDelegate: PagedChildBuilderDelegate<MangaShort>(
-                firstPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.refresh(),
-                  );
-                },
-                newPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.retryLastFailedRequest(),
-                  );
-                },
-                itemBuilder: (context, item, index) {
-                  return MangaCardEx(item);
-                },
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar.large(
+              title: Text('Топ манги'),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: PagedSliverGrid<int, MangaShort>(
+                //addRepaintBoundaries: false,
+                addSemanticIndexes: false,
+                addRepaintBoundaries: false,
+                showNewPageErrorIndicatorAsGridChild: false,
+                pagingController: controller.pageController,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 140, //150
+                  //mainAxisExtent: 230,
+                  childAspectRatio: 0.55,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                builderDelegate: PagedChildBuilderDelegate<MangaShort>(
+                  firstPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.refresh(),
+                    );
+                  },
+                  newPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.retryLastFailedRequest(),
+                    );
+                  },
+                  itemBuilder: (context, item, index) {
+                    return MangaCardEx(item);
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

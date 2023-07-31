@@ -29,56 +29,52 @@ class PlayerBottom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Padding(
-        //padding: const EdgeInsets.all(24),
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              width: 24,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(
+            width: 24,
+          ),
+          Expanded(
+            child: ProgressBar(
+              progress: progress,
+              total: total,
+              onDragUpdate: (_) => onDragUpdate(),
+              buffered: buffered,
+              onSeek: onSeek,
+              timeLabelTextStyle: const TextStyle(color: Colors.white),
+              thumbRadius: 8,
+              timeLabelPadding: 4,
+              timeLabelLocation: TimeLabelLocation.below,
+              timeLabelType: TimeLabelType.totalTime,
             ),
-            Expanded(
-              child: ProgressBar(
-                progress: progress,
-                total: total,
-                onDragUpdate: (_) => onDragUpdate(),
-                buffered: buffered,
-                onSeek: onSeek,
-                timeLabelTextStyle: const TextStyle(color: Colors.white),
-                thumbRadius: 8,
-                timeLabelPadding: 4,
-                timeLabelLocation: TimeLabelLocation.below,
-                timeLabelType: TimeLabelType.totalTime,
-              ),
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+          IconButton(
+            color: Colors.white,
+            onPressed: opSkip,
+            icon: const Icon(
+              Icons.double_arrow_rounded,
             ),
-            const SizedBox(
-              width: 8,
+            iconSize: 18,
+            tooltip: 'Перемотать 125 секунд',
+          ),
+          IconButton(
+            color: Colors.white,
+            onPressed: onExpand,
+            icon: Icon(
+              expandVideo
+                  ? Icons.close_fullscreen_rounded
+                  : Icons.open_in_full_rounded,
             ),
-            IconButton(
-              color: Colors.white,
-              onPressed: opSkip,
-              icon: const Icon(
-                Icons.double_arrow_rounded,
-              ),
-              iconSize: 18,
-              tooltip: 'Перемотать 125 секунд',
-            ),
-            IconButton(
-              color: Colors.white,
-              onPressed: onExpand,
-              icon: Icon(
-                expandVideo
-                    ? Icons.close_fullscreen_rounded
-                    : Icons.open_in_full_rounded,
-              ),
-              iconSize: 18,
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-          ],
-        ),
+            iconSize: 18,
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+        ],
       ),
     );
   }

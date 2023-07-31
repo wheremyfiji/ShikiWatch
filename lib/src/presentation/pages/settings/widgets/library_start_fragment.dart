@@ -18,9 +18,11 @@ class LibraryStartFragmentOption extends ConsumerWidget {
       title: 'Раздел по умолчанию', // рял, а кого раздел то.. одевайся давай
       subtitle: currentFragment.name,
       onTap: () => showModalBottomSheet(
-        useRootNavigator: true,
-        showDragHandle: true,
         context: context,
+        useSafeArea: true,
+        showDragHandle: true,
+        useRootNavigator: true,
+        isScrollControlled: true,
         constraints: BoxConstraints(
           maxWidth:
               MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,

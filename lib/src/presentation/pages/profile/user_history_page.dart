@@ -35,39 +35,43 @@ class UserHistoryPage extends ConsumerWidget {
         onRefresh: () => Future.sync(
           () => controller.pageController.refresh(),
         ),
-        child: CustomScrollView(
-          slivers: [
-            const SliverAppBar.large(
-              title: Text('История'),
-            ),
-            PagedSliverList<int, UserHistory>(
-              pagingController: controller.pageController,
-              builderDelegate: PagedChildBuilderDelegate<UserHistory>(
-                noItemsFoundIndicatorBuilder: (context) {
-                  return const Center(child: Text('В истории пусто'));
-                },
-                firstPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.refresh(),
-                  );
-                },
-                newPageErrorIndicatorBuilder: (context) {
-                  return CustomErrorWidget(
-                    controller.pageController.error.toString(),
-                    () => controller.pageController.retryLastFailedRequest(),
-                  );
-                },
-                itemBuilder: (context, historyItem, index) {
-                  if (historyItem.target != null) {
-                    return HistoryTargetItem(historyItem);
-                  }
-
-                  return HistoryInfoItem(historyItem);
-                },
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            slivers: [
+              const SliverAppBar.large(
+                title: Text('История'),
               ),
-            ),
-          ],
+              PagedSliverList<int, UserHistory>(
+                pagingController: controller.pageController,
+                builderDelegate: PagedChildBuilderDelegate<UserHistory>(
+                  noItemsFoundIndicatorBuilder: (context) {
+                    return const Center(child: Text('В истории пусто'));
+                  },
+                  firstPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.refresh(),
+                    );
+                  },
+                  newPageErrorIndicatorBuilder: (context) {
+                    return CustomErrorWidget(
+                      controller.pageController.error.toString(),
+                      () => controller.pageController.retryLastFailedRequest(),
+                    );
+                  },
+                  itemBuilder: (context, historyItem, index) {
+                    if (historyItem.target != null) {
+                      return HistoryTargetItem(historyItem);
+                    }
+
+                    return HistoryInfoItem(historyItem);
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

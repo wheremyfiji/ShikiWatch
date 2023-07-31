@@ -30,81 +30,87 @@ class MyProfilePage extends ConsumerWidget {
         //edgeOffset: 100,
         onRefresh: () async => ref
             .refresh(userProfileProvider(SecureStorageService.instance.userId)),
-        child: CustomScrollView(
-          key: const PageStorageKey<String>('ProfilePage'),
-          slivers: [
-            const _ProfilePageAppBar(),
-            ...controller.profile.when(
-              error: (error, stackTrace) {
-                return [
-                  SliverFillRemaining(
-                    child: CustomErrorWidget(
-                        error.toString(),
-                        () => ref.refresh(userProfileProvider(
-                            SecureStorageService.instance.userId))),
-                  ),
-                ];
-              },
-              loading: () {
-                return [
-                  const SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            key: const PageStorageKey<String>('ProfilePage'),
+            slivers: [
+              const _ProfilePageAppBar(),
+              ...controller.profile.when(
+                error: (error, stackTrace) {
+                  return [
+                    SliverFillRemaining(
+                      child: CustomErrorWidget(
+                          error.toString(),
+                          () => ref.refresh(userProfileProvider(
+                              SecureStorageService.instance.userId))),
                     ),
-                  )
-                ];
-              },
-              data: (data) => [
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                  sliver: SliverToBoxAdapter(
-                    child: UserProfileHeader(data: data),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
-                  sliver: SliverToBoxAdapter(
-                    child: ProfileActions(data.id!.toString()),
-                  ),
-                ),
-                if (!controller.friends.isLoading &&
-                    !controller.friends.hasError &&
-                    controller.friends.hasValue &&
-                    controller.friends.asData!.value.isNotEmpty)
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    sliver: SliverToBoxAdapter(
-                      child: UserFriendsWidget(
-                        data: controller.friends.asData?.value ?? [],
+                  ];
+                },
+                loading: () {
+                  return [
+                    const SliverFillRemaining(
+                      child: Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    ),
-                  ),
-                if (data.stats?.statuses?.anime != null &&
-                    controller.animeStat.isNotEmpty)
+                    )
+                  ];
+                },
+                data: (data) => [
                   SliverPadding(
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
-                      child: UserAnimeStatsWidget(
-                        list: controller.animeStat,
-                      ),
+                      child: UserProfileHeader(data: data),
                     ),
                   ),
-                if (data.stats?.statuses?.manga != null &&
-                    controller.mangaRanobeStat.isNotEmpty)
                   SliverPadding(
                     padding:
                         const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
                     sliver: SliverToBoxAdapter(
-                      child: UserMangaStatsWidget(
-                        list: controller.mangaRanobeStat,
-                      ),
+                      child: ProfileActions(data.id!.toString()),
                     ),
                   ),
-                const SliverToBoxAdapter(child: SizedBox(height: 60)),
-              ],
-            ),
-          ],
+                  if (!controller.friends.isLoading &&
+                      !controller.friends.hasError &&
+                      controller.friends.hasValue &&
+                      controller.friends.asData!.value.isNotEmpty)
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: UserFriendsWidget(
+                          data: controller.friends.asData?.value ?? [],
+                        ),
+                      ),
+                    ),
+                  if (data.stats?.statuses?.anime != null &&
+                      controller.animeStat.isNotEmpty)
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: UserAnimeStatsWidget(
+                          list: controller.animeStat,
+                        ),
+                      ),
+                    ),
+                  if (data.stats?.statuses?.manga != null &&
+                      controller.mangaRanobeStat.isNotEmpty)
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 0, 16, kDividerHeight),
+                      sliver: SliverToBoxAdapter(
+                        child: UserMangaStatsWidget(
+                          list: controller.mangaRanobeStat,
+                        ),
+                      ),
+                    ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 60)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

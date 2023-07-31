@@ -20,6 +20,8 @@ class CurrentThemeOption extends ConsumerWidget {
       onTap: () => showModalBottomSheet(
           useRootNavigator: true,
           showDragHandle: true,
+          useSafeArea: true,
+          isScrollControlled: true,
           context: context,
           constraints: BoxConstraints(
             maxWidth: MediaQuery.of(context).size.width >= 700

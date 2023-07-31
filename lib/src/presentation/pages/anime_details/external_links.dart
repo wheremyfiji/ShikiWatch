@@ -17,53 +17,58 @@ class ExternalLinksWidget extends ConsumerWidget {
     final links = ref.watch(externalLinksAnimeProvider(animeId));
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar.large(
-            title: Text('Ссылки'),
-          ),
-          ...links.when(
-            data: (data) => [
-              SliverList.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final link = data.toList()[index];
-                  final enable = link.url != null;
-                  return ListTile(
-                    enabled: enable,
-                    title: Text(
-                      link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
-                    ),
-                    onTap: () {
-                      launchUrlString(
-                        link.url!,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    },
-                  );
-                },
-              ),
-              const SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 16.0,
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+              title: Text('Ссылки'),
+              pinned: true,
+            ),
+            ...links.when(
+              data: (data) => [
+                SliverList.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final link = data.toList()[index];
+                    final enable = link.url != null;
+                    return ListTile(
+                      enabled: enable,
+                      title: Text(
+                        link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
+                      ),
+                      onTap: () {
+                        launchUrlString(
+                          link.url!,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                    );
+                  },
                 ),
-              ),
-            ],
-            error: (error, stackTrace) => [
-              SliverFillRemaining(
-                child: CustomErrorWidget(
-                  error.toString(),
-                  () => ref.refresh(externalLinksAnimeProvider(animeId)),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 16.0,
+                  ),
                 ),
-              ),
-            ],
-            loading: () => [
-              const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ],
-          ),
-        ],
+              ],
+              error: (error, stackTrace) => [
+                SliverFillRemaining(
+                  child: CustomErrorWidget(
+                    error.toString(),
+                    () => ref.refresh(externalLinksAnimeProvider(animeId)),
+                  ),
+                ),
+              ],
+              loading: () => [
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
