@@ -158,7 +158,7 @@ class AppThemeDataNotifier {
     );
   }
 
-  static const defaultAccent = Colors.orange;
+  static const defaultAccent = Colors.lightBlue;
   //Color.fromARGB(255, 149, 30, 229);
 
   static final defLightScheme = ColorScheme.fromSeed(

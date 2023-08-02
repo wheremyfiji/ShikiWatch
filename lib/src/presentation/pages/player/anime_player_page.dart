@@ -158,7 +158,9 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
               if (_seek) {
                 _seek = false;
                 _seekShowUI = true;
+
                 controller.hideController.permShow();
+
                 if (_controllerWasPlaying) {
                   controller.playerController.pause();
                 }
@@ -185,6 +187,7 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
 
               _seek = false;
               _seekShowUI = false;
+
               controller.hideController.hide();
 
               if (_seekToDuration ==

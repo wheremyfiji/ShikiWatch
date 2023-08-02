@@ -10,11 +10,6 @@ import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
 
 final libraryStateProvider = StateProvider<LibraryFragmentMode>((ref) {
-  // int value = Hive.box(BoxType.settings.name).get(
-  //   libraryStartFragmentKey,
-  //   defaultValue: 0,
-  // );
-
   final LibraryFragmentMode currentFragment = ref
       .watch(settingsProvider.select((settings) => settings.libraryFragment));
 
@@ -56,36 +51,8 @@ class LibraryPageAppBar extends ConsumerWidget {
               SecureStorageService.instance.userProfileImage,
               cacheManager: cacheManager,
             ),
-          ),
+          ).animate().fadeIn(),
         ),
-        // PopupMenuButton<LibraryState>(
-        //   tooltip: 'Выбор списка',
-        //   shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(12),
-        //   ),
-        //   //initialValue: state,
-        //   color: Theme.of(context).colorScheme.onInverseSurface,
-        //   itemBuilder: (context) => const [
-        //     PopupMenuItem(
-        //       value: LibraryState.anime,
-        //       child: Text('Аниме'),
-        //     ),
-        //     PopupMenuItem(
-        //       value: LibraryState.manga,
-        //       child: Text('Манга и ранобе'),
-        //     ),
-        //   ],
-        //   onSelected: (value) {
-        //     ref.read(libraryStateProvider.notifier).state = value;
-        //   },
-        //   child: CircleAvatar(
-        //     backgroundColor: Colors.transparent,
-        //     foregroundImage: CachedNetworkImageProvider(
-        //       SecureStorageService.instance.userProfileImage,
-        //       cacheManager: cacheManager,
-        //     ),
-        //   ),
-        // ),
         const SizedBox(
           width: 16,
         ),

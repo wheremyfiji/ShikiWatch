@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'extensions/buildcontext.dart';
+
 Uri getUrl(Uri baseUrl, String path, [Map<String, String>? params]) {
   return Uri(
     scheme: baseUrl.scheme,
@@ -15,17 +17,16 @@ void showSnackBar({
   required String msg,
   Duration? dur,
 }) {
-  var colors = Theme.of(ctx).colorScheme;
   var sm = ScaffoldMessenger.of(ctx);
   SnackBar snackBar = SnackBar(
     content: Text(
       msg,
       style: TextStyle(
-        color: colors.onSurfaceVariant,
+        color: ctx.colorScheme.onSurfaceVariant,
       ),
     ),
     behavior: SnackBarBehavior.floating,
-    backgroundColor: colors.surfaceVariant,
+    backgroundColor: ctx.colorScheme.surfaceVariant,
     dismissDirection: DismissDirection.horizontal,
     duration: dur ?? const Duration(seconds: 1),
   );
@@ -38,17 +39,16 @@ void showErrorSnackBar({
   required String msg,
   Duration? dur,
 }) {
-  var colors = Theme.of(ctx).colorScheme;
   var sm = ScaffoldMessenger.of(ctx);
   SnackBar snackBar = SnackBar(
     content: Text(
       msg,
       style: TextStyle(
-        color: colors.onBackground,
+        color: ctx.colorScheme.onErrorContainer,
       ),
     ),
     behavior: SnackBarBehavior.floating,
-    backgroundColor: colors.errorContainer,
+    backgroundColor: ctx.colorScheme.errorContainer,
     dismissDirection: DismissDirection.horizontal,
     duration: dur ?? const Duration(seconds: 3),
   );

@@ -156,7 +156,7 @@ class AnimeDetailsPage extends ConsumerWidget {
             slivers: [
               SliverAppBar(
                 pinned: true,
-                stretch: true,
+                //stretch: true,
                 expandedHeight:
                     titleInfo.title.valueOrNull == null ? null : 280,
                 title: Text(

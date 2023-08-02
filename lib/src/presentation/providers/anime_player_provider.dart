@@ -244,6 +244,8 @@ class PlayerController extends flutter.ChangeNotifier {
           )
           .then((value) => ref.invalidate(isAnimeInDataBaseProvider));
     });
+
+    hideController.dispose();
   }
 
   Future<void> hideCallback() async {
@@ -254,7 +256,7 @@ class PlayerController extends flutter.ChangeNotifier {
     if (hideController.isVisible) {
       await SystemChrome.setEnabledSystemUIMode(
         SystemUiMode.edgeToEdge,
-        overlays: [SystemUiOverlay.top],
+        //overlays: [SystemUiOverlay.top],
       );
     } else {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);

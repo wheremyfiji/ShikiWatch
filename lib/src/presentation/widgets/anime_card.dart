@@ -1,18 +1,16 @@
-//import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-//import 'package:transparent_image/transparent_image.dart';
 
-import '../../constants/config.dart';
-import '../../domain/models/animes.dart';
-import '../../domain/models/pages_extra.dart';
-import '../../domain/models/user_anime_rates.dart';
-import '../../utils/shiki_utils.dart';
-import '../../utils/target_platform.dart';
 import '../pages/anime_details/widgets/user_anime_rate.dart';
-import '../widgets/image_with_shimmer.dart';
+import '../../domain/models/user_anime_rates.dart';
 import 'custom_linear_progress_indicator.dart';
+import '../../domain/models/pages_extra.dart';
+import '../widgets/image_with_shimmer.dart';
+import '../../domain/models/animes.dart';
+import '../../utils/shiki_utils.dart';
+import '../../constants/config.dart';
 
 class AnimeListTile extends StatelessWidget {
   final UserAnimeRates data;
@@ -232,21 +230,47 @@ class AnimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final createDT = DateTime.parse(data.createdAt!).toLocal();
-    final updateDT = DateTime.parse(data.updatedAt!).toLocal();
-    final createString = DateFormat('yyyy-MM-dd в HH:mm').format(createDT);
-    final updateString = DateFormat('yyyy-MM-dd в HH:mm').format(updateDT);
+    //final createDT = DateTime.parse(data.createdAt!).toLocal();
+    //final updateDT = DateTime.parse(data.updatedAt!).toLocal();
+    //final createString = DateFormat('yyyy-MM-dd в HH:mm').format(createDT);
+    //final updateString = DateFormat('yyyy-MM-dd в HH:mm').format(updateDT);
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Tooltip(
-          waitDuration: TargetP.instance.isDesktop
-              ? const Duration(seconds: 1)
-              : const Duration(milliseconds: 0),
-          message: 'Создано: $createString\nИзменено: $updateString',
+        return Material(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.transparent,
+          clipBehavior: Clip.hardEdge,
           child: InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
+            // splashColor: Colors.transparent,
+            // highlightColor: Colors.transparent,
+            // splashFactory: NoSplash.splashFactory,
+            onLongPress: () {
+              FocusScope.of(context).unfocus();
+
+              final t = data.toAnime;
+
+              showModalBottomSheet<void>(
+                context: context,
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width >= 700
+                      ? 700
+                      : double.infinity,
+                ),
+                useRootNavigator: true,
+                isScrollControlled: true,
+                enableDrag: false,
+                useSafeArea: true,
+                builder: (context) {
+                  return SafeArea(
+                    child: AnimeUserRateBottomSheet(
+                      data: t,
+                      needUpdate: false,
+                    ),
+                  );
+                },
+              );
+            },
             onTap: () {
               FocusScope.of(context).unfocus();
 

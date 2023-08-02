@@ -130,6 +130,24 @@ class HistoryItem extends ConsumerWidget {
       color: Colors.transparent,
       clipBehavior: Clip.hardEdge,
       child: InkWell(
+        onLongPress: () {
+          DeleteFromHistoryBottomSheet.show(
+            context: context,
+            titleName: animeName,
+            episode: episode,
+            onDelete: () => ref
+                .read(animeDatabaseProvider)
+                .deleteEpisode(
+                  shikimoriId: shikimoriId,
+                  studioId: studioId,
+                  episodeNumber: episode!,
+                )
+                .then(
+                  (_) =>
+                      showSnackBar(ctx: context, msg: 'Серия $episode удалена'),
+                ),
+          );
+        },
         onTap: () {
           final extra = AnimeDetailsPageExtra(
             id: shikimoriId,
@@ -144,100 +162,162 @@ class HistoryItem extends ConsumerWidget {
             extra: extra,
           );
         },
-        child: Stack(
-          alignment: Alignment.bottomRight,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (image.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: SizedBox(
-                      width: 100, //120
-                      child: AspectRatio(
-                        aspectRatio: 0.703,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: CachedImage(
-                            AppConfig.staticUrl + image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+            if (image.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: SizedBox(
+                  width: 100, //120
+                  child: AspectRatio(
+                    aspectRatio: 0.703,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedImage(
+                        AppConfig.staticUrl + image,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        animeName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        '$episode серия • $studioName',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall!.color,
-                        ),
-                      ),
-                      if (timeStamp != null)
-                        Text(
-                          timeStamp!,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).textTheme.bodySmall!.color,
-                          ),
-                        ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        //'$date в $time ($lastUpdate)',
-                        update.convertToDaysAgo(),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color:
-                              context.colorScheme.onBackground.withOpacity(0.8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              // ),
-            ),
-            Positioned(
-              child: InkWell(
-                onTap: () =>
-                    showSnackBar(ctx: context, msg: 'Удерживайте для удаления'),
-                onLongPress: () => ref
-                    .read(animeDatabaseProvider)
-                    .deleteEpisode(
-                        shikimoriId: shikimoriId,
-                        studioId: studioId,
-                        episodeNumber: episode!)
-                    .then(
-                      (value) => showSnackBar(
-                          ctx: context, msg: 'Серия $episode удалена'),
-                    ),
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.delete_outline_rounded,
                   ),
                 ),
               ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    animeName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '$episode серия • $studioName',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.bodySmall!.color,
+                    ),
+                  ),
+                  if (timeStamp != null)
+                    Text(
+                      timeStamp!,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodySmall!.color,
+                      ),
+                    ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    //'$date в $time ($lastUpdate)',
+                    update.convertToDaysAgo(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.colorScheme.onBackground.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class DeleteFromHistoryBottomSheet extends StatelessWidget {
+  final String titleName;
+  final int? episode;
+  final Function() onDelete;
+
+  const DeleteFromHistoryBottomSheet({
+    super.key,
+    required this.titleName,
+    this.episode,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+          child: Text(
+            titleName,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+          child: Text(
+            'Серия $episode будет удалена из истории просмотра',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 14,
+              color: context.colorScheme.onBackground.withOpacity(0.8),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                onDelete();
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: context.colorScheme.error,
+                //foregroundColor: context.colorScheme.onErrorContainer,
+              ),
+              icon: const Icon(Icons.delete),
+              label: const Text('Удалить серию'),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static void show({
+    required BuildContext context,
+    required String titleName,
+    int? episode,
+    required Function() onDelete,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth:
+            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+      ),
+      builder: (_) => SafeArea(
+        child: DeleteFromHistoryBottomSheet(
+          titleName: titleName,
+          episode: episode,
+          onDelete: onDelete,
         ),
       ),
     );

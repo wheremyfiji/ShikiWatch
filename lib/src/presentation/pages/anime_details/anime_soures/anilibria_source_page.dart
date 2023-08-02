@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -223,11 +224,7 @@ class TitlePlaylist extends ConsumerWidget {
         return ListTile(
           contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
           onTap: () async {
-            if (ep.hls == null ||
-                ep.hls?.fhd == null ||
-                ep.hls!.fhd!.isEmpty ||
-                ep.hls?.hd == null ||
-                ep.hls!.hd!.isEmpty) {
+            if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
               showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
 
               return;
@@ -287,7 +284,7 @@ class TitlePlaylist extends ConsumerWidget {
                         .onBackground
                         .withOpacity(0.8),
                   ),
-                )
+                ).animate().fadeIn()
               : null,
           // title: RichText(
           //   overflow: TextOverflow.ellipsis,

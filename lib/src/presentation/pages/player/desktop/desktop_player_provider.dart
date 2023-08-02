@@ -189,21 +189,17 @@ class DesktopPlayerNotifier extends ChangeNotifier {
         _setRpc();
       }
 
-      if (player.platform is NativePlayer) {
-        await (player.platform as NativePlayer)
-            .setProperty("profile", 'gpu-hq');
-        await (player.platform as NativePlayer)
-            .setProperty("scale", 'ewa_lanczossharp');
-        await (player.platform as NativePlayer)
-            .setProperty("cscale", 'ewa_lanczossharp');
-      }
+      // if (player.platform is NativePlayer) {
+      //   await (player.platform as NativePlayer)
+      //       .setProperty("profile", 'gpu-hq');
+      //   await (player.platform as NativePlayer)
+      //       .setProperty("scale", 'ewa_lanczossharp');
+      //   await (player.platform as NativePlayer)
+      //       .setProperty("cscale", 'ewa_lanczossharp');
+      // }
 
       await player.open(
-        Playlist(
-          [
-            Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
-          ],
-        ),
+        Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
         play: false,
       );
 
@@ -262,7 +258,10 @@ class DesktopPlayerNotifier extends ChangeNotifier {
             duration = event;
             notifyListeners();
           }),
-          player.stream.buffer.listen((event) {
+          player.stream.buffer
+              .distinct(
+                  (a, b) => (a - b).abs() < const Duration(milliseconds: 200))
+              .listen((event) {
             if (_disposed) {
               return;
             }

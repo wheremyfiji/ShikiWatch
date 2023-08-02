@@ -1,70 +1,104 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-import '../../utils/debouncer.dart';
-
 class AutoHideController extends ChangeNotifier {
+  bool _disposed = false;
+  bool _isMount = false;
   bool _isVisible;
-  bool get isVisible => _isVisible;
+  final Duration _duration;
 
-  final Debouncer _debouncer;
+  Timer? timer;
 
   AutoHideController({required Duration duration, bool initialValue = false})
-      : _debouncer = Debouncer(delay: duration),
+      : _duration = duration,
         _isVisible = initialValue;
 
-  void toggle() {
-    _debouncer.run(() {
-      _isVisible = false;
-      notifyListeners();
-    });
+  bool get isVisible => _isVisible;
+  bool get isMount => _isMount;
 
+  void toggle() {
+    _isMount = true;
     _isVisible = !_isVisible;
     notifyListeners();
+
+    timer?.cancel();
+    timer = Timer(_duration, () {
+      _isVisible = false;
+
+      notifyListeners();
+    });
   }
 
   void show() {
+    _isMount = true;
     _isVisible = true;
     notifyListeners();
 
-    _debouncer.run(() {
+    timer?.cancel();
+    timer = Timer(_duration, () {
       _isVisible = false;
+
       notifyListeners();
     });
   }
 
   void hide() {
-    // _debouncer.run(() {
-    //   _isVisible = false;
-    //   notifyListeners();
-    // });
-
+    //timer?.cancel();
     _isVisible = false;
     notifyListeners();
   }
 
   void permShow() {
+    _isMount = true;
+    //timer?.cancel();
     _isVisible = true;
     notifyListeners();
+  }
+
+  void setMount() {
+    if (_isVisible) {
+      return;
+    }
+
+    _isMount = false;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 }
 
 class AutoHide extends StatelessWidget {
-  const AutoHide({
-    this.child,
-    required this.switchDuration,
-    required this.controller,
-    Key? key,
-  }) : super(key: key);
-
   final Widget? child;
   final AutoHideController controller;
   final Duration switchDuration;
 
+  const AutoHide({
+    super.key,
+    this.child,
+    required this.controller,
+    required this.switchDuration,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
+    return AnimatedOpacity(
+      curve: Curves.easeInOut,
+      opacity: controller.isVisible ? 1.0 : 0.0,
       duration: switchDuration,
-      child: controller.isVisible ? child : const SizedBox.shrink(),
+      onEnd: controller.setMount,
+      child: controller.isMount ? child : null,
     );
   }
 }
