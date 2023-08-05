@@ -26,8 +26,13 @@ class AnimeFilterPage extends ConsumerWidget {
         bottom: false,
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar.large(
-              title: Text('Фильтры'),
+            SliverAppBar.large(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back),
+              ),
+              title: const Text('Фильтры'),
             ),
 
             if (c.searchType == SearchType.anime)

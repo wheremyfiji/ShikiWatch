@@ -142,6 +142,11 @@ class SeriesSelectPage extends ConsumerWidget {
           child: CustomScrollView(
             slivers: [
               SliverAppBar.medium(
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
                 actions: [
                   Tooltip(
                     message: 'Сортировка серий',

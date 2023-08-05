@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../providers/user_profile_provider.dart';
 import '../../../domain/models/user.dart';
@@ -33,6 +35,11 @@ class UserProfilePage extends ConsumerWidget {
           child: CustomScrollView(
             slivers: [
               SliverAppBar.large(
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
                 title: Text(data.nickname ?? ''),
                 actions: [
                   PopupMenuButton(

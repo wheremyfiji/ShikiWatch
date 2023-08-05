@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -30,8 +31,13 @@ class LocalDatabaseManage extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           slivers: [
-            const SliverAppBar.large(
-              title: Text('Резервное копирование'),
+            SliverAppBar.large(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back),
+              ),
+              title: const Text('Резервное копирование'),
             ),
             const SliverToBoxAdapter(
               child: ExportDB(),

@@ -40,8 +40,13 @@ class UserHistoryPage extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
-              const SliverAppBar.large(
-                title: Text('История'),
+              SliverAppBar.large(
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
+                title: const Text('История'),
               ),
               PagedSliverList<int, UserHistory>(
                 pagingController: controller.pageController,

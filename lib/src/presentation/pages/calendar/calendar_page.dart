@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../utils/extensions/buildcontext.dart';
@@ -55,8 +56,13 @@ class CalendarPage extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
-              const SliverAppBar.large(
-                title: Text(
+              SliverAppBar.large(
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
+                title: const Text(
                   'Календарь',
                 ),
               ),

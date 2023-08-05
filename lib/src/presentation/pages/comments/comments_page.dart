@@ -32,8 +32,13 @@ class CommentsPage extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
-              const SliverAppBar.large(
-                title: Text('Обсуждение'),
+              SliverAppBar.large(
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
+                title: const Text('Обсуждение'),
               ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

@@ -23,8 +23,9 @@ class NextSeasonAnimePage extends ConsumerWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar.large(
-            title: Text('Выйдет в ближайшее время'), // Выйдет в след. сезоне
+          SliverAppBar.large(
+            title:
+                const Text('Выйдет в ближайшее время'), // Выйдет в след. сезоне
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

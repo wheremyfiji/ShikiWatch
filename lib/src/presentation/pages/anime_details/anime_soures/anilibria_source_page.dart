@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../anilibria/enums/title_status_code.dart';
 import '../../../../../anilibria/models/title.dart';
@@ -46,6 +45,11 @@ class AnilibriaSourcePage extends ConsumerWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar.medium(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
+              ),
               title: Text(
                 animeName,
                 maxLines: 1,
@@ -284,7 +288,7 @@ class TitlePlaylist extends ConsumerWidget {
                         .onBackground
                         .withOpacity(0.8),
                   ),
-                ).animate().fadeIn()
+                )
               : null,
           // title: RichText(
           //   overflow: TextOverflow.ellipsis,

@@ -12,9 +12,16 @@ class CustomLinearProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LinearProgressIndicator(
-      value: value / maxValue,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(4),
+      child: LinearProgressIndicator(
+        value: value / maxValue,
+      ),
     );
+
+    // return LinearProgressIndicator(
+    //   value: value / maxValue,
+    //   borderRadius: BorderRadius.circular(4),
+    // );
   }
 }

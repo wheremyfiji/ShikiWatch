@@ -32,9 +32,11 @@ class AnimeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final epCount = data.anime?.status == 'released'
-        ? data.anime?.episodes
-        : data.anime?.episodesAired;
+    // final epCount = data.anime?.status == 'released'
+    //     ? data.anime?.episodes
+    //     : data.anime?.episodesAired;
+
+    final epCount = data.anime?.episodes ?? data.anime?.episodesAired;
 
     final releasedOnDateTime =
         DateTime.parse(data.anime!.releasedOn ?? '1917-10-25').toLocal();

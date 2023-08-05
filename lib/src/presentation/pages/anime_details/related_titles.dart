@@ -25,7 +25,11 @@ class RelatedTitles extends StatelessWidget {
             return [
               SliverAppBar.large(
                 forceElevated: innerBoxIsScrolled,
-                stretch: true,
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
                 title: const Text(
                   'Связанное',
                 ),

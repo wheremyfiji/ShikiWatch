@@ -286,7 +286,7 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
               },
               style: FilledButton.styleFrom(
                 backgroundColor: context.colorScheme.error,
-                //foregroundColor: context.colorScheme.onErrorContainer,
+                foregroundColor: context.colorScheme.onError,
               ),
               icon: const Icon(Icons.delete),
               label: const Text('Удалить серию'),

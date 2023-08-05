@@ -46,6 +46,11 @@ class KodikSourcePage extends ConsumerWidget {
           child: CustomScrollView(
             slivers: [
               SliverAppBar.medium(
+                automaticallyImplyLeading: false,
+                leading: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
                 title: Text(
                   animeName,
                   maxLines: 1,

@@ -174,10 +174,10 @@ List<Genre> animeGenres = [
   //   id: 539,
   //   russian: 'Эротика',
   // ),
-  // Genre(
-  //   id: 9,
-  //   russian: 'Этти',
-  // ),
+  Genre(
+    id: 9,
+    russian: 'Этти',
+  ),
   // Genre(
   //   id: 34,
   //   russian: 'Юри',

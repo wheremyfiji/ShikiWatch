@@ -40,8 +40,13 @@ class SettingsPage extends ConsumerWidget {
         bottom: false,
         child: CustomScrollView(
           slivers: <Widget>[
-            const SliverAppBar.medium(
-              title: Text('Настройки'),
+            SliverAppBar.medium(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                onPressed: () => context.pop(),
+                icon: const Icon(Icons.arrow_back),
+              ),
+              title: const Text('Настройки'),
             ),
             SliverList(
               delegate: SliverChildListDelegate(
