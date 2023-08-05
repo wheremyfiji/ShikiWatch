@@ -19,6 +19,7 @@ import '../../../kodik/kodik.dart';
 import '../widgets/auto_hide.dart';
 
 import 'anime_details_provider.dart';
+import 'environment_provider.dart';
 
 class PlayerProviderParameters extends Equatable {
   final AnimePlayerPageExtra extra;
@@ -80,7 +81,11 @@ class PlayerController extends flutter.ChangeNotifier {
 
   bool hasConnection = true;
 
+  int? sdkVersion;
+
   Future<void> initState() async {
+    sdkVersion = ref.read(environmentProvider).sdkVersion;
+
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
 
@@ -195,10 +200,14 @@ class PlayerController extends flutter.ChangeNotifier {
 
     await _connectivitySubscription.cancel();
 
-    await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.edgeToEdge,
-      //overlays: [SystemUiOverlay.top],
-    );
+    if ((sdkVersion ?? 0) > 28) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    } else {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+        SystemUiOverlay.top,
+        SystemUiOverlay.bottom,
+      ]);
+    }
 
     await Wakelock.disable();
 
@@ -251,16 +260,23 @@ class PlayerController extends flutter.ChangeNotifier {
   Future<void> hideCallback() async {
     if (_disposed) return;
 
-    notifyListeners();
-
     if (hideController.isVisible) {
-      await SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.edgeToEdge,
-        //overlays: [SystemUiOverlay.top],
-      );
+      if ((sdkVersion ?? 0) > 28) {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      } else {
+        await SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: [
+            SystemUiOverlay.top,
+            SystemUiOverlay.bottom,
+          ],
+        );
+      }
     } else {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     }
+
+    notifyListeners();
 
     //-----------------
 

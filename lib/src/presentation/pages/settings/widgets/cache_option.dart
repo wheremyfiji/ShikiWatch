@@ -7,8 +7,9 @@ import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:path/path.dart' as p;
 
 import '../../../../utils/target_platform.dart';
-import '../../../../utils/utils.dart';
 import '../../../widgets/cached_image.dart';
+import '../../../../utils/utils.dart';
+
 import 'setting_option.dart';
 
 final cacheSizeProvider = FutureProvider.autoDispose<double>((ref) async {
@@ -16,14 +17,11 @@ final cacheSizeProvider = FutureProvider.autoDispose<double>((ref) async {
 
   final path = p.join(dir.path, 'imageCache');
 
-  debugPrint(path);
-
   final directory = Directory(path);
 
   final exists = await directory.exists();
 
   if (!exists) {
-    debugPrint('!exists');
     return 0;
   }
 
@@ -66,10 +64,6 @@ class ClearCacheWidget extends ConsumerWidget {
 
       await clearImageCache();
 
-      //final dir = await path_prov.getTemporaryDirectory();
-      //final path = p.join(dir.path, 'imageCache');
-      //await Directory(path).delete(recursive: true);
-
       if (!TargetP.instance.isDesktop) {
         ref.invalidate(cacheSizeProvider);
       }
@@ -91,7 +85,7 @@ class ClearCacheWidget extends ConsumerWidget {
       ),
       error: (error, stackTrace) => SettingsOption(
         title: 'Очистить кэш изображений',
-        subtitle: 'Ошибка вычисления размера кеша',
+        subtitle: 'Ошибка при вычислении размера кеша',
         onTap: () => clearCache(),
       ),
       loading: () => const SettingsOption(
@@ -99,33 +93,5 @@ class ClearCacheWidget extends ConsumerWidget {
         subtitle: '...',
       ),
     );
-
-    // return SettingsOption(
-    //   title: 'Очистить кэш изображений', //Очистить кэш
-    //   // subtitle:
-    //   //     'Удалить кэшированные изображения', //Удалить кэш API и изображений
-    //   subtitle: '',
-    //   onTap: () async {
-    //     showSnackBar(
-    //       ctx: context,
-    //       msg: 'Очистка..',
-    //       dur: const Duration(milliseconds: 800),
-    //     );
-    //     // await extended_image.clearDiskCachedImages();
-    //     // extended_image.clearMemoryImageCache();
-
-    //     await clearImageCache();
-
-    //     ref.invalidate(cacheSizeProvider);
-
-    //     if (context.mounted) {
-    //       showSnackBar(
-    //         ctx: context,
-    //         msg: 'Кэш успешно очищен',
-    //         dur: const Duration(milliseconds: 1200),
-    //       );
-    //     }
-    //   },
-    // );
   }
 }

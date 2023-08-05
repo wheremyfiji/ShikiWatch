@@ -33,14 +33,6 @@ class SourceModalSheet extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
-        // Padding(
-        //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-        //   child: Text(
-        //     'Выбор источника для поиска серий',
-        //     style: Theme.of(context).textTheme.headlineSmall,
-        //   ),
-        // ),
-
         ListTile(
           onTap: () {
             Navigator.pop(context);
@@ -63,7 +55,6 @@ class SourceModalSheet extends StatelessWidget {
           },
           title: const Text('Kodik'),
         ),
-
         ListTile(
           onTap: () {
             Navigator.pop(context);

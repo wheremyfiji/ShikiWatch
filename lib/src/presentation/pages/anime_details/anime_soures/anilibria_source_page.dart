@@ -86,9 +86,6 @@ class AnilibriaSourcePage extends ConsumerWidget {
                     data.list?[0].player?.playlist == null ||
                     data.list![0].player!.playlist!.isEmpty) {
                   return [
-                    // const SliverFillRemaining(
-                    //   child: Center(child: Text('Ничего не найдено')),
-                    // )
                     SliverFillRemaining(
                       child: NothingFound(
                         shikimoriId: shikimoriId,
@@ -105,7 +102,6 @@ class AnilibriaSourcePage extends ConsumerWidget {
 
                 return [
                   TitleInfo(title),
-                  // if (title.player?.playlist != null)
                   TitlePlaylist(
                     title: title,
                     shikimoriId: shikimoriId,
@@ -117,12 +113,15 @@ class AnilibriaSourcePage extends ConsumerWidget {
               },
               loading: () => [
                 const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator())),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
               ],
               error: (err, stack) => [
                 SliverFillRemaining(
-                  child: CustomErrorWidget(err.toString(),
-                      () => ref.refresh(anilibriaSearchProvider(searchName))),
+                  child: CustomErrorWidget(
+                    err.toString(),
+                    () => ref.refresh(anilibriaSearchProvider(searchName)),
+                  ),
                 ),
               ],
             ),
@@ -273,11 +272,6 @@ class TitlePlaylist extends ConsumerWidget {
           },
           title: Text(
             'Серия ${ep.episode}',
-            // style: TextStyle(
-            //   fontSize: 14,
-            //   fontWeight: FontWeight.w500,
-            //   color: Theme.of(context).colorScheme.onBackground,
-            // ),
           ),
           subtitle: savedEpisode != null && savedEpisode.timeStamp != null
               ? Text(
@@ -290,53 +284,6 @@ class TitlePlaylist extends ConsumerWidget {
                   ),
                 )
               : null,
-          // title: RichText(
-          //   overflow: TextOverflow.ellipsis,
-          //   text: TextSpan(
-          //     text: 'Серия ${ep.episode}',
-          //     style: TextStyle(
-          //       fontSize: 14,
-          //       fontWeight: FontWeight.w500,
-          //       color: Theme.of(context).colorScheme.onBackground,
-          //     ),
-          //     children: <TextSpan>[
-          //       if (ep.name != null)
-          //         TextSpan(
-          //           text: ' (${ep.name})',
-          //           style: TextStyle(
-          //             fontSize: 12,
-          //             fontWeight: FontWeight.w400,
-          //             color: Theme.of(context)
-          //                 .colorScheme
-          //                 .onBackground
-          //                 .withOpacity(0.6),
-          //           ),
-          //         ),
-          //     ],
-          //   ),
-          // ),
-          // subtitle: Column(
-          //   mainAxisSize: MainAxisSize.min,
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     if (savedEpisode != null)
-          //       Text(
-          //         savedEpisode.timeStamp ?? '',
-          //         style: TextStyle(
-          //           fontSize: 12,
-          //           fontWeight: FontWeight.bold,
-          //           color: context.colorScheme.onBackground.withOpacity(0.8),
-          //         ),
-          //       ),
-          //     Text(
-          //       'Обновлена ${ep.created!.convertToDaysAgo()}',
-          //       style: TextStyle(
-          //         fontSize: 12,
-          //         color: context.colorScheme.onBackground.withOpacity(0.6),
-          //       ),
-          //     ),
-          //   ],
-          // ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -417,20 +364,6 @@ class TitleInfo extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: Text(
-                //         'Найдено в Anilibria',
-                //         style: context.textTheme.titleLarge,
-                //       ),
-                //     ),
-                //     IconButton(
-                //       onPressed: () {},
-                //       icon: const Icon(Icons.info_outline),
-                //     ),
-                //   ],
-                // ),
                 Text(
                   'Найдено в AniLibria',
                   style: context.textTheme.titleLarge,
@@ -480,6 +413,18 @@ class TitleInfo extends StatelessWidget {
                       // ),
                     ),
                   ),
+
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: [
+                //     const Spacer(),
+                //     FilledButton(
+                //       onPressed: () {},
+                //       child: const Text('Подробнее'),
+                //     )
+                //   ],
+                // ),
               ],
             ),
           ),

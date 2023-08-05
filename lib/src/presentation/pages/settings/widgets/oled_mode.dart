@@ -15,7 +15,7 @@ class OledModeOption extends ConsumerWidget {
 
     return SwitchListTile(
       title: Text(
-        'AMOLED-тема',
+        'OLED-тема',
         style: TextStyle(
           color: context.colorScheme.onBackground,
         ),

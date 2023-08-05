@@ -92,13 +92,13 @@ class DebugInfo extends ConsumerWidget {
                   height: 8,
                 ),
                 const Text('appBuildDateTime: $appBuildDateTime'),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text('dart: ${Platform.version}'),
-                const SizedBox(
-                  height: 4,
-                ),
+                // const SizedBox(
+                //   height: 8,
+                // ),
+                // Text('dart: ${Platform.version}'),
+                // const SizedBox(
+                //   height: 4,
+                // ),
                 Text('operatingSystem: ${Platform.operatingSystemVersion}'),
                 const SizedBox(
                   height: 8,

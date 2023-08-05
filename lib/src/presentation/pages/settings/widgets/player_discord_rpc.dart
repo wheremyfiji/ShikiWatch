@@ -16,9 +16,8 @@ class PlayerDiscordRpcOption extends ConsumerWidget {
       title: const Text('Discord RPC'),
       subtitle: const Text('Отображать текущую активность в Discord'),
       value: playerDiscordRpc,
-      onChanged: (value) async {
-        await ref.read(settingsProvider.notifier).setPlayerDiscordRpc(value);
-      },
+      onChanged: (value) =>
+          ref.read(settingsProvider.notifier).setPlayerDiscordRpc(value),
     );
   }
 }
