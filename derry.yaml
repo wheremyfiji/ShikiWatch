@@ -10,7 +10,7 @@ test_build:
   #- flutter pub run shikidev:rename_apk
 build:
   android:
-    - $sync
+    #- $sync
     #- $gen
     - dart run shikidev:set_build_date_time
     - flutter build apk --flavor prod --split-per-abi

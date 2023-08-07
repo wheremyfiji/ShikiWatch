@@ -65,10 +65,10 @@ dependencies:
   isar: *isar_version
   isar_flutter_libs: *isar_version
   loggy: ^2.0.3
-  media_kit: ^1.1.1
+  media_kit: ^1.1.2+1
   media_kit_libs_windows_video: ^1.0.5
-  media_kit_native_event_loop: ^1.0.6
-  media_kit_video: ^1.1.1
+  #media_kit_native_event_loop: ^1.0.6
+  media_kit_video: ^1.1.2
   #nirikshak: ^0.1.0
   network_logger:
     git:
@@ -93,20 +93,8 @@ dependencies:
   url_launcher: ^6.1.11
   version: ^3.0.2
   video_player: ^2.7.0
-  wakelock: ^0.6.2
-  # wakelock:
-  #   git:
-  #     url: https://github.com/formigas/wakelock
-  #     path: wakelock/
-  #     ref: main
+  wakelock_plus: ^1.1.1
   window_manager: ^0.3.5
-
-dependency_overrides:
-  wakelock_windows:
-    git:
-      url: https://github.com/formigas/wakelock
-      path: wakelock_windows/
-      ref: main
 
 dev_dependencies:
   build_runner: ^2.4.6

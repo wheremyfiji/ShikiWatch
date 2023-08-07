@@ -230,8 +230,16 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                   controller: controller.hideController,
                   child: Container(color: Colors.black54),
                 ),
-                if (controller.playerController.value.isBuffering)
-                  const Align(child: CircularProgressIndicator()),
+                Align(
+                  child: AnimatedOpacity(
+                    curve: Curves.easeInOut,
+                    opacity: controller.playerController.value.isBuffering
+                        ? 1.0
+                        : 0.0,
+                    duration: const Duration(milliseconds: 250),
+                    child: const CircularProgressIndicator(),
+                  ),
+                ),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 50),
                   child: _seekShowUI
@@ -271,7 +279,9 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                             ? controller.playerController.pause
                             : controller.playerController.play,
                         onRetry: controller.retryPlay,
-                        showPlayPauseButton: !_seekShowUI,
+                        showPlayPauseButton: !(_seekShowUI ||
+                            controller.playerController.value.isBuffering),
+                        // !_seekShowUI,
                       ),
                       SafeArea(
                         top: false,

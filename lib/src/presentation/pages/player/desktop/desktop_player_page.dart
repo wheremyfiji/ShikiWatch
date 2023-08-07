@@ -82,8 +82,15 @@ class DesktopPlayerPage extends ConsumerWidget {
                   child: DesktopPlayerControls(p),
                 ),
               ),
-              if (notifier.buffering)
-                const Align(child: CircularProgressIndicator()),
+              //if (notifier.buffering)
+              Align(
+                child: AnimatedOpacity(
+                  curve: Curves.easeInOut,
+                  opacity: notifier.buffering ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 150),
+                  child: const CircularProgressIndicator(),
+                ),
+              ),
             ],
           );
         },

@@ -9,7 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:equatable/equatable.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../services/anime_database/anime_database_provider.dart';
 import '../../domain/models/anime_player_page_extra.dart';
@@ -182,6 +182,7 @@ class PlayerController extends flutter.ChangeNotifier {
 
       await SystemChrome.setEnabledSystemUIMode(
         SystemUiMode.immersiveSticky,
+        overlays: [],
       );
 
       playerController.initialize().then((_) async {
@@ -191,7 +192,7 @@ class PlayerController extends flutter.ChangeNotifier {
 
         await playerController.play();
       });
-      await Wakelock.enable();
+      await WakelockPlus.enable();
     });
   }
 
@@ -201,15 +202,18 @@ class PlayerController extends flutter.ChangeNotifier {
     await _connectivitySubscription.cancel();
 
     if ((sdkVersion ?? 0) > 28) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.edgeToEdge,
+        overlays: SystemUiOverlay.values,
+      );
     } else {
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
-        SystemUiOverlay.top,
-        SystemUiOverlay.bottom,
-      ]);
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: SystemUiOverlay.values,
+      );
     }
 
-    await Wakelock.disable();
+    await WakelockPlus.disable();
 
     streamAsync.whenData((value) async {
       final currentPosDuration = playerController.value.position;
@@ -262,18 +266,21 @@ class PlayerController extends flutter.ChangeNotifier {
 
     if (hideController.isVisible) {
       if ((sdkVersion ?? 0) > 28) {
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.edgeToEdge,
+          overlays: SystemUiOverlay.values,
+        );
       } else {
         await SystemChrome.setEnabledSystemUIMode(
           SystemUiMode.manual,
-          overlays: [
-            SystemUiOverlay.top,
-            SystemUiOverlay.bottom,
-          ],
+          overlays: SystemUiOverlay.values,
         );
       }
     } else {
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.immersiveSticky,
+        overlays: [],
+      );
     }
 
     notifyListeners();

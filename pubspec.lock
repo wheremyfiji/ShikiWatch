@@ -773,10 +773,10 @@ packages:
     dependency: "direct main"
     description:
       name: media_kit
-      sha256: "272a9f1dd77ed57b48707fdb0ec0e4a048ef958feccc0d0dd751135fe924b63a"
+      sha256: eb47c2d51b7c06b319d8c776b47be912c5a4f53af7ab4814927a52a76442609e
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2+1"
   media_kit_libs_windows_video:
     dependency: "direct main"
     description:
@@ -785,22 +785,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  media_kit_native_event_loop:
-    dependency: "direct main"
-    description:
-      name: media_kit_native_event_loop
-      sha256: "5351f0c28124b5358756515d8619abad182cdefe967468d7fb5b274737cc2f59"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.6"
   media_kit_video:
     dependency: "direct main"
     description:
       name: media_kit_video
-      sha256: "3ac0403d67710dfb2bf6aabfa6caff1b163e70fb7e1a88423bc1be569b4df6b3"
+      sha256: "4b627683ef9e7f5cd049fd01be4b5deb5f31effc878503f108c81b19fd745040"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   meta:
     dependency: transitive
     description:
@@ -1543,32 +1535,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
-  wakelock:
-    dependency: "direct main"
-    description:
-      name: wakelock
-      sha256: "769ecf42eb2d07128407b50cb93d7c10bd2ee48f0276ef0119db1d25cc2f87db"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.2"
-  wakelock_macos:
-    dependency: transitive
-    description:
-      name: wakelock_macos
-      sha256: "047c6be2f88cb6b76d02553bca5a3a3b95323b15d30867eca53a19a0a319d4cd"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
-  wakelock_platform_interface:
-    dependency: transitive
-    description:
-      name: wakelock_platform_interface
-      sha256: "1f4aeb81fb592b863da83d2d0f7b8196067451e4df91046c26b54a403f9de621"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
   wakelock_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: wakelock_plus
       sha256: aac3f3258f01781ec9212df94eecef1eb9ba9350e106728def405baa096ba413
@@ -1583,23 +1551,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  wakelock_web:
-    dependency: transitive
-    description:
-      name: wakelock_web
-      sha256: "1b256b811ee3f0834888efddfe03da8d18d0819317f20f6193e2922b41a501b5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
-  wakelock_windows:
-    dependency: "direct overridden"
-    description:
-      path: wakelock_windows
-      ref: main
-      resolved-ref: e90322e189243d2101b6298edaf00a04321c3d50
-      url: "https://github.com/formigas/wakelock"
-    source: git
-    version: "0.2.1"
   watcher:
     dependency: transitive
     description:
