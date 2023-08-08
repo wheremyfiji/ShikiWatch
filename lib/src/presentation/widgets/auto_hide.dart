@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 class AutoHideController extends ChangeNotifier {
   bool _disposed = false;
-  bool _isMount = false;
   bool _isVisible;
   final Duration _duration;
 
@@ -15,10 +14,8 @@ class AutoHideController extends ChangeNotifier {
         _isVisible = initialValue;
 
   bool get isVisible => _isVisible;
-  bool get isMount => _isMount;
 
   void toggle() {
-    _isMount = true;
     _isVisible = !_isVisible;
     notifyListeners();
 
@@ -31,7 +28,6 @@ class AutoHideController extends ChangeNotifier {
   }
 
   void show() {
-    _isMount = true;
     _isVisible = true;
     notifyListeners();
 
@@ -50,24 +46,15 @@ class AutoHideController extends ChangeNotifier {
   }
 
   void permShow() {
-    _isMount = true;
     //timer?.cancel();
     _isVisible = true;
-    notifyListeners();
-  }
-
-  void setMount() {
-    if (_isVisible) {
-      return;
-    }
-
-    _isMount = false;
     notifyListeners();
   }
 
   @override
   void dispose() {
     _disposed = true;
+
     super.dispose();
   }
 
@@ -93,12 +80,18 @@ class AutoHide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      curve: Curves.easeInOut,
-      opacity: controller.isVisible ? 1.0 : 0.0,
-      duration: switchDuration,
-      onEnd: controller.setMount,
-      child: controller.isMount ? child : null,
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        return IgnorePointer(
+          ignoring: !controller.isVisible,
+          child: AnimatedOpacity(
+            duration: switchDuration,
+            opacity: controller.isVisible ? 1.0 : 0.0,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

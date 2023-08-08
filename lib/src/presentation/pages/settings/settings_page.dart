@@ -172,7 +172,7 @@ class SettingsPage extends ConsumerWidget {
                     options: [
                       SettingsOption(
                         title: 'Github',
-                        subtitle: 'Исходный код',
+                        subtitle: 'Исходный код приложения',
                         onTap: () => launchUrlString(
                           'https://github.com/wheremyfiji/ShikiWatch',
                           mode: LaunchMode.externalApplication,

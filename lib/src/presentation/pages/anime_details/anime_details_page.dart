@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
-
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,8 +22,6 @@ import '../../widgets/title_description.dart';
 import 'anime_soures/anilibria_source_page.dart';
 import 'anime_soures/kodik_source_page.dart';
 import 'anime_soures/source_modal_sheet.dart';
-import 'rating_dialog.dart';
-import 'related_titles.dart';
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
@@ -32,6 +29,9 @@ import 'widgets/details_screenshots.dart';
 import 'widgets/info_header.dart';
 import 'widgets/rates_statuses_widget.dart';
 import 'widgets/user_anime_rate.dart';
+
+import 'rating_dialog.dart';
+import 'related_titles.dart';
 
 const double dividerHeight = 16;
 
@@ -160,14 +160,9 @@ class AnimeDetailsPage extends ConsumerWidget {
                 expandedHeight:
                     titleInfo.title.valueOrNull == null ? null : 280,
                 title: Text(
-                  // (animeData.russian == ''
-                  //         ? animeData.name
-                  //         : animeData.russian) ??
-                  //     '',
                   extra.label,
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
                     color: context.theme.colorScheme.onBackground,
                   ),
                 ),
@@ -237,7 +232,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                               child: AnimeUserRateBottomSheet(
                                 data: data,
                                 needUpdate: true,
-                                //anime: animeData,
                               ),
                             );
                           },
