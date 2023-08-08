@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
-import 'package:intl/intl.dart';
 
+import '../../../../utils/extensions/date_time_ext.dart';
 import 'anilibria_source_page.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
@@ -15,6 +15,31 @@ import 'kodik_series_select_page.dart';
 
 import 'latest_studio.dart';
 import 'providers.dart';
+
+enum KodikStudioType {
+  all,
+  voice,
+  sub,
+}
+
+final kodikStudioTypeProvider = StateProvider<KodikStudioType>(
+  (ref) => KodikStudioType.all,
+  name: 'kodikStudioTypeProvider',
+);
+
+final sortedStudiosProvider = Provider.autoDispose
+    .family<List<KodikStudio>, List<KodikStudio>>((ref, rawList) {
+  final sortType = ref.watch(kodikStudioTypeProvider);
+
+  switch (sortType) {
+    case KodikStudioType.all:
+      return rawList;
+    case KodikStudioType.voice:
+      return rawList.where((e) => e.type == 'voice').toList();
+    case KodikStudioType.sub:
+      return rawList.where((e) => e.type == 'subtitles').toList();
+  }
+}, name: 'sortedStudiosProvider');
 
 class KodikSourcePage extends ConsumerWidget {
   final int shikimoriId;
@@ -36,6 +61,7 @@ class KodikSourcePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<KodikAnime> studios = ref.watch(kodikAnimeProvider(shikimoriId));
     final latestStudio = ref.watch(latestStudioProvider(shikimoriId));
+    final studioType = ref.watch(kodikStudioTypeProvider);
 
     return Scaffold(
       body: RefreshIndicator(
@@ -45,8 +71,9 @@ class KodikSourcePage extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
-              SliverAppBar.medium(
+              SliverAppBar(
                 automaticallyImplyLeading: false,
+                pinned: true,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
@@ -55,6 +82,44 @@ class KodikSourcePage extends ConsumerWidget {
                   animeName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: context.theme.colorScheme.onBackground,
+                  ),
+                ),
+                bottom: AppBar(
+                  automaticallyImplyLeading: false,
+                  primary: false,
+                  title: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 0,
+                      children: [
+                        ChoiceChip(
+                          label: const Text('Все'),
+                          selected: studioType == KodikStudioType.all,
+                          onSelected: (value) => ref
+                              .read(kodikStudioTypeProvider.notifier)
+                              .state = KodikStudioType.all,
+                        ),
+                        ChoiceChip(
+                          label: const Text('Озвучка'),
+                          selected: studioType == KodikStudioType.voice,
+                          onSelected: (value) => ref
+                              .read(kodikStudioTypeProvider.notifier)
+                              .state = KodikStudioType.voice,
+                        ),
+                        ChoiceChip(
+                          label: const Text('Субтитры'),
+                          selected: studioType == KodikStudioType.sub,
+                          onSelected: (value) => ref
+                              .read(kodikStudioTypeProvider.notifier)
+                              .state = KodikStudioType.sub,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 actions: [
                   PopupMenuButton(
@@ -103,21 +168,27 @@ class KodikSourcePage extends ConsumerWidget {
                   ),
                 ],
                 data: (data) {
-                  if (data.total == 0) {
-                    return [
-                      const SliverFillRemaining(
-                        child: Center(child: Text('Ничего не найдено')),
-                      )
-                    ];
+                  if (data.total == 0 || data.studio == null) {
+                    return [const KodikNothingFound()];
                   }
+
+                  final studioList =
+                      ref.watch(sortedStudiosProvider(data.studio!));
+
+                  if (studioList.isEmpty) {
+                    return [const KodikNothingFound()];
+                  }
+
                   return [
                     latestStudio.maybeWhen(
                       skipError: true,
                       data: (latestStudio) {
                         if (latestStudio == null) {
                           return const SliverToBoxAdapter(
-                              child: SizedBox.shrink());
+                            child: SizedBox.shrink(),
+                          );
                         }
+
                         return LatestStudio(
                           studio: latestStudio,
                           onContinue: () {
@@ -159,80 +230,270 @@ class KodikSourcePage extends ConsumerWidget {
                             child: SizedBox.shrink());
                       },
                     ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          data.studio?.sort(
-                            (a, b) {
-                              final int sortByEpCount =
-                                  -a.episodesCount!.compareTo(b.episodesCount!);
-                              if (sortByEpCount == 0) {
-                                final int sortByUpdate =
-                                    -a.updatedAt!.compareTo(b.updatedAt!);
-                                return sortByUpdate;
-                              }
-                              return sortByEpCount;
-                            },
-                          );
 
-                          final KodikStudio? element = data.studio?[index];
-                          final dateTimeString = element?.updatedAt;
-                          final formattedDate = DateFormat('dd/MM/yyyy - HH:mm')
-                              .format(
-                                  DateTime.parse(dateTimeString!).toLocal());
+                    //const SliverToBoxAdapter(child: Divider(thickness: 2)),
 
-                          return ListTile(
-                            title: Text(
-                              element?.name ?? '',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            subtitle: Text(
-                              'Обновлено: $formattedDate',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: const TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                            trailing: Text(
-                              '${element?.episodesCount} эп.',
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: context.textTheme.bodyMedium
-                                  ?.copyWith(fontSize: 12),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  settings: const RouteSettings(
-                                    name: 'series select page',
-                                  ),
-                                  pageBuilder:
-                                      (context, animation1, animation2) =>
-                                          SeriesSelectPage(
-                                    seriesList: element?.kodikSeries,
-                                    studioId: element?.studioId ?? 0,
-                                    shikimoriId: shikimoriId,
-                                    episodeWatched: epWatched,
-                                    animeName: animeName,
-                                    studioName: element?.name ?? '',
-                                    studioType: element?.type ?? '',
-                                    imageUrl: imageUrl,
-                                  ),
-                                  transitionDuration: Duration.zero,
-                                  reverseTransitionDuration: Duration.zero,
+                    SliverList.builder(
+                      itemBuilder: (context, index) {
+                        studioList.sort(
+                          (a, b) {
+                            final int sortByEpCount =
+                                -a.episodesCount!.compareTo(b.episodesCount!);
+                            if (sortByEpCount == 0) {
+                              final int sortByUpdate =
+                                  -a.updatedAt!.compareTo(b.updatedAt!);
+                              return sortByUpdate;
+                            }
+                            return sortByEpCount;
+                          },
+                        );
+
+                        final studio = studioList[index];
+
+                        final updatedAtDateTime =
+                            DateTime.parse(studio.updatedAt!).toLocal();
+
+                        // return StudioListTile(
+                        //   name: studio.name!,
+                        //   update:
+                        //       'Обновлено ${updatedAtDateTime.convertToDaysAgo()}',
+                        //   episodeCount: '${studio.episodesCount} эп.',
+                        // );
+
+                        return ListTile(
+                          // leading: studio.studioId == 610
+                          //     ? const Icon(Icons.push_pin_rounded)
+                          //     : null,
+                          title: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  studio.name!.replaceFirst('.Subtitles', ''),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
-                              );
-                            },
-                          );
-                        },
-                        childCount: data.total,
-                      ),
+                              ),
+                              if (studio.name!.contains('.Subtitles'))
+                                const CustomInfoChip(
+                                  title: 'Субтитры',
+                                ),
+                            ],
+                          ),
+                          subtitle: Text(
+                            'Обновлено ${updatedAtDateTime.convertToDaysAgo()}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: context.colorScheme.onBackground
+                                  .withOpacity(0.8),
+                            ),
+                          ),
+                          trailing: Text(
+                            '${studio.episodesCount} эп.',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: context.colorScheme.onBackground
+                                  .withOpacity(0.8),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                settings: const RouteSettings(
+                                  name: 'series select page',
+                                ),
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        SeriesSelectPage(
+                                  seriesList: studio.kodikSeries,
+                                  studioId: studio.studioId ?? 0,
+                                  shikimoriId: shikimoriId,
+                                  episodeWatched: epWatched,
+                                  animeName: animeName,
+                                  studioName: studio.name ?? '',
+                                  studioType: studio.type ?? '',
+                                  imageUrl: imageUrl,
+                                ),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      itemCount: studioList.length,
                     ),
                   ];
                 },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// TODO Пусть пока будет тут
+class StudioListTile extends StatelessWidget {
+  final String name;
+  final String update;
+  final String episodeCount;
+
+  const StudioListTile({
+    super.key,
+    required this.name,
+    required this.update,
+    required this.episodeCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      //name.replaceFirst('.Subtitles', ' (Субтитры)'),
+                      name.replaceFirst('.Subtitles', ''),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: context.colorScheme.onBackground,
+                      ),
+                    ),
+                    if (name.contains('.Subtitles'))
+                      // Chip(
+                      //   //padding: const EdgeInsets.all(0),
+                      //   //labelPadding: const EdgeInsets.all(0),
+                      //   shadowColor: Colors.transparent,
+                      //   elevation: 0,
+                      //   side: const BorderSide(
+                      //       width: 0, color: Colors.transparent),
+                      //   // labelStyle: context.theme.textTheme.bodyMedium
+                      //   //     ?.copyWith(
+                      //   //         color: context.theme.colorScheme
+                      //   //             .onSecondaryContainer),
+                      //   backgroundColor:
+                      //       context.theme.colorScheme.secondaryContainer,
+                      //   label: Text('Субтитры',
+                      //       style: TextStyle(
+                      //           fontSize: 12,
+                      //           color: context
+                      //               .theme.colorScheme.onSecondaryContainer)),
+                      // ),
+                      const CustomInfoChip(
+                        title: 'Субтитры',
+                      ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 2.0,
+                ),
+                Text(
+                  update,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colorScheme.onBackground.withOpacity(0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            episodeCount,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.colorScheme.onBackground.withOpacity(0.8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomInfoChip extends StatelessWidget {
+  final String title;
+
+  const CustomInfoChip({
+    super.key,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      //margin: const EdgeInsets.all(0.0),
+      margin: const EdgeInsets.only(left: 4, right: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      color: context.theme.colorScheme.secondaryContainer,
+      elevation: 0.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: context.theme.colorScheme.onSecondaryContainer,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class KodikNothingFound extends StatelessWidget {
+  const KodikNothingFound({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverFillRemaining(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  'Σ(ಠ_ಠ)',
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textTheme.displayMedium,
+                ),
+              ),
+              const Flexible(
+                child: Text(
+                  'Ничего не найдено',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
               ),
             ],
           ),

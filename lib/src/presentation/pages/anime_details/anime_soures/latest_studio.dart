@@ -17,9 +17,11 @@ class LatestStudio extends StatelessWidget {
   Widget build(BuildContext context) {
     final episode = studio.episodes!.last;
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      //padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      padding: const EdgeInsets.fromLTRB(16.0, 10.0, 16.0, 0.0),
       sliver: SliverToBoxAdapter(
         child: Card(
+          margin: const EdgeInsets.all(0.0),
           shadowColor: Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -28,6 +30,8 @@ class LatestStudio extends StatelessWidget {
               children: [
                 Text(
                   'Последнее просмотренное',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.titleLarge,
                 ),
                 const SizedBox(
@@ -36,7 +40,7 @@ class LatestStudio extends StatelessWidget {
                 Text('${studio.name} • Серия ${episode.nubmer.toString()}'),
                 if (episode.timeStamp != null) Text(episode.timeStamp!),
                 const SizedBox(
-                  height: 8,
+                  height: 8.0,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

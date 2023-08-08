@@ -116,19 +116,6 @@ class SeriesSelectPage extends ConsumerWidget {
       context.pop();
     }
 
-    // watchRouteChange() async {
-    //   if (!GoRouter.of(context).location.contains('/player')) {
-    //     await Future.delayed(const Duration(milliseconds: 500));
-
-    //     ref.invalidate(isAnimeInDataBaseProvider);
-    //     debugPrint('invalidate isAnimeInDataBaseProvider');
-    //     if (context.mounted) {
-    //       debugPrint('removeListener watchRouteChange');
-    //       GoRouter.maybeOf(context)?.removeListener(watchRouteChange);
-    //     }
-    //   }
-    // }
-
     final sortedSeriesList = ref.watch(seriesSortProvider(seriesList!));
     final currentSort = ref.watch(episodeSortTypeProvider);
 
@@ -163,27 +150,13 @@ class SeriesSelectPage extends ConsumerWidget {
                   '$animeName • $studioName',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: context.theme.colorScheme.onBackground,
+                  ),
                 ),
               ),
-              // SliverPinnedHeader(
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Card(
-              //       //color: Colors.transparent,
-              //       shadowColor: Colors.transparent,
-              //       child: Padding(
-              //         padding: const EdgeInsets.all(16.0),
-              //         child: Column(
-              //           mainAxisSize: MainAxisSize.min,
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             Text('$animeName • $studioName'),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
+
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
@@ -208,9 +181,7 @@ class SeriesSelectPage extends ConsumerWidget {
                       contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                       onTap: () async {
                         String startPosition = '';
-                        if (
-                            //!TargetP.instance.isDesktop &&
-                            episode?.position != null && seria.type == null) {
+                        if (episode?.position != null && seria.type == null) {
                           bool? dialogValue = await showDialog<bool>(
                             barrierDismissible: false,
                             context: context,
@@ -238,22 +209,15 @@ class SeriesSelectPage extends ConsumerWidget {
 
                         // ignore: use_build_context_synchronously
                         GoRouter.of(context).pushNamed('player', extra: data);
-                        // ignore: use_build_context_synchronously
-                        //GoRouter.of(context).addListener(watchRouteChange);
-                        //debugPrint('addListener watchRouteChange');
                       },
-                      // title: seria.type != null
-                      //     ? Text("Серия ${seria.number} (${seria.type})")
-                      //     : Text("Серия ${seria.number}"),
                       title: Text("Серия ${seria.number}"),
                       subtitle: seria.type == null
                           ? (episode != null
                               ? Text(
                                   episode.timeStamp ?? '',
                                   style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground
+                                    fontSize: 12,
+                                    color: context.colorScheme.onBackground
                                         .withOpacity(0.8),
                                   ),
                                 )
@@ -261,9 +225,8 @@ class SeriesSelectPage extends ConsumerWidget {
                           : Text(
                               seria.type!,
                               style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onBackground
+                                fontSize: 12,
+                                color: context.colorScheme.onBackground
                                     .withOpacity(0.8),
                               ),
                             ),
@@ -297,10 +260,6 @@ class SeriesSelectPage extends ConsumerWidget {
                                     },
                                     icon: const Icon(Icons.delete),
                                     color: Theme.of(context).colorScheme.error,
-                                    // MediaQuery.of(context).platformBrightness ==
-                                    //         Brightness.dark
-                                    //     ? Colors.red.shade200
-                                    //     : Colors.red.shade600,
                                   ),
                                 ] else ...[
                                   IconButton(
@@ -326,7 +285,7 @@ class SeriesSelectPage extends ConsumerWidget {
     );
   }
 
-  _sortBottomSheet(BuildContext context,
+  static _sortBottomSheet(BuildContext context,
       Function(EpisodeSortType type) setSortType, EpisodeSortType currentSort) {
     return showModalBottomSheet(
       useRootNavigator: true,

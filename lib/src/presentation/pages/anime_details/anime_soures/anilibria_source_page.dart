@@ -54,6 +54,10 @@ class AnilibriaSourcePage extends ConsumerWidget {
                 animeName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: context.theme.colorScheme.onBackground,
+                ),
               ),
               pinned: true,
               actions: [
@@ -277,10 +281,8 @@ class TitlePlaylist extends ConsumerWidget {
               ? Text(
                   savedEpisode.timeStamp!,
                   style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onBackground
-                        .withOpacity(0.8),
+                    fontSize: 12,
+                    color: context.colorScheme.onBackground.withOpacity(0.8),
                   ),
                 )
               : null,
