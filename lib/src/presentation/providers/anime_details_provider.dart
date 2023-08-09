@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../domain/models/shiki_franchise.dart';
 import '../../utils/extensions/riverpod_extensions.dart';
 import '../../domain/models/anime_database.dart';
 import '../../domain/models/animes.dart';
@@ -15,12 +16,14 @@ import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/related_title.dart';
 
-// final franchiseProvider =
-//     FutureProvider.autoDispose.family<Franchise, int>((ref, id) async {
-//   await Future.delayed(const Duration(milliseconds: 500));
+final animeFranchiseProvider =
+    FutureProvider.autoDispose.family<ShikiFranchise, int>((ref, id) async {
+  final token = ref.cancelToken();
 
-//   return ref.watch(shikimoriRepositoryProvider).getAnimeFranchise(id: id);
-// }, name: 'franchiseProvider');
+  return ref
+      .watch(animeDataSourceProvider)
+      .getAnimeFranchise(id: id, cancelToken: token);
+}, name: 'animeFranchiseProvider');
 
 final isAnimeInDataBaseProvider =
     FutureProvider.family.autoDispose<AnimeDatabase?, int>((ref, id) {

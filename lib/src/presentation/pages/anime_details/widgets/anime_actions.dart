@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../domain/models/anime.dart';
 import '../../comments/comments_page.dart';
-import '../external_links.dart';
+import '../anime_franchise_page.dart';
 import '../similar_animes.dart';
 
 class AnimeActionsWidget extends StatelessWidget {
@@ -11,7 +11,7 @@ class AnimeActionsWidget extends StatelessWidget {
 
   const AnimeActionsWidget({super.key, required this.anime, this.onBtnPress});
 
-  String getStatus(String value, int? c) {
+  static String _getStatus(String value, int? c) {
     String status;
 
     const map = {
@@ -28,7 +28,7 @@ class AnimeActionsWidget extends StatelessWidget {
     return (c != 0 && value == 'watching') ? '$status (Серия $c)' : status;
   }
 
-  IconData getIcon(String value) {
+  static IconData _getIcon(String value) {
     IconData icon;
 
     const map = {
@@ -47,8 +47,6 @@ class AnimeActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int? topicId = anime.topicId;
-
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -70,6 +68,9 @@ class AnimeActionsWidget extends StatelessWidget {
                         reverseTransitionDuration: Duration.zero,
                       ),
                     ),
+                    // style: TextButton.styleFrom(
+                    //   foregroundColor: context.colorScheme.onBackground,
+                    // ),
                     child: const Column(
                       children: [
                         Icon(Icons.join_inner),
@@ -83,7 +84,7 @@ class AnimeActionsWidget extends StatelessWidget {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: (topicId == null || topicId == 0)
+                    onPressed: (anime.topicId == null || anime.topicId == 0)
                         ? null
                         : () {
                             Navigator.push(
@@ -92,7 +93,7 @@ class AnimeActionsWidget extends StatelessWidget {
                                 pageBuilder:
                                     (context, animation1, animation2) =>
                                         CommentsPage(
-                                  topicId: topicId,
+                                  topicId: anime.topicId!,
                                 ),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,
@@ -112,16 +113,22 @@ class AnimeActionsWidget extends StatelessWidget {
                 ),
                 Expanded(
                   child: TextButton(
-                    onPressed: () {
-                      _openFullscreenDialog(context);
-                    },
+                    onPressed: () => Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation1, animation2) =>
+                            AnimeFranchisePage(anime.id!),
+                        transitionDuration: Duration.zero,
+                        reverseTransitionDuration: Duration.zero,
+                      ),
+                    ),
                     child: const Column(
                       children: [
-                        Icon(Icons.link),
+                        Icon(Icons.list_rounded),
                         SizedBox(
                           height: 4,
                         ),
-                        Text('Ссылки', overflow: TextOverflow.ellipsis),
+                        Text('Хронология', overflow: TextOverflow.ellipsis),
                       ],
                     ),
                   ),
@@ -133,9 +140,9 @@ class AnimeActionsWidget extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onBtnPress,
                 label: Text(anime.userRate != null
-                    ? getStatus(anime.userRate!.status ?? '', 0)
+                    ? _getStatus(anime.userRate!.status ?? '', 0)
                     : 'Добавить в список'),
-                icon: Icon(getIcon(anime.userRate?.status ?? '')),
+                icon: Icon(_getIcon(anime.userRate?.status ?? '')),
               ),
             ),
           ],
@@ -144,16 +151,16 @@ class AnimeActionsWidget extends StatelessWidget {
     );
   }
 
-  void _openFullscreenDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      useRootNavigator: false,
-      useSafeArea: false,
-      builder: (context) => Dialog.fullscreen(
-        child: ExternalLinksWidget(
-          animeId: anime.id!,
-        ),
-      ),
-    );
-  }
+  // void _openFullscreenDialog(BuildContext context) {
+  //   showDialog<void>(
+  //     context: context,
+  //     useRootNavigator: false,
+  //     useSafeArea: false,
+  //     builder: (context) => Dialog.fullscreen(
+  //       child: ExternalLinksWidget(
+  //         animeId: anime.id!,
+  //       ),
+  //     ),
+  //   );
+  // }
 }

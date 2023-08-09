@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/models/external_link.dart';
-import '../../domain/models/franchise.dart';
+import '../../domain/models/shiki_franchise.dart';
 import '../../domain/models/related_title.dart';
 import '../../domain/models/shiki_calendar.dart';
 
@@ -23,7 +23,7 @@ abstract class AnimeRepository {
     required CancelToken cancelToken,
   });
 
-  Future<Franchise> getAnimeFranchise({
+  Future<ShikiFranchise> getAnimeFranchise({
     required int? id,
     CancelToken? cancelToken,
   });

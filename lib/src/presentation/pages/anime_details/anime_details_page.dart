@@ -22,6 +22,7 @@ import '../../widgets/title_description.dart';
 import 'anime_soures/anilibria_source_page.dart';
 import 'anime_soures/kodik_source_page.dart';
 import 'anime_soures/source_modal_sheet.dart';
+import 'external_links.dart';
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_chips_widger.dart';
 import 'widgets/anime_videos_widget.dart';
@@ -181,6 +182,10 @@ class AnimeDetailsPage extends ConsumerWidget {
                                 value: 1,
                                 child: Text("Поделиться"),
                               ),
+                              const PopupMenuItem<int>(
+                                value: 2,
+                                child: Text("Ссылки"),
+                              ),
                             ];
                           },
                           onSelected: (value) {
@@ -192,6 +197,19 @@ class AnimeDetailsPage extends ConsumerWidget {
                             } else if (value == 1) {
                               Share.share(AppConfig.staticUrl +
                                   (titleInfo.title.valueOrNull!.url ?? ''));
+                            } else if (value == 2) {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          ExternalLinksWidget(
+                                    animeId: extra.id,
+                                  ),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                ),
+                              );
                             }
                           },
                         ),

@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/animes.dart';
 import '../../domain/models/external_link.dart';
-import '../../domain/models/franchise.dart';
+import '../../domain/models/shiki_franchise.dart';
 import '../../domain/models/related_title.dart';
 import '../../domain/models/shiki_calendar.dart';
 import '../repositories/anime_repo.dart';
@@ -84,7 +84,7 @@ class AnimeDataSource implements AnimeRepository {
   }
 
   @override
-  Future<Franchise> getAnimeFranchise({
+  Future<ShikiFranchise> getAnimeFranchise({
     required int? id,
     CancelToken? cancelToken,
   }) async {
@@ -93,7 +93,7 @@ class AnimeDataSource implements AnimeRepository {
       cancelToken: cancelToken,
     );
 
-    return Franchise.fromJson(response);
+    return ShikiFranchise.fromJson(response);
   }
 
   @override
