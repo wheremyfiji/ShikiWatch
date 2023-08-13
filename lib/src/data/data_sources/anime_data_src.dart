@@ -7,6 +7,7 @@ import '../../domain/models/external_link.dart';
 import '../../domain/models/shiki_franchise.dart';
 import '../../domain/models/related_title.dart';
 import '../../domain/models/shiki_calendar.dart';
+import '../../domain/models/shiki_role.dart';
 import '../repositories/anime_repo.dart';
 import '../repositories/http_service.dart';
 import '../../services/http/http_service_provider.dart';
@@ -81,6 +82,19 @@ class AnimeDataSource implements AnimeRepository {
     );
 
     return [for (final e in response) ExternalLink.fromJson(e)];
+  }
+
+  @override
+  Future<List<ShikiRole>> getAnimeRoles({
+    required int? id,
+    required CancelToken cancelToken,
+  }) async {
+    final response = await dio.get(
+      'animes/$id/roles',
+      cancelToken: cancelToken,
+    );
+
+    return [for (final e in response) ShikiRole.fromJson(e)];
   }
 
   @override

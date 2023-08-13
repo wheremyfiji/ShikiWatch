@@ -6,6 +6,7 @@ import '../../domain/models/external_link.dart';
 import '../../domain/models/shiki_franchise.dart';
 import '../../domain/models/related_title.dart';
 import '../../domain/models/shiki_calendar.dart';
+import '../../domain/models/shiki_role.dart';
 
 abstract class AnimeRepository {
   const AnimeRepository();
@@ -34,6 +35,11 @@ abstract class AnimeRepository {
   });
 
   Future<Iterable<ExternalLink>> getExternalLinks({
+    required int? id,
+    required CancelToken cancelToken,
+  });
+
+  Future<List<ShikiRole>> getAnimeRoles({
     required int? id,
     required CancelToken cancelToken,
   });

@@ -10,6 +10,7 @@ import '../domain/models/pages_extra.dart';
 import '../domain/models/user.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 import '../presentation/pages/calendar/calendar_page.dart';
+import '../presentation/pages/character/character_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
 import '../presentation/pages/explore/next_season_anime_page.dart';
 import '../presentation/pages/explore/top_anime_page.dart';
@@ -215,6 +216,19 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                           child: MangaDetailPage(
                             key: state.pageKey,
                             manga: data,
+                          ),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      name: 'character',
+                      path: 'character/:id',
+                      pageBuilder: (context, state) {
+                        return SharedAxisTransition(
+                          key: state.pageKey,
+                          child: CharacterPage(
+                            state.pathParameters['id']!,
+                            key: state.pageKey,
                           ),
                         );
                       },

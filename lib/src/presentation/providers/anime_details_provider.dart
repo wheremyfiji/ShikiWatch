@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/models/shiki_franchise.dart';
+import '../../domain/models/shiki_role.dart';
 import '../../utils/extensions/riverpod_extensions.dart';
 import '../../domain/models/anime_database.dart';
 import '../../domain/models/animes.dart';
@@ -15,6 +16,21 @@ import '../../data/data_sources/anime_data_src.dart';
 import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/related_title.dart';
+
+final rolesAnimeProvider =
+    FutureProvider.autoDispose.family<List<ShikiRole>, int>((ref, id) async {
+  if (ref.state.isRefreshing) {
+    await ref.debounce();
+  }
+
+  final token = ref.cancelToken();
+
+  final roles = await ref
+      .read(animeDataSourceProvider)
+      .getAnimeRoles(id: id, cancelToken: token);
+
+  return roles.where((e) => e.character != null && e.person == null).toList();
+}, name: 'rolesAnimeProvider');
 
 final animeFranchiseProvider =
     FutureProvider.autoDispose.family<ShikiFranchise, int>((ref, id) async {
@@ -87,13 +103,6 @@ final externalLinksAnimeProvider = FutureProvider.autoDispose
 
 final titleInfoPageProvider = ChangeNotifierProvider.autoDispose
     .family<TitleInfoPageController, int>((ref, id) {
-  // final cancelToken = CancelToken();
-  // ////ref.onDispose(() => cancelToken.cancel());
-  // ref.onDispose(() {
-  //   cancelToken.cancel();
-  // });
-  //ref.cacheFor();
-
   final cancelToken = ref.cancelToken();
 
   final c = TitleInfoPageController(

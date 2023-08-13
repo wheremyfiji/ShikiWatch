@@ -19,12 +19,12 @@ import '../../widgets/error_widget.dart';
 import '../../../constants/config.dart';
 import '../../../utils/utils.dart';
 
-import 'anime_details_page.dart';
 import 'rating_dialog.dart';
 
 import 'widgets/anime_actions.dart';
 import 'widgets/anime_user_rate_dialog.dart';
 import 'widgets/rates_statuses_widget.dart';
+import 'widgets/related_widget.dart';
 
 //desktop
 class AnimeDetailsDesktopPage extends ConsumerWidget {
