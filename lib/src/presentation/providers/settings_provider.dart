@@ -23,6 +23,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
 
     return SettingsState(
       theme: _preferencesService.getTheme(),
+      navDestLabelBehavior: _preferencesService.getNavDestLabelBehavior(),
       dynamicColors: _preferencesService.getDynamicColors(),
       oledMode: _preferencesService.getOledMode(),
       libraryFragment: _preferencesService.getLibraryStartFragment(),
@@ -36,6 +37,14 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setTheme(theme);
     state = state.copyWith(
       theme: theme,
+    );
+  }
+
+  Future<void> setNavDestLabelBehavior(
+      NavigationDestinationLabelBehavior mode) async {
+    await _preferencesService.setNavDestLabelBehavior(mode);
+    state = state.copyWith(
+      navDestLabelBehavior: mode,
     );
   }
 

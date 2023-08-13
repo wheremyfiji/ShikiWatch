@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../utils/target_platform.dart';
 import '../../../services/updater/update_service.dart';
 import '../../../utils/utils.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
 
 const _allDestinations = [
@@ -55,6 +56,9 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         },
       ),
     );
+
+    final NavigationDestinationLabelBehavior navDestLabelBehavior = ref.watch(
+        settingsProvider.select((settings) => settings.navDestLabelBehavior));
 
     return TargetP.instance.isDesktop
         ? Scaffold(
@@ -106,6 +110,11 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         : Scaffold(
             body: navigationShell,
             bottomNavigationBar: NavigationBar(
+              height: navDestLabelBehavior ==
+                      NavigationDestinationLabelBehavior.alwaysHide
+                  ? 60
+                  : null,
+              labelBehavior: navDestLabelBehavior,
               destinations: const [
                 NavigationDestination(
                   icon: Icon(Icons.book_outlined),

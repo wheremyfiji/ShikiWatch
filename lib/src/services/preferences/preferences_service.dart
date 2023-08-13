@@ -9,6 +9,7 @@ import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 
 const _themeModeKey = 'themeModeKey';
+const _getNavDestLabelBehaviorKey = 'getNavDestLabelBehaviorKey';
 const _dynamicColorsKey = 'dynamicColorsKey';
 const _oledModeKey = 'oledModeKey';
 const _libraryStartFragmentKey = 'libraryStartFragmentKey';
@@ -42,6 +43,21 @@ class PreferencesService {
 
   Future<void> setTheme(ThemeMode theme) async {
     await _preferences.setString(_themeModeKey, theme.name);
+  }
+
+  NavigationDestinationLabelBehavior getNavDestLabelBehavior() {
+    final value = _preferences.getString(_getNavDestLabelBehaviorKey);
+    if (value == null) {
+      return NavigationDestinationLabelBehavior.alwaysShow;
+    }
+    return NavigationDestinationLabelBehavior.values
+            .firstWhereOrNull((theme) => theme.name == value) ??
+        NavigationDestinationLabelBehavior.alwaysShow;
+  }
+
+  Future<void> setNavDestLabelBehavior(
+      NavigationDestinationLabelBehavior mode) async {
+    await _preferences.setString(_getNavDestLabelBehaviorKey, mode.name);
   }
 
   bool getDynamicColors() {

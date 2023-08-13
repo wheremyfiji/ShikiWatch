@@ -19,6 +19,7 @@ import 'widgets/current_theme.dart';
 import 'widgets/dynamic_colors.dart';
 import 'widgets/library_layout.dart';
 import 'widgets/library_start_fragment.dart';
+import 'widgets/nav_dest_label_behavior_option.dart';
 import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/setting_option.dart';
@@ -54,13 +55,15 @@ class SettingsPage extends ConsumerWidget {
                   const SettingsHeader(),
                   if (SecureStorageService.instance.token != '' && userLogin)
                     const UserAccountGroup(),
-                  const SettingsGroup(
+                  SettingsGroup(
                     title: 'Внешний вид',
                     options: [
                       //SettingsOption(title: ''),
-                      CurrentThemeOption(),
-                      DynamicColorsOption(),
-                      OledModeOption(),
+                      const CurrentThemeOption(),
+                      const DynamicColorsOption(),
+                      const OledModeOption(),
+                      if (!TargetP.instance.isDesktop)
+                        const NavDestLabelBehaviorOption(),
                       // if (!TargetP.instance.isDesktop)
                       //   SwitchListTile(
                       //     value: false,

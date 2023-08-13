@@ -12,6 +12,7 @@ part 'settings_state.freezed.dart';
 class SettingsState with _$SettingsState {
   const factory SettingsState({
     required ThemeMode theme,
+    required NavigationDestinationLabelBehavior navDestLabelBehavior,
     required bool dynamicColors,
     required bool oledMode,
     required LibraryFragmentMode libraryFragment,
