@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
@@ -74,19 +73,16 @@ class UserFriendsWidget extends StatelessWidget {
                           context.push('/profile/${friend.id!}', extra: friend),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 42,
-                        backgroundImage: CachedNetworkImageProvider(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: CachedCircleImage(
                           friend.image?.x160 ?? friend.avatar ?? '',
-                          cacheManager: cacheManager,
+                          radius: 42,
                         ),
                       ),
-                      const SizedBox(
-                        height: 4,
-                      ),
                       Expanded(
-                        child: SizedBox(
-                          width: 80,
+                        child: LimitedBox(
+                          maxWidth: 80,
                           child: Text(
                             friend.nickname ?? '',
                             maxLines: 1,

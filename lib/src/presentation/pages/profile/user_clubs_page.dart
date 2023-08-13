@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
@@ -62,13 +61,9 @@ class UserClubsPage extends ConsumerWidget {
                     final club = data[index];
 
                     return ListTile(
-                      leading: CircleAvatar(
-                        maxRadius: 24,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: CachedNetworkImageProvider(
-                          AppConfig.staticUrl + (club.logo?.original ?? ''),
-                          cacheManager: cacheManager,
-                        ),
+                      leading: CachedCircleImage(
+                        AppConfig.staticUrl + (club.logo?.original ?? ''),
+                        //radius: 24,
                       ),
                       title: Text(
                         club.name ?? '',

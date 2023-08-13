@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -90,12 +89,8 @@ class CommentWidget extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: CachedNetworkImageProvider(
-                      comment.user?.avatar ?? '',
-                      cacheManager: cacheManager,
-                    ),
+                  CachedCircleImage(
+                    comment.user?.avatar ?? '',
                   ),
                   const SizedBox(
                     width: 8,

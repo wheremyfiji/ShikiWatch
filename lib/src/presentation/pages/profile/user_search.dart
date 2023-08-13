@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
@@ -12,6 +11,7 @@ import '../../../data/data_sources/user_data_src.dart';
 import '../../../data/repositories/user_repo.dart';
 import '../../../domain/models/user.dart';
 import '../../../utils/debouncer.dart';
+import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 
 class UserSearchPage extends ConsumerWidget {
@@ -109,10 +109,9 @@ class UserSearchItem extends StatelessWidget {
 
     return ListTile(
       onTap: () => context.push('/profile/${user.id!}', extra: user),
-      leading: CircleAvatar(
-        maxRadius: 32,
-        backgroundColor: Colors.transparent,
-        backgroundImage: CachedNetworkImageProvider(user.image?.x160 ?? ''),
+      leading: CachedCircleImage(
+        user.image?.x160 ?? '',
+        //radius: 32,
       ),
       title: Text(
         user.nickname ?? '',

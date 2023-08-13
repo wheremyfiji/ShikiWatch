@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -124,12 +123,8 @@ class CharacterHeader extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              backgroundImage: CachedNetworkImageProvider(
-                AppConfig.staticUrl + (data.image?.original ?? ''),
-                cacheManager: cacheManager,
-              ),
+            child: CachedCircleImage(
+              AppConfig.staticUrl + (data.image?.original ?? ''),
               radius: 72,
             ),
           ),
@@ -209,12 +204,8 @@ class CharacterSeyu extends StatelessWidget {
 
                 return Column(
                   children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      backgroundImage: CachedNetworkImageProvider(
-                        AppConfig.staticUrl + (seyu.image?.original ?? ''),
-                        cacheManager: cacheManager,
-                      ),
+                    CachedCircleImage(
+                      AppConfig.staticUrl + (seyu.image?.original ?? ''),
                       radius: 48,
                     ),
                     LimitedBox(

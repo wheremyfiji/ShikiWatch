@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/environment_provider.dart';
 import '../../../utils/target_platform.dart';
 import '../../../utils/router.dart';
@@ -25,6 +24,7 @@ import 'widgets/player_discord_rpc.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/settings_header.dart';
+import 'widgets/user_account_group.dart';
 import 'widgets/version_option.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -53,55 +53,7 @@ class SettingsPage extends ConsumerWidget {
                 <Widget>[
                   const SettingsHeader(),
                   if (SecureStorageService.instance.token != '' && userLogin)
-                    SettingsGroup(
-                      title: 'Аккаунт',
-                      options: [
-                        SettingsOption(
-                          title: 'Выйти из аккаунта',
-                          subtitle: 'Очистить текущую авторизацию',
-                          onTap: () async {
-                            bool? dialogValue = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Выйти из аккаунта?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                    child: const Text('Отмена'),
-                                  ),
-                                  FilledButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, true),
-                                    child: const Text('Выйти'),
-                                  ),
-                                ],
-                              ),
-                            );
-
-                            if (dialogValue == null || !dialogValue) {
-                              return;
-                            }
-
-                            await SecureStorageService.instance.deleteAll();
-
-                            ref
-                                .read(routerNotifierProvider.notifier)
-                                .userLogin = false;
-
-                            if (context.mounted) {
-                              context.scaffoldMessenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('Перезапустите приложение'),
-                                  duration: Duration(seconds: 5),
-                                ),
-                              );
-                              GoRouter.of(context).goNamed('login');
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                    const UserAccountGroup(),
                   const SettingsGroup(
                     title: 'Внешний вид',
                     options: [
@@ -133,8 +85,9 @@ class SettingsPage extends ConsumerWidget {
                   const SettingsGroup(
                     title: 'Библиотека', //   Приложение
                     options: [
-                      LibraryLayoutOption(),
                       LibraryStartFragmentOption(),
+                      LibraryLayoutOption(),
+
                       // SwitchListTile(
                       //   value: false,
                       //   onChanged: (value) {},

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher_string.dart';
@@ -15,15 +14,12 @@ class UserProfileHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        CircleAvatar(
-          radius: 64, //72
-          backgroundImage: CachedNetworkImageProvider(
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CachedCircleImage(
             data.image?.x160 ?? data.avatar ?? '',
-            cacheManager: cacheManager,
+            radius: 64, //72
           ),
-        ),
-        const SizedBox(
-          width: 16.0,
         ),
         Expanded(
           child: Column(

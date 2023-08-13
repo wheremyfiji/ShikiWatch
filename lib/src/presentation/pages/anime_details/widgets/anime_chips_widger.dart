@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../constants/config.dart';
@@ -89,13 +88,8 @@ class AnimeChipsWidget extends StatelessWidget {
                 backgroundColor: context.theme.colorScheme.tertiaryContainer,
                 avatar: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 4, 0, 4),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    //context.theme.colorScheme.secondaryContainer,
-                    backgroundImage: CachedNetworkImageProvider(
-                      '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
-                      cacheManager: cacheManager,
-                    ),
+                  child: CachedCircleImage(
+                    '${AppConfig.staticUrl}${studios![index].image ?? '/assets/globals/missing/mini.png'}',
                   ),
                 ),
                 label: Text(studios![index].name ?? ""),

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -45,12 +44,8 @@ class LibraryPageAppBar extends ConsumerWidget {
         // ),
         GestureDetector(
           onTap: () => showLibraryPopUp(context),
-          child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            foregroundImage: CachedNetworkImageProvider(
-              SecureStorageService.instance.userProfileImage,
-              cacheManager: cacheManager,
-            ),
+          child: CachedCircleImage(
+            SecureStorageService.instance.userProfileImage,
           ).animate().fadeIn(),
         ),
         const SizedBox(
@@ -177,12 +172,8 @@ class LibraryPopUp extends ConsumerWidget {
                     ),
                   ),
                   child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      foregroundImage: CachedNetworkImageProvider(
-                        SecureStorageService.instance.userProfileImage,
-                        cacheManager: cacheManager,
-                      ),
+                    leading: CachedCircleImage(
+                      SecureStorageService.instance.userProfileImage,
                     ),
                     title: Text(
                       SecureStorageService.instance.userNickname,
