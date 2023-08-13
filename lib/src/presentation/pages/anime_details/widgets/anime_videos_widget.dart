@@ -15,30 +15,30 @@ class AnimeVideosMobileWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16, top: 16),
+              child: Text(
                 'Видео',
                 style: context.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
+            ),
 
-              // InkWell(
-              //   onTap: () {},
-              //   child: Text(
-              //     'Больше',
-              //     style: context.textTheme.bodyLarge?.copyWith(
-              //       fontWeight: FontWeight.bold,
-              //       color: context.theme.colorScheme.primary,
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
+            // InkWell(
+            //   onTap: () {},
+            //   child: Text(
+            //     'Больше',
+            //     style: context.textTheme.bodyLarge?.copyWith(
+            //       fontWeight: FontWeight.bold,
+            //       color: context.theme.colorScheme.primary,
+            //     ),
+            //   ),
+            // ),
+          ],
         ),
         const SizedBox(
           height: 10,

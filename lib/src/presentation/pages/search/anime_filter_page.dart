@@ -434,12 +434,64 @@ class GenresBottomSheet extends ConsumerWidget {
     return DraggableScrollableSheet(
       expand: false,
       snap: true,
+      minChildSize: 0.75,
+      initialChildSize: 0.75,
       //maxChildSize: 0.75,
-      builder: (context, scrollController) => SafeArea(
-        child: SingleChildScrollView(
-          controller: scrollController,
-          child: Padding(
-            padding: const EdgeInsets.all(0.0),
+      builder: (context, scrollController) {
+        return SafeArea(
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                sliver: SliverToBoxAdapter(
+                  child: Row(
+                    children: [
+                      Text(
+                        'Жанры',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: (c.selectedGenres?.isEmpty ?? true)
+                            ? null
+                            : () {
+                                c.clearSelectedGenres();
+                              },
+                        child: const Text('Очистить'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SliverList.builder(
+                itemBuilder: (context, index) {
+                  final genre = animeGenres[index];
+                  final isSelected = c.selectedGenres?.contains(genre) ?? false;
+                  return CheckboxListTile(
+                    //contentPadding: const EdgeInsets.all(0),
+                    value: isSelected,
+                    onChanged: (value) {
+                      if (value!) {
+                        c.addGenre(genre);
+                      } else {
+                        c.removeGenre(genre);
+                      }
+                    },
+                    title: Text(
+                      genre.russian!,
+                    ),
+                  );
+                },
+                itemCount: animeGenres.length,
+              ),
+            ],
+          ),
+        );
+
+        return SafeArea(
+          child: SingleChildScrollView(
+            controller: scrollController,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,18 +513,6 @@ class GenresBottomSheet extends ConsumerWidget {
                               },
                         child: const Text('Очистить'),
                       ),
-                      // IconButton(
-                      //   tooltip: 'Очистить всё',
-                      //   onPressed: (c.selectedGenres?.isEmpty ?? true)
-                      //       ? null
-                      //       : () {
-                      //           c.clearSelectedGenres();
-                      //         },
-                      //   icon: const Icon(Icons.clear_all),
-                      // ),
-                      // const SizedBox(
-                      //   width: 4,
-                      // ),
                     ],
                   ),
                 ),
@@ -508,8 +548,8 @@ class GenresBottomSheet extends ConsumerWidget {
               ],
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

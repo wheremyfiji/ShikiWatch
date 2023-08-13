@@ -141,7 +141,6 @@ class SeriesSelectPage extends ConsumerWidget {
                       onPressed: () {
                         _sortBottomSheet(context, setSortType, currentSort);
                       },
-                      //onPressed: null,
                       icon: const Icon(Icons.filter_list),
                     ),
                   ),
@@ -174,9 +173,13 @@ class SeriesSelectPage extends ConsumerWidget {
                       episode = epList?[epIndex!];
                     }
 
+                    //final latestEp = epList?.last;
+                    //final isLatestWatched = episode?.nubmer == latestEp?.nubmer;
+
                     final int seriaNum = int.parse(seria.number ?? '0');
 
                     final isComp = seriaNum <= episodeWatched;
+
                     return ListTile(
                       contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                       onTap: () async {

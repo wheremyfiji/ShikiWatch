@@ -275,7 +275,8 @@ class KodikSourcePage extends ConsumerWidget {
                                   maxLines: 2,
                                 ),
                               ),
-                              if (studio.name!.contains('.Subtitles'))
+                              //if (studio.name!.contains('.Subtitles'))
+                              if (studio.type == 'subtitles')
                                 const CustomInfoChip(
                                   title: 'Субтитры',
                                 ),
@@ -447,15 +448,15 @@ class CustomInfoChip extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4.0),
       ),
-      color: context.theme.colorScheme.secondaryContainer,
-      elevation: 0.0,
+      color: context.theme.colorScheme.tertiaryContainer,
+      //elevation: 0.0,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
         child: Text(
           title,
           style: TextStyle(
             fontSize: 12,
-            color: context.theme.colorScheme.onSecondaryContainer,
+            color: context.theme.colorScheme.onTertiaryContainer,
           ),
         ),
       ),

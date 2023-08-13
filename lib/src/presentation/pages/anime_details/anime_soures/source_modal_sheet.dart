@@ -27,10 +27,41 @@ class SourceModalSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        ListTile(
+        const ListTile(
           title: Text(
             'Выбор источника для поиска серий',
-            style: Theme.of(context).textTheme.headlineSmall,
+            //style: Theme.of(context).textTheme.headlineSmall,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Card(
+          color: context.colorScheme.secondaryContainer,
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 3),
+                  child: Icon(
+                    Icons.info_rounded,
+                    color: context.colorScheme.onSecondaryContainer,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'Задать приоритетный вариант можно в настройках приложения',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: context.colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         ListTile(

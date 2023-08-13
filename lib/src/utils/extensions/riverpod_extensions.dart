@@ -12,29 +12,29 @@ extension CancelTokenExtension on AutoDisposeRef {
   }
 }
 
-// extension CacheExtension on AutoDisposeRef {
-//   KeepAliveLink cacheFor([Duration duration = const Duration(seconds: 4)]) {
-//     Timer? timer;
-//     // prevents being disposed
-//     final link = keepAlive();
+extension CacheExtension on AutoDisposeRef {
+  KeepAliveLink cacheFor([Duration duration = const Duration(seconds: 3)]) {
+    Timer? timer;
+    // prevents being disposed
+    final link = keepAlive();
 
-//     // when the provider is no longer used (removed all listeners)
-//     // the timer will be started with the given cache duration
-//     // when the time expires, the link will be closed,
-//     // and the provider will dispose itself
-//     onCancel(() => timer = Timer(duration, link.close));
+    // when the provider is no longer used (removed all listeners)
+    // the timer will be started with the given cache duration
+    // when the time expires, the link will be closed,
+    // and the provider will dispose itself
+    onCancel(() => timer = Timer(duration, link.close));
 
-//     // when we recall the provider again
-//     // the timer will be canceled and the link will no longer close.
-//     onResume(() => timer?.cancel());
+    // when we recall the provider again
+    // the timer will be canceled and the link will no longer close.
+    onResume(() => timer?.cancel());
 
-//     /// if the link is closed, [onDispose] will be called
-//     /// and if there's a timer it will be canceled
-//     onDispose(() => timer?.cancel());
+    /// if the link is closed, [onDispose] will be called
+    /// and if there's a timer it will be canceled
+    onDispose(() => timer?.cancel());
 
-//     return link;
-//   }
-// }
+    return link;
+  }
+}
 
 extension DebounceExtension on Ref {
   /// delays the execution of the code for the given duration,

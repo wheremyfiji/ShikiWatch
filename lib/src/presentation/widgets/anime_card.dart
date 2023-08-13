@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../pages/anime_details/widgets/user_anime_rate.dart';
 import '../../domain/models/user_anime_rates.dart';
+import 'custom_info_chip.dart';
 import 'custom_linear_progress_indicator.dart';
 import '../../domain/models/pages_extra.dart';
 import '../widgets/image_with_shimmer.dart';
@@ -202,14 +203,10 @@ class AnimeListTile extends StatelessWidget {
                   if (data.anime?.status == 'anons' &&
                       data.anime!.airedOn != null &&
                       data.anime!.airedOn!.isNotEmpty)
-                    Text(
-                      //'Выйдет $airedOn',
-                      '$season $year',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: CustomInfoChip(
+                        title: '$season $year',
                       ),
                     ),
                 ],
@@ -237,127 +234,122 @@ class AnimeCard extends StatelessWidget {
     //final createString = DateFormat('yyyy-MM-dd в HH:mm').format(createDT);
     //final updateString = DateFormat('yyyy-MM-dd в HH:mm').format(updateDT);
 
+    // borderRadius: BorderRadius.circular(12),
+    // color: Colors.transparent,
+    // clipBehavior: Clip.hardEdge,
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Material(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.transparent,
-          clipBehavior: Clip.hardEdge,
-          child: InkWell(
-            // splashColor: Colors.transparent,
-            // highlightColor: Colors.transparent,
-            // splashFactory: NoSplash.splashFactory,
-            onLongPress: () {
-              FocusScope.of(context).unfocus();
+        return InkWell(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+          onLongPress: () {
+            FocusScope.of(context).unfocus();
 
-              final t = data.toAnime;
+            final t = data.toAnime;
 
-              showModalBottomSheet<void>(
-                context: context,
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width >= 700
-                      ? 700
-                      : double.infinity,
-                ),
-                useRootNavigator: true,
-                isScrollControlled: true,
-                enableDrag: false,
-                useSafeArea: true,
-                builder: (context) {
-                  return SafeArea(
-                    child: AnimeUserRateBottomSheet(
-                      data: t,
-                      needUpdate: false,
-                    ),
-                  );
-                },
-              );
-            },
-            onTap: () {
-              FocusScope.of(context).unfocus();
+            showModalBottomSheet<void>(
+              context: context,
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width >= 700
+                    ? 700
+                    : double.infinity,
+              ),
+              useRootNavigator: true,
+              isScrollControlled: true,
+              enableDrag: false,
+              useSafeArea: true,
+              builder: (context) {
+                return SafeArea(
+                  child: AnimeUserRateBottomSheet(
+                    data: t,
+                    needUpdate: false,
+                  ),
+                );
+              },
+            );
+          },
+          onTap: () {
+            FocusScope.of(context).unfocus();
 
-              final extra = AnimeDetailsPageExtra(
-                id: data.anime!.id!,
-                label: (data.anime!.russian == ''
-                        ? data.anime!.name
-                        : data.anime!.russian) ??
-                    '',
-              );
+            final extra = AnimeDetailsPageExtra(
+              id: data.anime!.id!,
+              label: (data.anime!.russian == ''
+                      ? data.anime!.name
+                      : data.anime!.russian) ??
+                  '',
+            );
 
-              context.pushNamed(
-                'library_anime',
-                pathParameters: <String, String>{
-                  'id': (data.anime?.id!).toString(),
-                },
-                extra: extra,
-              );
-            },
-            child: Column(
-              children: [
-                SizedBox(
-                  width: constraints.maxWidth,
-                  height: constraints.maxHeight / 1.4,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: ImageWithShimmerWidget(
-                      imageUrl: AppConfig.staticUrl +
-                          (data.anime?.image?.original ?? ''),
-                    ),
+            context.pushNamed(
+              'library_anime',
+              pathParameters: <String, String>{
+                'id': (data.anime?.id!).toString(),
+              },
+              extra: extra,
+            );
+          },
+          child: Column(
+            children: [
+              SizedBox(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight / 1.4,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: ImageWithShimmerWidget(
+                    imageUrl: AppConfig.staticUrl +
+                        (data.anime?.image?.original ?? ''),
                   ),
                 ),
-                const SizedBox(
-                  height: 4,
-                ),
-                SizedBox(
-                  width: constraints.maxWidth,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (data.anime?.russian == ''
-                                ? data.anime?.name
-                                : data.anime?.russian) ??
-                            '',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w500,
-                        ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              SizedBox(
+                width: constraints.maxWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (data.anime?.russian == ''
+                              ? data.anime?.name
+                              : data.anime?.russian) ??
+                          '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w500,
                       ),
-                      const SizedBox(
-                        height: 2,
-                      ),
-                      data.anime?.status == 'released'
-                          ? Text(
-                              '${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .color,
-                              ),
-                            )
-                          : Text(
-                              '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .color,
-                              ),
+                    ),
+                    const SizedBox(
+                      height: 2,
+                    ),
+                    data.anime?.status == 'released'
+                        ? Text(
+                            '${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall!.color,
                             ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+                          )
+                        : Text(
+                            '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color:
+                                  Theme.of(context).textTheme.bodySmall!.color,
+                            ),
+                          ),
+                  ],
+                ),
+              )
+            ],
           ),
         );
       },

@@ -5,15 +5,16 @@ class ShikiImage {
   final String? x48;
 
   ShikiImage({
-    required this.original,
-    required this.preview,
-    required this.x96,
-    required this.x48,
+    this.original,
+    this.preview,
+    this.x96,
+    this.x48,
   });
 
-  ShikiImage.fromJson(Map<String, dynamic> json)
-      : original = json['original'],
-        preview = json['preview'],
-        x96 = json['x96'],
-        x48 = json['x48'];
+  factory ShikiImage.fromJson(Map<String, dynamic> json) => ShikiImage(
+        original: json["original"],
+        preview: json["preview"],
+        x96: json["x96"],
+        x48: json["x48"],
+      );
 }

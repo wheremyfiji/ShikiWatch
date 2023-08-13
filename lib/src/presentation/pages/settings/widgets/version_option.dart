@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../constants/config.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../providers/environment_provider.dart';
@@ -50,7 +51,7 @@ class VersionWidget extends ConsumerWidget {
         );
       },
       child: SettingsOption(
-        title: 'Версия: $version ($build)',
+        title: 'Версия: $version ($build) - $kAppArch',
         //subtitle: appname,
         subtitle: 'от $dateString ($timeString)',
         onTap: null,

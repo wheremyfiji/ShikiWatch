@@ -252,10 +252,10 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Text(
             titleName,
-            maxLines: 2,
+            maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 18,
@@ -263,18 +263,45 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
-          child: Text(
-            'Серия $episode будет удалена из истории просмотра',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14,
-              color: context.colorScheme.onBackground.withOpacity(0.8),
+        Card(
+          color: context.colorScheme.secondaryContainer,
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 3),
+                  child: Icon(
+                    Icons.info_rounded,
+                    color: context.colorScheme.onSecondaryContainer,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'Серия $episode будет удалена из истории просмотра',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: context.colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+        //   child: Text(
+        //     'Серия $episode будет удалена из истории просмотра',
+        //     maxLines: 2,
+        //     overflow: TextOverflow.ellipsis,
+        //     style: TextStyle(
+        //       fontSize: 14,
+        //       color: context.colorScheme.onBackground.withOpacity(0.8),
+        //     ),
+        //   ),
+        // ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: SizedBox(

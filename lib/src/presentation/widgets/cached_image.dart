@@ -42,8 +42,9 @@ class CachedImage extends StatelessWidget {
       height: height,
       cacheManager: cacheManager,
       placeholder: (context, url) => const CustomShimmer(),
-      errorWidget: (context, url, error) =>
-          const Center(child: Icon(Icons.error_outline_rounded)),
+      errorWidget: (context, url, error) => const Center(
+        child: Icon(Icons.error_outline_rounded),
+      ),
       // progressIndicatorBuilder: (context, _, p) => Center(
       //   child: CircularProgressIndicator(
       //     value: p.progress,

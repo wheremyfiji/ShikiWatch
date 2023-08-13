@@ -35,7 +35,7 @@ class CommentsPage extends ConsumerWidget {
               SliverAppBar.large(
                 automaticallyImplyLeading: false,
                 leading: IconButton(
-                  onPressed: () => context.pop(),
+                  onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
                 ),
                 title: const Text('Обсуждение'),

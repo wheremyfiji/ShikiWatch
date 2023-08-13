@@ -38,8 +38,37 @@ class AnimeFranchisePage extends ConsumerWidget {
                 final franchiseItems = data.nodes;
 
                 if (franchiseItems == null || franchiseItems.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(child: Text('пусто..')),
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Σ(ಠ_ಠ)',
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.textTheme.displayMedium,
+                              ),
+                            ),
+                            const Flexible(
+                              child: Text(
+                                'Ничего не найдено',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   );
                 }
 

@@ -38,7 +38,17 @@ class LatestStudio extends StatelessWidget {
                   height: 8.0,
                 ),
                 Text('${studio.name} • Серия ${episode.nubmer.toString()}'),
-                if (episode.timeStamp != null) Text(episode.timeStamp!),
+                if (episode.timeStamp != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      episode.timeStamp!,
+                      style: TextStyle(
+                        color:
+                            context.colorScheme.onBackground.withOpacity(0.8),
+                      ),
+                    ),
+                  ),
                 const SizedBox(
                   height: 8.0,
                 ),
