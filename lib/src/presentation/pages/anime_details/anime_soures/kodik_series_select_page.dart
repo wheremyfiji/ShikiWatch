@@ -184,6 +184,7 @@ class SeriesSelectPage extends ConsumerWidget {
                       contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                       onTap: () async {
                         String startPosition = '';
+
                         if (episode?.position != null && seria.type == null) {
                           bool? dialogValue = await showDialog<bool>(
                             barrierDismissible: false,

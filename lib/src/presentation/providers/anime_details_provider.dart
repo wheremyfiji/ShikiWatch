@@ -29,7 +29,9 @@ final rolesAnimeProvider =
       .read(animeDataSourceProvider)
       .getAnimeRoles(id: id, cancelToken: token);
 
-  return roles.where((e) => e.character != null && e.person == null).toList();
+  return roles;
+
+  //return roles.where((e) => e.character != null && e.person == null).toList();
 }, name: 'rolesAnimeProvider');
 
 final animeFranchiseProvider =
@@ -269,7 +271,7 @@ class TitleInfoPageController extends ChangeNotifier {
       //final splitted = data.nextEpisodeAt!.split('-');
       //nextEp = '${splitted[1]}-${splitted[2]}';
       final dateTime = DateTime.parse(data.nextEpisodeAt!);
-      nextEp = DateFormat.MMMEd().format(dateTime);
+      nextEp = DateFormat.MMMMEEEEd().format(dateTime); //MMMEd
     }
 
     for (var i = 0; i < data.ratesScoresStats!.length; i++) {

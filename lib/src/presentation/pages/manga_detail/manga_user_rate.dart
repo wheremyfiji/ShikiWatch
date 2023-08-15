@@ -3,104 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../data/data_sources/user_data_src.dart';
-import '../../../../domain/models/manga_ranobe.dart';
-import '../../../../domain/models/manga_short.dart';
-import '../../../../services/secure_storage/secure_storage_service.dart';
-import '../../../../utils/utils.dart';
-import '../../../providers/library_manga_provider.dart';
-import '../../../providers/manga_details_provider.dart';
-import '../../../widgets/cool_chip.dart';
-import '../../../widgets/delete_dialog.dart';
-import '../../../widgets/material_you_chip.dart';
-import '../../../widgets/number_field.dart';
-
-class UserRateWidget extends StatelessWidget {
-  final MangaShort manga;
-  final MangaRanobe data;
-
-  const UserRateWidget({
-    super.key,
-    required this.manga,
-    required this.data,
-  });
-
-  String getRateStatus(String value) {
-    String status;
-
-    const map = {
-      'planned': 'В планах',
-      'watching': 'Читаю',
-      'rewatching': 'Перечитываю',
-      'completed': 'Прочитано',
-      'on_hold': 'Отложено',
-      'dropped': 'Брошено'
-    };
-
-    status = map[value] ?? '';
-
-    return status;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 0,
-        children: [
-          CoolChip(
-            label: getRateStatus(data.userRate!.status!),
-          ),
-          // CoolChip(
-          //   label: 'Тома: ${data.userRate!.volumes.toString()}',
-          // ),
-          CoolChip(
-            label: 'Главы: ${data.userRate!.chapters.toString()}',
-          ),
-          CoolChip(
-            label: 'Оценка: ${data.userRate!.score.toString()}',
-          ),
-          CoolChip(
-            label: 'Перечитано: ${data.userRate!.rewatches.toString()}',
-          ),
-        ],
-      ),
-    );
-
-    // return Card(
-    //   margin: EdgeInsets.zero,
-    //   child: Padding(
-    //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-    //     child: Wrap(
-    //       direction: Axis.horizontal,
-    //       alignment: WrapAlignment.start,
-    //       crossAxisAlignment: WrapCrossAlignment.start, //end
-    //       spacing: 8,
-    //       runSpacing: 0,
-    //       children: [
-    //         CoolChip(
-    //           label: getRateStatus(data.userRate!.status!),
-    //         ),
-    //         // CoolChip(
-    //         //   label: 'Тома: ${data.userRate!.volumes.toString()}',
-    //         // ),
-    //         CoolChip(
-    //           label: 'Главы: ${data.userRate!.chapters.toString()}',
-    //         ),
-    //         CoolChip(
-    //           label: 'Оценка: ${data.userRate!.score.toString()}',
-    //         ),
-    //         CoolChip(
-    //           label: 'Перечитано: ${data.userRate!.rewatches.toString()}',
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
-  }
-}
+import '../../../data/data_sources/user_data_src.dart';
+import '../../../domain/models/manga_ranobe.dart';
+import '../../../domain/models/manga_short.dart';
+import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../../utils/utils.dart';
+import '../../providers/library_manga_provider.dart';
+import '../../providers/manga_details_provider.dart';
+import '../../widgets/delete_dialog.dart';
+import '../../widgets/material_you_chip.dart';
+import '../../widgets/number_field.dart';
 
 class MangaUserRateBottomSheet extends ConsumerStatefulWidget {
   final MangaShort manga;

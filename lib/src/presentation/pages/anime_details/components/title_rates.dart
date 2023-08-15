@@ -4,21 +4,24 @@ import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/desc_with_text_element.dart';
 import '../../../widgets/custom_element_bar.dart';
 
-const List<String> statNames = [
+const List<String> _names = [
   'Запланировано',
-  'Прочитано',
-  'Читаю',
+  'Просмотрено',
+  'Смотрю',
   'Брошено',
   'Отложено'
 ];
 
-class MangaRatesStatusesWidget extends StatelessWidget {
+class TitleRatesWidget extends StatelessWidget {
   final List<int> statsValues;
-  const MangaRatesStatusesWidget({super.key, required this.statsValues});
+
+  const TitleRatesWidget(this.statsValues, {super.key});
 
   @override
   Widget build(BuildContext context) {
     int sum = statsValues.reduce((a, b) => a + b);
+    final isDarkThemed = context.isDarkThemed;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,14 +29,15 @@ class MangaRatesStatusesWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Статистика',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              'В списках', //Статистика
+              style: context.textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               'Всего: $sum',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(),
+              style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.onBackground.withOpacity(0.8)),
             ),
           ],
         ),
@@ -42,13 +46,13 @@ class MangaRatesStatusesWidget extends StatelessWidget {
         ),
         CustomElementBar(
           values: statsValues,
-          height: 36,
+          height: 32,
         ),
         const SizedBox(
           height: 8,
         ),
         Wrap(
-          spacing: 4.0,
+          spacing: 0.0,
           runSpacing: 8.0,
           direction: Axis.horizontal,
           children: [
@@ -56,9 +60,11 @@ class MangaRatesStatusesWidget extends StatelessWidget {
               statsValues.length,
               (index) {
                 return DescWithTextElement(
-                  text: '${statNames[index]}: ${statsValues[index]}',
+                  text: '${_names[index]}: ${statsValues[index]}',
                   color: getStatElementColor(
-                      dark: context.isDarkThemed, index: index),
+                    dark: isDarkThemed,
+                    index: index,
+                  ),
                 );
               },
             ),

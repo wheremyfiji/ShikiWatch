@@ -4,17 +4,18 @@ import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/desc_with_text_element.dart';
 import '../../../widgets/custom_element_bar.dart';
 
-const List<String> names = [
+const List<String> _names = [
   'Запланировано',
-  'Просмотрено',
-  'Смотрю',
+  'Прочитано',
+  'Читаю',
   'Брошено',
   'Отложено'
 ];
 
-class AnimeRatesStatusesWidget extends StatelessWidget {
+class MangaRatesWidget extends StatelessWidget {
   final List<int> statsValues;
-  const AnimeRatesStatusesWidget({super.key, required this.statsValues});
+
+  const MangaRatesWidget(this.statsValues, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +27,15 @@ class AnimeRatesStatusesWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Статистика',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              'В списках',
+              style: context.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               'Всего: $sum',
-              style: Theme.of(context).textTheme.bodySmall,
+              style: context.textTheme.bodySmall?.copyWith(
+                  color: context.colorScheme.onBackground.withOpacity(0.8)),
             ),
           ],
         ),
@@ -42,13 +44,13 @@ class AnimeRatesStatusesWidget extends StatelessWidget {
         ),
         CustomElementBar(
           values: statsValues,
-          height: 36,
+          height: 32,
         ),
         const SizedBox(
           height: 8,
         ),
         Wrap(
-          spacing: 4.0,
+          spacing: 0.0,
           runSpacing: 8.0,
           direction: Axis.horizontal,
           children: [
@@ -56,7 +58,7 @@ class AnimeRatesStatusesWidget extends StatelessWidget {
               statsValues.length,
               (index) {
                 return DescWithTextElement(
-                  text: '${names[index]}: ${statsValues[index]}',
+                  text: '${_names[index]}: ${statsValues[index]}',
                   color: getStatElementColor(
                       dark: context.isDarkThemed, index: index),
                 );

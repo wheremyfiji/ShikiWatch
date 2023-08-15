@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../utils/extensions/buildcontext.dart';
-import '../../providers/anime_details_provider.dart';
-import '../../widgets/anime_card.dart';
+import '../../providers/manga_details_provider.dart';
 import '../../widgets/error_widget.dart';
+import '../../widgets/manga_card.dart';
 
-class SimilarAnimesPage extends ConsumerWidget {
-  final int animeId;
+class MangaSimilarPage extends ConsumerWidget {
+  final int mangaId;
 
-  const SimilarAnimesPage({super.key, required this.animeId});
+  const MangaSimilarPage(this.mangaId, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final similarAnimes = ref.watch(similarTitlesAnimeProvider(animeId));
+    final similarManga = ref.watch(similarTitlesMangaProvider(mangaId));
 
     return Scaffold(
       body: SafeArea(
@@ -36,7 +36,7 @@ class SimilarAnimesPage extends ConsumerWidget {
               ),
             ];
           },
-          body: similarAnimes.when(
+          body: similarManga.when(
             data: (data) {
               if (data.isEmpty) {
                 return Center(
@@ -72,15 +72,16 @@ class SimilarAnimesPage extends ConsumerWidget {
                 );
               }
               return CustomScrollView(
+                shrinkWrap: false,
                 slivers: [
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverGrid(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
-                          final anime = data.toList()[index];
+                          final manga = data.toList()[index];
 
-                          return AnimeTileExp(anime);
+                          return MangaCardEx(manga);
                         },
                         childCount: data.length,
                       ),
@@ -97,7 +98,7 @@ class SimilarAnimesPage extends ConsumerWidget {
               );
             },
             error: (err, stack) => CustomErrorWidget(err.toString(),
-                () => ref.refresh(similarTitlesAnimeProvider(animeId))),
+                () => ref.refresh(similarTitlesMangaProvider(mangaId))),
             loading: () => const Center(
               child: CircularProgressIndicator(),
             ),

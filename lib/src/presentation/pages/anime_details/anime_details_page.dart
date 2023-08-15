@@ -15,23 +15,22 @@ import '../../widgets/error_widget.dart';
 import '../../../domain/enums/anime_source.dart';
 import '../../widgets/title_description.dart';
 
-import 'anime_soures/anilibria_source_page.dart';
+import 'anime_soures/anilibria_source_page.dart' hide TitleInfo;
 import 'anime_soures/kodik_source_page.dart';
 import 'anime_soures/source_modal_sheet.dart';
-import 'external_links.dart';
-import 'widgets/anime_actions.dart';
-import 'widgets/anime_chips_widger.dart';
-import 'widgets/anime_videos_widget.dart';
-import 'widgets/characters_widget.dart';
-import 'widgets/details_screenshots.dart';
-import 'widgets/info_header.dart';
-import 'widgets/rates_statuses_widget.dart';
-import 'widgets/related_widget.dart';
-import 'widgets/user_anime_rate.dart';
+
+import 'components/title_actions.dart';
+import 'components/title_characters.dart';
+import 'components/title_genres_studios.dart';
+import 'components/title_info.dart';
+import 'components/title_name.dart';
+import 'components/title_poster.dart';
+import 'components/title_rates.dart';
+import 'components/title_related.dart';
+import 'components/title_screenshots.dart';
+import 'components/title_videos.dart';
 
 import 'rating_dialog.dart';
-
-const double dividerHeight = 16;
 
 class AnimeDetailsPage extends ConsumerWidget {
   final AnimeDetailsPageExtra extra;
@@ -154,9 +153,6 @@ class AnimeDetailsPage extends ConsumerWidget {
             slivers: [
               SliverAppBar(
                 pinned: true,
-                //stretch: true,
-                expandedHeight:
-                    titleInfo.title.valueOrNull == null ? null : 280,
                 title: Text(
                   extra.label,
                   style: TextStyle(
@@ -179,10 +175,6 @@ class AnimeDetailsPage extends ConsumerWidget {
                                 value: 1,
                                 child: Text("Поделиться"),
                               ),
-                              const PopupMenuItem<int>(
-                                value: 2,
-                                child: Text("Ссылки"),
-                              ),
                             ];
                           },
                           onSelected: (value) {
@@ -194,134 +186,102 @@ class AnimeDetailsPage extends ConsumerWidget {
                             } else if (value == 1) {
                               Share.share(AppConfig.staticUrl +
                                   (titleInfo.title.valueOrNull!.url ?? ''));
-                            } else if (value == 2) {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder:
-                                      (context, animation1, animation2) =>
-                                          ExternalLinksWidget(
-                                    animeId: extra.id,
-                                  ),
-                                  transitionDuration: Duration.zero,
-                                  reverseTransitionDuration: Duration.zero,
-                                ),
-                              );
                             }
                           },
                         ),
                       ],
-                flexibleSpace: titleInfo.title.valueOrNull == null
-                    ? null
-                    : FlexibleSpaceBar(
-                        background: AnimeInfoHeader(
-                          titleInfo.title.value!,
-                          duration: titleInfo.duration,
-                          favoured: titleInfo.isFavor,
-                          nextEp: titleInfo.nextEp ?? '',
-                          rating: titleInfo.rating,
-                        ).animate().fade(),
-                      ),
               ),
               ...titleInfo.title.when(
                 skipLoadingOnRefresh: false,
-                data: (data) => [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-                    sliver: SliverToBoxAdapter(
-                      child: AnimeActionsWidget(
-                        anime: data,
-                        onBtnPress: () => showModalBottomSheet<void>(
-                          context: context,
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width >= 700
-                                ? 700
-                                : double.infinity,
-                          ),
-                          useRootNavigator: true,
-                          isScrollControlled: true,
-                          enableDrag: false,
-                          useSafeArea: true,
-                          builder: (context) {
-                            return SafeArea(
-                              child: AnimeUserRateBottomSheet(
-                                data: data,
-                                needUpdate: true,
-                              ),
-                            );
-                          },
-                        ),
-                      ).animate().fadeIn(),
-                    ),
+                data: (anime) => [
+                  SliverToBoxAdapter(
+                    child: TitlePoster(
+                      anime.image?.original ?? '',
+                    ).animate().fade(),
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    sliver: SliverToBoxAdapter(
-                      child: AnimeChipsWidget(
-                        genres: data.genres,
-                        studios: data.studios,
-                        score: data.score,
-                        rating: titleInfo.rating,
-                      ).animate().fade(),
-                    ),
+                  SliverToBoxAdapter(
+                    child: TitleActions(
+                      anime,
+                    ).animate().fade(),
                   ),
-                  if (data.description != null) ...[
+                  SliverToBoxAdapter(
+                    child: TitleName(
+                      animeId: extra.id,
+                      title:
+                          (anime.russian == '' ? anime.name : anime.russian) ??
+                              '',
+                      subTitle: anime.name,
+                      rating: titleInfo.rating,
+                      score: anime.score,
+                    ).animate().fade(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: TitleInfo(
+                      anime,
+                      duration: titleInfo.duration,
+                      nextEp: titleInfo.nextEp,
+                    ).animate().fade(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: TitleGenresStudios(
+                      genres: anime.genres,
+                      studios: anime.studios,
+                    ).animate().fade(),
+                  ),
+                  if (anime.description != null)
                     SliverPadding(
-                      padding:
-                          const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       sliver: SliverToBoxAdapter(
                         child: TitleDescription(
-                          data.descriptionHtml!,
+                          anime.descriptionHtml!,
                         ).animate().fade(),
                       ),
                     ),
-                  ],
-                  if (titleInfo.statsValues != []) ...[
+                  if (titleInfo.statsValues != [])
                     SliverPadding(
-                      padding:
-                          const EdgeInsets.fromLTRB(16, 0, 16, dividerHeight),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       sliver: SliverToBoxAdapter(
-                        child: AnimeRatesStatusesWidget(
-                          statsValues: titleInfo.statsValues,
+                        child: TitleRatesWidget(
+                          titleInfo.statsValues,
                         ).animate().fade(),
                       ),
                     ),
-                  ],
                   SliverToBoxAdapter(
-                    child: CharactersWidget(
-                      data.id!,
+                    child: TitleCharactersWidget(
+                      anime.id!,
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: RelatedWidget(
-                      id: data.id!,
+                    child: TitleRelatedWidget(
+                      id: anime.id!,
                     ),
                   ),
-                  if (data.screenshots != null &&
-                      data.screenshots!.isNotEmpty) ...[
+                  if (anime.screenshots != null &&
+                      anime.screenshots!.isNotEmpty)
                     SliverToBoxAdapter(
-                      child: AnimeScreenshots(data).animate().fade(),
+                      child: TitleScreenshots(anime).animate().fade(),
                     ),
-                  ],
-                  if (data.videos != null && data.videos!.isNotEmpty) ...[
+                  if (anime.videos != null && anime.videos!.isNotEmpty)
                     SliverPadding(
-                      padding: const EdgeInsets.only(bottom: dividerHeight),
+                      padding: const EdgeInsets.only(bottom: 16),
                       sliver: SliverToBoxAdapter(
-                        child: AnimeVideosMobileWidget(data).animate().fade(),
+                        child: TitleVideosWidget(anime).animate().fade(),
                       ),
                     ),
-                  ],
                   const SliverToBoxAdapter(child: SizedBox(height: 70)),
                 ],
                 error: (err, stack) => [
                   SliverFillRemaining(
-                    child: CustomErrorWidget(err.toString(),
-                        () => ref.invalidate(titleInfoPageProvider(extra.id))),
+                    child: CustomErrorWidget(
+                      err.toString(),
+                      () => ref.invalidate(titleInfoPageProvider(extra.id)),
+                    ),
                   ),
                 ],
                 loading: () => [
                   const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator())),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
                 ],
               ),
             ],

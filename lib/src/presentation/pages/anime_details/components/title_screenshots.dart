@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../../constants/config.dart';
-import '../../../../domain/models/anime.dart' as a;
+import '../../../../domain/models/anime.dart';
 import '../../../widgets/image_with_shimmer.dart';
 
 import '../screenshots_page.dart';
 
-class AnimeScreenshots extends StatelessWidget {
-  final a.Anime data;
-  const AnimeScreenshots(this.data, {super.key});
+class TitleScreenshots extends StatelessWidget {
+  final Anime data;
+  const TitleScreenshots(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {

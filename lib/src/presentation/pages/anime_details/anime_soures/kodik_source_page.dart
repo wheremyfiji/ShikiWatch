@@ -277,7 +277,7 @@ class KodikSourcePage extends ConsumerWidget {
                               ),
                               //if (studio.name!.contains('.Subtitles'))
                               if (studio.type == 'subtitles')
-                                const CustomInfoChip(
+                                const _CustomInfoChip(
                                   title: 'Субтитры',
                                 ),
                             ],
@@ -397,7 +397,7 @@ class StudioListTile extends StatelessWidget {
                       //           color: context
                       //               .theme.colorScheme.onSecondaryContainer)),
                       // ),
-                      const CustomInfoChip(
+                      const _CustomInfoChip(
                         title: 'Субтитры',
                       ),
                   ],
@@ -432,11 +432,10 @@ class StudioListTile extends StatelessWidget {
   }
 }
 
-class CustomInfoChip extends StatelessWidget {
+class _CustomInfoChip extends StatelessWidget {
   final String title;
 
-  const CustomInfoChip({
-    super.key,
+  const _CustomInfoChip({
     required this.title,
   });
 

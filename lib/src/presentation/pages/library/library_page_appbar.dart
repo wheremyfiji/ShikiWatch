@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -44,8 +45,12 @@ class LibraryPageAppBar extends ConsumerWidget {
         // ),
         GestureDetector(
           onTap: () => showLibraryPopUp(context),
-          child: CachedCircleImage(
-            SecureStorageService.instance.userProfileImage,
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            foregroundImage: CachedNetworkImageProvider(
+              SecureStorageService.instance.userProfileImage,
+              cacheManager: cacheManager,
+            ),
           ).animate().fadeIn(),
         ),
         const SizedBox(
@@ -117,7 +122,7 @@ class LibraryPageAppBar extends ConsumerWidget {
     );
   }
 
-  showLibraryPopUp(BuildContext context) {
+  static showLibraryPopUp(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) => const LibraryPopUp(),
@@ -163,8 +168,6 @@ class LibraryPopUp extends ConsumerWidget {
                 // ),
                 Card(
                   margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  //color: Theme.of(context).colorScheme.background,
-                  //elevation: 0,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(24),
@@ -194,8 +197,6 @@ class LibraryPopUp extends ConsumerWidget {
                 ),
                 Card(
                   margin: const EdgeInsets.fromLTRB(8, 4, 8, 8),
-                  //color: Theme.of(context).colorScheme.background,
-                  //elevation: 0,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(24),

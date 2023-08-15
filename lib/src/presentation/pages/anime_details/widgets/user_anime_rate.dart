@@ -12,336 +12,152 @@ import '../../../../domain/models/animes.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../providers/library_tab_page_provider.dart';
-import '../../../widgets/cool_chip.dart';
 import '../../../widgets/delete_dialog.dart';
 import '../../../widgets/material_you_chip.dart';
 import '../../../widgets/number_field.dart';
 
-class UserAnimeRateWidget extends HookConsumerWidget {
-  final Animes anime;
-  final Anime data;
-  final String imageUrl;
-  const UserAnimeRateWidget(this.anime, this.data, this.imageUrl, {super.key});
+// class UserAnimeRateWidget extends HookConsumerWidget {
+//   //final Animes anime;
+//   final Anime data;
+//   //final String imageUrl;
 
-  String getRateStatus(String value) {
-    String status;
+//   const UserAnimeRateWidget(
+//       // this.anime,
+//       this.data,
+//       // this.imageUrl,
+//       {super.key});
 
-    const map = {
-      'planned': 'В планах',
-      'watching': 'Смотрю',
-      'rewatching': 'Пересматриваю',
-      'completed': 'Просмотрено',
-      'on_hold': 'Отложено',
-      'dropped': 'Брошено'
-    };
+//   String getRateStatus(String value) {
+//     String status;
 
-    status = map[value] ?? '';
+//     const map = {
+//       'planned': 'В планах',
+//       'watching': 'Смотрю',
+//       'rewatching': 'Пересматриваю',
+//       'completed': 'Просмотрено',
+//       'on_hold': 'Отложено',
+//       'dropped': 'Брошено'
+//     };
 
-    return status;
-  }
+//     status = map[value] ?? '';
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    //final isLoading = useState(false);
+//     return status;
+//   }
 
-    // Future<void> incRate() async {
-    //   final rate = await ref.read(userDataSourceProvider).incrementUserRate(
-    //       token: SecureStorageService.instance.token,
-    //       rateId: data.userRate!.id!);
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     if (data.userRate == null) {
+//       return SizedBox(
+//         child: Card(
+//           margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+//           shape: const RoundedRectangleBorder(
+//             borderRadius: BorderRadius.only(
+//               topLeft: Radius.circular(24),
+//               topRight: Radius.circular(24),
+//             ),
+//           ),
+//           child: Padding(
+//             padding: const EdgeInsets.symmetric(
+//               vertical: 8,
+//               horizontal: 12,
+//             ),
+//             child: FilledButton.icon(
+//               onPressed: () {
+//                 _openBottomSheet(context);
+//               },
+//               icon: const Icon(Icons.add_rounded),
+//               label: const Text('Добавить в список'),
+//             ),
+//           ),
+//         ),
+//       );
+//     }
 
-    //   if (rate.status != data.userRate!.status) {
-    //     switch (data.userRate!.status) {
-    //       case 'watching':
-    //         {
-    //           ref.read(watchingTabPageProvider).deleteAnime(data.id!);
-    //         }
-    //         break;
-    //       case 'planned':
-    //         {
-    //           ref.read(plannedTabPageProvider).deleteAnime(data.id!);
-    //           break;
-    //         }
-    //       case 'completed':
-    //         {
-    //           ref.read(completedTabPageProvider).deleteAnime(data.id!);
-    //         }
-    //         break;
-    //       case 'rewatching':
-    //         {
-    //           ref.read(rewatchingTabPageProvider).deleteAnime(data.id!);
-    //         }
-    //         break;
-    //       case 'on_hold':
-    //         {
-    //           ref.read(onHoldTabPageProvider).deleteAnime(data.id!);
-    //         }
-    //         break;
-    //       case 'dropped':
-    //         {
-    //           ref.read(droppedTabPageProvider).deleteAnime(data.id!);
-    //         }
-    //         break;
-    //       default:
-    //     }
-    //     switch (rate.status) {
-    //       case 'watching':
-    //         {
-    //           ref.read(watchingTabPageProvider).addAnime(
-    //                 animeId: data.id!,
-    //                 anime: anime,
-    //                 rateId: rate.id!,
-    //                 createdAt: rate.createdAt!,
-    //                 updatedAt: rate.updatedAt!,
-    //                 score: rate.score,
-    //                 episodes: rate.episodes,
-    //                 rewatches: rate.rewatches,
-    //                 status: rate.status,
-    //               );
-    //         }
-    //         break;
-    //       case 'planned':
-    //         {
-    //           ref.read(plannedTabPageProvider).addAnime(
-    //                 animeId: data.id!,
-    //                 anime: anime,
-    //                 rateId: rate.id!,
-    //                 createdAt: rate.createdAt!,
-    //                 updatedAt: rate.updatedAt!,
-    //                 score: rate.score,
-    //                 episodes: rate.episodes,
-    //                 rewatches: rate.rewatches,
-    //                 status: rate.status,
-    //               );
-    //           break;
-    //         }
-    //       case 'completed':
-    //         {
-    //           ref.read(completedTabPageProvider).addAnime(
-    //                 animeId: data.id!,
-    //                 anime: anime,
-    //                 rateId: rate.id!,
-    //                 createdAt: rate.createdAt!,
-    //                 updatedAt: rate.updatedAt!,
-    //                 score: rate.score,
-    //                 episodes: rate.episodes,
-    //                 rewatches: rate.rewatches,
-    //                 status: rate.status,
-    //               );
-    //         }
-    //         break;
-    //       case 'rewatching':
-    //         {
-    //           ref.read(rewatchingTabPageProvider).addAnime(
-    //                 animeId: data.id!,
-    //                 anime: anime,
-    //                 rateId: rate.id!,
-    //                 createdAt: rate.createdAt!,
-    //                 updatedAt: rate.updatedAt!,
-    //                 score: rate.score,
-    //                 episodes: rate.episodes,
-    //                 rewatches: rate.rewatches,
-    //                 status: rate.status,
-    //               );
-    //         }
-    //         break;
-    //       case 'on_hold':
-    //         {
-    //           ref.read(onHoldTabPageProvider).addAnime(
-    //                 animeId: data.id!,
-    //                 anime: anime,
-    //                 rateId: rate.id!,
-    //                 createdAt: rate.createdAt!,
-    //                 updatedAt: rate.updatedAt!,
-    //                 score: rate.score,
-    //                 episodes: rate.episodes,
-    //                 rewatches: rate.rewatches,
-    //                 status: rate.status,
-    //               );
-    //         }
-    //         break;
-    //       case 'dropped':
-    //         {
-    //           ref.read(droppedTabPageProvider).addAnime(
-    //                 animeId: data.id!,
-    //                 anime: anime,
-    //                 rateId: rate.id!,
-    //                 createdAt: rate.createdAt!,
-    //                 updatedAt: rate.updatedAt!,
-    //                 score: rate.score,
-    //                 episodes: rate.episodes,
-    //                 rewatches: rate.rewatches,
-    //                 status: rate.status,
-    //               );
-    //         }
-    //         break;
-    //       default:
-    //     }
-    //     ref.read(titleInfoPageProvider(data.id!)).addRate(
-    //           rateId: rate.id!,
-    //           updatedAt: rate.updatedAt!,
-    //           status: rate.status!,
-    //           score: rate.score,
-    //           episodes: rate.episodes,
-    //           rewatches: rate.rewatches,
-    //           text: rate.text,
-    //           textHtml: rate.textHtml,
-    //           createdAt: rate.createdAt,
-    //         );
-    //     return;
-    //   }
-    //   //switch (selectedStatus ?? initStatus) {
-    //   switch (rate.status) {
-    //     case 'watching':
-    //       ref.read(watchingTabPageProvider).updateAnime(
-    //             animeId: data.id!,
-    //             updatedAt: rate.updatedAt!,
-    //             score: rate.score,
-    //             episodes: rate.episodes,
-    //             rewatches: rate.rewatches,
-    //           );
-    //       break;
-    //     case 'planned':
-    //       ref.read(plannedTabPageProvider).updateAnime(
-    //             animeId: data.id!,
-    //             updatedAt: rate.updatedAt!,
-    //             score: rate.score,
-    //             episodes: rate.episodes,
-    //             rewatches: rate.rewatches,
-    //           );
-    //       break;
-    //     case 'completed':
-    //       ref.read(completedTabPageProvider).updateAnime(
-    //             animeId: data.id!,
-    //             updatedAt: rate.updatedAt!,
-    //             score: rate.score,
-    //             episodes: rate.episodes,
-    //             rewatches: rate.rewatches,
-    //           );
-    //       break;
-    //     case 'rewatching':
-    //       ref.read(rewatchingTabPageProvider).updateAnime(
-    //             animeId: data.id!,
-    //             updatedAt: rate.updatedAt!,
-    //             score: rate.score,
-    //             episodes: rate.episodes,
-    //             rewatches: rate.rewatches,
-    //           );
-    //       break;
-    //     case 'on_hold':
-    //       ref.read(onHoldTabPageProvider).updateAnime(
-    //             animeId: data.id!,
-    //             updatedAt: rate.updatedAt!,
-    //             score: rate.score,
-    //             episodes: rate.episodes,
-    //             rewatches: rate.rewatches,
-    //           );
-    //       break;
-    //     case 'dropped':
-    //       ref.read(droppedTabPageProvider).updateAnime(
-    //             animeId: data.id!,
-    //             updatedAt: rate.updatedAt!,
-    //             score: rate.score,
-    //             episodes: rate.episodes,
-    //             rewatches: rate.rewatches,
-    //           );
-    //       break;
-    //     default:
-    //   }
-    //   ref.read(titleInfoPageProvider(data.id!)).addRate(
-    //         rateId: rate.id!,
-    //         updatedAt: rate.updatedAt!,
-    //         status: rate.status!,
-    //         score: rate.score,
-    //         episodes: rate.episodes,
-    //         rewatches: rate.rewatches,
-    //         text: rate.text,
-    //         textHtml: rate.textHtml,
-    //         createdAt: rate.createdAt,
-    //       );
-    // }
+//     return SizedBox(
+//       width: double.infinity,
+//       child: Card(
+//         //margin: EdgeInsets.zero,
+//         margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+//         shape: const RoundedRectangleBorder(
+//           borderRadius: BorderRadius.only(
+//             topLeft: Radius.circular(24),
+//             topRight: Radius.circular(24),
+//           ),
+//         ),
+//         child: Padding(
+//           padding: const EdgeInsets.symmetric(
+//             vertical: 8,
+//             horizontal: 12,
+//           ),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               SingleChildScrollView(
+//                 scrollDirection: Axis.horizontal,
+//                 child: Wrap(
+//                   direction: Axis.horizontal,
+//                   alignment: WrapAlignment.start,
+//                   crossAxisAlignment: WrapCrossAlignment.start,
+//                   spacing: 8,
+//                   runSpacing: 0,
+//                   children: [
+//                     CoolChip(
+//                       label: getRateStatus(data.userRate!.status ?? ''),
+//                     ),
+//                     CoolChip(
+//                       label: 'Эпизоды: ${data.userRate!.episodes.toString()}',
+//                     ),
+//                     CoolChip(
+//                       label: 'Оценка: ${data.userRate!.score.toString()}',
+//                     ),
+//                     CoolChip(
+//                       label:
+//                           'Пересмотрено: ${data.userRate!.rewatches.toString()}',
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               SizedBox(
+//                 width: double.infinity,
+//                 child: FilledButton.icon(
+//                   onPressed: () {
+//                     _openBottomSheet(context);
+//                   },
+//                   icon: const Icon(Icons.edit_rounded),
+//                   label: const Text('Изменить'),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-    if (data.userRate == null) {
-      return SizedBox(
-        child: FilledButton(
-          onPressed: () {
-            _openBottomSheet(context);
-          },
-          child: const Text('Добавить в список'),
-        ),
-      );
-    }
-
-    return SizedBox(
-      width: double.infinity,
-      child: Card(
-        margin: EdgeInsets.zero,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                direction: Axis.horizontal,
-                alignment: WrapAlignment.start,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                spacing: 8,
-                runSpacing: 0,
-                children: [
-                  CoolChip(
-                    label: getRateStatus(data.userRate!.status ?? ''),
-                  ),
-                  CoolChip(
-                    label: 'Эпизоды: ${data.userRate!.episodes.toString()}',
-                  ),
-                  CoolChip(
-                    label: 'Оценка: ${data.userRate!.score.toString()}',
-                  ),
-                  CoolChip(
-                    label:
-                        'Пересмотрено: ${data.userRate!.rewatches.toString()}',
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    _openBottomSheet(context);
-                  },
-                  child: const Text('Изменить'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _openBottomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      constraints: BoxConstraints(
-        maxWidth:
-            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
-      ),
-      useRootNavigator: true,
-      isScrollControlled: true,
-      enableDrag: false,
-      useSafeArea: true,
-      //elevation: 0,
-      builder: (context) {
-        return SafeArea(
-          child: AnimeUserRateBottomSheet(
-            needUpdate: true,
-            data: data,
-            //anime: anime,
-          ),
-        );
-      },
-    );
-  }
-}
+//   void _openBottomSheet(BuildContext context) {
+//     showModalBottomSheet<void>(
+//       context: context,
+//       constraints: BoxConstraints(
+//         maxWidth:
+//             MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+//       ),
+//       useRootNavigator: true,
+//       isScrollControlled: true,
+//       enableDrag: false,
+//       useSafeArea: true,
+//       //elevation: 0,
+//       builder: (context) {
+//         return SafeArea(
+//           child: AnimeUserRateBottomSheet(
+//             needUpdate: true,
+//             data: data,
+//             //anime: anime,
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
 
 // enum UserList { watching, planned, completed, rewatching, onHold, dropped }
 
@@ -850,13 +666,11 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
 class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
   final Anime data;
   final bool needUpdate;
-  //final Animes anime;
 
   const AnimeUserRateBottomSheet({
     super.key,
     required this.data,
     required this.needUpdate,
-    // required this.anime,
   });
 
   @override
@@ -866,98 +680,6 @@ class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
 
 class _AnimeUserRateBottomSheetState
     extends ConsumerState<AnimeUserRateBottomSheet> {
-  IconData getChipIcon(int index) {
-    switch (index) {
-      case 0:
-        return Icons.remove_red_eye;
-      case 1:
-        return Icons.event_available;
-      case 2:
-        return Icons.done_all;
-      case 3:
-        return Icons.refresh;
-      case 4:
-        return Icons.pause;
-      case 5:
-        return Icons.close;
-      default:
-        return Icons.error;
-    }
-  }
-
-  String getChipLabel(int value) {
-    String label;
-
-    const map = {
-      0: 'Смотрю',
-      1: 'В планах',
-      2: 'Просмотрено',
-      3: 'Пересматриваю',
-      4: 'Отложено',
-      5: 'Брошено'
-    };
-
-    label = map[value] ?? '?';
-
-    return label;
-  }
-
-  int convertStatusStringToInt(String? value) {
-    int status;
-
-    const map = {
-      'watching': 0,
-      'planned': 1,
-      'completed': 2,
-      'rewatching': 3,
-      'on_hold': 4,
-      'dropped': 5,
-    };
-
-    status = map[value] ?? -1;
-
-    return status;
-  }
-
-  String convertStatusIntToString(int value) {
-    String status;
-
-    const map = {
-      0: 'watching',
-      1: 'planned',
-      2: 'completed',
-      3: 'rewatching',
-      4: 'on_hold',
-      5: 'dropped',
-    };
-
-    status = map[value] ?? '';
-
-    return status;
-  }
-
-  String getScorePrefix(int? score) {
-    String text;
-
-    const map = {
-      0: 'Без оценки',
-      1: 'Хуже некуда',
-      2: 'Ужасно',
-      3: 'Очень плохо',
-      4: 'Плохо',
-      5: 'Более-менее',
-      6: 'Нормально',
-      7: 'Хорошо',
-      8: 'Отлично',
-      9: 'Великолепно',
-      10: 'Эпик Вин!',
-    };
-
-    text = map[score] ?? '';
-
-    return text;
-  }
-
   late TextEditingController _controller;
 
   String? initStatus;
@@ -998,7 +720,7 @@ class _AnimeUserRateBottomSheetState
   void initState() {
     initStatus = widget.data.userRate?.status;
 
-    selectedStatus = convertStatusStringToInt(widget.data.userRate?.status);
+    selectedStatus = _convertStatusStringToInt(widget.data.userRate?.status);
 
     currentScore = widget.data.userRate?.score;
     rewatches = widget.data.userRate?.rewatches ?? 0;
@@ -1015,6 +737,13 @@ class _AnimeUserRateBottomSheetState
     _controller.text = userRateText;
     fill();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -1040,7 +769,6 @@ class _AnimeUserRateBottomSheetState
 
     return WillPopScope(
       onWillPop: () async {
-        //return true;
         return !isLoading;
       },
       child: SingleChildScrollView(
@@ -1063,10 +791,6 @@ class _AnimeUserRateBottomSheetState
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
-                // style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                //       fontSize: 18,
-                //       fontWeight: FontWeight.w500,
-                //     ),
               ),
               const SizedBox(
                 height: 10,
@@ -1079,8 +803,8 @@ class _AnimeUserRateBottomSheetState
                     6,
                     (int index) {
                       return MaterialYouChip(
-                        title: getChipLabel(index),
-                        icon: getChipIcon(index),
+                        title: _getChipLabel(index),
+                        icon: _getChipIcon(index),
                         onPressed: () {
                           setState(
                             () {
@@ -1211,7 +935,7 @@ class _AnimeUserRateBottomSheetState
                             ),
                             if (currentScore != null)
                               Text(
-                                '(${getScorePrefix(currentScore)})',
+                                '(${_getScorePrefix(currentScore)})',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall!
@@ -1323,7 +1047,7 @@ class _AnimeUserRateBottomSheetState
                                     .createRate(
                                       needUpdate: widget.needUpdate,
                                       anime: widget.data,
-                                      selectedStatus: convertStatusIntToString(
+                                      selectedStatus: _convertStatusIntToString(
                                           selectedStatus!),
                                       currentScore: currentScore ?? 0,
                                       progress: progress,
@@ -1335,7 +1059,7 @@ class _AnimeUserRateBottomSheetState
                                         showSnackBar(
                                           ctx: context,
                                           msg:
-                                              'Добавлено в список "${getChipLabel(selectedStatus ?? 0)}"',
+                                              'Добавлено в список "${_getChipLabel(selectedStatus ?? 0)}"',
                                           dur: const Duration(seconds: 3),
                                         );
                                       },
@@ -1349,7 +1073,7 @@ class _AnimeUserRateBottomSheetState
                                       rateId: widget.data.userRate!.id!,
                                       animeId: widget.data.id!,
                                       anime: widget.data,
-                                      selectedStatus: convertStatusIntToString(
+                                      selectedStatus: _convertStatusIntToString(
                                           selectedStatus!),
                                       initStatus: initStatus!,
                                       currentScore: currentScore,
@@ -1412,7 +1136,7 @@ class _AnimeUserRateBottomSheetState
                                 showSnackBar(
                                   ctx: context,
                                   msg:
-                                      'Удалено из списка "${getChipLabel(selectedStatus ?? 0)}"',
+                                      'Удалено из списка "${_getChipLabel(selectedStatus ?? 0)}"',
                                   dur: const Duration(seconds: 3),
                                 );
                               },
@@ -1427,5 +1151,97 @@ class _AnimeUserRateBottomSheetState
         ),
       ),
     );
+  }
+
+  static IconData _getChipIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icons.remove_red_eye;
+      case 1:
+        return Icons.event_available;
+      case 2:
+        return Icons.done_all;
+      case 3:
+        return Icons.refresh;
+      case 4:
+        return Icons.pause;
+      case 5:
+        return Icons.close;
+      default:
+        return Icons.error;
+    }
+  }
+
+  static String _getChipLabel(int value) {
+    String label;
+
+    const map = {
+      0: 'Смотрю',
+      1: 'В планах',
+      2: 'Просмотрено',
+      3: 'Пересматриваю',
+      4: 'Отложено',
+      5: 'Брошено'
+    };
+
+    label = map[value] ?? '?';
+
+    return label;
+  }
+
+  static int _convertStatusStringToInt(String? value) {
+    int status;
+
+    const map = {
+      'watching': 0,
+      'planned': 1,
+      'completed': 2,
+      'rewatching': 3,
+      'on_hold': 4,
+      'dropped': 5,
+    };
+
+    status = map[value] ?? -1;
+
+    return status;
+  }
+
+  static String _convertStatusIntToString(int value) {
+    String status;
+
+    const map = {
+      0: 'watching',
+      1: 'planned',
+      2: 'completed',
+      3: 'rewatching',
+      4: 'on_hold',
+      5: 'dropped',
+    };
+
+    status = map[value] ?? '';
+
+    return status;
+  }
+
+  static String _getScorePrefix(int? score) {
+    String text;
+
+    const map = {
+      0: 'Без оценки',
+      1: 'Хуже некуда',
+      2: 'Ужасно',
+      3: 'Очень плохо',
+      4: 'Плохо',
+      5: 'Более-менее',
+      6: 'Нормально',
+      7: 'Хорошо',
+      8: 'Отлично',
+      9: 'Великолепно',
+      10: 'Эпик Вин!',
+    };
+
+    text = map[score] ?? '';
+
+    return text;
   }
 }

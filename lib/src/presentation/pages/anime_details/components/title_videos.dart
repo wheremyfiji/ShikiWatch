@@ -6,9 +6,10 @@ import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/image_with_shimmer.dart';
 import '../../../../domain/models/anime.dart';
 
-class AnimeVideosMobileWidget extends StatelessWidget {
+class TitleVideosWidget extends StatelessWidget {
   final Anime data;
-  const AnimeVideosMobileWidget(this.data, {super.key});
+
+  const TitleVideosWidget(this.data, {super.key});
 
   @override
   Widget build(BuildContext context) {

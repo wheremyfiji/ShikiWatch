@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/extensions/buildcontext.dart';
+
 class DescWithTextElement extends StatelessWidget {
   final String text;
   final Color color;
@@ -9,26 +11,31 @@ class DescWithTextElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 16,
-          height: 16,
+          width: 16.0,
+          height: 16.0,
           decoration: BoxDecoration(
             color: color,
             borderRadius: const BorderRadius.all(
               Radius.circular(4.0),
             ),
           ),
-          //color: Colors.amber,
         ),
         const SizedBox(
           width: 4,
         ),
-        Text(text),
+        Text(
+          text,
+          style: context.textTheme.bodySmall,
+          // style: TextStyle(
+          //   fontSize: 12.0,
+          //   color: context.colorScheme.onBackground.withOpacity(0.8),
+          // ),
+        ),
         const SizedBox(
-          width: 8,
+          width: 8.0,
         ),
       ],
     );
