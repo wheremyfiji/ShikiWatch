@@ -37,7 +37,11 @@ class ScaffoldWithNavBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ext = MediaQuery.of(context).size.width > 1600; //1200
+    //final ext = MediaQuery.of(context).size.width > 1600; //1200
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    const breakpoint = 600.0;
+    const expandedBreakpoint = 1200.0;
 
     ref.listen(
       appReleaseProvider,
@@ -60,6 +64,113 @@ class ScaffoldWithNavBar extends ConsumerWidget {
     final NavigationDestinationLabelBehavior navDestLabelBehavior = ref.watch(
         settingsProvider.select((settings) => settings.navDestLabelBehavior));
 
+    if (screenWidth >= breakpoint) {
+      return Scaffold(
+        body: SafeArea(
+          top: false,
+          bottom: false,
+          child: Row(
+            children: [
+              SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height),
+                  child: IntrinsicHeight(
+                    child: NavigationRail(
+                      extended: TargetP.instance.isDesktop
+                          ? screenWidth > 1600
+                          : screenWidth > expandedBreakpoint,
+                      groupAlignment: -1.0,
+                      selectedIndex: navigationShell.currentIndex,
+                      onDestinationSelected: (tappedIndex) {
+                        if (navigationShell.currentIndex == tappedIndex &&
+                            GoRouter.of(context).location == '/explore') {
+                          context.push('/explore/search');
+                          return;
+                        }
+
+                        if (navigationShell.currentIndex == tappedIndex) {
+                          navigationShell
+                              .shellRouteContext.navigatorKey.currentState
+                              ?.popUntil((r) => r.isFirst);
+                        } else {
+                          navigationShell.goBranch(tappedIndex);
+                        }
+                      },
+                      destinations: const [
+                        NavigationRailDestination(
+                          icon: Icon(Icons.book_outlined),
+                          selectedIcon: Icon(Icons.book),
+                          label: Text('Библиотека'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.home_outlined),
+                          selectedIcon: Icon(Icons.home_rounded),
+                          label: Text('Главная'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.account_circle_outlined),
+                          selectedIcon: Icon(Icons.account_circle),
+                          label: Text('Профиль'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const VerticalDivider(thickness: 1, width: 1),
+              Expanded(
+                child: navigationShell,
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      Scaffold(
+        body: navigationShell,
+        bottomNavigationBar: NavigationBar(
+          height: navDestLabelBehavior ==
+                  NavigationDestinationLabelBehavior.alwaysHide
+              ? 60
+              : null,
+          labelBehavior: navDestLabelBehavior,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.book_outlined),
+              selectedIcon: Icon(Icons.book),
+              label: 'Библиотека',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: 'Главная',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.account_circle_outlined),
+              selectedIcon: Icon(Icons.account_circle),
+              label: 'Профиль',
+            ),
+          ],
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: (tappedIndex) {
+            if (navigationShell.currentIndex == tappedIndex &&
+                GoRouter.of(context).location == '/explore') {
+              context.push('/explore/search');
+              return;
+            }
+
+            if (navigationShell.currentIndex == tappedIndex) {
+              navigationShell.shellRouteContext.navigatorKey.currentState
+                  ?.popUntil((r) => r.isFirst);
+            } else {
+              navigationShell.goBranch(tappedIndex);
+            }
+          },
+        ),
+      );
+    }
+
     return TargetP.instance.isDesktop
         ? Scaffold(
             body: SafeArea(
@@ -68,16 +179,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                   Stack(
                     children: [
                       NavigationRail(
-                        // trailing: const Expanded(
-                        //   child: Align(
-                        //     alignment: Alignment.bottomLeft,
-                        //     child: Padding(
-                        //       padding: EdgeInsets.only(bottom: 8.0),
-                        //       child: Text('Версия: пошел '),
-                        //     ),
-                        //   ),
-                        // ),
-                        extended: ext,
+                        //extended: ext,
                         groupAlignment: -1.0,
                         destinations: _allDestinations,
                         selectedIndex: navigationShell.currentIndex,
