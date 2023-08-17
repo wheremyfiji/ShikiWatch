@@ -112,7 +112,7 @@ class AnimeSearchPage extends ConsumerWidget {
                       ),
                     ),
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     sliver: PagedSliverGrid<int, ShikiTitle>(
                       addAutomaticKeepAlives: true,
                       showNewPageErrorIndicatorAsGridChild: false,
@@ -175,6 +175,7 @@ class AnimeSearchPage extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 70)),
                 ],
               );
             },

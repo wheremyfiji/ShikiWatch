@@ -27,7 +27,7 @@ class TitleInfo extends StatelessWidget {
         children: [
           _InfoItem(
             'Тип: ',
-            '${getKind(anime.kind!)} • ${getStatus(anime.status!)}',
+            '${getKind(anime.kind ?? '')} • ${getStatus(anime.status ?? '')}',
           ),
           if (date != null)
             _InfoItem(

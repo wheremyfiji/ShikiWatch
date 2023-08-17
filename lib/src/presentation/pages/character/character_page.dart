@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../constants/config.dart';
 import '../../../domain/models/animes.dart';
@@ -68,6 +69,29 @@ class CharacterPage extends ConsumerWidget {
               ),
               pinned: true,
               title: const Text('Персонаж'),
+              actions: character.valueOrNull == null
+                  ? null
+                  : [
+                      PopupMenuButton(
+                        tooltip: '',
+                        itemBuilder: (context) {
+                          return [
+                            const PopupMenuItem<int>(
+                              value: 0,
+                              child: Text("Открыть в браузере"),
+                            ),
+                          ];
+                        },
+                        onSelected: (value) {
+                          if (value == 0) {
+                            launchUrlString(
+                              '${AppConfig.staticUrl}${character.valueOrNull?.url ?? ''}',
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
+                      ),
+                    ],
             ),
             ...character.when(
               data: (data) => [

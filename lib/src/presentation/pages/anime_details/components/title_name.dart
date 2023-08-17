@@ -102,6 +102,7 @@ class TitleName extends StatelessWidget {
       useRootNavigator: true,
       showDragHandle: true,
       useSafeArea: true,
+      isScrollControlled: true,
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(c).size.width >= 700 ? 700 : double.infinity,
       ),
@@ -143,48 +144,96 @@ class _AnimeOtherNames extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (anime.english != null && anime.english!.isNotEmpty) ...[
-              const Text(
-                'English',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              // const Text(
+              //   'English',
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 2,
+              // ),
+              // ...List.generate(anime.english!.length,
+              //     ((index) => SelectableText(anime.english![index]))),
+
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: <TextSpan>[
+                    const TextSpan(
+                      text: 'English:\n',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(text: anime.english!.join('\n')),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 2,
-              ),
-              ...List.generate(anime.english!.length,
-                  ((index) => SelectableText(anime.english![index]))),
               const Divider(),
             ],
             if (anime.japanese != null && anime.japanese!.isNotEmpty) ...[
-              const Text(
-                'Japanese',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              // const Text(
+              //   'Japanese',
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 2,
+              // ),
+              // ...List.generate(anime.japanese!.length,
+              //     ((index) => SelectableText(anime.japanese![index]))),
+
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: <TextSpan>[
+                    const TextSpan(
+                      text: 'Japanese:\n',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(text: anime.japanese!.join('\n')),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 2,
-              ),
-              ...List.generate(anime.japanese!.length,
-                  ((index) => SelectableText(anime.japanese![index]))),
             ],
             if (anime.synonyms != null && anime.synonyms!.isNotEmpty) ...[
               const Divider(),
-              const Text(
-                'Синонимы',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              // const Text(
+              //   'Синонимы',
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 2,
+              // ),
+              // ...List.generate(anime.synonyms!.length,
+              //     ((index) => SelectableText(anime.synonyms![index]))),
+
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  children: <TextSpan>[
+                    const TextSpan(
+                      text: 'Синонимы:\n',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(text: anime.synonyms!.join('\n')),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 2,
-              ),
-              ...List.generate(anime.synonyms!.length,
-                  ((index) => SelectableText(anime.synonyms![index]))),
             ],
           ],
         ),

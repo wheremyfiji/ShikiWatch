@@ -170,7 +170,7 @@ class FranchiseListItem extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${item.kind} • ${item.year} год',
+                    '${item.kind ?? '?'} • ${item.year ?? '?'} год',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

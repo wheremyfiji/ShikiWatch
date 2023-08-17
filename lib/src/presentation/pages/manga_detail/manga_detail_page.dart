@@ -127,10 +127,8 @@ class MangaDetailPage extends ConsumerWidget {
                         ).animate().fade(),
                       ),
                     ),
-                  SliverToBoxAdapter(
-                    child: MangaRelatedWidget(
-                      id: data.id!,
-                    ),
+                  MangaRelatedWidget(
+                    id: data.id!,
                   ),
                   const SliverToBoxAdapter(child: SizedBox(height: 60)),
                 ],

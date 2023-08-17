@@ -1,25 +1,30 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../../utils/extensions/buildcontext.dart';
 
 const errorFaces = [
   'Σ(ಠ_ಠ)',
   '(˘･_･˘)',
-//'＼（〇_ｏ）／',
   '(┬┬﹏┬┬)',
   '(´･ω･`)?',
+  'X﹏X',
+  '＞︿＜',
 ];
 
-class CustomErrorWidget extends StatelessWidget {
-  const CustomErrorWidget(this.errorString, this.buttonOnPressed, {Key? key})
-      : super(key: key);
+class CustomErrorWidget extends HookWidget {
   final String errorString;
   final Function()? buttonOnPressed;
+
+  const CustomErrorWidget(this.errorString, this.buttonOnPressed, {super.key});
+
   @override
   Widget build(BuildContext context) {
-    final errorFace = errorFaces[Random().nextInt(errorFaces.length)];
+    final errorFace = useMemoized(
+      () => errorFaces[Random().nextInt(errorFaces.length)],
+    );
 
     return Center(
       child: Padding(
@@ -53,7 +58,7 @@ class CustomErrorWidget extends StatelessWidget {
             const SizedBox(
               height: 16,
             ),
-            ElevatedButton.icon(
+            FilledButton.icon(
               onPressed: buttonOnPressed,
               label: const Text(
                 'Повторить',

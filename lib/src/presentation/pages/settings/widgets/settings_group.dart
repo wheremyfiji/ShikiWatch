@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
+
 class SettingsGroup extends StatelessWidget {
   final String title;
   final List<Widget> options;
@@ -14,16 +16,14 @@ class SettingsGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: Clip.hardEdge,
       elevation: 0,
-      color: Theme.of(context).colorScheme.background,
+      color: context.colorScheme.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          //color: Colors.grey.withOpacity(0.2),
-          color: Theme.of(context)
-              .colorScheme
-              .surfaceVariant, //onInverseSurface  surfaceVariant
+          color: context
+              .colorScheme.surfaceVariant, //onInverseSurface  surfaceVariant
           width: 1,
         ),
       ),
@@ -36,9 +36,9 @@ class SettingsGroup extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+              style: context.textTheme.titleMedium?.copyWith(
+                color: context.colorScheme.primary,
+              ),
             ),
           ),
           ...options

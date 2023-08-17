@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../constants/config.dart';
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/cached_image.dart';
 
 class TitlePoster extends StatelessWidget {
@@ -28,7 +29,7 @@ class TitlePoster extends StatelessWidget {
             left: -1,
             right: -1,
             child: Container(
-              color: Theme.of(context).colorScheme.background.withOpacity(0.8),
+              color: context.colorScheme.background.withOpacity(0.8),
             ),
           ),
           Positioned.fill(
@@ -41,9 +42,9 @@ class TitlePoster extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.background,
-                    Theme.of(context).colorScheme.background.withOpacity(0.2),
-                    Theme.of(context).colorScheme.background,
+                    context.colorScheme.background,
+                    context.colorScheme.background.withOpacity(0.2),
+                    context.colorScheme.background,
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -59,7 +60,7 @@ class TitlePoster extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               child: SizedBox(
                 height: 300,
                 child: AspectRatio(

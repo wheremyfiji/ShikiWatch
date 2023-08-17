@@ -9,7 +9,7 @@ import 'custom_shimmer.dart';
 final cacheManager = CacheManager(
   Config(
     'imageCache',
-    maxNrOfCacheObjects: 1000,
+    maxNrOfCacheObjects: 512,
     stalePeriod: const Duration(days: 14),
   ),
 );
@@ -59,12 +59,11 @@ class CachedCircleImage extends StatelessWidget {
         maxHeight: maxDiameter,
       ),
       duration: kThemeChangeDuration,
-      decoration: BoxDecoration(
-        // shape: BoxShape.circle,
-        borderRadius: BorderRadius.circular(maxDiameter),
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(maxDiameter),
+      child: ClipOval(
+        clipBehavior: Clip.hardEdge,
         child: CachedNetworkImage(
           imageUrl: url,
           fit: BoxFit.cover,
@@ -76,6 +75,32 @@ class CachedCircleImage extends StatelessWidget {
         ),
       ),
     );
+
+    // return AnimatedContainer(
+    //   constraints: BoxConstraints(
+    //     minHeight: minDiameter,
+    //     minWidth: minDiameter,
+    //     maxWidth: maxDiameter,
+    //     maxHeight: maxDiameter,
+    //   ),
+    //   duration: kThemeChangeDuration,
+    //   decoration: BoxDecoration(
+    //     // shape: BoxShape.circle,
+    //     borderRadius: BorderRadius.circular(maxDiameter),
+    //   ),
+    //   child: ClipRRect(
+    //     borderRadius: BorderRadius.circular(maxDiameter),
+    //     child: CachedNetworkImage(
+    //       imageUrl: url,
+    //       fit: BoxFit.cover,
+    //       cacheManager: cacheManager,
+    //       placeholder: (context, url) => const CustomShimmer(),
+    //       errorWidget: (context, url, error) => const Center(
+    //         child: Icon(Icons.error_outline_rounded),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 
