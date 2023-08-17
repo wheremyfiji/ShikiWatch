@@ -16,6 +16,7 @@ import '../../../utils/router.dart';
 import 'widgets/anime_source_option.dart';
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
+import 'widgets/donate_widget.dart';
 import 'widgets/dynamic_colors.dart';
 import 'widgets/library_layout.dart';
 import 'widgets/library_start_fragment.dart';
@@ -81,6 +82,8 @@ class SettingsPage extends ConsumerWidget {
                     title: 'Плеер',
                     options: [
                       const AnimeSourceOption(),
+                      // if (!TargetP.instance.isDesktop)
+                      //   const PlayerSwipeSeekOption(),
                       if (TargetP.instance.isDesktop)
                         const PlayerDiscordRpcOption(),
                     ],
@@ -203,6 +206,10 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ],
               ),
+            ),
+            const SliverPadding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+              sliver: SliverToBoxAdapter(child: DonateWidget()),
             ),
             SliverToBoxAdapter(
               child: SizedBox(height: MediaQuery.of(context).padding.bottom),
