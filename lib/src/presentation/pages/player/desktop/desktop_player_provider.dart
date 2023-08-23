@@ -57,7 +57,9 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   late final Player player = Player(
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
-      logLevel: MPVLogLevel.warn,
+      logLevel: kDebugMode ? MPVLogLevel.debug : MPVLogLevel.error,
+      // увеличение размера кеша просто откладывает начало пропусков
+      bufferSize: 32 * 1024 * 1024,
     ),
   );
   late final playerController = VideoController(player);
@@ -141,7 +143,9 @@ class DesktopPlayerNotifier extends ChangeNotifier {
 
       if (extra.isLibria) {
         extra.libriaEpisode!.fnd != null
-            ? streamFhd = extra.libriaEpisode!.host + extra.libriaEpisode!.fnd!
+            ? streamFhd = extra.libriaEpisode!.host +
+                extra.libriaEpisode!
+                    .fnd! //extra.libriaEpisode!.host    kVideosUrl.toString()
             : streamFhd = null;
 
         extra.libriaEpisode!.hd != null
@@ -198,6 +202,26 @@ class DesktopPlayerNotifier extends ChangeNotifier {
       //       .setProperty("cscale", 'ewa_lanczossharp');
       // }
 
+      ///
+      /// seg_max_retry никак не влияет, хотя устанавливается правильно
+      /// tls_verify=0 тоже ничего не делает
+      /// fflags=+discardcorrupt вообще юзелес
+      ///
+
+      if (player.platform is NativePlayer) {
+        // await (player.platform as NativePlayer).setProperty(
+        //   'demuxer-lavf-o',
+        //   'http_persistent=0,seg_max_retry=100',
+        //   //'http_persistent=0,seg_max_retry=10000',
+        //   //'http_persistent=0,http_multiple=0,http_seekable=0,seg_max_retry=5',
+        //   //'http_persistent=0,timeout=1000,seg_max_retry=5',
+        // );
+        await (player.platform as dynamic).setProperty(
+          'demuxer-lavf-o',
+          'http_persistent=0,seg_max_retry=5',
+        );
+      }
+
       await player.open(
         Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
         play: false,
@@ -226,6 +250,45 @@ class DesktopPlayerNotifier extends ChangeNotifier {
 
       subscriptions.addAll(
         [
+          player.stream.error.listen((event) {
+            if (_disposed) {
+              return;
+            }
+
+            log(event, name: 'PlayerError');
+
+            /// Происходит при первом открытии видео из-за просроченного сертификата,
+            /// если открыть повторно, то все збс.
+            /// на практике работает как надо, но выглядит страшно
+            /// в рот ебал я хост анилибрии
+            /// и ффмпег я тоже ебал в рот, как его сконфигурировать то епта,
+            /// чтобы не было пропусков сегментов
+            if (event.contains('Failed to open')) {
+              player
+                  .open(Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
+                      play: extra.startPosition.isEmpty)
+                  .then((_) {
+                if (extra.startPosition.isNotEmpty) {
+                  (player.platform as NativePlayer)
+                      .setProperty(
+                        "start",
+                        extra.startPosition,
+                      )
+                      .then((_) =>
+                          player.seek(_parseDuration(extra.startPosition)))
+                      .then((_) => player.play());
+                }
+              });
+              return;
+            }
+
+            if (event.contains('ffurl')) {
+              return;
+            }
+
+            streamAsync = AsyncValue.error(event, StackTrace.current);
+            notifyListeners();
+          }),
           player.stream.playing.listen((event) {
             if (_disposed) {
               return;
