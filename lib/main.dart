@@ -126,9 +126,9 @@ void initApp() async {
 
   runApp(
     ProviderScope(
-      observers: const [
-        if (kDebugMode) ProviderLogger(),
-      ],
+      // observers: const [
+      //   if (kDebugMode) ProviderLogger(),
+      // ],
       overrides: [
         environmentProvider.overrideWithValue(
           EnvironmentDataSource(

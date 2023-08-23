@@ -2,6 +2,10 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 extension DateTimeExt on DateTime {
+  String get toDateString => DateFormat.yMMMd().format(this);
+
+  DateTime get toShort => DateTime(year, month, day);
+
   bool isToday() {
     final now = DateTime.now();
     return now.year == year && now.month == month && now.day == day;

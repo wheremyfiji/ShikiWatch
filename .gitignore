@@ -38,6 +38,7 @@ lib/secret.dart
 
 /lib/kodik/
 /lib/anilibria/
+/lib/anime_lib/
 
 # Symbolication related
 app.*.symbols

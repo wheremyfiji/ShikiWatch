@@ -5,12 +5,14 @@ import 'package:expandable_text/expandable_text.dart';
 //import 'package:flutter_html/flutter_html.dart';
 import 'package:html/parser.dart';
 
+import '../../utils/extensions/buildcontext.dart';
 // CustomRenderMatcher birdMatcher() =>
 //     (context) => context.tree.element?.localName == 'character';
 
 class TitleDescription extends StatelessWidget {
   final String description;
-  const TitleDescription(this.description, {Key? key}) : super(key: key);
+
+  const TitleDescription(this.description, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class TitleDescription extends StatelessWidget {
       urlStyle: const TextStyle(
         decoration: TextDecoration.underline,
       ),
-      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 15),
+      style: context.textTheme.bodyMedium?.copyWith(fontSize: 14),
       expandOnTextTap: true,
       collapseOnTextTap: true,
       // onUrlTap: (value) {

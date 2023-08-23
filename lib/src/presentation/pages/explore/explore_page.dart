@@ -9,6 +9,7 @@ import '../../../domain/models/animes.dart';
 import '../../providers/explore_page_provider.dart';
 import '../../widgets/anime_card.dart';
 import '../../widgets/error_widget.dart';
+
 import 'widgets/explore_actions.dart';
 
 class ExplorePage extends ConsumerWidget {

@@ -26,7 +26,7 @@ dependencies:
   android_intent_plus: ^4.0.2
   audio_video_progress_bar: ^1.0.1
   #git_info: ^1.1.2
-  bottom_sheet: ^3.1.2
+  #bottom_sheet: ^3.1.2
   cached_network_image: ^3.2.3
   collection: ^1.17.1
   connectivity_plus: ^4.0.1
@@ -57,7 +57,7 @@ dependencies:
   flutter_web_auth: ^0.5.0
   freezed_annotation: ^2.4.1
   go_router: 7.1.1
-  hooks_riverpod: ^2.3.7
+  hooks_riverpod: ^2.3.8
   html: ^0.15.4
   http: ^1.1.0
   infinite_scroll_pagination: ^3.2.0
@@ -66,10 +66,10 @@ dependencies:
   isar: *isar_version
   isar_flutter_libs: *isar_version
   loggy: ^2.0.3
-  media_kit: ^1.1.3+1
-  media_kit_libs_windows_video: ^1.0.6
+  media_kit: ^1.1.5
+  media_kit_libs_windows_video: ^1.0.7
   #media_kit_native_event_loop: ^1.0.6
-  media_kit_video: ^1.1.3
+  media_kit_video: ^1.1.6
   #nirikshak: ^0.1.0
   network_logger:
     git:
