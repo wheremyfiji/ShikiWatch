@@ -39,9 +39,14 @@ class LibraryPageAppBar extends ConsumerWidget {
           ? const Text('Манга и ранобе')
           : const Text('Аниме'),
       actions: [
-        // IconButton(
-        //   onPressed: () {},
-        //   icon: const Icon(Icons.notifications),
+        // Badge.count(
+        //   count: 9990,
+        //   offset: const Offset(8, -8),
+        //   alignment: AlignmentDirectional.center,
+        //   child: IconButton(
+        //     onPressed: () {},
+        //     icon: const Icon(Icons.notifications),
+        //   ),
         // ),
         GestureDetector(
           onTap: () => showLibraryPopUp(context),
@@ -59,21 +64,10 @@ class LibraryPageAppBar extends ConsumerWidget {
       ],
       bottom: TabBar(
         controller: tabController,
-        unselectedLabelColor: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black,
         isScrollable: true,
-        indicatorSize: TabBarIndicatorSize.label,
-        indicatorWeight: 2,
+        indicatorWeight: 1.5,
         dividerColor: Colors.transparent,
-        splashFactory: NoSplash.splashFactory,
-        overlayColor: MaterialStateProperty.resolveWith<Color?>(
-          (Set<MaterialState> states) {
-            return states.contains(MaterialState.focused)
-                ? null
-                : Colors.transparent;
-          },
-        ),
+        splashBorderRadius: BorderRadius.circular(12.0),
         tabs: state == LibraryFragmentMode.manga
             ? const [
                 Tab(

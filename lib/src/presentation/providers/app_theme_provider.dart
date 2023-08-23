@@ -55,17 +55,9 @@ class AppThemeDataNotifier {
         ? ThemeData.dark(useMaterial3: true)
         : ThemeData.light(useMaterial3: true);
     return origin.copyWith(
-      //pageTransitionsTheme: NoTransitions(),
       visualDensity: VisualDensity.standard,
       useMaterial3: true,
       colorScheme: colorScheme,
-      appBarTheme: AppBarTheme(
-        elevation: 0,
-        backgroundColor: colorScheme.background,
-        foregroundColor: colorScheme.onSurface,
-        //shadowColor: Colors.transparent,
-        //surfaceTintColor: Colors.transparent,
-      ),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       dialogBackgroundColor: colorScheme.background,
@@ -83,14 +75,11 @@ class AppThemeDataNotifier {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
         ),
-        //backgroundColor: colorScheme.primaryContainer,
-        //contentTextStyle: TextStyle(color: colorScheme.onPrimaryContainer),
       ),
       listTileTheme: origin.listTileTheme.copyWith(
         minVerticalPadding: 12,
         iconColor: colorScheme.onSurfaceVariant,
       ),
-
       navigationBarTheme: NavigationBarThemeData(
         labelTextStyle: MaterialStateProperty.resolveWith(
           (states) {
@@ -110,12 +99,6 @@ class AppThemeDataNotifier {
           },
         ),
       ),
-
-      // dropdownMenuTheme: origin.dropdownMenuTheme.copyWith(
-      //   inputDecorationTheme:
-      //       const InputDecorationTheme(border: OutlineInputBorder()),
-      //   //menuStyle: MenuStyle(),
-      // ),
     );
   }
 

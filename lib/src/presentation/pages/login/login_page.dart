@@ -144,7 +144,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     children: [
                       Icon(
                         Icons.login_outlined,
-                        //size: 32,
                       ),
                       SizedBox(
                         width: 12,
@@ -165,7 +164,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     children: [
                       Icon(
                         Icons.settings_outlined,
-                        //size: 32,
                       ),
                       SizedBox(
                         width: 12,

@@ -58,7 +58,7 @@ class _LoginDesktopPageState extends ConsumerState<LoginDesktopPage> {
 
   void goToHome() {
     ref.read(routerNotifierProvider.notifier).userLogin = true;
-    GoRouter.of(context).go('/library'); //library explore
+    GoRouter.of(context).go('/library');
   }
 
   Future<void> auth(String code) async {
@@ -185,7 +185,6 @@ class _LoginDesktopPageState extends ConsumerState<LoginDesktopPage> {
                             children: [
                               Icon(
                                 Icons.settings_outlined,
-                                //size: 32,
                               ),
                               SizedBox(
                                 width: 12,

@@ -34,10 +34,7 @@ class OAuthService {
       headers: headers,
     );
 
-    //logDebug('[Auth login] ${tokenRequestResponse.statusCode}');
-
     if (tokenRequestResponse.statusCode == 200) {
-      //logDebug('[Auth login] Get Access Token');
       final data =
           convert.jsonDecode(tokenRequestResponse.body) as Map<String, dynamic>;
 
@@ -114,12 +111,18 @@ class OAuthService {
 
       WhoIAm data = WhoIAm.fromJson(json);
 
+      if (data.nickname != null) {
+        await SecureStorageService.instance.writeUserNickname(data.nickname!);
+      }
+
       await SecureStorageService.instance.writeUserId(data.id.toString());
+
       await SecureStorageService.instance
-          .writeUserImage(data.image!.x160 ?? '');
+          .writeUserImage(data.image?.x160 ?? '');
 
       SecureStorageService.instance.userId = data.id.toString();
-      SecureStorageService.instance.userProfileImage = data.image!.x160 ?? '';
+      SecureStorageService.instance.userNickname = data.nickname ?? '';
+      SecureStorageService.instance.userProfileImage = data.image?.x160 ?? '';
 
       Sentry.configureScope(
         (scope) => scope.setUser(
@@ -143,9 +146,7 @@ class OAuthService {
         'Failed to get USER response',
         withScope: (scope) {
           scope.setExtra('code', statusCode);
-          //scope.setTag('my-tag', 'my value');
           scope.level = SentryLevel.error;
-          //scope.setContexts('episode link', episodeLink);
         },
       );
       logError('Failed to get USER response');
