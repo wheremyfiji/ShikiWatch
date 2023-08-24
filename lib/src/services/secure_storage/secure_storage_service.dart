@@ -1,5 +1,6 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:loggy/loggy.dart';
 
 class SecureStorageService extends SecureStorageValues {
   static SecureStorageService instance = SecureStorageService();
@@ -31,10 +32,10 @@ class SecureStorageService extends SecureStorageValues {
   }
 
   void debug() {
-    logDebug('SecureStorage: token = $token');
-    logDebug('SecureStorage: refreshToken = $refreshToken');
-    logDebug('SecureStorage: userId = $userId');
-    logDebug('SecureStorage: userProfileImage = $userProfileImage');
+    debugPrint('SecureStorage: token = $token');
+    debugPrint('SecureStorage: refreshToken = $refreshToken');
+    debugPrint('SecureStorage: userId = $userId');
+    debugPrint('SecureStorage: userProfileImage = $userProfileImage');
   }
 
   Future<void> read() async {

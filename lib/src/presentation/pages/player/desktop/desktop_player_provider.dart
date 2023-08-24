@@ -95,6 +95,8 @@ class DesktopPlayerNotifier extends ChangeNotifier {
 
   StreamQuality selectedQuality = StreamQuality.fhd;
 
+  //late File logFile;
+
   Future<void> initState() async {
     oldTitle = await windowManager.getTitle();
 
@@ -192,6 +194,8 @@ class DesktopPlayerNotifier extends ChangeNotifier {
       if (dr) {
         _setRpc();
       }
+
+      //logFile = await createLogFile(streamHd!.contains('static.'));
 
       // if (player.platform is NativePlayer) {
       //   await (player.platform as NativePlayer)
@@ -452,6 +456,15 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   void _pipeLogsToConsole(Player player) {
     player.stream.log.listen(
       (event) {
+        //!(libmpv_render || ao/wasapi)
+        // if ((event.prefix.contains('ffmpeg') ||
+        //     event.prefix.contains('cplayer'))) {
+        //   logToFile(
+        //     file: logFile,
+        //     value: '${event.prefix}::${event.level}::${event.text}',
+        //   );
+        // }
+
         if (kDebugMode) {
           log('${event.prefix}: ${event.level}: ${event.text}',
               name: 'mpv player');

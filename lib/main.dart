@@ -15,7 +15,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:loggy/loggy.dart';
 import 'package:intl/intl.dart';
 
 import 'src/services/anime_database/anime_database_provider.dart';
@@ -24,6 +23,7 @@ import 'src/services/secure_storage/secure_storage_service.dart';
 import 'src/presentation/providers/environment_provider.dart';
 import 'src/services/preferences/preferences_service.dart';
 import 'src/data/data_sources/environment_data_src.dart';
+import 'src/utils/dynamic_colors.dart';
 import 'src/utils/target_platform.dart';
 import 'src/presentation/shiki.dart';
 
@@ -61,10 +61,6 @@ void initApp() async {
 
   final appCacheDir = await path_prov.getTemporaryDirectory();
   TargetP.init(appCacheDir);
-
-  Loggy.initLoggy(
-    logPrinter: const PrettyPrinter(),
-  );
 
   // if (Platform.isAndroid) {
   //   try {
@@ -105,11 +101,9 @@ void initApp() async {
   }
 
   final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
-  //await animeDatabase.migration();
-
   final preferencesService = await PreferencesService.initialize();
-
   final packageInfo = await PackageInfo.fromPlatform();
+  final dynamicColors = await getDynamicColors();
 
   AndroidDeviceInfo? androidInfo;
   WindowsDeviceInfo? windowsInfo;
@@ -139,11 +133,8 @@ void initApp() async {
         ),
         animeDatabaseProvider.overrideWithValue(animeDatabase),
         preferencesProvider.overrideWithValue(preferencesService),
+        dynamicColorsProvider.overrideWithValue(dynamicColors)
       ],
-      // child: WindowWatcher(
-      //   child: const ShikiApp(),
-      //   onClose: () {},
-      // ),
       child: const ShikiApp(),
     ),
   );

@@ -9,14 +9,14 @@ final appThemeDataProvider = Provider.autoDispose<AppThemeDataNotifier>((ref) {
 
 class AppThemeData {
   const AppThemeData({
-    required this.day,
-    required this.night,
-    required this.midnight,
+    required this.light,
+    required this.dark,
+    required this.oled,
   });
 
-  final ThemeData day;
-  final ThemeData night;
-  final ThemeData midnight;
+  final ThemeData light;
+  final ThemeData dark;
+  final ThemeData oled;
 }
 
 class AppThemeDataNotifier {
@@ -36,9 +36,9 @@ class AppThemeDataNotifier {
   AppThemeData _createAppThemeData(
       {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {
     return AppThemeData(
-      day: _createThemeData(light, Brightness.light, useMonet!),
-      night: _createThemeData(dark, Brightness.dark, useMonet),
-      midnight: _createThemeDataMidnight(dark, useMonet),
+      light: _createThemeData(light, Brightness.light, useMonet!),
+      dark: _createThemeData(dark, Brightness.dark, useMonet),
+      oled: _createThemeDataMidnight(dark, useMonet),
     );
   }
 
@@ -48,7 +48,6 @@ class AppThemeDataNotifier {
     final defScheme = isDark ? defDarkScheme : defLightScheme;
     final harmonized = useMonet ? scheme?.harmonized() ?? defScheme : defScheme;
     final colorScheme = harmonized.copyWith(
-      //background: harmonized.surface.shade(isDark ? 30 : 3),
       outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
     );
     final origin = isDark
@@ -106,7 +105,6 @@ class AppThemeDataNotifier {
     final origin = _createThemeData(scheme, Brightness.dark, useMonet);
     return origin.copyWith(
       appBarTheme: AppBarTheme(
-        //backgroundColor: Colors.black,
         backgroundColor: backgroundReducedSmearingColor,
         foregroundColor: origin.colorScheme.onSurface,
         shadowColor: Colors.transparent,
@@ -142,7 +140,6 @@ class AppThemeDataNotifier {
   }
 
   static const defaultAccent = Colors.lightBlue;
-  //Color.fromARGB(255, 149, 30, 229);
 
   static final defLightScheme = ColorScheme.fromSeed(
     seedColor: defaultAccent,

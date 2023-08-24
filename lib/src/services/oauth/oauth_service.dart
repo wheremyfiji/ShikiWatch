@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:loggy/loggy.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'dart:convert' as convert;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../secret.dart';
 import '../../utils/target_platform.dart';
@@ -149,7 +150,7 @@ class OAuthService {
           scope.level = SentryLevel.error;
         },
       );
-      logError('Failed to get USER response');
+      debugPrint('Failed to get USER response');
       throw Exception('Failed to get USER response. Status code = $statusCode');
     }
   }
