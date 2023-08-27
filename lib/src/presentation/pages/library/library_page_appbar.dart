@@ -48,16 +48,21 @@ class LibraryPageAppBar extends ConsumerWidget {
         //     icon: const Icon(Icons.notifications),
         //   ),
         // ),
-        GestureDetector(
-          onTap: () => showLibraryPopUp(context),
-          child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            foregroundImage: CachedNetworkImageProvider(
-              SecureStorageService.instance.userProfileImage,
-              cacheManager: cacheManager,
+        if (!innerBoxIsScrolled)
+          GestureDetector(
+            onTap: () => showLibraryPopUp(context),
+            child: CircleAvatar(
+              //radius: innerBoxIsScrolled ? 0 : null,
+
+              backgroundColor: Colors.transparent,
+              foregroundImage: CachedNetworkImageProvider(
+                SecureStorageService.instance.userProfileImage,
+                cacheManager: cacheManager,
+              ),
             ),
-          ).animate().fadeIn(),
-        ),
+            //.animate().fadeIn(),
+          ),
+
         const SizedBox(
           width: 16,
         ),

@@ -37,24 +37,31 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
     // Query<AnimeDatabase> animeList =
     //     isardb.animeDatabases.where().sortByLastUpdateDesc().build();
 
-    Query<AnimeDatabase> animeList = isardb.animeDatabases.buildQuery(
-      whereClauses: [
-        const IndexWhereClause.greaterThan(
-          indexName: 'shikimoriId',
-          lower: [0],
-          includeLower: false,
-        ),
-      ],
-      filter: const FilterCondition.isNotNull(
-        property: 'studios',
-      ),
-      sortBy: [
-        const SortProperty(
-          property: 'lastUpdate',
-          sort: Sort.desc,
-        )
-      ],
-    );
+    final animeList = isardb.animeDatabases
+        .filter()
+        .shikimoriIdGreaterThan(0)
+        .studiosElement((q) => q.idIsNotNull())
+        .sortByLastUpdateDesc()
+        .build();
+
+    // Query<AnimeDatabase> animeList = isardb.animeDatabases.buildQuery(
+    //   whereClauses: [
+    //     const IndexWhereClause.greaterThan(
+    //       indexName: 'shikimoriId',
+    //       lower: [0],
+    //       includeLower: false,
+    //     ),
+    //   ],
+    //   filter: const FilterCondition.isNotNull(
+    //     property: 'studios',
+    //   ),
+    //   sortBy: [
+    //     const SortProperty(
+    //       property: 'lastUpdate',
+    //       sort: Sort.desc,
+    //     )
+    //   ],
+    // );
 
     return animeList.watch(fireImmediately: true);
   }

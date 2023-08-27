@@ -95,6 +95,8 @@ class DesktopPlayerNotifier extends ChangeNotifier {
 
   StreamQuality selectedQuality = StreamQuality.fhd;
 
+  int retryCount = 0;
+
   //late File logFile;
 
   Future<void> initState() async {
@@ -267,11 +269,12 @@ class DesktopPlayerNotifier extends ChangeNotifier {
             /// в рот ебал я хост анилибрии
             /// и ффмпег я тоже ебал в рот, как его сконфигурировать то епта,
             /// чтобы не было пропусков сегментов
-            if (event.contains('Failed to open')) {
+            if (event.contains('Failed to open') && retryCount == 0) {
               player
                   .open(Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
                       play: extra.startPosition.isEmpty)
                   .then((_) {
+                retryCount += 1;
                 if (extra.startPosition.isNotEmpty) {
                   (player.platform as NativePlayer)
                       .setProperty(

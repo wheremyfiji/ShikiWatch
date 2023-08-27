@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -110,6 +111,10 @@ void initApp() async {
 
   if (Platform.isAndroid) {
     androidInfo = await DeviceInfoPlugin().androidInfo;
+
+    if (androidInfo.version.sdkInt > 28) {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
   }
 
   if (Platform.isWindows) {

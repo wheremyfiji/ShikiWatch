@@ -12,7 +12,7 @@ isar_version: &isar_version 3.1.0+1
 
 dependencies:
   android_intent_plus: ^4.0.2
-  audio_video_progress_bar: ^1.0.1
+  audio_video_progress_bar: ^2.0.0
   #git_info: ^1.1.2
   #bottom_sheet: ^3.1.2
   cached_network_image: ^3.2.3
@@ -30,6 +30,7 @@ dependencies:
   easy_image_viewer: ^1.2.1
   equatable: ^2.0.5
   expandable_text: ^2.3.0
+  extended_nested_scroll_view: ^6.1.2
   file_picker: ^5.3.3
   flutter:
     sdk: flutter
@@ -52,9 +53,9 @@ dependencies:
   intl: ^0.18.1
   isar: *isar_version
   isar_flutter_libs: *isar_version
-  media_kit: ^1.1.5
-  media_kit_libs_windows_video: ^1.0.7
-  media_kit_video: ^1.1.6
+  media_kit: ^1.1.6
+  media_kit_libs_windows_video: ^1.0.8
+  media_kit_video: ^1.1.7
   #nirikshak: ^0.1.0
   network_logger:
     git:

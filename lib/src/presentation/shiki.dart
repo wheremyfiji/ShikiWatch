@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,7 +8,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../utils/dynamic_colors.dart';
 import '../utils/router.dart';
 
-import 'providers/environment_provider.dart';
 import 'providers/settings_provider.dart';
 import 'widgets/app_theme_builder.dart';
 
@@ -21,15 +19,15 @@ class ShikiApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
-    final environment = ref.watch(environmentProvider);
+    //final environment = ref.watch(environmentProvider);
     final dynamicColors = ref.watch(dynamicColorsProvider);
 
     final (themeMode, useDynamicColors, oledMode) = ref.watch(
         settingsProvider.select((s) => (s.theme, s.dynamicColors, s.oledMode)));
 
-    if ((environment.sdkVersion ?? 0) > 28) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    }
+    // if ((environment.sdkVersion ?? 0) > 28) {
+    //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // }
 
     return AppThemeBuilder(
       dynamicLight: dynamicColors?.light,
