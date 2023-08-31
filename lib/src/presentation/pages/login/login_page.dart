@@ -174,6 +174,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
             ],
+            SizedBox(
+              height: MediaQuery.of(context).padding.bottom + 16.0,
+            ),
           ],
         ),
       ),

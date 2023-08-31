@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/models/manga_ranobe.dart';
 import '../../../../domain/models/manga_short.dart';
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../widgets/shadowed_overflow_list.dart';
 import '../../comments/comments_page.dart';
 import '../manga_links_page.dart';
 import '../manga_similar_page.dart';
@@ -22,91 +23,94 @@ class MangaActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(0),
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          spacing: 8.0,
-          children: [
-            const SizedBox(
-              width: 8.0,
-            ),
-            _UserRateItem(
-              data,
-              onPressed: () => showModalBottomSheet<void>(
-                context: context,
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width >= 700
-                      ? 700
-                      : double.infinity,
-                ),
-                useRootNavigator: true,
-                isScrollControlled: true,
-                enableDrag: false,
-                useSafeArea: true,
-                builder: (context) {
-                  return SafeArea(
-                    child: MangaUserRateBottomSheet(
-                      manga: manga,
-                      data: data,
-                    ),
-                  );
-                },
+      child: ShadowedOverflowList(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(0),
+          scrollDirection: Axis.horizontal,
+          child: Wrap(
+            spacing: 8.0,
+            children: [
+              const SizedBox(
+                width: 8.0,
               ),
-            ),
-            // _ActionItem(
-            //   title: 'Хронология',
-            //   icon: Icons.playlist_play_rounded,
-            //   onPressed: () {},
-            // ),
-            if (data.topicId != null && data.topicId != 0)
+              _UserRateItem(
+                data,
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width >= 700
+                        ? 700
+                        : double.infinity,
+                  ),
+                  useRootNavigator: true,
+                  isScrollControlled: true,
+                  enableDrag: false,
+                  useSafeArea: true,
+                  elevation: 0,
+                  builder: (context) {
+                    return SafeArea(
+                      child: MangaUserRateBottomSheet(
+                        manga: manga,
+                        data: data,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // _ActionItem(
+              //   title: 'Хронология',
+              //   icon: Icons.playlist_play_rounded,
+              //   onPressed: () {},
+              // ),
+              if (data.topicId != null && data.topicId != 0)
+                _ActionItem(
+                  title: 'Обсуждение',
+                  icon: Icons.forum_rounded,
+                  onPressed: () => Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          CommentsPage(
+                        topicId: data.topicId!,
+                      ),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  ),
+                ),
               _ActionItem(
-                title: 'Обсуждение',
-                icon: Icons.forum_rounded,
+                title: 'Похожее',
+                icon: Icons.join_inner,
                 onPressed: () => Navigator.push(
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) =>
-                        CommentsPage(
-                      topicId: data.topicId!,
+                        MangaSimilarPage(manga.id!),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                ),
+              ),
+              _ActionItem(
+                title: 'Ссылки',
+                icon: Icons.link,
+                onPressed: () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        MangaExternalLinksPage(
+                      data.id!,
                     ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),
                 ),
               ),
-            _ActionItem(
-              title: 'Похожее',
-              icon: Icons.join_inner,
-              onPressed: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      MangaSimilarPage(manga.id!),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
+              const SizedBox(
+                width: 8.0,
               ),
-            ),
-            _ActionItem(
-              title: 'Ссылки',
-              icon: Icons.link,
-              onPressed: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      MangaExternalLinksPage(
-                    data.id!,
-                  ),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 8.0,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

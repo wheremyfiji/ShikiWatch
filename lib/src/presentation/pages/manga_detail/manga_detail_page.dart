@@ -79,7 +79,10 @@ class MangaDetailPage extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: TitlePoster(
                       data.image?.original ?? '',
-                    ).animate().fade(),
+                    )
+                        .animate()
+                        .fade()
+                        .slideY(begin: .05, end: 0, curve: Curves.easeOutCirc),
                   ),
                   SliverToBoxAdapter(
                     child: MangaActions(

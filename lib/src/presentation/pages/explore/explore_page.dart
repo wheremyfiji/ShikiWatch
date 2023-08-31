@@ -28,22 +28,10 @@ class ExplorePage extends ConsumerWidget {
           clipBehavior: Clip.none,
           key: const PageStorageKey<String>('ExplorePage'),
           slivers: [
-            SliverAppBar(
+            SliverAppBar.large(
               automaticallyImplyLeading: false,
-              //title: const Text('ShikiWatch'),
               pinned: true,
-              expandedHeight: 168,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: false,
-                titlePadding: const EdgeInsets.all(16),
-                title: Text(
-                  'ShikiWatch',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 24,
-                  ),
-                ),
-              ),
+              title: const Text('ShikiWatch'),
               actions: [
                 IconButton(
                   onPressed: () => context.push('/explore/search'),

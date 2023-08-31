@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:network_logger/network_logger.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../providers/user_profile_provider.dart';
@@ -126,29 +125,7 @@ class _ProfilePageAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar.large(
       title: const Text('Мой профиль'),
-      actions: [
-        // дебаг для деда
-        if (SecureStorageService.instance.userId == '384889' ||
-            SecureStorageService.instance.userId == '1161605') ...[
-          IconButton(
-            onPressed: () => NetworkLoggerScreen.open(context),
-            icon: const Icon(Icons.travel_explore),
-          ),
-        ],
-
-        IconButton(
-          tooltip: 'Искать пользователя',
-          onPressed: () => context.pushNamed('user_search'),
-          icon: const Icon(
-            Icons.person_search,
-          ),
-        ),
-        IconButton(
-          tooltip: 'Настройки',
-          onPressed: () => context.push('/profile/settings'),
-          icon: const Icon(Icons.settings_outlined),
-        ),
-      ],
+      //actions: const [],
     );
   }
 }

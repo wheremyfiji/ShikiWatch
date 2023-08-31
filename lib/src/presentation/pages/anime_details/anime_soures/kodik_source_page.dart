@@ -90,12 +90,16 @@ class KodikSourcePage extends ConsumerWidget {
                 bottom: AppBar(
                   automaticallyImplyLeading: false,
                   primary: false,
+                  titleSpacing: 0.0,
                   title: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 0,
                       children: [
+                        const SizedBox(
+                          width: 8.0,
+                        ),
                         ChoiceChip(
                           label: const Text('Все'),
                           selected: studioType == KodikStudioType.all,
@@ -116,6 +120,9 @@ class KodikSourcePage extends ConsumerWidget {
                           onSelected: (value) => ref
                               .read(kodikStudioTypeProvider.notifier)
                               .state = KodikStudioType.sub,
+                        ),
+                        const SizedBox(
+                          width: 8.0,
                         ),
                       ],
                     ),
@@ -155,6 +162,11 @@ class KodikSourcePage extends ConsumerWidget {
                     },
                   ),
                 ],
+              ),
+              const SliverToBoxAdapter(
+                child: Divider(
+                  height: 1,
+                ),
               ),
               ...studios.when(
                 loading: () => [

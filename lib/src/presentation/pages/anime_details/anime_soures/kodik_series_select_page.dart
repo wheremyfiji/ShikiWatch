@@ -146,7 +146,7 @@ class SeriesSelectPage extends ConsumerWidget {
                   ),
                 ],
                 title: Text(
-                  '$animeName • $studioName',
+                  '$animeName • ${studioName.replaceFirst('.Subtitles', ' (Субтитры)')}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

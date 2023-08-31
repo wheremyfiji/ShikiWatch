@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../domain/models/anime.dart';
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../widgets/shadowed_overflow_list.dart';
 import '../../comments/comments_page.dart';
 import '../anime_franchise_page.dart';
 import '../external_links.dart';
@@ -22,99 +23,102 @@ class TitleActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(0),
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          spacing: 8,
-          children: [
-            const SizedBox(
-              width: 8.0,
-            ),
-            _UserRateItem(
-              anime,
-              onPressed: () => showModalBottomSheet<void>(
-                context: context,
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width >= 700
-                      ? 700
-                      : double.infinity,
-                ),
-                useRootNavigator: true,
-                isScrollControlled: true,
-                enableDrag: false,
-                useSafeArea: true,
-                builder: (context) {
-                  return SafeArea(
-                    child: AnimeUserRateBottomSheet(
-                      data: anime,
-                      needUpdate: true,
-                    ),
-                  );
-                },
+      child: ShadowedOverflowList(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(0),
+          scrollDirection: Axis.horizontal,
+          child: Wrap(
+            spacing: 8,
+            children: [
+              const SizedBox(
+                width: 8.0,
               ),
-            ),
-            _ActionItem(
-              title: 'Хронология',
-              icon: Icons.playlist_play_rounded, //list_rounded
-              onPressed: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      AnimeFranchisePage(anime.id!),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
+              _UserRateItem(
+                anime,
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width >= 700
+                        ? 700
+                        : double.infinity,
+                  ),
+                  elevation: 0,
+                  useRootNavigator: true,
+                  isScrollControlled: true,
+                  enableDrag: false,
+                  useSafeArea: true,
+                  builder: (context) {
+                    return SafeArea(
+                      child: AnimeUserRateBottomSheet(
+                        data: anime,
+                        needUpdate: true,
+                      ),
+                    );
+                  },
                 ),
               ),
-            ),
-            if (anime.topicId != null && anime.topicId != 0)
               _ActionItem(
-                title: 'Обсуждение',
-                icon: Icons.forum_rounded,
+                title: 'Хронология',
+                icon: Icons.playlist_play_rounded, //list_rounded
                 onPressed: () => Navigator.push(
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) =>
-                        CommentsPage(
-                      topicId: anime.topicId!,
+                        AnimeFranchisePage(anime.id!),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                ),
+              ),
+              if (anime.topicId != null && anime.topicId != 0)
+                _ActionItem(
+                  title: 'Обсуждение',
+                  icon: Icons.forum_rounded,
+                  onPressed: () => Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          CommentsPage(
+                        topicId: anime.topicId!,
+                      ),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  ),
+                ),
+              _ActionItem(
+                title: 'Похожее',
+                icon: Icons.join_inner,
+                onPressed: () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        SimilarAnimesPage(animeId: anime.id!),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                ),
+              ),
+              _ActionItem(
+                title: 'Ссылки',
+                icon: Icons.link,
+                onPressed: () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        ExternalLinksWidget(
+                      animeId: anime.id!,
                     ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),
                 ),
               ),
-            _ActionItem(
-              title: 'Похожее',
-              icon: Icons.join_inner,
-              onPressed: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      SimilarAnimesPage(animeId: anime.id!),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
+              const SizedBox(
+                width: 8.0,
               ),
-            ),
-            _ActionItem(
-              title: 'Ссылки',
-              icon: Icons.link,
-              onPressed: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      ExternalLinksWidget(
-                    animeId: anime.id!,
-                  ),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 8.0,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

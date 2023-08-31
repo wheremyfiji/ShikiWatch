@@ -18,29 +18,35 @@ class SearchTypeChips extends ConsumerWidget {
       spacing: 8,
       runSpacing: 0,
       children: [
+        const SizedBox(
+          width: 8.0,
+        ),
         ChoiceChip(
-          selected: searchType == SearchType.anime,
-          //labelPadding: const EdgeInsets.all(0),
           label: const Text('Аниме'),
-          onSelected: (bool selected) {
-            ref.read(animeSearchProvider(t)).changeSearchType(SearchType.anime);
-          },
+          labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+          selected: searchType == SearchType.anime,
+          onSelected: (_) => ref
+              .read(animeSearchProvider(t))
+              .changeSearchType(SearchType.anime),
         ),
         ChoiceChip(
-          selected: searchType == SearchType.manga,
           label: const Text('Манга'),
-          onSelected: (bool selected) {
-            ref.read(animeSearchProvider(t)).changeSearchType(SearchType.manga);
-          },
+          selected: searchType == SearchType.manga,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+          onSelected: (_) => ref
+              .read(animeSearchProvider(t))
+              .changeSearchType(SearchType.manga),
         ),
         ChoiceChip(
-          selected: searchType == SearchType.ranobe,
           label: const Text('Ранобе'),
-          onSelected: (bool selected) {
-            ref
-                .read(animeSearchProvider(t))
-                .changeSearchType(SearchType.ranobe);
-          },
+          labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+          selected: searchType == SearchType.ranobe,
+          onSelected: (_) => ref
+              .read(animeSearchProvider(t))
+              .changeSearchType(SearchType.ranobe),
+        ),
+        const SizedBox(
+          width: 8.0,
         ),
       ],
     );

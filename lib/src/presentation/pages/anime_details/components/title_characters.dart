@@ -35,17 +35,17 @@ class TitleCharactersWidget extends ConsumerWidget {
         }
 
         return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 8.0),
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(right: 4.0),
+                      padding: const EdgeInsets.only(left: 16.0, right: 4.0),
                       child: Text(
                         'Персонажи',
                         style: context.textTheme.bodyLarge!
@@ -67,15 +67,21 @@ class TitleCharactersWidget extends ConsumerWidget {
               ),
               SizedBox(
                 height: 120, //210
-                child: ListView.separated(
+                child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: characters.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 8),
+                  // separatorBuilder: (context, index) =>
+                  //     const SizedBox(width: 8),
                   itemBuilder: (context, index) {
+                    final isFirstItem = index == 0;
                     final item = characters[index];
 
-                    return CharacterCard(item.character!);
+                    return Container(
+                      margin:
+                          EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 8, 0),
+                      height: 120,
+                      child: CharacterCard(item.character!),
+                    );
 
                     // return AspectRatio(
                     //   aspectRatio: 0.55,

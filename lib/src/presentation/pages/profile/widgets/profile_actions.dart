@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../user_clubs_page.dart';
-import '../user_history_page.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileActions extends StatelessWidget {
   final String userId;
@@ -18,17 +17,10 @@ class ProfileActions extends StatelessWidget {
           children: [
             Expanded(
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          UserClubsPage(userId),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
-                },
+                onPressed: () => context.pushNamed(
+                  'user_clubs',
+                  pathParameters: {'id': userId},
+                ),
                 child: const Column(
                   children: [
                     Icon(Icons.groups),
@@ -56,17 +48,10 @@ class ProfileActions extends StatelessWidget {
             // ),
             Expanded(
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          UserHistoryPage(userId),
-                      transitionDuration: Duration.zero,
-                      reverseTransitionDuration: Duration.zero,
-                    ),
-                  );
-                },
+                onPressed: () => context.pushNamed(
+                  'user_online_history',
+                  pathParameters: {'id': userId},
+                ),
                 child: const Column(
                   children: [
                     Icon(Icons.history_rounded),

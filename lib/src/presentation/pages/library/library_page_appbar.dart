@@ -1,20 +1,24 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/enums/library_state.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../../domain/enums/library_state.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
+import '../../widgets/custom_search_bar.dart';
+
+import 'search/library_anime_search_page.dart';
 
 final libraryStateProvider = StateProvider<LibraryFragmentMode>((ref) {
   final LibraryFragmentMode currentFragment = ref
       .watch(settingsProvider.select((settings) => settings.libraryFragment));
 
   return currentFragment;
-}, name: 'libraryProvider');
+}, name: 'libraryViewProvider');
 
 class LibraryPageAppBar extends ConsumerWidget {
   final bool innerBoxIsScrolled;
@@ -35,9 +39,26 @@ class LibraryPageAppBar extends ConsumerWidget {
       pinned: true,
       floating: true,
       snap: false,
-      title: state == LibraryFragmentMode.manga
-          ? const Text('Манга и ранобе')
-          : const Text('Аниме'),
+      title: state == LibraryFragmentMode.anime
+          ? CustomSearchBar(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        const LibraryAnimeSearchPage(),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                );
+              },
+              hintText: 'Поиск аниме',
+              leading: const Icon(Icons.search),
+            )
+          : const Text('Манга и ранобе'),
+      // title: state == LibraryFragmentMode.manga
+      //     ? const Text('Манга и ранобе')
+      //     : const Text('Аниме'),
       actions: [
         // Badge.count(
         //   count: 9990,
@@ -48,20 +69,16 @@ class LibraryPageAppBar extends ConsumerWidget {
         //     icon: const Icon(Icons.notifications),
         //   ),
         // ),
-        if (!innerBoxIsScrolled)
-          GestureDetector(
-            onTap: () => showLibraryPopUp(context),
-            child: CircleAvatar(
-              //radius: innerBoxIsScrolled ? 0 : null,
-
-              backgroundColor: Colors.transparent,
-              foregroundImage: CachedNetworkImageProvider(
-                SecureStorageService.instance.userProfileImage,
-                cacheManager: cacheManager,
-              ),
+        GestureDetector(
+          onTap: () => showLibraryPopUp(context),
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            foregroundImage: CachedNetworkImageProvider(
+              SecureStorageService.instance.userProfileImage,
+              cacheManager: cacheManager,
             ),
-            //.animate().fadeIn(),
-          ),
+          ).animate().fadeIn(),
+        ),
 
         const SizedBox(
           width: 16,
@@ -149,7 +166,7 @@ class LibraryPopUp extends ConsumerWidget {
         heightFactor: isPortrait ? 0.5 : 1.0,
         widthFactor: isPortrait ? 1 : 0.6,
         child: Material(
-          color: Theme.of(context).colorScheme.background,
+          color: context.colorScheme.background,
           //surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
           shadowColor: Colors.transparent,
           elevation: 0,
@@ -186,10 +203,8 @@ class LibraryPopUp extends ConsumerWidget {
                     subtitle: Text(
                       'id: ${SecureStorageService.instance.userId}',
                       style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onBackground
-                            .withOpacity(0.8),
+                        color:
+                            context.colorScheme.onBackground.withOpacity(0.8),
                       ),
                     ),
                   ),

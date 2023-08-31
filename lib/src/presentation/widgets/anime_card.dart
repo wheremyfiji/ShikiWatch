@@ -72,6 +72,7 @@ class AnimeListTile extends StatelessWidget {
             isScrollControlled: true,
             enableDrag: false,
             useSafeArea: true,
+            elevation: 0,
             builder: (context) {
               return SafeArea(
                 child: AnimeUserRateBottomSheet(
@@ -260,6 +261,7 @@ class AnimeCard extends StatelessWidget {
               isScrollControlled: true,
               enableDrag: false,
               useSafeArea: true,
+              elevation: 0,
               builder: (context) {
                 return SafeArea(
                   child: AnimeUserRateBottomSheet(

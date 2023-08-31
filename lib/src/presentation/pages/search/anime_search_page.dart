@@ -28,7 +28,6 @@ class AnimeSearchPage extends ConsumerWidget {
     final t =
         SearchPageParameters(studioId: studioId ?? 0, genreId: genreId ?? 0);
     final controller = ref.watch(animeSearchProvider(t));
-
     final currentSearchType = controller.searchType;
 
     return GestureDetector(
@@ -39,19 +38,19 @@ class AnimeSearchPage extends ConsumerWidget {
       },
       child: Scaffold(
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            //FiltersBottomSheet.show(context, extra: t);
-            //return;
-            context.pushNamed('search_filters', extra: t);
-          },
+          onPressed: () => context.pushNamed('search_filters', extra: t),
           icon: const Icon(Icons.tune), //tune  filter_list
           label: const Text('Фильтры'),
           heroTag: null,
         ),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: const Icon(Icons.arrow_back),
+          ),
           title: TextField(
             controller: controller.textEditingController,
-            //autofocus: true,
             focusNode: controller.focusNode,
             onChanged: controller.onSearchChanged,
             onSubmitted: (value) {
@@ -59,7 +58,6 @@ class AnimeSearchPage extends ConsumerWidget {
             },
             decoration: InputDecoration(
               filled: false,
-              //contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
               hintText: currentSearchType.searchHintText,
               suffixIcon: controller.textEditingController.text.isNotEmpty
@@ -75,6 +73,7 @@ class AnimeSearchPage extends ConsumerWidget {
           bottom: AppBar(
             automaticallyImplyLeading: false,
             primary: false,
+            titleSpacing: 0.0,
             title: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: SearchTypeChips(t),
@@ -98,16 +97,24 @@ class AnimeSearchPage extends ConsumerWidget {
               return CustomScrollView(
                 key: const PageStorageKey<String>('SearchPageResult'),
                 slivers: [
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: Divider(
+                        height: 1,
+                      ),
+                    ),
+                  ),
                   if (controller.filterCount.isNotEmpty)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                       sliver: SliverToBoxAdapter(
                         child: Text(
                           'Кол-во фильтров: ${controller.filterCount.length}',
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    fontSize: 14,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontSize: 14),
                         ),
                       ),
                     ),
@@ -134,6 +141,14 @@ class AnimeSearchPage extends ConsumerWidget {
                           final t = item.toAnimes;
                           return AnimeTileExp(t);
                         },
+
+                        /// надо убрать топ паддинг
+                        // firstPageProgressIndicatorBuilder: (context) {
+                        //   return Container(
+                        //     alignment: Alignment.topCenter,
+                        //     child: const LinearProgressIndicator(),
+                        //   );
+                        // },
                         firstPageErrorIndicatorBuilder: (context) {
                           return CustomErrorWidget(
                             controller.pageController.error.toString(),

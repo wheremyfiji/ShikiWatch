@@ -13,6 +13,7 @@ import '../../providers/manga_details_provider.dart';
 import '../../widgets/delete_dialog.dart';
 import '../../widgets/material_you_chip.dart';
 import '../../widgets/number_field.dart';
+import '../../widgets/shadowed_overflow_list.dart';
 
 class MangaUserRateBottomSheet extends ConsumerStatefulWidget {
   final MangaShort manga;
@@ -206,49 +207,122 @@ class _MangaUserRateBottomSheetState
       },
       child: SingleChildScrollView(
         child: Padding(
-          padding:
-              MediaQuery.of(context).viewInsets + const EdgeInsets.all(16.0),
+          padding: MediaQuery.of(context).viewInsets +
+              const EdgeInsets.only(top: 16, bottom: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                (widget.data.russian == ''
-                        ? widget.data.name
-                        : widget.data.russian) ??
-                    '',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 10, bottom: 10),
+                child: Text(
+                  (widget.data.russian == ''
+                          ? widget.data.name
+                          : widget.data.russian) ??
+                      '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(
                 height: 10,
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Wrap(
-                  spacing: 8,
-                  children: List<Widget>.generate(
-                    6,
-                    (int index) {
-                      return MaterialYouChip(
-                        title: getChipLabel(index),
-                        icon: getChipIcon(index),
-                        onPressed: () {
-                          setState(
-                            () {
-                              selectedStatus = index;
-                            },
-                          );
-                        },
-                        isSelected: selectedStatus == index,
-                      );
-                    },
-                  ).toList(),
+              ShadowedOverflowList(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      const SizedBox(
+                        width: 8.0,
+                      ),
+                      MaterialYouChip(
+                        title: getChipLabel(0),
+                        icon: getChipIcon(0),
+                        onPressed: () => setState(
+                          () {
+                            selectedStatus = 0;
+                          },
+                        ),
+                        isSelected: selectedStatus == 0,
+                      ),
+                      MaterialYouChip(
+                        title: getChipLabel(1),
+                        icon: getChipIcon(1),
+                        onPressed: () => setState(
+                          () {
+                            selectedStatus = 1;
+                          },
+                        ),
+                        isSelected: selectedStatus == 1,
+                      ),
+                      MaterialYouChip(
+                        title: getChipLabel(2),
+                        icon: getChipIcon(2),
+                        onPressed: () => setState(
+                          () {
+                            selectedStatus = 2;
+                          },
+                        ),
+                        isSelected: selectedStatus == 2,
+                      ),
+                      MaterialYouChip(
+                        title: getChipLabel(3),
+                        icon: getChipIcon(3),
+                        onPressed: () => setState(
+                          () {
+                            selectedStatus = 3;
+                          },
+                        ),
+                        isSelected: selectedStatus == 3,
+                      ),
+                      MaterialYouChip(
+                        title: getChipLabel(4),
+                        icon: getChipIcon(4),
+                        onPressed: () => setState(
+                          () {
+                            selectedStatus = 4;
+                          },
+                        ),
+                        isSelected: selectedStatus == 4,
+                      ),
+                      MaterialYouChip(
+                        title: getChipLabel(5),
+                        icon: getChipIcon(5),
+                        onPressed: () => setState(
+                          () {
+                            selectedStatus = 5;
+                          },
+                        ),
+                        isSelected: selectedStatus == 5,
+                      ),
+                      const SizedBox(
+                        width: 8.0,
+                      ),
+                    ],
+                    // children: List<Widget>.generate(
+                    //   6,
+                    //   (int index) {
+                    //     return MaterialYouChip(
+                    //       title: getChipLabel(index),
+                    //       icon: getChipIcon(index),
+                    //       onPressed: () {
+                    //         setState(
+                    //           () {
+                    //             selectedStatus = index;
+                    //           },
+                    //         );
+                    //       },
+                    //       isSelected: selectedStatus == index,
+                    //     );
+                    //   },
+                    // ).toList(),
+                  ),
                 ),
               ),
               if (widget.data.userRate != null) ...[
@@ -317,7 +391,7 @@ class _MangaUserRateBottomSheetState
                 //   ),
                 // ),
                 Card(
-                  margin: EdgeInsets.zero,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(12),
@@ -347,8 +421,7 @@ class _MangaUserRateBottomSheetState
                   height: 8,
                 ),
                 Card(
-                  shadowColor: Colors.transparent,
-                  margin: EdgeInsets.zero,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.zero),
                   ),
@@ -405,8 +478,7 @@ class _MangaUserRateBottomSheetState
                   height: 8,
                 ),
                 Card(
-                  shadowColor: Colors.transparent,
-                  margin: EdgeInsets.zero,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(12),
@@ -482,20 +554,20 @@ class _MangaUserRateBottomSheetState
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
-                TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    //filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      //filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                      hintText: 'Заметка',
                     ),
-                    hintText: 'Заметка',
+                    minLines: 1,
+                    maxLines: 3,
                   ),
-                  minLines: 1,
-                  maxLines: 3,
                 ),
               ],
               const SizedBox(
@@ -505,9 +577,7 @@ class _MangaUserRateBottomSheetState
                 SizedBox(
                   width: double.infinity,
                   child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    shadowColor: Colors.transparent,
-                    margin: EdgeInsets.zero,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -527,110 +597,115 @@ class _MangaUserRateBottomSheetState
                   height: 16,
                 ),
               ],
-              Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: isLoading || selectedStatus == -1
-                          ? null
-                          : () {
-                              if (widget.data.userRate == null) {
-                                ref
-                                    .read(
-                                        updateMangaRateButtonProvider.notifier)
-                                    .createRate(
-                                      mangaId: widget.manga.id!,
-                                      manga: widget.manga,
-                                      selectedStatus: convertStatusIntToString(
-                                          selectedStatus!),
-                                      onFinally: () {
-                                        Navigator.of(context).pop();
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: isLoading || selectedStatus == -1
+                            ? null
+                            : () {
+                                if (widget.data.userRate == null) {
+                                  ref
+                                      .read(updateMangaRateButtonProvider
+                                          .notifier)
+                                      .createRate(
+                                        mangaId: widget.manga.id!,
+                                        manga: widget.manga,
+                                        selectedStatus:
+                                            convertStatusIntToString(
+                                                selectedStatus!),
+                                        onFinally: () {
+                                          Navigator.of(context).pop();
 
-                                        showSnackBar(
-                                          ctx: context,
-                                          msg:
-                                              'Добавлено в список "${getChipLabel(selectedStatus ?? 0)}"',
-                                          dur: const Duration(seconds: 3),
-                                        );
-                                      },
-                                    );
-                              } else {
-                                ref
-                                    .read(
-                                        updateMangaRateButtonProvider.notifier)
-                                    .updateRate(
-                                      rateId: widget.data.userRate!.id!,
-                                      manga: widget.manga,
-                                      selectedStatus: convertStatusIntToString(
-                                          selectedStatus!),
-                                      initStatus: initStatus!,
-                                      currentScore: currentScore,
-                                      progress: progress,
-                                      rewatches: rewatches,
-                                      text: _controller.text,
-                                      onFinally: () {
-                                        Navigator.of(context).pop();
+                                          showSnackBar(
+                                            ctx: context,
+                                            msg:
+                                                'Добавлено в список "${getChipLabel(selectedStatus ?? 0)}"',
+                                            dur: const Duration(seconds: 3),
+                                          );
+                                        },
+                                      );
+                                } else {
+                                  ref
+                                      .read(updateMangaRateButtonProvider
+                                          .notifier)
+                                      .updateRate(
+                                        rateId: widget.data.userRate!.id!,
+                                        manga: widget.manga,
+                                        selectedStatus:
+                                            convertStatusIntToString(
+                                                selectedStatus!),
+                                        initStatus: initStatus!,
+                                        currentScore: currentScore,
+                                        progress: progress,
+                                        rewatches: rewatches,
+                                        text: _controller.text,
+                                        onFinally: () {
+                                          Navigator.of(context).pop();
 
-                                        showSnackBar(
-                                          ctx: context,
-                                          msg: 'Сохранено успешно',
-                                          dur: const Duration(seconds: 3),
-                                        );
-                                      },
-                                    );
-                              }
-                            },
-                      child: isLoading
-                          ? const SizedBox.square(
-                              dimension: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                              ),
-                            )
-                          : Text(
-                              widget.data.userRate == null
-                                  ? 'Добавить'
-                                  : 'Сохранить',
-                            ),
-                    ),
-                  ),
-                  if (widget.data.userRate != null &&
-                      widget.data.userRate?.id != null &&
-                      !isLoading)
-                    IconButton(
-                      tooltip: 'Удалить из списка',
-                      onPressed: () async {
-                        bool value = await showDialog<bool>(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  const DeleteDialog(),
-                            ) ??
-                            false;
-
-                        if (!value) {
-                          return;
-                        }
-                        ref
-                            .read(updateMangaRateButtonProvider.notifier)
-                            .deleteRate(
-                              rateId: widget.data.userRate!.id!,
-                              mangaId: widget.manga.id!,
-                              status: initStatus ?? '',
-                              onFinally: () {
-                                Navigator.of(context).pop();
-
-                                showSnackBar(
-                                  ctx: context,
-                                  msg:
-                                      'Удалено из списка "${getChipLabel(selectedStatus ?? 0)}"',
-                                  dur: const Duration(seconds: 3),
-                                );
+                                          showSnackBar(
+                                            ctx: context,
+                                            msg: 'Сохранено успешно',
+                                            dur: const Duration(seconds: 3),
+                                          );
+                                        },
+                                      );
+                                }
                               },
-                            );
-                      },
-                      icon: const Icon(Icons.delete),
+                        child: isLoading
+                            ? const SizedBox.square(
+                                dimension: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : Text(
+                                widget.data.userRate == null
+                                    ? 'Добавить'
+                                    : 'Сохранить',
+                              ),
+                      ),
                     ),
-                ],
+                    if (widget.data.userRate != null &&
+                        widget.data.userRate?.id != null &&
+                        !isLoading)
+                      IconButton(
+                        tooltip: 'Удалить из списка',
+                        onPressed: () async {
+                          bool value = await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const DeleteDialog(),
+                              ) ??
+                              false;
+
+                          if (!value) {
+                            return;
+                          }
+                          ref
+                              .read(updateMangaRateButtonProvider.notifier)
+                              .deleteRate(
+                                rateId: widget.data.userRate!.id!,
+                                mangaId: widget.manga.id!,
+                                status: initStatus ?? '',
+                                onFinally: () {
+                                  Navigator.of(context).pop();
+
+                                  showSnackBar(
+                                    ctx: context,
+                                    msg:
+                                        'Удалено из списка "${getChipLabel(selectedStatus ?? 0)}"',
+                                    dur: const Duration(seconds: 3),
+                                  );
+                                },
+                              );
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                  ],
+                ),
               ),
             ],
           ),

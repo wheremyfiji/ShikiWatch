@@ -8,6 +8,7 @@ import '../domain/models/anime_player_page_extra.dart';
 import '../domain/models/manga_short.dart';
 import '../domain/models/pages_extra.dart';
 import '../domain/models/user.dart';
+import '../presentation/pages/about/about_page.dart';
 import '../presentation/pages/anime_details/anime_details_page.dart';
 import '../presentation/pages/calendar/calendar_page.dart';
 import '../presentation/pages/character/character_page.dart';
@@ -19,9 +20,12 @@ import '../presentation/pages/library/library_page.dart';
 import '../presentation/pages/login/login_desktop_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/manga_detail/manga_detail_page.dart';
+import '../presentation/pages/other_more/other_more_page.dart';
 import '../presentation/pages/player/anime_player_page.dart';
 import '../presentation/pages/player/desktop/desktop_player_page.dart';
 import '../presentation/pages/profile/my_profile_page.dart';
+import '../presentation/pages/profile/user_clubs_page.dart';
+import '../presentation/pages/profile/user_history_page.dart';
 import '../presentation/pages/profile/user_profile_page.dart';
 import '../presentation/pages/profile/user_search.dart';
 import '../presentation/pages/root/root_page.dart';
@@ -386,8 +390,12 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                 GoRoute(
                   name: 'profile',
                   path: '/profile',
+                  // builder: (BuildContext context, GoRouterState state) =>
+                  //     MyProfilePage(
+                  //   key: state.pageKey,
+                  // ),
                   builder: (BuildContext context, GoRouterState state) =>
-                      MyProfilePage(
+                      OtherMorePage(
                     key: state.pageKey,
                   ),
                   routes: <RouteBase>[
@@ -395,6 +403,16 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       name: 'profile_id',
                       path: r':id(\d+)',
                       pageBuilder: (context, state) {
+                        if (state.pathParameters['id']! ==
+                            SecureStorageService.instance.userId) {
+                          return SharedAxisTransition(
+                            key: state.pageKey,
+                            child: MyProfilePage(
+                              key: state.pageKey,
+                            ),
+                          );
+                        }
+
                         User data = state.extra as User;
 
                         return SharedAxisTransition(
@@ -402,6 +420,32 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                           child: UserProfilePage(
                             key: state.pageKey,
                             data: data,
+                          ),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      name: 'user_clubs',
+                      path: 'user_clubs/:id',
+                      pageBuilder: (context, state) {
+                        return SharedAxisTransition(
+                          key: state.pageKey,
+                          child: UserClubsPage(
+                            state.pathParameters['id']!,
+                            key: state.pageKey,
+                          ),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      name: 'user_online_history',
+                      path: 'user_online_history/:id',
+                      pageBuilder: (context, state) {
+                        return SharedAxisTransition(
+                          key: state.pageKey,
+                          child: UserHistoryPage(
+                            state.pathParameters['id']!,
+                            key: state.pageKey,
                           ),
                         );
                       },
@@ -425,6 +469,18 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                         return SharedAxisTransition(
                           key: state.pageKey,
                           child: SettingsPage(
+                            key: state.pageKey,
+                          ),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      name: 'about',
+                      path: 'about',
+                      pageBuilder: (context, state) {
+                        return SharedAxisTransition(
+                          key: state.pageKey,
+                          child: AboutPage(
                             key: state.pageKey,
                           ),
                         );

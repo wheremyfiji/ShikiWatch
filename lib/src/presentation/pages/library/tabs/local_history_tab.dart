@@ -1,4 +1,3 @@
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -9,7 +8,6 @@ import '../../../providers/library_local_history_provider.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/models/pages_extra.dart';
-import '../../../widgets/automatic_keep_alive.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
 import '../../../../constants/config.dart';
@@ -22,89 +20,83 @@ class LocalHistoryTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final localHistory = ref.watch(animeLocalHistoryProvider);
 
-    return ExtendedVisibilityDetector(
-      uniqueKey: const Key('LocalHistoryTab'),
-      child: localHistory.when(
-        data: (data) => data.isEmpty
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'В истории пусто',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall!
-                        .copyWith(fontSize: 16),
-                  ),
-                ),
-              )
-            : AutoKeepAlive(
-                child: CustomScrollView(
-                  key: const PageStorageKey<String>('LocalHistoryTab'),
-                  slivers: [
-                    const SliverPadding(
-                      padding: EdgeInsets.only(top: 16.0),
-                    ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        childCount: data.length,
-                        (context, index) {
-                          final anime = data[index];
-
-                          var studios = anime.studios;
-
-                          if (studios == null || studios.isEmpty) {
-                            return null;
-                          }
-
-                          studios = [
-                            ...studios.where(
-                                (element) => element.episodes!.isNotEmpty)
-                          ];
-
-                          studios
-                              .sort((a, b) => a.updated!.compareTo(b.updated!));
-
-                          if (studios.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-
-                          final studio = studios.last;
-
-                          int episode = 0;
-
-                          if (studio.episodes!.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-
-                          episode = studio.episodes?.last.nubmer ?? 0;
-                          final ts = studio.episodes?.last.timeStamp;
-
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                            child: HistoryItem(
-                              animeName: anime.animeName ?? '',
-                              image: anime.imageUrl ?? '',
-                              update: anime.lastUpdate ?? DateTime(2000),
-                              studioName: studio.name ?? '',
-                              episode: episode,
-                              timeStamp: ts,
-                              shikimoriId: anime.shikimoriId,
-                              studioId: studio.id ?? 0,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+    return localHistory.when(
+      data: (data) => data.isEmpty
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'В истории пусто',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(fontSize: 16),
                 ),
               ),
-        error: (err, stack) => CustomErrorWidget(
-          err.toString(),
-          null,
-        ),
-        loading: () => const Center(child: CircularProgressIndicator()),
+            )
+          : CustomScrollView(
+              key: const PageStorageKey<String>('LocalHistoryTab'),
+              slivers: [
+                const SliverPadding(
+                  padding: EdgeInsets.only(top: 16.0),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: data.length,
+                    (context, index) {
+                      final anime = data[index];
+
+                      var studios = anime.studios;
+
+                      if (studios == null || studios.isEmpty) {
+                        return null;
+                      }
+
+                      studios = [
+                        ...studios
+                            .where((element) => element.episodes!.isNotEmpty)
+                      ];
+
+                      studios.sort((a, b) => a.updated!.compareTo(b.updated!));
+
+                      if (studios.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final studio = studios.last;
+
+                      int episode = 0;
+
+                      if (studio.episodes!.isEmpty) {
+                        return const SizedBox.shrink();
+                      }
+
+                      episode = studio.episodes?.last.nubmer ?? 0;
+                      final ts = studio.episodes?.last.timeStamp;
+
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                        child: HistoryItem(
+                          animeName: anime.animeName ?? '',
+                          image: anime.imageUrl ?? '',
+                          update: anime.lastUpdate ?? DateTime(2000),
+                          studioName: studio.name ?? '',
+                          episode: episode,
+                          timeStamp: ts,
+                          shikimoriId: anime.shikimoriId,
+                          studioId: studio.id ?? 0,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+      error: (err, stack) => CustomErrorWidget(
+        err.toString(),
+        null,
       ),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }

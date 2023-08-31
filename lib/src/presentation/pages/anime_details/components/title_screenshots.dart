@@ -31,13 +31,17 @@ class TitleScreenshots extends StatelessWidget {
                 ),
               ),
               TextButton(
+                style: const ButtonStyle(visualDensity: VisualDensity.compact),
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => AnimeScreenshotsPage(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        AnimeScreenshotsPage(
                       id: data.id ?? 0,
                       name: data.russian ?? data.name ?? '',
                     ),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
                   ),
                 ),
                 child: const Text(

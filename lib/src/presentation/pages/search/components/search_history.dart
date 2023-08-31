@@ -15,6 +15,11 @@ class AnimeSearchHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
+        const SliverToBoxAdapter(
+          child: Divider(
+            height: 1,
+          ),
+        ),
         SliverToBoxAdapter(
           child: Row(
             children: [

@@ -197,7 +197,10 @@ class AnimeDetailsPage extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: TitlePoster(
                       anime.image?.original ?? '',
-                    ).animate().fade(),
+                    )
+                        .animate()
+                        .fade()
+                        .slideY(begin: .05, end: 0, curve: Curves.easeOutCirc),
                   ),
                   SliverToBoxAdapter(
                     child: TitleActions(

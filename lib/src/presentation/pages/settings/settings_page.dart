@@ -4,19 +4,16 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../providers/environment_provider.dart';
 import '../../../utils/target_platform.dart';
 import '../../../utils/router.dart';
 
 import 'widgets/anime_source_option.dart';
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
-import 'widgets/donate_widget.dart';
 import 'widgets/dynamic_colors.dart';
 import 'widgets/library_layout.dart';
 import 'widgets/library_start_fragment.dart';
@@ -25,9 +22,7 @@ import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
-import 'widgets/settings_header.dart';
 import 'widgets/user_account_group.dart';
-import 'widgets/version_option.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -53,29 +48,16 @@ class SettingsPage extends ConsumerWidget {
             SliverList(
               delegate: SliverChildListDelegate(
                 <Widget>[
-                  const SettingsHeader(),
                   if (SecureStorageService.instance.token != '' && userLogin)
                     const UserAccountGroup(),
                   SettingsGroup(
                     title: 'Внешний вид',
                     options: [
-                      //SettingsOption(title: ''),
                       const CurrentThemeOption(),
                       const DynamicColorsOption(),
                       const OledModeOption(),
                       if (!TargetP.instance.isDesktop)
                         const NavDestLabelBehaviorOption(),
-                      // if (!TargetP.instance.isDesktop)
-                      //   SwitchListTile(
-                      //     value: false,
-                      //     onChanged: (value) {},
-                      //     title: const Text(
-                      //       'Прозрачный бар навигации',
-                      //     ),
-                      //     subtitle: const Text(
-                      //       'Если поддерживается системой (необходим перезапуск)',
-                      //     ),
-                      //   ),
                     ],
                   ),
                   SettingsGroup(
@@ -124,74 +106,7 @@ class SettingsPage extends ConsumerWidget {
                       //       export();
                       //     },
                       //   ),
-                    ],
-                  ),
-                  SettingsGroup(
-                    title: 'Ссылки',
-                    options: [
-                      SettingsOption(
-                        title: 'Github',
-                        subtitle: 'Исходный код приложения',
-                        onTap: () => launchUrlString(
-                          'https://github.com/wheremyfiji/ShikiWatch',
-                          mode: LaunchMode.externalApplication,
-                        ),
-                      ),
-                      //const Divider(),
-                      SettingsOption(
-                        title: 'Telegram',
-                        subtitle:
-                            'Новые версии, обсуждение и прочее', //Автор приложения
-                        onTap: () => launchUrlString(
-                          'https://t.me/shikiwatch',
-                          mode: LaunchMode.externalApplication,
-                        ),
-                      ),
 
-                      SettingsOption(
-                        title: 'Shikimori',
-                        subtitle: 'Энциклопедия аниме и манги',
-                        onTap: () => launchUrlString(
-                          'https://shikimori.me',
-                          mode: LaunchMode.externalApplication,
-                        ),
-                      ),
-                      if (TargetP.instance.isDesktop)
-                        SettingsOption(
-                          title: 'Anime4K',
-                          subtitle:
-                              'Набор высококачественных алгоритмов масштабирования / шумоподавления аниме в реальном времени с открытым исходным кодом',
-                          onTap: () => launchUrlString(
-                            'https://bloc97.github.io/Anime4K/',
-                            mode: LaunchMode.externalApplication,
-                          ),
-                        ),
-                    ],
-                  ),
-                  SettingsGroup(
-                    title: 'О приложении',
-                    options: [
-                      const SettingsOption(
-                        title: 'ShikiWatch',
-                        subtitle:
-                            'Неофициальное приложение для сайта shikimori.me с возможностью онлайн просмотра аниме',
-                        onTap: null,
-                      ),
-                      const VersionWidget(),
-                      if (TargetP.instance.isDesktop)
-                        const WindowsDeviceInfoWidget(),
-                      SettingsOption(
-                        title: 'Лицензии',
-                        subtitle: 'Лицензии с открытым исходным кодом',
-                        onTap: () {
-                          showLicensePage(
-                            context: context,
-                            applicationName: 'ShikiWatch',
-                            applicationVersion: 'v1.3.3.7',
-                            useRootNavigator: true,
-                          );
-                        },
-                      ),
                       if (TargetP.instance.isDesktop)
                         SettingsOption(
                           title: 'распаковать pedals',
@@ -199,17 +114,12 @@ class SettingsPage extends ConsumerWidget {
                             Directory app =
                                 await getApplicationSupportDirectory();
                             await launchUrl(Uri.parse(app.path));
-                            //setRpc();
                           },
                         ),
                     ],
                   ),
                 ],
               ),
-            ),
-            const SliverPadding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverToBoxAdapter(child: DonateWidget()),
             ),
             SliverToBoxAdapter(
               child: SizedBox(height: MediaQuery.of(context).padding.bottom),
@@ -256,23 +166,3 @@ class SettingsPage extends ConsumerWidget {
 //     );
 //   }
 // }
-
-class WindowsDeviceInfoWidget extends ConsumerWidget {
-  const WindowsDeviceInfoWidget({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final environment = ref.watch(environmentProvider);
-
-    final productName = environment.windowsInfo?.productName.toString() ?? '';
-    final buildNumber = environment.windowsInfo?.buildNumber.toString() ?? '';
-    final displayVersion =
-        environment.windowsInfo?.displayVersion.toString() ?? '';
-
-    return SettingsOption(
-      title: 'Информация об устройстве',
-      subtitle: '$productName $displayVersion ($buildNumber)',
-      onTap: null,
-    );
-  }
-}

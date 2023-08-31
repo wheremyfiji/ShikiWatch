@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../../../utils/extensions/buildcontext.dart';
+import '../../utils/extensions/buildcontext.dart';
 
 class DonateWidget extends StatelessWidget {
   const DonateWidget({super.key});
@@ -23,11 +23,11 @@ class DonateWidget extends StatelessWidget {
             //context.colorScheme.primaryContainer,
           ],
         ),
-        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(24.0)),
       ),
       child: Material(
         clipBehavior: Clip.hardEdge,
-        borderRadius: const BorderRadius.all(Radius.circular(12.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(24.0)),
         color: Colors.transparent,
         child: InkWell(
           onTap: () => _DonateBottomSheet.show(context),

@@ -9,23 +9,23 @@ import '../../../utils/utils.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
 
-const _allDestinations = [
-  NavigationRailDestination(
-    label: Text('Библиотека'),
-    icon: Icon(Icons.book_outlined),
-    selectedIcon: Icon(Icons.book),
-  ),
-  NavigationRailDestination(
-    label: Text('Главная'),
-    icon: Icon(Icons.home_outlined),
-    selectedIcon: Icon(Icons.home_rounded),
-  ),
-  NavigationRailDestination(
-    label: Text('Профиль'),
-    icon: Icon(Icons.account_circle_outlined),
-    selectedIcon: Icon(Icons.account_circle),
-  ),
-];
+// const _allDestinations = [
+//   NavigationRailDestination(
+//     label: Text('Библиотека'),
+//     icon: Icon(Icons.book_outlined),
+//     selectedIcon: Icon(Icons.book),
+//   ),
+//   NavigationRailDestination(
+//     label: Text('Главная'),
+//     icon: Icon(Icons.home_outlined),
+//     selectedIcon: Icon(Icons.home_rounded),
+//   ),
+//   NavigationRailDestination(
+//     label: Text('Профиль'),
+//     icon: Icon(Icons.account_circle_outlined),
+//     selectedIcon: Icon(Icons.account_circle),
+//   ),
+// ];
 
 class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -127,7 +127,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         ),
       );
     } else {
-      Scaffold(
+      return Scaffold(
         body: navigationShell,
         bottomNavigationBar: NavigationBar(
           height: navDestLabelBehavior ==
@@ -141,15 +141,25 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               selectedIcon: Icon(Icons.book),
               label: 'Библиотека',
             ),
+            // NavigationDestination(
+            //   icon: Icon(Icons.home_outlined),
+            //   selectedIcon: Icon(Icons.home_rounded),
+            //   label: 'Главная',
+            // ),
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded),
-              label: 'Главная',
+              icon: Icon(Icons.explore_outlined),
+              selectedIcon: Icon(Icons.explore_rounded),
+              label: 'Обзор',
             ),
+            // NavigationDestination(
+            //   icon: Icon(Icons.account_circle_outlined),
+            //   selectedIcon: Icon(Icons.account_circle),
+            //   label: 'Профиль',
+            // ),
             NavigationDestination(
-              icon: Icon(Icons.account_circle_outlined),
-              selectedIcon: Icon(Icons.account_circle),
-              label: 'Профиль',
+              icon: Icon(Icons.more_horiz),
+              selectedIcon: Icon(Icons.more_horiz),
+              label: 'Ещё',
             ),
           ],
           selectedIndex: navigationShell.currentIndex,
@@ -170,86 +180,5 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         ),
       );
     }
-
-    return TargetP.instance.isDesktop
-        ? Scaffold(
-            body: SafeArea(
-              child: Row(
-                children: [
-                  Stack(
-                    children: [
-                      NavigationRail(
-                        //extended: ext,
-                        groupAlignment: -1.0,
-                        destinations: _allDestinations,
-                        selectedIndex: navigationShell.currentIndex,
-                        onDestinationSelected: (tappedIndex) {
-                          if (navigationShell.currentIndex == tappedIndex &&
-                              GoRouter.of(context).location == '/explore') {
-                            context.push('/explore/search');
-                            return;
-                          }
-
-                          if (navigationShell.currentIndex == tappedIndex) {
-                            navigationShell
-                                .shellRouteContext.navigatorKey.currentState
-                                ?.popUntil((r) => r.isFirst);
-                          } else {
-                            navigationShell.goBranch(tappedIndex);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  //const VerticalDivider(thickness: 1, width: 1),
-                  Expanded(
-                    child: navigationShell,
-                  )
-                ],
-              ),
-            ),
-          )
-        : Scaffold(
-            body: navigationShell,
-            bottomNavigationBar: NavigationBar(
-              height: navDestLabelBehavior ==
-                      NavigationDestinationLabelBehavior.alwaysHide
-                  ? 60
-                  : null,
-              labelBehavior: navDestLabelBehavior,
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.book_outlined),
-                  selectedIcon: Icon(Icons.book),
-                  label: 'Библиотека',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home_rounded),
-                  label: 'Главная',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.account_circle_outlined),
-                  selectedIcon: Icon(Icons.account_circle),
-                  label: 'Профиль',
-                ),
-              ],
-              selectedIndex: navigationShell.currentIndex,
-              onDestinationSelected: (tappedIndex) {
-                if (navigationShell.currentIndex == tappedIndex &&
-                    GoRouter.of(context).location == '/explore') {
-                  context.push('/explore/search');
-                  return;
-                }
-
-                if (navigationShell.currentIndex == tappedIndex) {
-                  navigationShell.shellRouteContext.navigatorKey.currentState
-                      ?.popUntil((r) => r.isFirst);
-                } else {
-                  navigationShell.goBranch(tappedIndex);
-                }
-              },
-            ),
-          );
   }
 }

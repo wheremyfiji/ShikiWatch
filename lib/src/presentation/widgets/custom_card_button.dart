@@ -20,6 +20,9 @@ class CustomCardButton extends StatelessWidget {
       height: 48,
       child: Card(
         clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
         margin: const EdgeInsets.all(0.0),
         child: InkWell(
           onTap: onTap,
