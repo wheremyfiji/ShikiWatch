@@ -52,11 +52,11 @@ class LibraryPage extends HookConsumerWidget {
               ),
             ];
           },
-          body: state == LibraryFragmentMode.manga
-              ? SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: TabBarView(
+          body: SafeArea(
+            top: false,
+            bottom: false,
+            child: state == LibraryFragmentMode.manga
+                ? TabBarView(
                     controller: mangaTabController,
                     children: const [
                       ReadingMangaTab(),
@@ -66,12 +66,8 @@ class LibraryPage extends HookConsumerWidget {
                       OnHoldMangaTab(),
                       DroppedMangaTab(),
                     ],
-                  ),
-                )
-              : SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: TabBarView(
+                  )
+                : TabBarView(
                     controller: animeTabController,
                     children: const [
                       LocalHistoryTab(),
@@ -83,7 +79,7 @@ class LibraryPage extends HookConsumerWidget {
                       DroppedTab(),
                     ],
                   ),
-                ),
+          ),
         ),
       ),
     );

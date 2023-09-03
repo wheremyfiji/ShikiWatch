@@ -37,9 +37,6 @@ class CurrentAppUser extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(
-            height: 1,
-          ),
           ListTile(
             onTap: () => context.pushNamed(
               'user_clubs',
@@ -47,9 +44,6 @@ class CurrentAppUser extends StatelessWidget {
             ),
             leading: const Icon(Icons.groups),
             title: const Text('Клубы'),
-          ),
-          const Divider(
-            height: 1,
           ),
           ListTile(
             onTap: () => context.pushNamed(

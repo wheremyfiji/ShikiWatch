@@ -806,87 +806,27 @@ class _AnimeUserRateBottomSheetState
                       const SizedBox(
                         width: 8.0,
                       ),
-                      MaterialYouChip(
-                        title: _getChipLabel(0),
-                        icon: _getChipIcon(0),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 0;
-                          },
-                        ),
-                        isSelected: selectedStatus == 0,
-                      ),
-                      MaterialYouChip(
-                        title: _getChipLabel(1),
-                        icon: _getChipIcon(1),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 1;
-                          },
-                        ),
-                        isSelected: selectedStatus == 1,
-                      ),
-                      MaterialYouChip(
-                        title: _getChipLabel(2),
-                        icon: _getChipIcon(2),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 2;
-                          },
-                        ),
-                        isSelected: selectedStatus == 2,
-                      ),
-                      MaterialYouChip(
-                        title: _getChipLabel(3),
-                        icon: _getChipIcon(3),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 3;
-                          },
-                        ),
-                        isSelected: selectedStatus == 3,
-                      ),
-                      MaterialYouChip(
-                        title: _getChipLabel(4),
-                        icon: _getChipIcon(4),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 4;
-                          },
-                        ),
-                        isSelected: selectedStatus == 4,
-                      ),
-                      MaterialYouChip(
-                        title: _getChipLabel(5),
-                        icon: _getChipIcon(5),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 5;
-                          },
-                        ),
-                        isSelected: selectedStatus == 5,
+                      ...List<Widget>.generate(
+                        6,
+                        (int index) {
+                          return MaterialYouChip(
+                            title: _getChipLabel(index),
+                            icon: _getChipIcon(index),
+                            onPressed: () {
+                              setState(
+                                () {
+                                  selectedStatus = index;
+                                },
+                              );
+                            },
+                            isSelected: selectedStatus == index,
+                          );
+                        },
                       ),
                       const SizedBox(
                         width: 8.0,
                       ),
                     ],
-                    // children: List<Widget>.generate(
-                    //   6,
-                    //   (int index) {
-                    //     return MaterialYouChip(
-                    //       title: _getChipLabel(index),
-                    //       icon: _getChipIcon(index),
-                    //       onPressed: () {
-                    //         setState(
-                    //           () {
-                    //             selectedStatus = index;
-                    //           },
-                    //         );
-                    //       },
-                    //       isSelected: selectedStatus == index,
-                    //     );
-                    //   },
-                    // ).toList(),
                   ),
                 ),
               ),

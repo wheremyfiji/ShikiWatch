@@ -74,7 +74,8 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height),
+                    minHeight: MediaQuery.of(context).size.height,
+                  ),
                   child: IntrinsicHeight(
                     child: NavigationRail(
                       extended: TargetP.instance.isDesktop
@@ -104,14 +105,14 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                           label: Text('Библиотека'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.home_outlined),
-                          selectedIcon: Icon(Icons.home_rounded),
-                          label: Text('Главная'),
+                          icon: Icon(Icons.explore_outlined),
+                          selectedIcon: Icon(Icons.explore_rounded),
+                          label: Text('Обзор'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.account_circle_outlined),
-                          selectedIcon: Icon(Icons.account_circle),
-                          label: Text('Профиль'),
+                          icon: Icon(Icons.more_horiz),
+                          selectedIcon: Icon(Icons.more_horiz),
+                          label: Text('Ещё'),
                         ),
                       ],
                     ),
@@ -121,7 +122,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               const VerticalDivider(thickness: 1, width: 1),
               Expanded(
                 child: navigationShell,
-              )
+              ),
             ],
           ),
         ),
@@ -141,21 +142,11 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               selectedIcon: Icon(Icons.book),
               label: 'Библиотека',
             ),
-            // NavigationDestination(
-            //   icon: Icon(Icons.home_outlined),
-            //   selectedIcon: Icon(Icons.home_rounded),
-            //   label: 'Главная',
-            // ),
             NavigationDestination(
               icon: Icon(Icons.explore_outlined),
               selectedIcon: Icon(Icons.explore_rounded),
               label: 'Обзор',
             ),
-            // NavigationDestination(
-            //   icon: Icon(Icons.account_circle_outlined),
-            //   selectedIcon: Icon(Icons.account_circle),
-            //   label: 'Профиль',
-            // ),
             NavigationDestination(
               icon: Icon(Icons.more_horiz),
               selectedIcon: Icon(Icons.more_horiz),

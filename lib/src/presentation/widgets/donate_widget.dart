@@ -62,8 +62,7 @@ class DonateWidget extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 6.0, top: 6.0, bottom: 4.0),
+                  padding: const EdgeInsets.only(left: 6.0, top: 6.0),
                   child: Text(
                     'Вы можете оформить добровольное пожертвование для дальнейшего развития приложения.',
                     style: TextStyle(
@@ -73,17 +72,17 @@ class DonateWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 6.0),
-                  child: Text(
-                    'Мне будет очень приятно, а также я смогу купить очередную баночку енергетика...',
-                    style: TextStyle(
-                      fontSize: 12.0,
-                      color: context.colorScheme.onTertiaryContainer
-                          .withOpacity(0.6),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(left: 6.0),
+                //   child: Text(
+                //     'Мне будет очень приятно, а также я смогу купить очередную баночку енергетика...',
+                //     style: TextStyle(
+                //       fontSize: 12.0,
+                //       color: context.colorScheme.onTertiaryContainer
+                //           .withOpacity(0.6),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

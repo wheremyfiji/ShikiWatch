@@ -65,9 +65,6 @@ class OtherMoreActions extends StatelessWidget {
             title: const Text('Настройки'),
             leading: const Icon(Icons.settings),
           ),
-          const Divider(
-            height: 1,
-          ),
           ListTile(
             onTap: () => context.pushNamed('about'),
             leading: const Icon(Icons.info),

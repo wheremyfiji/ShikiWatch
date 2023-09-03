@@ -162,31 +162,8 @@ class AnimeSearchPage extends ConsumerWidget {
                                 .retryLastFailedRequest(),
                           );
                         },
-                        noItemsFoundIndicatorBuilder: (context) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 32, horizontal: 16),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Ничего не найдено',
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  const SizedBox(
-                                    height: 8,
-                                  ),
-                                  const Text(
-                                    'Попробуй поискать что-то другое',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                        noItemsFoundIndicatorBuilder: (context) =>
+                            const _NothingFound(),
                       ),
                     ),
                   ),
@@ -197,6 +174,40 @@ class AnimeSearchPage extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _NothingFound extends StatelessWidget {
+  const _NothingFound();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '(˘･_･˘)',
+          textAlign: TextAlign.center,
+          style: context.textTheme.displaySmall,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
+          child: Text(
+            'Ничего не найдено',
+            style: context.textTheme.titleLarge,
+          ),
+        ),
+        Text(
+          'Попробуй поискать что-то другое',
+          style: context.textTheme.bodySmall?.copyWith(
+            color: context.colorScheme.onBackground.withOpacity(
+              0.8,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

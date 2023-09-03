@@ -22,7 +22,9 @@ class CurrentThemeOption extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
               'Тема приложения',
-              style: context.textTheme.bodyLarge,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: context.colorScheme.onBackground,
+              ),
             ),
           ),
           Row(
@@ -176,6 +178,7 @@ class _ThemeCard extends StatelessWidget {
                 ? null
                 : Border.all(
                     color: context.colorScheme.outline,
+                    strokeAlign: BorderSide.strokeAlignInside,
                   ),
             borderRadius: const BorderRadius.all(Radius.circular(12)),
           ),

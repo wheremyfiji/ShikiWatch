@@ -75,7 +75,7 @@ String anime4kModeAFast(String basePath) {
   str += _makePath(basePath, anime4K_AutoDownscalePre_x4);
   str += _makePath(basePath, anime4K_Upscale_CNN_x2_S);
 
-  str += _makePath(basePath, anime4K_Darken_VeryFast);
+  str += _makePath(basePath, anime4K_Darken_Fast);
   str += _makePath(basePath, anime4K_Thin_Fast);
 
   return str;

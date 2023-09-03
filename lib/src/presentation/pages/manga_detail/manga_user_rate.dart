@@ -241,87 +241,27 @@ class _MangaUserRateBottomSheetState
                       const SizedBox(
                         width: 8.0,
                       ),
-                      MaterialYouChip(
-                        title: getChipLabel(0),
-                        icon: getChipIcon(0),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 0;
-                          },
-                        ),
-                        isSelected: selectedStatus == 0,
-                      ),
-                      MaterialYouChip(
-                        title: getChipLabel(1),
-                        icon: getChipIcon(1),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 1;
-                          },
-                        ),
-                        isSelected: selectedStatus == 1,
-                      ),
-                      MaterialYouChip(
-                        title: getChipLabel(2),
-                        icon: getChipIcon(2),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 2;
-                          },
-                        ),
-                        isSelected: selectedStatus == 2,
-                      ),
-                      MaterialYouChip(
-                        title: getChipLabel(3),
-                        icon: getChipIcon(3),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 3;
-                          },
-                        ),
-                        isSelected: selectedStatus == 3,
-                      ),
-                      MaterialYouChip(
-                        title: getChipLabel(4),
-                        icon: getChipIcon(4),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 4;
-                          },
-                        ),
-                        isSelected: selectedStatus == 4,
-                      ),
-                      MaterialYouChip(
-                        title: getChipLabel(5),
-                        icon: getChipIcon(5),
-                        onPressed: () => setState(
-                          () {
-                            selectedStatus = 5;
-                          },
-                        ),
-                        isSelected: selectedStatus == 5,
+                      ...List<Widget>.generate(
+                        6,
+                        (int index) {
+                          return MaterialYouChip(
+                            title: getChipLabel(index),
+                            icon: getChipIcon(index),
+                            onPressed: () {
+                              setState(
+                                () {
+                                  selectedStatus = index;
+                                },
+                              );
+                            },
+                            isSelected: selectedStatus == index,
+                          );
+                        },
                       ),
                       const SizedBox(
                         width: 8.0,
                       ),
                     ],
-                    // children: List<Widget>.generate(
-                    //   6,
-                    //   (int index) {
-                    //     return MaterialYouChip(
-                    //       title: getChipLabel(index),
-                    //       icon: getChipIcon(index),
-                    //       onPressed: () {
-                    //         setState(
-                    //           () {
-                    //             selectedStatus = index;
-                    //           },
-                    //         );
-                    //       },
-                    //       isSelected: selectedStatus == index,
-                    //     );
-                    //   },
-                    // ).toList(),
                   ),
                 ),
               ),
@@ -329,67 +269,6 @@ class _MangaUserRateBottomSheetState
                 const SizedBox(
                   height: 16,
                 ),
-                // Card(
-                //   clipBehavior: Clip.antiAlias,
-                //   shadowColor: Colors.transparent,
-                //   margin: EdgeInsets.zero,
-                //   child: Padding(
-                //     padding: const EdgeInsets.symmetric(
-                //       vertical: 8,
-                //       horizontal: 16,
-                //     ),
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //       children: [
-                //         Wrap(
-                //           children: [
-                //             const Text('Главы:'),
-                //             const SizedBox(
-                //               width: 4,
-                //             ),
-                //             chaptersCount == 0
-                //                 ? Text(
-                //                     '$progress',
-                //                   )
-                //                 : Text(
-                //                     '$progress/${chaptersCount.toString()}',
-                //                   ),
-                //           ],
-                //         ),
-                //         Wrap(
-                //           children: [
-                //             IconButton(
-                //               onPressed: () {
-                //                 if (progress == 0) {
-                //                   return;
-                //                 }
-                //                 setState(() {
-                //                   progress = progress - 1;
-                //                 });
-                //               },
-                //               icon: const Icon(Icons.remove),
-                //             ),
-                //             const SizedBox(
-                //               width: 4,
-                //             ),
-                //             IconButton(
-                //               onPressed: () {
-                //                 if (chaptersCount != 0 &&
-                //                     progress >= chaptersCount) {
-                //                   return;
-                //                 }
-                //                 setState(() {
-                //                   progress = progress + 1;
-                //                 });
-                //               },
-                //               icon: const Icon(Icons.add),
-                //             ),
-                //           ],
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   shape: const RoundedRectangleBorder(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../providers/settings_provider.dart';
 
 class PlayerDiscordRpcOption extends ConsumerWidget {
@@ -13,8 +14,18 @@ class PlayerDiscordRpcOption extends ConsumerWidget {
         settingsProvider.select((settings) => settings.playerDiscordRpc));
 
     return SwitchListTile(
-      title: const Text('Discord RPC'),
-      subtitle: const Text('Отображать текущую активность в Discord'),
+      title: Text(
+        'Discord RPC',
+        style: TextStyle(
+          color: context.colorScheme.onBackground,
+        ),
+      ),
+      subtitle: Text(
+        'Отображать текущую активность в Discord',
+        style: TextStyle(
+          color: context.colorScheme.onBackground.withOpacity(0.8),
+        ),
+      ),
       value: playerDiscordRpc,
       onChanged: (value) =>
           ref.read(settingsProvider.notifier).setPlayerDiscordRpc(value),

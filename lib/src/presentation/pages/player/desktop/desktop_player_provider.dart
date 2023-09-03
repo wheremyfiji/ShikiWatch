@@ -57,7 +57,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   late final Player player = Player(
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
-      logLevel: kDebugMode ? MPVLogLevel.debug : MPVLogLevel.error,
+      logLevel: kDebugMode ? MPVLogLevel.error : MPVLogLevel.error,
       // увеличение размера кеша просто откладывает начало пропусков
       bufferSize: 32 * 1024 * 1024,
     ),
@@ -96,6 +96,9 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   StreamQuality selectedQuality = StreamQuality.fhd;
 
   int retryCount = 0;
+
+  int videoW = 0;
+  int videoH = 0;
 
   //late File logFile;
 
@@ -269,7 +272,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
             /// в рот ебал я хост анилибрии
             /// и ффмпег я тоже ебал в рот, как его сконфигурировать то епта,
             /// чтобы не было пропусков сегментов
-            if (event.contains('Failed to open') && retryCount == 0) {
+            if (event.contains('Failed to open') && retryCount < 3) {
               player
                   .open(Media(streamFhd ?? streamHd ?? streamSd ?? streamLow!),
                       play: extra.startPosition.isEmpty)
@@ -289,12 +292,12 @@ class DesktopPlayerNotifier extends ChangeNotifier {
               return;
             }
 
-            if (event.contains('ffurl')) {
-              return;
-            }
+            // if (event.contains('ffurl')) {
+            //   return;
+            // }
 
-            streamAsync = AsyncValue.error(event, StackTrace.current);
-            notifyListeners();
+            // streamAsync = AsyncValue.error(event, StackTrace.current);
+            // notifyListeners();
           }),
           player.stream.playing.listen((event) {
             if (_disposed) {
@@ -372,6 +375,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   Future<void> toggleShaders() async {
     if (shaders) {
       await (player.platform as NativePlayer).setProperty('glsl-shaders', '');
+      await _resizeVideoTexture(true);
       shaders = false;
 
       notifyListeners();
@@ -382,14 +386,48 @@ class DesktopPlayerNotifier extends ChangeNotifier {
         notifyListeners();
         return;
       }
+
+      final resize = await _resizeVideoTexture(false);
+      if (!resize) {
+        return;
+      }
+
       await (player.platform as NativePlayer).setProperty(
         'glsl-shaders',
-        anime4kModeDoubleA(appDir!.path),
+        anime4kModeAFast(appDir!.path),
       ); //  anime4kModeDoubleA  || anime4kModeAFast || anime4kModeGan
 
       shaders = true;
       notifyListeners();
     }
+  }
+
+  Future<bool> _resizeVideoTexture(bool revert) async {
+    final width = player.state.width;
+    final height = player.state.height;
+
+    if (width == null || height == null) {
+      return false;
+    }
+
+    if (revert && videoW != 0) {
+      await playerController.setSize(
+        width: videoW,
+        height: videoH,
+      );
+
+      return true;
+    }
+
+    videoW = width;
+    videoH = height;
+
+    await playerController.setSize(
+      width: width * 2,
+      height: height * 2,
+    );
+
+    return true;
   }
 
   Future<void> updateDataBase() async {
@@ -441,7 +479,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
     rpc.start(autoRegister: true);
     rpc.updatePresence(
       DiscordPresence(
-        details: 'Смотрит ${extra.animeName}',
+        details: 'Смотрит "${extra.animeName}"',
         state: 'Серия ${extra.episodeNumber}',
         //startTimeStamp: DateTime.now().millisecondsSinceEpoch,
         //largeImageKey: 'large_image',
