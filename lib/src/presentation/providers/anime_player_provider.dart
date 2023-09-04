@@ -20,6 +20,7 @@ import '../widgets/auto_hide.dart';
 
 import 'anime_details_provider.dart';
 import 'environment_provider.dart';
+import 'settings_provider.dart';
 
 class PlayerProviderParameters extends Equatable {
   final AnimePlayerPageExtra extra;
@@ -189,6 +190,11 @@ class PlayerController extends flutter.ChangeNotifier {
         if (extra.startPosition.isNotEmpty) {
           await playerController.seekTo(_parseDuration(extra.startPosition));
         }
+
+        final speed = ref
+            .read(settingsProvider.select((settings) => settings.playerSpeed));
+
+        await playerController.setPlaybackSpeed(speed);
 
         await playerController.play();
       });
@@ -380,6 +386,12 @@ class PlayerController extends flutter.ChangeNotifier {
     );
   }
 
+  void setPlaybackSpeed(double speed) async {
+    await ref.read(settingsProvider.notifier).setPlayerSpeed(speed);
+
+    await playerController.setPlaybackSpeed(speed);
+  }
+
   void changeStreamQuality(StreamQuality q) async {
     final s = getStreamLink;
 
@@ -436,9 +448,14 @@ class PlayerController extends flutter.ChangeNotifier {
 
     playerController.addListener(playerCallback);
 
-    playerController.initialize().then((_) {
-      if (pos != null) playerController.seekTo(pos);
-      if (latestPlayingState) playerController.play();
+    playerController.initialize().then((_) async {
+      if (pos != null) await playerController.seekTo(pos);
+
+      final speed =
+          ref.read(settingsProvider.select((settings) => settings.playerSpeed));
+      await playerController.setPlaybackSpeed(speed);
+
+      if (latestPlayingState) await playerController.play();
     });
   }
 

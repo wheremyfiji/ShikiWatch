@@ -30,6 +30,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       playerDiscordRpc: _preferencesService.getPlayerDiscordRpc(),
       libraryLayout: _preferencesService.getLibraryLayout(),
       animeSource: _preferencesService.getAnimeSource(),
+      playerSpeed: _preferencesService.getPlayerSpeed(),
     );
   }
 
@@ -87,6 +88,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setAnimeSource(source);
     state = state.copyWith(
       animeSource: source,
+    );
+  }
+
+  Future<void> setPlayerSpeed(double speed) async {
+    await _preferencesService.setPlayerSpeed(speed);
+    state = state.copyWith(
+      playerSpeed: speed,
     );
   }
 }

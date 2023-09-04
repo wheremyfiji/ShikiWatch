@@ -16,6 +16,7 @@ const _libraryStartFragmentKey = 'libraryStartFragmentKey';
 const _playerDiscordRpcKey = 'playerDiscordRpcKey';
 const _libraryLayoutModeKey = 'libraryLayoutModeKey';
 const _animeSource = 'animeSourceKey';
+const _playerSpeedKey = 'playerSpeedKey';
 
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
@@ -142,5 +143,19 @@ class PreferencesService {
 
   Future<void> setAnimeSource(AnimeSource layout) async {
     await _preferences.setString(_animeSource, layout.name);
+  }
+
+  double getPlayerSpeed() {
+    final value = _preferences.getDouble(_playerSpeedKey);
+
+    if (value == null) {
+      return 1.0;
+    }
+
+    return value.clamp(0.25, 2.0);
+  }
+
+  Future<void> setPlayerSpeed(double speed) async {
+    await _preferences.setDouble(_playerSpeedKey, speed);
   }
 }

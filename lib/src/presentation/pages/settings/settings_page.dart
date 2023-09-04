@@ -20,6 +20,7 @@ import 'widgets/library_start_fragment.dart';
 import 'widgets/nav_dest_label_behavior_option.dart';
 import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
+import 'widgets/player_playback_speed.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/user_account_group.dart';
@@ -64,6 +65,8 @@ class SettingsPage extends ConsumerWidget {
                     title: 'Плеер',
                     options: [
                       const AnimeSourceOption(),
+                      if (!TargetP.instance.isDesktop)
+                        const PlayerPlaybackSpeedOption(),
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
                       if (TargetP.instance.isDesktop)

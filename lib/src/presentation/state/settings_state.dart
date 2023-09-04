@@ -19,5 +19,6 @@ class SettingsState with _$SettingsState {
     required bool playerDiscordRpc,
     required LibraryLayoutMode libraryLayout,
     required AnimeSource animeSource,
+    required double playerSpeed,
   }) = _SettingsState;
 }

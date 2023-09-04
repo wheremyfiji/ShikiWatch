@@ -6,14 +6,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../domain/enums/stream_quality.dart';
 import '../../../providers/anime_player_provider.dart';
 
-const List<double> _examplePlaybackRates = <double>[
+const List<double> _playbackRates = <double>[
   0.25,
   0.5,
-  //0.75,
   1.0,
   1.25,
   1.5,
-  //1.75,
   2.0,
 ];
 
@@ -108,7 +106,7 @@ class PlayerSpeedPopUp extends StatelessWidget {
       onSelected: onSelected,
       itemBuilder: (BuildContext context) {
         return <PopupMenuItem<double>>[
-          for (final double speed in _examplePlaybackRates)
+          for (final double speed in _playbackRates)
             PopupMenuItem<double>(
               value: speed,
               child: Text('${speed}x'),
@@ -195,80 +193,3 @@ class QualityPopUpMenu extends ConsumerWidget {
     );
   }
 }
-
-// class QualityButton extends StatelessWidget {
-//   final int streamQuality;
-//   //final int initialValue;
-//   final Function(int) onSelected;
-
-//   const QualityButton({
-//     super.key,
-//     required this.streamQuality,
-//     required this.onSelected,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return PopupMenuButton<int>(
-//       initialValue: streamQuality,
-//       onSelected: onSelected,
-//       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-//         const PopupMenuItem<int>(
-//           value: 0,
-//           child: Text('720p'),
-//         ),
-//         const PopupMenuItem<int>(
-//           value: 1,
-//           child: Text('480p'),
-//         ),
-//         const PopupMenuItem<int>(
-//           value: 2,
-//           child: Text('360p'),
-//         ),
-//       ],
-//       child: Padding(
-//         padding: const EdgeInsets.all(0),
-//         child: QualityTextWidget(
-//           quality: streamQuality,
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class QualityTextWidget extends StatelessWidget {
-//   final int quality;
-//   const QualityTextWidget({super.key, required this.quality});
-
-//   String getString(int value) {
-//     String str;
-
-//     const map = {0: '720p', 1: '480p', 2: '360p'};
-
-//     str = map[value] ?? 'N/A';
-
-//     return str;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         Text(
-//           getString(quality),
-//           style: const TextStyle(
-//             color: Colors.white,
-//             fontSize: 14,
-//           ),
-//           overflow: TextOverflow.ellipsis,
-//           maxLines: 1,
-//         ),
-//         const SizedBox(
-//           width: 4,
-//         ),
-//         const Icon(Icons.expand_more)
-//       ],
-//     );
-//   }
-// }

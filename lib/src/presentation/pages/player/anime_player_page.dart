@@ -82,9 +82,8 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                     controller.playerController.value.isInitialized &&
                     !controller.isError,
             playbackSpeed: controller.playbackSpeed,
-            onSelectedSpeed: (double speed) {
-              controller.playerController.setPlaybackSpeed(speed);
-            },
+            onSelectedSpeed: (double speed) =>
+                controller.setPlaybackSpeed(speed),
           ),
         ),
       ),
