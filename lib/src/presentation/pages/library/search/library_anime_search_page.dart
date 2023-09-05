@@ -12,7 +12,6 @@ import '../../../../utils/debouncer.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/custom_info_chip.dart';
 import '../../../widgets/image_with_shimmer.dart';
-import '../../../widgets/shadowed_overflow_list.dart';
 
 class LibraryAnimeSearchPage extends ConsumerWidget {
   const LibraryAnimeSearchPage({super.key});
@@ -56,91 +55,81 @@ class LibraryAnimeSearchPage extends ConsumerWidget {
                 automaticallyImplyLeading: false,
                 primary: false,
                 titleSpacing: 0,
-                title: ShadowedOverflowList(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 0,
-                      children: [
-                        const SizedBox(
-                          width: 8.0,
-                        ),
-                        ChoiceChip(
-                          label: const Text('Все'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected:
-                              provider.searchType == LibrarySearchType.all,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.all),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Смотрю'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected:
-                              provider.searchType == LibrarySearchType.watching,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.watching),
-                        ),
-                        ChoiceChip(
-                          label: const Text('В планах'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected:
-                              provider.searchType == LibrarySearchType.planned,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.planned),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Просмотрено'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected: provider.searchType ==
-                              LibrarySearchType.completed,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.completed),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Пересматриваю'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected: provider.searchType ==
-                              LibrarySearchType.rewatching,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.rewatching),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Отложено'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected:
-                              provider.searchType == LibrarySearchType.onHold,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.onHold),
-                        ),
-                        ChoiceChip(
-                          label: const Text('Брошено'),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          selected:
-                              provider.searchType == LibrarySearchType.dropped,
-                          onSelected: (_) => ref
-                              .read(libraryAnimeSearchProvider)
-                              .setSearchType(LibrarySearchType.dropped),
-                        ),
-                        const SizedBox(
-                          width: 8.0,
-                        ),
-                      ],
-                    ),
+                title: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 0,
+                    children: [
+                      const SizedBox(
+                        width: 8.0,
+                      ),
+                      ChoiceChip(
+                        label: const Text('Все'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected: provider.searchType == LibrarySearchType.all,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.all),
+                      ),
+                      ChoiceChip(
+                        label: const Text('Смотрю'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected:
+                            provider.searchType == LibrarySearchType.watching,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.watching),
+                      ),
+                      ChoiceChip(
+                        label: const Text('В планах'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected:
+                            provider.searchType == LibrarySearchType.planned,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.planned),
+                      ),
+                      ChoiceChip(
+                        label: const Text('Просмотрено'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected:
+                            provider.searchType == LibrarySearchType.completed,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.completed),
+                      ),
+                      ChoiceChip(
+                        label: const Text('Пересматриваю'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected:
+                            provider.searchType == LibrarySearchType.rewatching,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.rewatching),
+                      ),
+                      ChoiceChip(
+                        label: const Text('Отложено'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected:
+                            provider.searchType == LibrarySearchType.onHold,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.onHold),
+                      ),
+                      ChoiceChip(
+                        label: const Text('Брошено'),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        selected:
+                            provider.searchType == LibrarySearchType.dropped,
+                        onSelected: (_) => ref
+                            .read(libraryAnimeSearchProvider)
+                            .setSearchType(LibrarySearchType.dropped),
+                      ),
+                      const SizedBox(
+                        width: 8.0,
+                      ),
+                    ],
                   ),
                 ),
               ),

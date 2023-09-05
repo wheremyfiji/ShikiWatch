@@ -92,7 +92,7 @@ class InternalServerErrorException extends DioException {
 
   @override
   String toString() {
-    return 'Unknown error occurred, please try again later.';
+    return 'Скорее всего Shikimori недоступен, попробуй позже';
   }
 }
 
