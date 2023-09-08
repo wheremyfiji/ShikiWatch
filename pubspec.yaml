@@ -2,7 +2,7 @@ name: shikidev
 description: Unofficial application for shikimori.me
 publish_to: 'none'
 
-version: 0.6.0+42
+version: 0.6.1+44
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -11,7 +11,6 @@ environment:
 isar_version: &isar_version 3.1.0+1
 
 dependencies:
-  android_intent_plus: ^4.0.2
   audio_video_progress_bar: ^2.0.0
   #git_info: ^1.1.2
   #bottom_sheet: ^3.1.2
