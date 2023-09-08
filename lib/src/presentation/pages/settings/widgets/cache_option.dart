@@ -6,9 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:path/path.dart' as p;
 
-import '../../../../utils/target_platform.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../widgets/cached_image.dart';
-import '../../../../utils/utils.dart';
 
 import 'setting_option.dart';
 
@@ -64,7 +63,7 @@ class ClearCacheWidget extends ConsumerWidget {
 
       await clearImageCache();
 
-      if (!TargetP.instance.isDesktop) {
+      if (!AppUtils.instance.isDesktop) {
         ref.invalidate(cacheSizeProvider);
       }
 

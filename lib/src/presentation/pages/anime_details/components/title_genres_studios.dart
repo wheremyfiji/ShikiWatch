@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../domain/models/genre.dart';
 import '../../../../domain/models/studio.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/shadowed_overflow_list.dart';
+import '../../../widgets/shadowed_overflow_decorator.dart';
 
 class TitleGenresStudios extends StatelessWidget {
   final List<Genre>? genres;
@@ -22,7 +22,7 @@ class TitleGenresStudios extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return ShadowedOverflowList(
+    return ShadowedOverflowDecorator(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Wrap(

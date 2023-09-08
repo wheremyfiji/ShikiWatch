@@ -10,8 +10,7 @@ import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
-import '../../../../utils/target_platform.dart';
-import '../../../../utils/utils.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/error_widget.dart';
 
@@ -267,7 +266,7 @@ class TitlePlaylist extends ConsumerWidget {
               isLibria: true,
               libriaEpisode: LibriaEpisode(
                 //host: 'https://${title.player!.host!}',
-                host: TargetP.instance.isDesktop
+                host: AppUtils.instance.isDesktop
                     ? 'https://static.libria.fun'
                     : 'https://${title.player!.host!}',
                 fnd: ep.hls?.fhd,

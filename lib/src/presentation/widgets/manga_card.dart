@@ -7,7 +7,7 @@ import '../../constants/config.dart';
 import '../../domain/models/manga_short.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/shiki_utils.dart';
-import '../../utils/target_platform.dart';
+import '../../utils/app_utils.dart';
 import '../widgets/image_with_shimmer.dart';
 
 class MangaCard extends StatelessWidget {
@@ -27,7 +27,7 @@ class MangaCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Tooltip(
-          waitDuration: TargetP.instance.isDesktop
+          waitDuration: AppUtils.instance.isDesktop
               ? const Duration(seconds: 1)
               : const Duration(milliseconds: 0),
           message: 'Изменено: $updateString\nСоздано: $createString',

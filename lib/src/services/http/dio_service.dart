@@ -11,7 +11,7 @@ import 'package:dio/dio.dart';
 
 import '../../constants/config.dart';
 import '../../data/repositories/http_service.dart';
-import '../../utils/target_platform.dart';
+import '../../utils/app_utils.dart';
 
 import 'interceptors/request_interceptor.dart';
 import 'interceptors/refresh_token_interceptor.dart';
@@ -79,7 +79,7 @@ class DioHttpService implements HttpService {
 
   @override
   Map<String, String> headers = {
-    'User-Agent': TargetP.instance.userAgent,
+    'User-Agent': AppUtils.instance.userAgent,
   };
 
   /// GET method

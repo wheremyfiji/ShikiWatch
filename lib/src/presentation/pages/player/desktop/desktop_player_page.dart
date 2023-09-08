@@ -11,11 +11,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../mobile/animated_play_pause.dart';
-import '../../../../utils/utils.dart';
+import '../../../../utils/app_utils.dart';
 import '../player_error.dart';
 
-import 'components/player_info_header.dart';
 import 'components/player_volume_slider.dart';
+import 'components/player_info_header.dart';
 import 'desktop_player_provider.dart';
 
 class DesktopPlayerPage extends ConsumerWidget {

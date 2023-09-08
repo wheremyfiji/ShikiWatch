@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../../utils/target_platform.dart';
+import '../../../utils/app_utils.dart';
 import '../../../utils/router.dart';
 
 import 'widgets/anime_source_option.dart';
@@ -57,7 +57,7 @@ class SettingsPage extends ConsumerWidget {
                       const CurrentThemeOption(),
                       const DynamicColorsOption(),
                       const OledModeOption(),
-                      if (!TargetP.instance.isDesktop)
+                      if (!AppUtils.instance.isDesktop)
                         const NavDestLabelBehaviorOption(),
                     ],
                   ),
@@ -65,11 +65,11 @@ class SettingsPage extends ConsumerWidget {
                     title: 'Плеер',
                     options: [
                       const AnimeSourceOption(),
-                      if (!TargetP.instance.isDesktop)
+                      if (!AppUtils.instance.isDesktop)
                         const PlayerPlaybackSpeedOption(),
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
-                      if (TargetP.instance.isDesktop)
+                      if (AppUtils.instance.isDesktop)
                         const PlayerDiscordRpcOption(),
                     ],
                   ),
@@ -110,7 +110,7 @@ class SettingsPage extends ConsumerWidget {
                       //     },
                       //   ),
 
-                      if (TargetP.instance.isDesktop)
+                      if (AppUtils.instance.isDesktop)
                         SettingsOption(
                           title: 'распаковать pedals',
                           onTap: () async {

@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../services/anime_database/anime_database_provider.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../providers/library_local_history_provider.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
 import '../../../../utils/extensions/buildcontext.dart';
@@ -11,7 +12,6 @@ import '../../../../domain/models/pages_extra.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
 import '../../../../constants/config.dart';
-import '../../../../utils/utils.dart';
 
 class LocalHistoryTab extends ConsumerWidget {
   const LocalHistoryTab({super.key});

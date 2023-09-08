@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-import '../../../utils/target_platform.dart';
+import '../../../utils/app_utils.dart';
 import '../../oauth/oauth_service.dart';
 
 class RefreshTokenInterceptor extends Interceptor {
@@ -47,7 +47,7 @@ class RefreshTokenInterceptor extends Interceptor {
       method: requestOptions.method,
       responseType: requestOptions.responseType,
       headers: {
-        'User-Agent': TargetP.instance.userAgent,
+        'User-Agent': AppUtils.instance.userAgent,
         'Authorization': 'Bearer $newToken',
       },
     );

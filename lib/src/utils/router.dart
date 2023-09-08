@@ -37,7 +37,7 @@ import '../presentation/providers/anime_search_provider.dart';
 import '../presentation/widgets/shiki_annotate_region_widget.dart';
 import '../services/secure_storage/secure_storage_service.dart';
 
-import 'target_platform.dart';
+import 'app_utils.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -136,7 +136,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
 
             return FadeTransitionPage(
               key: state.pageKey,
-              child: TargetP.instance.isDesktop
+              child: AppUtils.instance.isDesktop
                   ? DesktopPlayerPage(extra: data)
                   : AnimePlayerPage(data: data),
             );
@@ -156,7 +156,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
         GoRoute(
           name: 'login',
           path: '/login',
-          builder: (context, state) => TargetP.instance.isDesktop
+          builder: (context, state) => AppUtils.instance.isDesktop
               ? const LoginDesktopPage()
               : const LoginPage(),
           routes: [

@@ -57,7 +57,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
   late final Player player = Player(
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
-      logLevel: kDebugMode ? MPVLogLevel.error : MPVLogLevel.error,
+      logLevel: kDebugMode ? MPVLogLevel.debug : MPVLogLevel.error,
       // увеличение размера кеша просто откладывает начало пропусков
       bufferSize: 32 * 1024 * 1024,
     ),
@@ -225,7 +225,7 @@ class DesktopPlayerNotifier extends ChangeNotifier {
         //   //'http_persistent=0,http_multiple=0,http_seekable=0,seg_max_retry=5',
         //   //'http_persistent=0,timeout=1000,seg_max_retry=5',
         // );
-        await (player.platform as dynamic).setProperty(
+        await (player.platform as NativePlayer).setProperty(
           'demuxer-lavf-o',
           'http_persistent=0,seg_max_retry=5',
         );

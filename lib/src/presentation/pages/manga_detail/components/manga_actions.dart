@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/models/manga_ranobe.dart';
 import '../../../../domain/models/manga_short.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/shadowed_overflow_list.dart';
+import '../../../widgets/shadowed_overflow_decorator.dart';
 import '../../comments/comments_page.dart';
 import '../manga_links_page.dart';
 import '../manga_similar_page.dart';
@@ -23,7 +23,7 @@ class MangaActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: ShadowedOverflowList(
+      child: ShadowedOverflowDecorator(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(0),
           scrollDirection: Axis.horizontal,

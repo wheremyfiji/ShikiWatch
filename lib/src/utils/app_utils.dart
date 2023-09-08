@@ -1,6 +1,30 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'extensions/buildcontext.dart';
+
+class AppUtils {
+  AppUtils._();
+
+  static final AppUtils _instance = AppUtils._();
+
+  static AppUtils get instance => _instance;
+
+  late bool isDesktop;
+  late String userAgent;
+  late String appCachePath;
+
+  static init(Directory appCacheDir) {
+    _instance.appCachePath = appCacheDir.path;
+
+    _instance.isDesktop =
+        Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+
+    _instance.userAgent = _instance.isDesktop
+        ? 'Shikimori Flutter Windows App'
+        : 'Shikimori Flutter App';
+  }
+}
 
 Uri getUrl(Uri baseUrl, String path, [Map<String, String>? params]) {
   return Uri(

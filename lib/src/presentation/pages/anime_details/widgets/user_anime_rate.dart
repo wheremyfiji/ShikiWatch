@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../utils/utils.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../../data/data_sources/anime_data_src.dart';
 import '../../../../data/data_sources/user_data_src.dart';
 import '../../../../data/repositories/anime_repo.dart';
@@ -15,7 +15,7 @@ import '../../../providers/library_tab_page_provider.dart';
 import '../../../widgets/delete_dialog.dart';
 import '../../../widgets/material_you_chip.dart';
 import '../../../widgets/number_field.dart';
-import '../../../widgets/shadowed_overflow_list.dart';
+import '../../../widgets/shadowed_overflow_decorator.dart';
 
 // class UserAnimeRateWidget extends HookConsumerWidget {
 //   //final Animes anime;
@@ -797,7 +797,7 @@ class _AnimeUserRateBottomSheetState
                   ),
                 ),
               ),
-              ShadowedOverflowList(
+              ShadowedOverflowDecorator(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Wrap(

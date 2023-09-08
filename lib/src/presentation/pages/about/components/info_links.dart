@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../../utils/target_platform.dart';
+import '../../../../utils/app_utils.dart';
 
 class InfoLinks extends StatelessWidget {
   const InfoLinks({super.key});
@@ -50,7 +50,7 @@ class InfoLinks extends StatelessWidget {
               mode: LaunchMode.externalApplication,
             ),
           ),
-          if (TargetP.instance.isDesktop) ...[
+          if (AppUtils.instance.isDesktop) ...[
             _buildItem(
               context,
               title: 'Anime4K',

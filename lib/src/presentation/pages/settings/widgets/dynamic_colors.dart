@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../../utils/target_platform.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../providers/environment_provider.dart';
 import '../../../providers/settings_provider.dart';
 
@@ -14,7 +14,7 @@ class DynamicColorsOption extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final environment = ref.watch(environmentProvider);
 
-    if ((environment.sdkVersion ?? 0) < 31 && !TargetP.instance.isDesktop) {
+    if ((environment.sdkVersion ?? 0) < 31 && !AppUtils.instance.isDesktop) {
       return const SizedBox.shrink();
     }
 
@@ -28,7 +28,7 @@ class DynamicColorsOption extends ConsumerWidget {
           color: context.colorScheme.onBackground,
         ),
       ),
-      subtitle: TargetP.instance.isDesktop
+      subtitle: AppUtils.instance.isDesktop
           ? null
           : Text(
               'Динамические цвета на основе обоев телефона',

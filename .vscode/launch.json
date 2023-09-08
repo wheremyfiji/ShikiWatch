@@ -7,12 +7,12 @@
             "type": "dart",
             "flutterMode": "debug",
             "args": [
-                "--verbose",
                 "--flavor",
                 "dev",
             ]
         }
     ],
 }
+//"--verbose",
 //profile debug
 //dev

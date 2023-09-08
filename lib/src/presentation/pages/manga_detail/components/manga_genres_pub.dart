@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../domain/models/genre.dart';
 import '../../../../domain/models/publisher.dart';
 import '../../../widgets/cool_chip.dart';
-import '../../../widgets/shadowed_overflow_list.dart';
+import '../../../widgets/shadowed_overflow_decorator.dart';
 
 class MangaGenresWidget extends StatelessWidget {
   final List<Genre>? genres;
@@ -17,7 +17,7 @@ class MangaGenresWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadowedOverflowList(
+    return ShadowedOverflowDecorator(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Wrap(

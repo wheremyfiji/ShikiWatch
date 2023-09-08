@@ -5,9 +5,9 @@ import '../../../../data/data_sources/user_data_src.dart';
 import '../../../../domain/models/anime.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../providers/library_tab_page_provider.dart';
-import '../../../../utils/utils.dart';
 
 const List<String> statusList = <String>[
   'Смотрю',

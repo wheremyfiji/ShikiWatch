@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:version/version.dart';
 
 import '../../presentation/providers/environment_provider.dart';
-import '../../utils/target_platform.dart';
+import '../../utils/app_utils.dart';
 import '../../constants/config.dart';
 import '../../../secret.dart';
 
@@ -58,7 +58,7 @@ class AppReleaseNotifier extends AsyncNotifier<AppRelease?> {
       return null;
     }
 
-    if (TargetP.instance.isDesktop) {
+    if (AppUtils.instance.isDesktop) {
       return null;
     }
 
@@ -101,7 +101,7 @@ class AppReleaseNotifier extends AsyncNotifier<AppRelease?> {
   }
 
   bool _checkAppSig(String sig) {
-    if (TargetP.instance.isDesktop) {
+    if (AppUtils.instance.isDesktop) {
       return false;
     }
 

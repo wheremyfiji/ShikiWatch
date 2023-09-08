@@ -25,7 +25,7 @@ import 'src/presentation/providers/environment_provider.dart';
 import 'src/services/preferences/preferences_service.dart';
 import 'src/data/data_sources/environment_data_src.dart';
 import 'src/utils/dynamic_colors.dart';
-import 'src/utils/target_platform.dart';
+import 'src/utils/app_utils.dart';
 import 'src/presentation/shiki.dart';
 
 import 'secret.dart';
@@ -61,7 +61,7 @@ void initApp() async {
   timeago.setLocaleMessages('ru', timeago.RuMessages());
 
   final appCacheDir = await path_prov.getTemporaryDirectory();
-  TargetP.init(appCacheDir);
+  AppUtils.init(appCacheDir);
 
   // if (Platform.isAndroid) {
   //   try {

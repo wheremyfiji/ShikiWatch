@@ -5,15 +5,14 @@ import 'dart:convert' as convert;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../secret.dart';
-import '../../utils/target_platform.dart';
-import '../../utils/utils.dart';
+import '../../utils/app_utils.dart';
 import '../secure_storage/secure_storage_service.dart';
 
 class OAuthService {
   static OAuthService instance = OAuthService();
 
   Map<String, String> headers = {
-    'User-Agent': TargetP.instance.isDesktop
+    'User-Agent': AppUtils.instance.isDesktop
         ? 'Shikimori Flutter Windows App'
         : 'Shikimori Flutter App',
   };
@@ -22,13 +21,14 @@ class OAuthService {
     http.Response tokenRequestResponse = await http.post(
       getUrl(Uri.parse('https://shikimori.me'), '/oauth/token', {
         'grant_type': 'authorization_code',
-        'client_id':
-            TargetP.instance.isDesktop ? kShikiClientIdDesktop : kShikiClientId,
-        'client_secret': TargetP.instance.isDesktop
+        'client_id': AppUtils.instance.isDesktop
+            ? kShikiClientIdDesktop
+            : kShikiClientId,
+        'client_secret': AppUtils.instance.isDesktop
             ? kShikiClientSecretDesktop
             : kShikiClientSecret,
         'code': authCode,
-        'redirect_uri': TargetP.instance.isDesktop
+        'redirect_uri': AppUtils.instance.isDesktop
             ? 'urn:ietf:wg:oauth:2.0:oob'
             : 'shikidev://oauth/shikimori',
       }),
@@ -64,10 +64,10 @@ class OAuthService {
         '/oauth/token',
         {
           'grant_type': 'refresh_token',
-          'client_id': TargetP.instance.isDesktop
+          'client_id': AppUtils.instance.isDesktop
               ? kShikiClientIdDesktop
               : kShikiClientId,
-          'client_secret': TargetP.instance.isDesktop
+          'client_secret': AppUtils.instance.isDesktop
               ? kShikiClientSecretDesktop
               : kShikiClientSecret,
           'refresh_token': SecureStorageService.instance.refreshToken,
@@ -96,7 +96,7 @@ class OAuthService {
     final Uri userUrl = Uri.https('shikimori.me', 'api/users/whoami');
 
     final Map<String, String> headers = {
-      'User-Agent': TargetP.instance.isDesktop
+      'User-Agent': AppUtils.instance.isDesktop
           ? 'Shikimori Flutter Windows App'
           : 'Shikimori Flutter App',
       'Authorization': 'Bearer $token',

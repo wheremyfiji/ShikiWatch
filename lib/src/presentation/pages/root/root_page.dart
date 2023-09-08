@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../utils/target_platform.dart';
 import '../../../services/updater/update_service.dart';
-import '../../../utils/utils.dart';
-import '../../providers/settings_provider.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
+import '../../providers/settings_provider.dart';
+import '../../../utils/app_utils.dart';
 
 // const _allDestinations = [
 //   NavigationRailDestination(
@@ -78,7 +77,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                   ),
                   child: IntrinsicHeight(
                     child: NavigationRail(
-                      extended: TargetP.instance.isDesktop
+                      extended: AppUtils.instance.isDesktop
                           ? screenWidth > 1600
                           : screenWidth > expandedBreakpoint,
                       groupAlignment: -1.0,

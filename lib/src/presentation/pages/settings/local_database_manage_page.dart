@@ -8,15 +8,14 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../providers/environment_provider.dart';
-import '../../../utils/target_platform.dart';
-import '../../../utils/utils.dart';
+import '../../../utils/app_utils.dart';
 
 class LocalDatabaseManage extends StatelessWidget {
   const LocalDatabaseManage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (TargetP.instance.isDesktop) {
+    if (AppUtils.instance.isDesktop) {
       return Scaffold(
         appBar: AppBar(),
         body: const Center(

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../utils/extensions/buildcontext.dart';
 
-class ShadowedOverflowList extends StatelessWidget {
+class ShadowedOverflowDecorator extends StatelessWidget {
   final Widget child;
   final double width;
 
-  const ShadowedOverflowList({
+  const ShadowedOverflowDecorator({
     super.key,
     required this.child,
     this.width = 16.0,

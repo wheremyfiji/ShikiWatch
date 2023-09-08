@@ -7,13 +7,13 @@ import '../../../data/data_sources/user_data_src.dart';
 import '../../../domain/models/manga_ranobe.dart';
 import '../../../domain/models/manga_short.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
-import '../../../utils/utils.dart';
+import '../../../utils/app_utils.dart';
 import '../../providers/library_manga_provider.dart';
 import '../../providers/manga_details_provider.dart';
 import '../../widgets/delete_dialog.dart';
 import '../../widgets/material_you_chip.dart';
 import '../../widgets/number_field.dart';
-import '../../widgets/shadowed_overflow_list.dart';
+import '../../widgets/shadowed_overflow_decorator.dart';
 
 class MangaUserRateBottomSheet extends ConsumerStatefulWidget {
   final MangaShort manga;
@@ -232,7 +232,7 @@ class _MangaUserRateBottomSheetState
               const SizedBox(
                 height: 10,
               ),
-              ShadowedOverflowList(
+              ShadowedOverflowDecorator(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Wrap(
