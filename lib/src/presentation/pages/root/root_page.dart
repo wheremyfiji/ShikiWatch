@@ -54,7 +54,8 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         error: (error, stackTrace) {
           showErrorSnackBar(
             ctx: context,
-            msg: 'Возникла ошибка при поиске обновлений',
+            msg: 'Произошла ошибка при поиске обновлений приложения',
+            dur: const Duration(seconds: 5),
           );
         },
       ),

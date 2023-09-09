@@ -1,15 +1,11 @@
 enum LibraryLayoutMode {
   list,
-  grid,
-}
+  grid;
 
-extension LibraryLayoutModeName on LibraryLayoutMode {
   String get name {
-    switch (this) {
-      case LibraryLayoutMode.list:
-        return 'Список';
-      case LibraryLayoutMode.grid:
-        return 'Сетка';
-    }
+    return switch (this) {
+      LibraryLayoutMode.list => 'Список',
+      LibraryLayoutMode.grid => 'Сетка',
+    };
   }
 }

@@ -26,70 +26,78 @@ class TitleName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: tap ? () => _showSheet(context) : null,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 3,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (subTitle != null)
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 16),
+      child: InkWell(
+        onTap: tap ? () => _showSheet(context) : null,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      subTitle!,
-                      maxLines: 2,
+                      title,
+                      maxLines: 3,
                       overflow: TextOverflow.fade,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: context.colorScheme.onBackground.withOpacity(
-                          0.8,
-                        ),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  if (score != null && score != '0.0')
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: RatingBarIndicator(
-                            rating: (double.tryParse(score!) ?? 0.0) / 2,
-                            itemSize: 16,
-                            itemCount: 5,
-                            itemBuilder: (context, index) => Icon(
-                              Icons.star_rounded,
-                              color: context.isDarkThemed
-                                  ? Colors.amber.shade200
-                                  : Colors.amber.shade600,
-                            ),
+                    if (subTitle != null)
+                      Text(
+                        subTitle!,
+                        maxLines: 2,
+                        overflow: TextOverflow.fade,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          fontSize: 14,
+                          color: context.colorScheme.onBackground.withOpacity(
+                            0.8,
                           ),
                         ),
-                        Text(
-                          score!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: context.colorScheme.onBackground.withOpacity(
-                              0.8,
+                      ),
+                    if (score != null && score != '0.0')
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 4),
+                            child: RatingBarIndicator(
+                              rating: (double.tryParse(score!) ?? 0.0) / 2,
+                              itemSize: 16,
+                              itemCount: 5,
+                              itemBuilder: (context, index) => Icon(
+                                Icons.star_rounded,
+                                color: context.isDarkThemed
+                                    ? Colors.amber.shade200
+                                    : Colors.amber.shade600,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                ],
+                          Text(
+                            score!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  context.colorScheme.onBackground.withOpacity(
+                                0.8,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
-            ),
-            if (rating != '?') CustomInfoChip(title: rating),
-          ],
+              if (rating != '?')
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: CustomInfoChip(title: rating),
+                ),
+            ],
+          ),
         ),
       ),
     );

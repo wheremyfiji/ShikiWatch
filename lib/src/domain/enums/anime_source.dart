@@ -1,18 +1,13 @@
 enum AnimeSource {
   alwaysAsk,
   kodik,
-  libria,
-}
+  libria;
 
-extension AnimeSourceExt on AnimeSource {
   String get name {
-    switch (this) {
-      case AnimeSource.alwaysAsk:
-        return 'Всегда спрашивать';
-      case AnimeSource.kodik:
-        return 'Kodik';
-      case AnimeSource.libria:
-        return 'AniLibria';
-    }
+    return switch (this) {
+      AnimeSource.alwaysAsk => 'Всегда спрашивать',
+      AnimeSource.kodik => 'Kodik',
+      AnimeSource.libria => 'AniLibria',
+    };
   }
 }

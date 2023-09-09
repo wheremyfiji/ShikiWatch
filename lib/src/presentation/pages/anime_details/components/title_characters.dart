@@ -62,6 +62,20 @@ class TitleCharactersWidget extends ConsumerWidget {
                         ),
                       ),
                     ),
+                    if (characters.length > 2) ...[
+                      const Spacer(),
+                      IconButton(
+                        style: const ButtonStyle(
+                          visualDensity: VisualDensity.compact,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        onPressed: () => AllCharactersBottomSheet.show(
+                            context: context, characters: characters),
+                        icon: const Icon(
+                          Icons.chevron_right_rounded,
+                        ),
+                      ),
+                    ]
                   ],
                 ),
               ),
@@ -82,11 +96,6 @@ class TitleCharactersWidget extends ConsumerWidget {
                       height: 120,
                       child: CharacterCard(item.character!),
                     );
-
-                    // return AspectRatio(
-                    //   aspectRatio: 0.55,
-                    //   child: CharacterCard(item.character!),
-                    // );
                   },
                 ),
               ),
@@ -124,14 +133,6 @@ class TitleCharactersWidget extends ConsumerWidget {
                       child: CustomShimmer(),
                     ),
                   );
-
-                  // return AspectRatio(
-                  //   aspectRatio: 0.708,
-                  //   child: ClipRRect(
-                  //     borderRadius: BorderRadius.circular(12),
-                  //     child: const CustomShimmer(),
-                  //   ),
-                  // );
                 },
               ),
             ),
@@ -178,55 +179,80 @@ class CharacterCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
 
-    // return LayoutBuilder(
-    //   builder: (context, constraints) {
-    //     return InkWell(
-    //       splashColor: Colors.transparent,
-    //       highlightColor: Colors.transparent,
-    //       splashFactory: NoSplash.splashFactory,
-    //       onTap: () => context.pushNamed(
-    //         'character',
-    //         pathParameters: <String, String>{
-    //           'id': (character.id!).toString(),
-    //         },
-    //       ),
-    //       child: Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           SizedBox(
-    //             width: constraints.maxWidth,
-    //             height: constraints.maxHeight / 1.3,
-    //             child: ClipRRect(
-    //               borderRadius: BorderRadius.circular(12.0),
-    //               child: ImageWithShimmerWidget(
-    //                 imageUrl:
-    //                     AppConfig.staticUrl + (character.image?.original ?? ''),
-    //               ),
-    //             ),
-    //           ),
-    //           const SizedBox(
-    //             height: 4,
-    //           ),
-    //           Flexible(
-    //             child: Text(
-    //               (character.russian == ''
-    //                       ? character.name
-    //                       : character.russian) ??
-    //                   '',
-    //               maxLines: 2,
-    //               overflow: TextOverflow.ellipsis,
-    //               style: const TextStyle(
-    //                 fontSize: 14.0,
-    //                 height: 1.2,
-    //                 //fontWeight: FontWeight.w500,
-    //               ),
-    //             ),
-    //           )
-    //         ],
-    //       ),
-    //     );
-    //   },
-    // );
+class AllCharactersBottomSheet extends StatelessWidget {
+  final List<ShikiRole> characters;
+
+  const AllCharactersBottomSheet(this.characters, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      snap: true,
+      minChildSize: 0.5,
+      initialChildSize: 0.75,
+      builder: (context, scrollController) {
+        return SafeArea(
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    'Все персонажи',
+                    style: context.textTheme.titleLarge,
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: Divider(height: 1),
+              ),
+              SliverList.builder(
+                itemCount: characters.length,
+                itemBuilder: (context, index) {
+                  final chara = characters[index];
+
+                  return ListTile(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.pushNamed(
+                        'character',
+                        pathParameters: <String, String>{
+                          'id': (chara.character!.id!).toString(),
+                        },
+                      );
+                    },
+                    leading: CachedCircleImage(
+                      AppConfig.staticUrl +
+                          (chara.character!.image?.original ?? ''),
+                    ),
+                    title: Text(chara.character!.name ?? '[Без имени]'),
+                    subtitle: chara.character!.russian == null
+                        ? null
+                        : Text(chara.character!.russian ?? ''),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static void show(
+      {required BuildContext context, required List<ShikiRole> characters}) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: false,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      showDragHandle: true,
+      builder: (_) => SafeArea(child: AllCharactersBottomSheet(characters)),
+    );
   }
 }

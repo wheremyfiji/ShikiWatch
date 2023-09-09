@@ -231,12 +231,13 @@ class AnimeDetailsPage extends ConsumerWidget {
                       studios: anime.studios,
                     ).animate().fade(),
                   ),
-                  if (anime.description != null)
+                  if (anime.description != null &&
+                      anime.description!.isNotEmpty)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       sliver: SliverToBoxAdapter(
                         child: TitleDescription(
-                          anime.descriptionHtml!,
+                          anime.description!,
                         ).animate().fade(),
                       ),
                     ),

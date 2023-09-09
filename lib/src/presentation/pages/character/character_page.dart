@@ -99,11 +99,11 @@ class CharacterPage extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   sliver: CharacterHeader(data),
                 ),
-                if (data.description != null)
+                if (data.description != null && data.description!.isNotEmpty)
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverToBoxAdapter(
-                      child: TitleDescription(data.descriptionHtml ?? ''),
+                      child: TitleDescription(data.description ?? ''),
                     ),
                   ),
                 if (data.seyu != null && data.seyu!.isNotEmpty)

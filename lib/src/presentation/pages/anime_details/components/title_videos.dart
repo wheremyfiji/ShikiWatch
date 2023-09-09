@@ -60,6 +60,10 @@ class TitleVideosWidget extends StatelessWidget {
                 desc = model.kind ?? '';
               }
 
+              if (model.hosting != null && model.hosting!.isNotEmpty) {
+                desc = '${model.hosting} • $desc';
+              }
+
               return GestureDetector(
                 onTap: () => launchUrlString(
                   model.url ?? '',

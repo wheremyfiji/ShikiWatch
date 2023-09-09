@@ -36,7 +36,7 @@ class TitleRelatedWidget extends ConsumerWidget {
         final hasMore = dataList.length > 3;
 
         return SliverList.separated(
-          itemCount: hasMore ? 5 : dataList.length + 1,
+          itemCount: hasMore ? 4 : dataList.length + 1,
           separatorBuilder: (context, index) =>
               SizedBox(height: index == 0 ? 6 : 10),
           itemBuilder: (context, index) {
@@ -60,33 +60,28 @@ class TitleRelatedWidget extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  if (hasMore) ...[
+                    const Spacer(),
+                    IconButton(
+                      style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              RelatedTitles(related: dataList),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
+                        ),
+                      ),
+                      icon: const Icon(
+                        Icons.chevron_right_rounded,
+                      ),
+                    ),
+                  ],
                 ],
-              );
-            }
-
-            if (hasMore && index == 4) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation1, animation2) =>
-                            RelatedTitles(related: dataList),
-                        transitionDuration: Duration.zero,
-                        reverseTransitionDuration: Duration.zero,
-                      ),
-                    ),
-                    child: Text(
-                      'Ещё',
-                      style: TextStyle(
-                        color: context.colorScheme.onBackground,
-                      ),
-                    ),
-                  ),
-                ),
               );
             }
 

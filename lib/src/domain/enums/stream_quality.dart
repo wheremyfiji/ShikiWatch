@@ -2,20 +2,14 @@ enum StreamQuality {
   fhd,
   hd,
   sd,
-  low,
-}
+  low;
 
-extension StreamQualityExt on StreamQuality {
   String get name {
-    switch (this) {
-      case StreamQuality.fhd:
-        return '1080p';
-      case StreamQuality.hd:
-        return '720p';
-      case StreamQuality.sd:
-        return '480p';
-      case StreamQuality.low:
-        return '360p';
-    }
+    return switch (this) {
+      StreamQuality.fhd => '1080p',
+      StreamQuality.hd => '720p',
+      StreamQuality.sd => '480p',
+      StreamQuality.low => '360p',
+    };
   }
 }
