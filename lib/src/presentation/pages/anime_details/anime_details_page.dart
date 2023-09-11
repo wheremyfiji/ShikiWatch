@@ -251,7 +251,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                       ),
                     ),
                   SliverToBoxAdapter(
-                    child: TitleCharactersWidget(
+                    child: AnimeCharactersWidget(
                       anime.id!,
                     ),
                   ),

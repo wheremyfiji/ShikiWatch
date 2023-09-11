@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -93,7 +94,7 @@ class TitleName extends StatelessWidget {
               ),
               if (rating != '?')
                 Padding(
-                  padding: const EdgeInsets.only(left: 4),
+                  padding: const EdgeInsets.only(left: 8),
                   child: CustomInfoChip(title: rating),
                 ),
             ],

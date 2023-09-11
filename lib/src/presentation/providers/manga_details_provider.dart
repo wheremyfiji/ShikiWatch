@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../domain/models/shiki_role.dart';
 import '../../utils/extensions/riverpod_extensions.dart';
 import '../../data/data_sources/manga_data_src.dart';
 import '../../data/repositories/manga_repo.dart';
@@ -11,6 +12,24 @@ import '../../domain/models/manga_short.dart';
 import '../../domain/models/related_title.dart';
 import '../../domain/models/user_rate.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
+
+final mangaRolesProvider =
+    FutureProvider.autoDispose.family<List<ShikiRole>, int>((ref, id) async {
+  if (ref.state.isRefreshing) {
+    await ref.debounce();
+  }
+
+  final token = ref.cancelToken();
+
+  final roles = await ref.read(mangaDataSourceProvider).getMangaRoles(
+        id: id,
+        cancelToken: token,
+      );
+
+  return roles;
+
+  //return roles.where((e) => e.character != null && e.person == null).toList();
+}, name: 'mangaRolesProvider');
 
 final relatedTitlesMangaProvider = FutureProvider.autoDispose
     .family<Iterable<RelatedTitle>, int>((ref, id) async {

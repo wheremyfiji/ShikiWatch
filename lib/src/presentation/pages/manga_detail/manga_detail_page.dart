@@ -11,6 +11,7 @@ import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/manga_details_provider.dart';
 import '../../widgets/error_widget.dart';
 import '../../widgets/title_description.dart';
+import '../anime_details/components/title_characters.dart';
 import '../anime_details/components/title_name.dart';
 import '../anime_details/components/title_poster.dart';
 import 'components/manga_actions.dart';
@@ -130,6 +131,11 @@ class MangaDetailPage extends ConsumerWidget {
                         ).animate().fade(),
                       ),
                     ),
+                  SliverToBoxAdapter(
+                    child: MangaCharactersWidget(
+                      mangaDetails.id,
+                    ),
+                  ),
                   MangaRelatedWidget(
                     id: data.id!,
                   ),
@@ -154,5 +160,18 @@ class MangaDetailPage extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class MangaCharactersWidget extends ConsumerWidget {
+  final int id;
+
+  const MangaCharactersWidget(this.id, {super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final roles = ref.watch(mangaRolesProvider(id));
+
+    return TitleCharactersWidget(roles);
   }
 }

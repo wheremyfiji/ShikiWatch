@@ -4,6 +4,7 @@ import '../../domain/models/external_link.dart';
 import '../../domain/models/manga_ranobe.dart';
 import '../../domain/models/manga_short.dart';
 import '../../domain/models/related_title.dart';
+import '../../domain/models/shiki_role.dart';
 
 abstract class MangaRepository {
   const MangaRepository();
@@ -27,6 +28,11 @@ abstract class MangaRepository {
   });
 
   Future<Iterable<MangaShort>> getSimilar({
+    required int? id,
+    required CancelToken cancelToken,
+  });
+
+  Future<List<ShikiRole>> getMangaRoles({
     required int? id,
     required CancelToken cancelToken,
   });

@@ -1,7 +1,13 @@
 String getStatus(String value) {
   String status;
 
-  const map = {'anons': 'Анонс', 'ongoing': 'Онгоинг', 'released': 'Вышло'};
+  const map = {
+    'anons': 'Анонс',
+    'ongoing': 'Онгоинг',
+    'released': 'Вышло',
+    'paused': 'Приостановлено',
+    'discontinued': 'Прекращено'
+  };
 
   status = map[value] ?? 'N/A';
 

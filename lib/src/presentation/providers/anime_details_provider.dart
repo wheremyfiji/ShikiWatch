@@ -17,7 +17,7 @@ import '../../data/repositories/anime_repo.dart';
 import '../../domain/models/anime.dart';
 import '../../domain/models/related_title.dart';
 
-final rolesAnimeProvider =
+final animeRolesProvider =
     FutureProvider.autoDispose.family<List<ShikiRole>, int>((ref, id) async {
   if (ref.state.isRefreshing) {
     await ref.debounce();
@@ -32,7 +32,7 @@ final rolesAnimeProvider =
   return roles;
 
   //return roles.where((e) => e.character != null && e.person == null).toList();
-}, name: 'rolesAnimeProvider');
+}, name: 'animeRolesProvider');
 
 final animeFranchiseProvider =
     FutureProvider.autoDispose.family<ShikiFranchise, int>((ref, id) async {

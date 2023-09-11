@@ -17,34 +17,37 @@ class MangaGenresWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShadowedOverflowDecorator(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          spacing: 8,
-          children: [
-            const SizedBox(
-              width: 8.0,
-            ),
-            if (genres != null) ...[
-              ...List.generate(
-                genres!.length,
-                (index) => CoolChip(label: genres![index].russian ?? ""),
+    return Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: ShadowedOverflowDecorator(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Wrap(
+            spacing: 8,
+            children: [
+              const SizedBox(
+                width: 8.0,
               ),
-            ],
-            if (publishers != null) ...[
-              ...List.generate(
-                publishers!.length,
-                (index) => CoolChip(
-                  label: publishers![index].name ?? "",
-                  useTertiaryColors: true,
+              if (genres != null && genres!.isNotEmpty) ...[
+                ...List.generate(
+                  genres!.length,
+                  (index) => CoolChip(label: genres![index].russian ?? ""),
                 ),
+              ],
+              if (publishers != null && publishers!.isNotEmpty) ...[
+                ...List.generate(
+                  publishers!.length,
+                  (index) => CoolChip(
+                    label: publishers![index].name ?? "",
+                    useTertiaryColors: true,
+                  ),
+                ),
+              ],
+              const SizedBox(
+                width: 8.0,
               ),
             ],
-            const SizedBox(
-              width: 8.0,
-            ),
-          ],
+          ),
         ),
       ),
     );

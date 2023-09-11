@@ -5,6 +5,7 @@ import '../../domain/models/external_link.dart';
 import '../../domain/models/manga_ranobe.dart';
 import '../../domain/models/manga_short.dart';
 import '../../domain/models/related_title.dart';
+import '../../domain/models/shiki_role.dart';
 import '../../services/http/http_service_provider.dart';
 import '../repositories/http_service.dart';
 import '../repositories/manga_repo.dart';
@@ -71,6 +72,19 @@ class MangaDataSource implements MangaRepository {
     final response = await dio.get('mangas/$id/similar');
 
     return [for (final e in response) MangaShort.fromJson(e)];
+  }
+
+  @override
+  Future<List<ShikiRole>> getMangaRoles({
+    required int? id,
+    required CancelToken cancelToken,
+  }) async {
+    final response = await dio.get(
+      'mangas/$id/roles',
+      cancelToken: cancelToken,
+    );
+
+    return [for (final e in response) ShikiRole.fromJson(e)];
   }
 
   @override

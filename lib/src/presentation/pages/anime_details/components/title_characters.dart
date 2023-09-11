@@ -11,14 +11,26 @@ import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/custom_shimmer.dart';
 
-class TitleCharactersWidget extends ConsumerWidget {
+class AnimeCharactersWidget extends ConsumerWidget {
   final int id;
-  const TitleCharactersWidget(this.id, {super.key});
+
+  const AnimeCharactersWidget(this.id, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final roles = ref.watch(rolesAnimeProvider(id));
+    final roles = ref.watch(animeRolesProvider(id));
 
+    return TitleCharactersWidget(roles);
+  }
+}
+
+class TitleCharactersWidget extends StatelessWidget {
+  final AsyncValue<List<ShikiRole>> roles;
+
+  const TitleCharactersWidget(this.roles, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return roles.when(
       data: (data) {
         if (data.isEmpty) {
@@ -201,7 +213,7 @@ class AllCharactersBottomSheet extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 16),
+                  padding: const EdgeInsets.only(left: 16, bottom: 8),
                   child: Text(
                     'Все персонажи',
                     style: context.textTheme.titleLarge,
