@@ -77,7 +77,7 @@ class LibraryPageAppBar extends ConsumerWidget {
               SecureStorageService.instance.userProfileImage,
               cacheManager: cacheManager,
             ),
-          ).animate().fadeIn(),
+          ).animate().fade(duration: 500.milliseconds),
         ),
 
         const SizedBox(

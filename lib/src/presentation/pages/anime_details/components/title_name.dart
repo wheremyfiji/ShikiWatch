@@ -95,7 +95,10 @@ class TitleName extends StatelessWidget {
               if (rating != '?')
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
-                  child: CustomInfoChip(title: rating),
+                  child: CustomInfoChip(
+                    title: rating,
+                    elevation: false,
+                  ),
                 ),
             ],
           ),

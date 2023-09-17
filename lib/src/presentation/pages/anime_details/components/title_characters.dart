@@ -74,7 +74,7 @@ class TitleCharactersWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (characters.length > 2) ...[
+                    if (characters.length > 5) ...[
                       const Spacer(),
                       IconButton(
                         style: const ButtonStyle(
@@ -206,6 +206,7 @@ class AllCharactersBottomSheet extends StatelessWidget {
       snap: true,
       minChildSize: 0.5,
       initialChildSize: 0.75,
+      snapSizes: const [0.75, 1.0],
       builder: (context, scrollController) {
         return SafeArea(
           child: CustomScrollView(

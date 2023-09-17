@@ -49,12 +49,12 @@ class TitleInfo extends StatelessWidget {
               anime.status == 'released'
                   ? _InfoItem(
                       title: 'Эпизоды',
-                      content: '${anime.episodes!} эп. по ~$duration мин.',
+                      content: '${anime.episodes!} эп.', //по ~$duration мин.
                     )
                   : _InfoItem(
                       title: 'Эпизоды',
                       content:
-                          '${anime.episodesAired!} / ${anime.episodes! == 0 ? '?' : '${anime.episodes!}'} эп. по ~$duration мин.',
+                          '${anime.episodesAired!} из ${anime.episodes! == 0 ? '?' : '${anime.episodes!}'} эп.',
                     ),
             if (nextEp != null && nextEp != '')
               _InfoItem(

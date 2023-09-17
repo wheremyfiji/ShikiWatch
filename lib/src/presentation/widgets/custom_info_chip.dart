@@ -4,10 +4,12 @@ import '../../utils/extensions/buildcontext.dart';
 
 class CustomInfoChip extends StatelessWidget {
   final String title;
+  final bool elevation;
 
   const CustomInfoChip({
     super.key,
     required this.title,
+    this.elevation = true,
   });
 
   @override
@@ -18,7 +20,7 @@ class CustomInfoChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(4.0),
       ),
       color: context.theme.colorScheme.tertiaryContainer,
-      //elevation: 0.0,
+      elevation: elevation ? null : 0.0,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
         child: Text(

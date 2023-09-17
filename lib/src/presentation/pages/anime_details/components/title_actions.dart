@@ -22,7 +22,7 @@ class TitleActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.only(top: 16), //10
       child: ShadowedOverflowDecorator(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(0),
