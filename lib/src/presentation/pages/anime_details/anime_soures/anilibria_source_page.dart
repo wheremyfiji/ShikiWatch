@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../anilibria/enums/title_status_code.dart';
@@ -11,6 +13,7 @@ import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
 import '../../../../utils/app_utils.dart';
+import '../../../hooks/use_auto_scroll_controller.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/error_widget.dart';
 
@@ -18,7 +21,7 @@ import '../../player/continue_dialog.dart';
 import 'kodik_source_page.dart';
 import 'providers.dart';
 
-class AnilibriaSourcePage extends ConsumerWidget {
+class AnilibriaSourcePage extends HookConsumerWidget {
   final int shikimoriId;
   final int epWatched;
   final String animeName;
@@ -37,12 +40,94 @@ class AnilibriaSourcePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final result = ref.watch(anilibriaSearchProvider(searchName));
+    final anime = ref.watch(isAnimeInDataBaseProvider(shikimoriId));
+
+    void addEpisode(int episode) {
+      ref
+          .read(animeDatabaseProvider)
+          .updateEpisode(
+            shikimoriId: shikimoriId,
+            animeName: animeName,
+            imageUrl: imageUrl,
+            timeStamp: 'Просмотрено полностью',
+            studioId: 610,
+            studioName: 'AniLibria.TV',
+            studioType: 'voice',
+            episodeNumber: episode,
+            complete: true,
+          )
+          .then((_) {
+        showSnackBar(ctx: context, msg: 'Серия $episode добавлена');
+        return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
+      });
+    }
+
+    void removeEpisode(int episode) {
+      ref
+          .read(animeDatabaseProvider)
+          .deleteEpisode(
+            shikimoriId: shikimoriId,
+            studioId: 610,
+            episodeNumber: episode,
+          )
+          .then((value) {
+        showSnackBar(ctx: context, msg: 'Серия $episode удалена');
+        return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
+      });
+    }
+
+    final List<Episode>? episodesList = useMemoized(() {
+      return anime.maybeWhen(
+        data: (anime) {
+          final studioIndex = anime?.studios
+              ?.indexWhere((e) => (e.id == 610 && e.name == 'AniLibria.TV'));
+
+          if (studioIndex == -1) {
+            return null;
+          }
+
+          final studio = anime?.studios?[studioIndex!];
+
+          return studio?.episodes;
+        },
+        orElse: () => null,
+      );
+    }, [anime]);
+
+    final autoScrollController =
+        useAutoScrollController(suggestedRowHeight: 48);
+
+    useEffect(() {
+      final latestEpisode = episodesList?.last;
+
+      if (latestEpisode == null) {
+        return null;
+      }
+
+      if (latestEpisode.nubmer == null) {
+        return null;
+      }
+
+      final index = latestEpisode.nubmer! - 1;
+
+      if (index < 0) {
+        return null;
+      }
+
+      autoScrollController.scrollToIndex(
+        index,
+        preferPosition: AutoScrollPosition.middle,
+      );
+
+      return null;
+    }, [episodesList]);
 
     return Scaffold(
       body: SafeArea(
         top: false,
         bottom: false,
         child: CustomScrollView(
+          controller: autoScrollController,
           slivers: [
             SliverAppBar.medium(
               automaticallyImplyLeading: false,
@@ -65,10 +150,11 @@ class AnilibriaSourcePage extends ConsumerWidget {
                   onPressed: () => showDialog<void>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      //icon: const Icon(Icons.info),
+                      icon: const Icon(Icons.info),
                       title: const Text('Информация'),
                       content: const Text(
-                        'Поиск производится по названию через API АниЛибрии. Результат может НЕ совпадать с искомым аниме.\n\nНайденные серии связаны с озвучкой от Анилибрии в других источниках.',
+                        'Поиск производится по названию через API АниЛибрии. Результат может НЕ совпадать с искомым аниме.\n'
+                        '\nНайденные серии связаны с озвучкой от Анилибрии в других источниках.',
                       ),
                       actions: <Widget>[
                         FilledButton(
@@ -106,12 +192,42 @@ class AnilibriaSourcePage extends ConsumerWidget {
 
                 return [
                   TitleInfo(title),
-                  TitlePlaylist(
-                    title: title,
-                    shikimoriId: shikimoriId,
-                    epWatched: epWatched,
-                    animeName: animeName,
-                    imageUrl: imageUrl,
+                  SliverList.builder(
+                    itemCount: title.player!.playlist!.length,
+                    itemBuilder: (context, index) {
+                      final ep = title.player!.playlist![index];
+
+                      final savedEpIndex = episodesList
+                          ?.indexWhere((e) => e.nubmer == ep.episode);
+
+                      final Episode? savedEpisode;
+
+                      if (savedEpIndex == -1) {
+                        savedEpisode = null;
+                      } else {
+                        savedEpisode = episodesList?[savedEpIndex!];
+                      }
+
+                      final isCompleted = ep.episode! <= epWatched;
+
+                      return AutoScrollTag(
+                        controller: autoScrollController,
+                        key: ValueKey(index),
+                        index: index,
+                        child: AnilibriaEpisodeTile(
+                          ep: ep,
+                          savedEpisode: savedEpisode,
+                          isCompleted: isCompleted,
+                          host: 'https://${title.player!.host!}',
+                          shikimoriId: shikimoriId,
+                          epWatched: epWatched,
+                          animeName: animeName,
+                          imageUrl: imageUrl,
+                          removeEpisode: (e) => removeEpisode(e),
+                          addEpisode: (e) => addEpisode(e),
+                        ),
+                      );
+                    },
                   ),
                 ];
               },
@@ -136,197 +252,133 @@ class AnilibriaSourcePage extends ConsumerWidget {
   }
 }
 
-class TitlePlaylist extends ConsumerWidget {
-  final AnilibriaTitle title;
+class AnilibriaEpisodeTile extends StatelessWidget {
+  final AnilibriaEpisode ep;
+  final Episode? savedEpisode;
+  final bool isCompleted;
+  final String host;
+
   final int shikimoriId;
   final int epWatched;
   final String animeName;
   final String imageUrl;
 
-  const TitlePlaylist({
+  final void Function(int episode) removeEpisode;
+  final void Function(int episode) addEpisode;
+
+  const AnilibriaEpisodeTile({
     super.key,
-    required this.title,
+    required this.ep,
+    required this.savedEpisode,
+    required this.isCompleted,
+    required this.host,
     required this.shikimoriId,
     required this.epWatched,
     required this.animeName,
     required this.imageUrl,
+    required this.removeEpisode,
+    required this.addEpisode,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final anime = ref.watch(isAnimeInDataBaseProvider(shikimoriId));
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+      onTap: () async {
+        if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
+          showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
 
-    List<Episode>? episodesList() => anime.maybeWhen(
-          data: (anime) {
-            // возврящает -1 если элемент не найден
-            final studioIndex = anime?.studios
-                ?.indexWhere((e) => (e.id == 610 && e.name == 'AniLibria.TV'));
-
-            // если такой студии нету
-            if (studioIndex == -1) {
-              return null;
-            }
-
-            final studio = anime?.studios?[studioIndex!];
-
-            return studio?.episodes;
-          },
-          orElse: () => null,
-        );
-
-    void addEpisode(int episode) async {
-      ref
-          .read(animeDatabaseProvider)
-          .updateEpisode(
-            shikimoriId: shikimoriId,
-            animeName: animeName,
-            imageUrl: imageUrl,
-            timeStamp: 'Просмотрено полностью',
-            studioId: 610,
-            studioName: 'AniLibria.TV',
-            studioType: 'voice',
-            episodeNumber: episode,
-            complete: true,
-          )
-          .then((_) {
-        showSnackBar(ctx: context, msg: 'Серия $episode добавлена');
-        return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
-      });
-    }
-
-    void removeEpisode(int episode) async {
-      ref
-          .read(animeDatabaseProvider)
-          .deleteEpisode(
-            shikimoriId: shikimoriId,
-            studioId: 610,
-            episodeNumber: episode,
-          )
-          .then((value) {
-        showSnackBar(ctx: context, msg: 'Серия $episode удалена');
-        return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
-      });
-    }
-
-    return SliverList.builder(
-      itemCount: title.player!.playlist!.length,
-      itemBuilder: (context, index) {
-        final ep = title.player!.playlist![index];
-
-        final savedEpList = episodesList();
-
-        final savedEpIndex =
-            savedEpList?.indexWhere((e) => e.nubmer == ep.episode);
-
-        final Episode? savedEpisode;
-
-        if (savedEpIndex == -1) {
-          savedEpisode = null;
-        } else {
-          savedEpisode = savedEpList?[savedEpIndex!];
+          return;
         }
 
-        final isCompleted = ep.episode! <= epWatched;
+        String startPosition = '';
 
-        return ListTile(
-          contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-          onTap: () async {
-            if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
-              showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
+        if (savedEpisode?.position != null) {
+          bool? dialogValue = await showDialog<bool>(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => const ContinueDialog(),
+          );
 
-              return;
-            }
+          if (dialogValue ?? false) {
+            startPosition = savedEpisode?.position ?? '';
+          }
+        }
 
-            String startPosition = '';
-
-            if (savedEpisode?.position != null) {
-              bool? dialogValue = await showDialog<bool>(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) => const ContinueDialog(),
-              );
-
-              if (dialogValue ?? false) {
-                startPosition = savedEpisode?.position ?? '';
-              }
-            }
-
-            AnimePlayerPageExtra extra = AnimePlayerPageExtra(
-              studioId: 610,
-              shikimoriId: shikimoriId,
-              episodeNumber: ep.episode!,
-              animeName: animeName,
-              studioName: 'AniLibria.TV',
-              studioType: 'voice',
-              episodeLink: '',
-              additInfo: '',
-              position: savedEpisode?.position,
-              imageUrl: imageUrl,
-              startPosition: startPosition,
-              isLibria: true,
-              libriaEpisode: LibriaEpisode(
-                //host: 'https://${title.player!.host!}',
-                host: AppUtils.instance.isDesktop
-                    ? 'https://static.libria.fun'
-                    : 'https://${title.player!.host!}',
-                fnd: ep.hls?.fhd,
-                hd: ep.hls?.hd,
-              ),
-            );
-
-            // ignore: use_build_context_synchronously
-            GoRouter.of(context).pushNamed('player', extra: extra);
-          },
-          title: Text(
-            'Серия ${ep.episode}',
-          ),
-          subtitle: savedEpisode != null && savedEpisode.timeStamp != null
-              ? Text(
-                  savedEpisode.timeStamp!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.colorScheme.onBackground.withOpacity(0.8),
-                  ),
-                )
-              : null,
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (savedEpisode != null && !isCompleted) ...[
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.done),
-                  color: Theme.of(context).colorScheme.primary,
-                )
-              ],
-              if (isCompleted) ...[
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.check_circle_rounded),
-                  color: Theme.of(context).colorScheme.primary,
-                )
-              ],
-              if (savedEpisode != null) ...[
-                IconButton(
-                  onPressed: () {
-                    removeEpisode(ep.episode!);
-                  },
-                  icon: const Icon(Icons.delete),
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ] else ...[
-                IconButton(
-                  onPressed: () {
-                    addEpisode(ep.episode!);
-                  },
-                  icon: const Icon(Icons.add),
-                  color: context.colorScheme.onSurfaceVariant,
-                ),
-              ],
-            ],
+        AnimePlayerPageExtra extra = AnimePlayerPageExtra(
+          studioId: 610,
+          shikimoriId: shikimoriId,
+          episodeNumber: ep.episode!,
+          animeName: animeName,
+          studioName: 'AniLibria.TV',
+          studioType: 'voice',
+          episodeLink: '',
+          additInfo: '',
+          position: savedEpisode?.position,
+          imageUrl: imageUrl,
+          startPosition: startPosition,
+          isLibria: true,
+          libriaEpisode: LibriaEpisode(
+            //host: 'https://${title.player!.host!}',
+            host: AppUtils.instance.isDesktop
+                ? 'https://static.libria.fun'
+                : host,
+            fnd: ep.hls?.fhd,
+            hd: ep.hls?.hd,
           ),
         );
+
+        // ignore: use_build_context_synchronously
+        GoRouter.of(context).pushNamed('player', extra: extra);
       },
+      title: Text(
+        'Серия ${ep.episode}',
+      ),
+      subtitle: savedEpisode != null && savedEpisode!.timeStamp != null
+          ? Text(
+              savedEpisode!.timeStamp!,
+              style: TextStyle(
+                fontSize: 12,
+                color: context.colorScheme.onBackground.withOpacity(0.8),
+              ),
+            )
+          : null,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (savedEpisode != null && !isCompleted) ...[
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.done),
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
+          if (isCompleted) ...[
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.check_circle_rounded),
+              color: Theme.of(context).colorScheme.primary,
+            )
+          ],
+          if (savedEpisode != null) ...[
+            IconButton(
+              onPressed: () {
+                removeEpisode(ep.episode!);
+              },
+              icon: const Icon(Icons.delete),
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ] else ...[
+            IconButton(
+              onPressed: () {
+                addEpisode(ep.episode!);
+              },
+              icon: const Icon(Icons.add),
+              color: context.colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

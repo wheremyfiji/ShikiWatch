@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../utils/app_utils.dart';
 import '../../../../utils/extensions/buildcontext.dart';
@@ -9,6 +11,7 @@ import '../../../../../kodik/models/kodik_anime.dart';
 import '../../../../domain/models/anime_database.dart';
 import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
+import '../../../hooks/use_auto_scroll_controller.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../player/continue_dialog.dart';
 
@@ -30,7 +33,7 @@ final seriesSortProvider = StateProvider.family
   }
 }, name: 'episodeSortProvider');
 
-class SeriesSelectPage extends ConsumerWidget {
+class SeriesSelectPage extends HookConsumerWidget {
   final List<KodikSeries>? seriesList;
 
   final int studioId;
@@ -56,6 +59,14 @@ class SeriesSelectPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final anime = ref.watch(isAnimeInDataBaseProvider(shikimoriId));
+
+    final sortedSeriesList = ref.watch(seriesSortProvider(seriesList!));
+    final currentSort = ref.watch(episodeSortTypeProvider);
+
+    void setSortType(EpisodeSortType type) async {
+      ref.read(episodeSortTypeProvider.notifier).update((state) => type);
+      context.pop();
+    }
 
     void addEpisode(int? episode) async {
       if (episode != null) {
@@ -93,31 +104,55 @@ class SeriesSelectPage extends ConsumerWidget {
       }
     }
 
-    List<Episode>? episodesList(int studioId) => anime.maybeWhen(
-          data: (anime) {
-            // возврящает -1 если элемент не найден
-            final studioIndex =
-                anime?.studios?.indexWhere((e) => e.id == studioId);
+    final List<Episode>? episodesList = useMemoized(() {
+      return anime.maybeWhen(
+        data: (anime) {
+          // возврящает -1 если элемент не найден
+          final studioIndex =
+              anime?.studios?.indexWhere((e) => e.id == studioId);
 
-            // если такой студии нету
-            if (studioIndex == -1) {
-              return null;
-            }
+          // если такой студии нету
+          if (studioIndex == -1) {
+            return null;
+          }
 
-            final studio = anime?.studios?[studioIndex!];
+          final studio = anime?.studios?[studioIndex!];
 
-            return studio?.episodes;
-          },
-          orElse: () => null,
-        );
+          return studio?.episodes;
+        },
+        orElse: () => null,
+      );
+    }, [anime]);
 
-    void setSortType(EpisodeSortType type) async {
-      ref.read(episodeSortTypeProvider.notifier).update((state) => type);
-      context.pop();
-    }
+    final autoScrollController =
+        useAutoScrollController(suggestedRowHeight: 48);
 
-    final sortedSeriesList = ref.watch(seriesSortProvider(seriesList!));
-    final currentSort = ref.watch(episodeSortTypeProvider);
+    useEffect(() {
+      final latestEpisode = episodesList?.last;
+
+      if (latestEpisode == null) {
+        return null;
+      }
+
+      if (latestEpisode.nubmer == null) {
+        return null;
+      }
+
+      final index = currentSort == EpisodeSortType.oldest
+          ? latestEpisode.nubmer! - 1
+          : sortedSeriesList.length - latestEpisode.nubmer!;
+
+      if (index < 0) {
+        return null;
+      }
+
+      autoScrollController.scrollToIndex(
+        index,
+        preferPosition: AutoScrollPosition.middle,
+      );
+
+      return null;
+    }, [episodesList]);
 
     return Scaffold(
       body: RefreshIndicator(
@@ -127,9 +162,11 @@ class SeriesSelectPage extends ConsumerWidget {
           top: false,
           bottom: false,
           child: CustomScrollView(
+            controller: autoScrollController,
             slivers: [
-              SliverAppBar.medium(
+              SliverAppBar(
                 automaticallyImplyLeading: false,
+                pinned: true,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
@@ -150,7 +187,7 @@ class SeriesSelectPage extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     color: context.theme.colorScheme.onBackground,
                   ),
                 ),
@@ -160,7 +197,7 @@ class SeriesSelectPage extends ConsumerWidget {
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                     final seria = sortedSeriesList[index];
-                    final epList = episodesList(studioId);
+                    final epList = episodesList;
 
                     final epIndex = epList?.indexWhere(
                         (e) => e.nubmer == int.parse(seria.number ?? ''));
@@ -180,102 +217,110 @@ class SeriesSelectPage extends ConsumerWidget {
 
                     final isComp = seriaNum <= episodeWatched;
 
-                    return ListTile(
-                      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                      onTap: () async {
-                        String startPosition = '';
+                    return AutoScrollTag(
+                      controller: autoScrollController,
+                      key: ValueKey(index),
+                      index: index,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                        onTap: () async {
+                          String startPosition = '';
 
-                        if (episode?.position != null && seria.type == null) {
-                          bool? dialogValue = await showDialog<bool>(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) => const ContinueDialog(),
+                          if (episode?.position != null && seria.type == null) {
+                            bool? dialogValue = await showDialog<bool>(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) => const ContinueDialog(),
+                            );
+
+                            if (dialogValue ?? false) {
+                              startPosition = episode?.position ?? '';
+                            }
+                          }
+                          AnimePlayerPageExtra data = AnimePlayerPageExtra(
+                            studioId: studioId,
+                            shikimoriId: shikimoriId,
+                            episodeNumber: int.parse(seria.number ?? ''),
+                            animeName: animeName,
+                            studioName: studioName,
+                            studioType: studioType,
+                            episodeLink: seria.link ?? '',
+                            additInfo: seria.type ?? '',
+                            position: episode?.position,
+                            imageUrl: imageUrl,
+                            startPosition: startPosition,
+                            isLibria: false,
                           );
 
-                          if (dialogValue ?? false) {
-                            startPosition = episode?.position ?? '';
-                          }
-                        }
-                        AnimePlayerPageExtra data = AnimePlayerPageExtra(
-                          studioId: studioId,
-                          shikimoriId: shikimoriId,
-                          episodeNumber: int.parse(seria.number ?? ''),
-                          animeName: animeName,
-                          studioName: studioName,
-                          studioType: studioType,
-                          episodeLink: seria.link ?? '',
-                          additInfo: seria.type ?? '',
-                          position: episode?.position,
-                          imageUrl: imageUrl,
-                          startPosition: startPosition,
-                          isLibria: false,
-                        );
-
-                        // ignore: use_build_context_synchronously
-                        GoRouter.of(context).pushNamed('player', extra: data);
-                      },
-                      title: Text("Серия ${seria.number}"),
-                      subtitle: seria.type == null
-                          ? (episode != null
-                              ? Text(
-                                  episode.timeStamp ?? '',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: context.colorScheme.onBackground
-                                        .withOpacity(0.8),
-                                  ),
-                                )
-                              : null)
-                          : Text(
-                              seria.type!,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: context.colorScheme.onBackground
-                                    .withOpacity(0.8),
+                          // ignore: use_build_context_synchronously
+                          GoRouter.of(context).pushNamed('player', extra: data);
+                        },
+                        title: Text("Серия ${seria.number}"),
+                        subtitle: seria.type == null
+                            ? (episode != null
+                                ? Text(
+                                    episode.timeStamp ?? '',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: context.colorScheme.onBackground
+                                          .withOpacity(0.8),
+                                    ),
+                                  )
+                                : null)
+                            : Text(
+                                seria.type!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: context.colorScheme.onBackground
+                                      .withOpacity(0.8),
+                                ),
                               ),
-                            ),
-                      trailing: seria.type != null
-                          ? null
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (episode != null && !isComp) ...[
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.done),
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  )
+                        trailing: seria.type != null
+                            ? null
+                            : Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (episode != null && !isComp) ...[
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.done),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    )
+                                  ],
+                                  if (isComp) ...[
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: const Icon(
+                                          Icons.check_circle_rounded),
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    )
+                                  ],
+                                  if (episode != null) ...[
+                                    IconButton(
+                                      onPressed: () {
+                                        removeEpisode(
+                                            int.parse(seria.number ?? ''));
+                                      },
+                                      icon: const Icon(Icons.delete),
+                                      color:
+                                          Theme.of(context).colorScheme.error,
+                                    ),
+                                  ] else ...[
+                                    IconButton(
+                                      onPressed: () {
+                                        addEpisode(
+                                            int.parse(seria.number ?? ''));
+                                      },
+                                      icon: const Icon(Icons.add),
+                                      color:
+                                          context.colorScheme.onSurfaceVariant,
+                                    ),
+                                  ],
                                 ],
-                                if (isComp) ...[
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon:
-                                        const Icon(Icons.check_circle_rounded),
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  )
-                                ],
-                                if (episode != null) ...[
-                                  IconButton(
-                                    onPressed: () {
-                                      removeEpisode(
-                                          int.parse(seria.number ?? ''));
-                                    },
-                                    icon: const Icon(Icons.delete),
-                                    color: Theme.of(context).colorScheme.error,
-                                  ),
-                                ] else ...[
-                                  IconButton(
-                                    onPressed: () {
-                                      addEpisode(int.parse(seria.number ?? ''));
-                                    },
-                                    icon: const Icon(Icons.add),
-                                    color: context.colorScheme.onSurfaceVariant,
-                                  ),
-                                ],
-                              ],
-                            ),
+                              ),
+                      ),
                     );
                   },
                   childCount: sortedSeriesList.length,
