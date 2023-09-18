@@ -98,6 +98,10 @@ class AnilibriaSourcePage extends HookConsumerWidget {
         useAutoScrollController(suggestedRowHeight: 48);
 
     useEffect(() {
+      if (result.isLoading || result.asData == null) {
+        return null;
+      }
+
       final latestEpisode = episodesList?.last;
 
       if (latestEpisode == null) {
@@ -120,7 +124,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
       );
 
       return null;
-    }, [episodesList]);
+    }, [episodesList, result]);
 
     return Scaffold(
       body: SafeArea(

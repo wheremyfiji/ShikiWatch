@@ -17,13 +17,9 @@ class SecureStorageService extends SecureStorageValues {
   //       encryptedSharedPreferences: true,
   //     );
 
-  // static const _storage = FlutterSecureStorage(
-  //   //aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  //   aOptions: AndroidOptions.defaultOptions,
-  // );
-
   static Future<void> initialize() async {
     instance.storage = const FlutterSecureStorage(
+        wOptions: WindowsOptions(useBackwardCompatibility: true)
         //aOptions: instance.getAndroidOptions(),
         );
 
