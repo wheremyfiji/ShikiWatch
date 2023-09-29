@@ -60,7 +60,7 @@ class OAuthService {
   Future<String?> refreshToken() async {
     http.Response tokenRefreshResponse = await http.post(
       getUrl(
-        Uri.parse('https://shikimori.me'),
+        Uri.parse('https://shikimori.one'),
         '/oauth/token',
         {
           'grant_type': 'refresh_token',
