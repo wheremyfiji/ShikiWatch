@@ -15,7 +15,7 @@
 
 #### Android
 
-| <img src="screenshots/scr-andr-library.png?raw=true" width="200"/> | <img src="screenshots/scr-andr-anime_info.png?raw=true" width="200"/> | <img src="screenshots/scr-andr-search-filters.jpg?raw=true" width="200"/> |<img src="screenshots/scr-andr-exp_page.jpg" width="200"/> |
+| <img src="screenshots/scr-andr-library.png?raw=true" width="200"/> | <img src="screenshots/scr-andr-anime_info.png?raw=true" width="200"/> | <img src="screenshots/scr-andr-search-filters.png?raw=true" width="200"/> |<img src="screenshots/scr-andr-exp_page.png?raw=true" width="200"/> |
 | :--: | :--: | :--: | :--: |
 |Библиотека|Аниме|Фильтры поиска|Главная|
 
