@@ -100,17 +100,19 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
       return null;
     }
 
-    if (state.location == '/login/settings') {
+    final String location = state.uri.toString();
+
+    if (location == '/login/settings') {
       return null;
     }
 
-    final isSplash = state.location == '/splash';
+    final isSplash = location == '/splash';
 
     if (isSplash) {
       return userLogin ? '/' : '/login';
     }
 
-    final isLoggingIn = state.location == '/login';
+    final isLoggingIn = location == '/login';
 
     if (isLoggingIn) return userLogin ? '/' : null;
 
@@ -119,13 +121,16 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
 
   List<RouteBase> get routes => [
         GoRoute(
-          path: '/splash',
-          name: 'splash',
-          builder: (context, state) => const SplashPage(),
-        ),
-        GoRoute(
           path: '/',
           redirect: (_, __) => '/library',
+        ),
+        GoRoute(
+          path: '/splash',
+          name: 'splash',
+          pageBuilder: (context, state) => FadeTransitionPage(
+            key: state.pageKey,
+            child: const SplashPage(),
+          ),
         ),
         GoRoute(
           path: '/player',
@@ -156,9 +161,12 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
         GoRoute(
           name: 'login',
           path: '/login',
-          builder: (context, state) => AppUtils.instance.isDesktop
-              ? const LoginDesktopPage()
-              : const LoginPage(),
+          pageBuilder: (context, state) => FadeTransitionPage(
+            key: state.pageKey,
+            child: AppUtils.instance.isDesktop
+                ? const LoginDesktopPage()
+                : const LoginPage(),
+          ),
           routes: [
             GoRoute(
               name: 'login_settings',
@@ -261,8 +269,8 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       name: 'explore_search',
                       path: 'search',
                       pageBuilder: (context, state) {
-                        final sId = state.queryParameters['studioId'];
-                        final gId = state.queryParameters['genreId'];
+                        final sId = state.uri.queryParameters['studioId'];
+                        final gId = state.uri.queryParameters['genreId'];
 
                         return FadeTransitionPage(
                           key: state.pageKey,

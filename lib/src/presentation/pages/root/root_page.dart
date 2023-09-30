@@ -83,21 +83,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                           : screenWidth > expandedBreakpoint,
                       groupAlignment: -1.0,
                       selectedIndex: navigationShell.currentIndex,
-                      onDestinationSelected: (tappedIndex) {
-                        if (navigationShell.currentIndex == tappedIndex &&
-                            GoRouter.of(context).location == '/explore') {
-                          context.push('/explore/search');
-                          return;
-                        }
-
-                        if (navigationShell.currentIndex == tappedIndex) {
-                          navigationShell
-                              .shellRouteContext.navigatorKey.currentState
-                              ?.popUntil((r) => r.isFirst);
-                        } else {
-                          navigationShell.goBranch(tappedIndex);
-                        }
-                      },
+                      onDestinationSelected: _onDestinationSelected,
                       destinations: const [
                         NavigationRailDestination(
                           icon: Icon(Icons.book_outlined),
@@ -154,22 +140,31 @@ class ScaffoldWithNavBar extends ConsumerWidget {
             ),
           ],
           selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: (tappedIndex) {
-            if (navigationShell.currentIndex == tappedIndex &&
-                GoRouter.of(context).location == '/explore') {
-              context.push('/explore/search');
-              return;
-            }
-
-            if (navigationShell.currentIndex == tappedIndex) {
-              navigationShell.shellRouteContext.navigatorKey.currentState
-                  ?.popUntil((r) => r.isFirst);
-            } else {
-              navigationShell.goBranch(tappedIndex);
-            }
-          },
+          onDestinationSelected: _onDestinationSelected,
         ),
       );
     }
   }
+
+  _onDestinationSelected(int tappedIndex) {
+    navigationShell.goBranch(
+      tappedIndex,
+      initialLocation: tappedIndex == navigationShell.currentIndex,
+    );
+  }
+
+  // _onDestinationSelected(BuildContext context, int tappedIndex) {
+  //   if (navigationShell.currentIndex == tappedIndex &&
+  //       GoRouterState.of(context).uri.toString() == '/explore') {
+  //     context.push('/explore/search');
+  //     return;
+  //   }
+
+  //   if (navigationShell.currentIndex == tappedIndex) {
+  //     navigationShell.shellRouteContext.navigatorKey.currentState
+  //         ?.popUntil((r) => r.isFirst);
+  //   } else {
+  //     navigationShell.goBranch(tappedIndex);
+  //   }
+  // }
 }
