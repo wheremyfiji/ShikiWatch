@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/models/anime_player_page_extra.dart';
 import '../../providers/anime_player_provider.dart';
 import '../../../utils/extensions/duration.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/auto_hide.dart';
 import 'mobile/player_bottom.dart';
 import 'mobile/player_center.dart';
@@ -60,6 +61,9 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
     final p = PlayerProviderParameters(data);
 
     final controller = ref.watch(playerControllerProvider(p));
+
+    final longPressSeek = ref.watch(
+        settingsProvider.select((settings) => settings.playerLongPressSeek));
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -125,6 +129,21 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
         data: (video) {
           return GestureDetector(
             behavior: HitTestBehavior.translucent,
+            onLongPressStart: !longPressSeek
+                ? null
+                : (details) {
+                    if (controller.isError ||
+                        !controller.playerController.value.isInitialized) {
+                      return;
+                    }
+                    controller.longPressSeek(true);
+                  },
+            onLongPressEnd: !longPressSeek
+                ? null
+                : (details) {
+                    controller.longPressSeek(false);
+                  },
+            onLongPressCancel: () {},
             onTap: controller.isError ? null : controller.hideController.toggle,
             onHorizontalDragStart: (DragStartDetails details) {
               if (controller.isError ||

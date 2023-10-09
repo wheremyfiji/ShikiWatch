@@ -20,5 +20,6 @@ class SettingsState with _$SettingsState {
     required LibraryLayoutMode libraryLayout,
     required AnimeSource animeSource,
     required double playerSpeed,
+    required bool playerLongPressSeek,
   }) = _SettingsState;
 }

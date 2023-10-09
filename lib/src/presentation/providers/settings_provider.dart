@@ -31,6 +31,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       libraryLayout: _preferencesService.getLibraryLayout(),
       animeSource: _preferencesService.getAnimeSource(),
       playerSpeed: _preferencesService.getPlayerSpeed(),
+      playerLongPressSeek: _preferencesService.getPlayerLongPressSeek(),
     );
   }
 
@@ -95,6 +96,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setPlayerSpeed(speed);
     state = state.copyWith(
       playerSpeed: speed,
+    );
+  }
+
+  Future<void> setPlayerLongPressSeek(bool newValue) async {
+    await _preferencesService.setPlayerLongPressSeek(newValue);
+    state = state.copyWith(
+      playerLongPressSeek: newValue,
     );
   }
 }

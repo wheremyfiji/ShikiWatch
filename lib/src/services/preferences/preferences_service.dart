@@ -17,6 +17,7 @@ const _playerDiscordRpcKey = 'playerDiscordRpcKey';
 const _libraryLayoutModeKey = 'libraryLayoutModeKey';
 const _animeSource = 'animeSourceKey';
 const _playerSpeedKey = 'playerSpeedKey';
+const _playerLongPressSeek = 'playerLongPressSeekKey';
 
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
@@ -157,5 +158,19 @@ class PreferencesService {
 
   Future<void> setPlayerSpeed(double speed) async {
     await _preferences.setDouble(_playerSpeedKey, speed);
+  }
+
+  bool getPlayerLongPressSeek() {
+    final value = _preferences.getBool(_playerLongPressSeek);
+
+    if (value == null) {
+      return false;
+    }
+
+    return value;
+  }
+
+  Future<void> setPlayerLongPressSeek(bool v) async {
+    await _preferences.setBool(_playerLongPressSeek, v);
   }
 }

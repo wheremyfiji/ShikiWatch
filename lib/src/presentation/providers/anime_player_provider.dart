@@ -76,6 +76,7 @@ class PlayerController extends flutter.ChangeNotifier {
   bool expandVideo = false;
 
   double playbackSpeed = 1.0;
+  double savedPlaybackSpeed = 1.0;
 
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
@@ -390,6 +391,15 @@ class PlayerController extends flutter.ChangeNotifier {
     await ref.read(settingsProvider.notifier).setPlayerSpeed(speed);
 
     await playerController.setPlaybackSpeed(speed);
+  }
+
+  void longPressSeek(bool seek) {
+    if (seek) {
+      savedPlaybackSpeed = playbackSpeed;
+      playerController.setPlaybackSpeed(2.0);
+    } else {
+      playerController.setPlaybackSpeed(savedPlaybackSpeed);
+    }
   }
 
   void changeStreamQuality(StreamQuality q) async {
