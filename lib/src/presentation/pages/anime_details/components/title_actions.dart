@@ -210,15 +210,16 @@ class _UserRateItem extends StatelessWidget {
     IconData icon;
 
     const map = {
-      'planned': Icons.event_available,
-      'watching': Icons.remove_red_eye,
-      'rewatching': Icons.refresh,
-      'completed': Icons.done_all,
-      'on_hold': Icons.pause,
-      'dropped': Icons.close
+      'planned': Icons.event_available_rounded,
+      'watching': Icons.remove_red_eye_rounded,
+      'rewatching': Icons.refresh_rounded,
+      'completed': Icons.done_all_rounded,
+      'on_hold': Icons.pause_rounded,
+      'dropped': Icons.close_rounded
     };
 
-    icon = map[value] ?? Icons.add_rounded;
+    icon = map[value] ?? Icons.bookmark_add_rounded;
+    //Icons.add_rounded;
 
     return icon;
   }

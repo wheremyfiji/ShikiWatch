@@ -10,6 +10,7 @@ import '../utils/router.dart';
 
 import 'providers/settings_provider.dart';
 import 'widgets/app_theme_builder.dart';
+import 'widgets/shiki_annotate_region_widget.dart';
 
 //String appTitle = kDebugMode ? 'ShikiDev' : 'ShikiWatch';
 
@@ -33,35 +34,37 @@ class ShikiApp extends ConsumerWidget {
       dynamicLight: dynamicColors?.light,
       dynamicDark: dynamicColors?.dark,
       isDynamic: useDynamicColors,
-      builder: (context, appTheme) => MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        //showPerformanceOverlay: true,
-        //checkerboardOffscreenLayers: true,
-        //checkerboardRasterCacheImages: true,
-        theme: appTheme.light,
-        darkTheme: oledMode ? appTheme.oled : appTheme.dark,
-        title: kDebugMode ? 'ShikiDev' : 'ShikiWatch',
-        themeMode: themeMode,
-        routerConfig: router,
-        scrollBehavior: ScrollBehavior(),
-        builder: (context, child) {
-          if (!kDebugMode) {
-            ErrorWidget.builder = (FlutterErrorDetails error) {
-              return const Center(
-                child: Text('Произошла ошибка'),
-              );
-            };
-          }
+      builder: (context, appTheme) => StyledOverlayRegion(
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          //showPerformanceOverlay: true,
+          //checkerboardOffscreenLayers: true,
+          //checkerboardRasterCacheImages: true,
+          theme: appTheme.light,
+          darkTheme: oledMode ? appTheme.oled : appTheme.dark,
+          title: kDebugMode ? 'ShikiDev' : 'ShikiWatch',
+          themeMode: themeMode,
+          routerConfig: router,
+          scrollBehavior: ScrollBehavior(),
+          builder: (context, child) {
+            if (!kDebugMode) {
+              ErrorWidget.builder = (FlutterErrorDetails error) {
+                return const Center(
+                  child: Text('Произошла ошибка'),
+                );
+              };
+            }
 
-          /// fix high textScaleFactor
-          final mediaQuery = MediaQuery.of(context);
-          final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+            /// fix high textScaleFactor
+            final mediaQuery = MediaQuery.of(context);
+            final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
 
-          return MediaQuery(
-            data: mediaQuery.copyWith(textScaleFactor: scale),
-            child: child!,
-          );
-        },
+            return MediaQuery(
+              data: mediaQuery.copyWith(textScaleFactor: scale),
+              child: child!,
+            );
+          },
+        ),
       ),
     );
   }

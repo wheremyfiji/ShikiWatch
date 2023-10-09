@@ -34,7 +34,6 @@ import '../presentation/pages/search/anime_search_page.dart';
 import '../presentation/pages/settings/local_database_manage_page.dart';
 import '../presentation/pages/settings/settings_page.dart';
 import '../presentation/providers/anime_search_provider.dart';
-import '../presentation/widgets/shiki_annotate_region_widget.dart';
 import '../services/secure_storage/secure_storage_service.dart';
 
 import 'app_utils.dart';
@@ -502,10 +501,8 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
             return ExcludeSemantics(
-              child: StyledOverlayRegion(
-                child: ScaffoldWithNavBar(
-                  navigationShell: navigationShell,
-                ),
+              child: ScaffoldWithNavBar(
+                navigationShell: navigationShell,
               ),
             );
           },

@@ -38,6 +38,7 @@ class UserAccountGroup extends ConsumerWidget {
             bool? dialogValue = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
+                icon: const Icon(Icons.logout_rounded),
                 title: const Text('Выйти из аккаунта?'),
                 actions: <Widget>[
                   TextButton(
