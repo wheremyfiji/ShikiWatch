@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../domain/enums/library_state.dart';
-import '../../../utils/app_utils.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
@@ -43,13 +42,6 @@ class LibraryPageAppBar extends ConsumerWidget {
       title: state == LibraryFragmentMode.anime
           ? CustomSearchBar(
               onTap: () {
-                showErrorSnackBar(
-                  ctx: context,
-                  msg: 'Временно не работает, используй глобальный поиск',
-                );
-
-                return;
-
                 Navigator.push(
                   context,
                   PageRouteBuilder(

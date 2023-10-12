@@ -13,7 +13,7 @@ import 'disclaimer_dialog.dart';
 
 Future<void> _launchUrl() async {
   if (!await launchUrl(Uri.parse(
-      'https://shikimori.me/oauth/authorize?client_id=$kShikiClientIdDesktop&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=user_rates'))) {
+      'https://shikimori.one/oauth/authorize?client_id=$kShikiClientIdDesktop&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=user_rates'))) {
     // throw Exception('Could not launch $_url');
     throw Exception('Could not launch login url');
   }

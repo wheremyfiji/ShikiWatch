@@ -46,7 +46,7 @@ class InfoLinks extends StatelessWidget {
             icon: Icons.local_florist_rounded,
             //icon: FontAwesomeIcons.s,
             onTap: () => launchUrlString(
-              'https://shikimori.me',
+              'https://shikimori.one',
               mode: LaunchMode.externalApplication,
             ),
           ),

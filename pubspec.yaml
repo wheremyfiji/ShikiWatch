@@ -1,5 +1,5 @@
 name: shikidev
-description: Unofficial application for shikimori.me
+description: Unofficial application for shikimori
 publish_to: 'none'
 
 version: 0.7.0+46

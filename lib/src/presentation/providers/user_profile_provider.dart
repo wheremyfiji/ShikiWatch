@@ -10,8 +10,6 @@ import '../../domain/models/user.dart';
 import '../../domain/models/user_profile.dart';
 import '../../services/secure_storage/secure_storage_service.dart';
 
-//https://shikimori.me/api/users?page=1&limit=10&search=ya_sel
-
 final userProfileProvider = ChangeNotifierProvider.autoDispose
     .family<UserProfileController, String>((ref, userId) {
   //ref.cacheFor();

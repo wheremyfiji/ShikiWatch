@@ -34,7 +34,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     const callbackUrlScheme = 'shikidev';
     const url =
-        'https://shikimori.me/oauth/authorize?client_id=$kShikiClientId&redirect_uri=shikidev%3A%2F%2Foauth%2Fshikimori&response_type=code&scope=user_rates';
+        'https://shikimori.one/oauth/authorize?client_id=$kShikiClientId&redirect_uri=shikidev%3A%2F%2Foauth%2Fshikimori&response_type=code&scope=user_rates';
 
     try {
       final result = await FlutterWebAuth.authenticate(
