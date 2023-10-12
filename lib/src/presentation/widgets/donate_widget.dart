@@ -30,7 +30,11 @@ class DonateWidget extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(24.0)),
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => _DonateBottomSheet.show(context),
+          //onTap: () => _DonateBottomSheet.show(context),
+          onTap: () => launchUrlString(
+            'https://new.donatepay.ru/@1156478',
+            mode: LaunchMode.externalApplication,
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 12.0,
@@ -64,7 +68,7 @@ class DonateWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 6.0, top: 6.0),
                   child: Text(
-                    'Вы можете оформить добровольное пожертвование для дальнейшего развития приложения.',
+                    'Вы можете оформить добровольное пожертвование для дальнейшего развития приложения',
                     style: TextStyle(
                       fontSize: 14.0,
                       color: context.colorScheme.onTertiaryContainer

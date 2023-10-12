@@ -66,11 +66,12 @@ class SettingsPage extends ConsumerWidget {
                     title: 'Плеер',
                     options: [
                       const AnimeSourceOption(),
-                      if (!AppUtils.instance.isDesktop)
+                      if (!AppUtils.instance.isDesktop) ...[
                         const PlayerPlaybackSpeedOption(),
+                        const PlayerLongPressSeekOption(),
+                      ],
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
-                      const PlayerLongPressSeekOption(),
                       if (AppUtils.instance.isDesktop)
                         const PlayerDiscordRpcOption(),
                     ],
