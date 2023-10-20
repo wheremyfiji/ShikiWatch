@@ -33,7 +33,7 @@ final mangaRolesProvider =
 
 final relatedTitlesMangaProvider = FutureProvider.autoDispose
     .family<Iterable<RelatedTitle>, int>((ref, id) async {
-  //ref.cacheFor();
+  ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -50,7 +50,7 @@ final externalLinksMangaProvider = FutureProvider.autoDispose
     await ref.debounce();
   }
 
-  //ref.cacheFor();
+  ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -66,7 +66,7 @@ final similarTitlesMangaProvider = FutureProvider.autoDispose
     await ref.debounce();
   }
 
-  //ref.cacheFor();
+  ref.cacheFor();
 
   final token = ref.cancelToken();
 

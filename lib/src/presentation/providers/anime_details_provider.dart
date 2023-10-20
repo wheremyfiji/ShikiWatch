@@ -23,6 +23,8 @@ final animeRolesProvider =
     await ref.debounce();
   }
 
+  ref.cacheFor();
+
   final token = ref.cancelToken();
 
   final roles = await ref
@@ -55,7 +57,7 @@ final similarTitlesAnimeProvider =
     await ref.debounce();
   }
 
-  //ref.cacheFor();
+  ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -76,7 +78,7 @@ final relatedTitlesAnimeProvider = FutureProvider.autoDispose
     await ref.debounce();
   }
 
-  //ref.cacheFor();
+  ref.cacheFor();
 
   final token = ref.cancelToken();
 
@@ -93,7 +95,7 @@ final externalLinksAnimeProvider = FutureProvider.autoDispose
     await ref.debounce();
   }
 
-  //ref.cacheFor();
+  ref.cacheFor();
 
   final token = ref.cancelToken();
 
