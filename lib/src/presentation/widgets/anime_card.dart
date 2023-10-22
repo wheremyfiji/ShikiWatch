@@ -61,27 +61,10 @@ class AnimeListTile extends StatelessWidget {
 
           final t = data.toAnime;
 
-          showModalBottomSheet<void>(
-            context: context,
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width >= 700
-                  ? 700
-                  : double.infinity,
-            ),
-            useRootNavigator: true,
-            isScrollControlled: true,
-            enableDrag: false,
-            useSafeArea: true,
-            elevation: 0,
-            builder: (context) {
-              return SafeArea(
-                child: AnimeUserRateBottomSheet(
-                  data: t,
-                  needUpdate: false,
-                  //anime: animeData,
-                ),
-              );
-            },
+          AnimeUserRateBottomSheet.show(
+            context,
+            anime: t,
+            update: false,
           );
         },
         onTap: () {
@@ -230,15 +213,6 @@ class AnimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final createDT = DateTime.parse(data.createdAt!).toLocal();
-    //final updateDT = DateTime.parse(data.updatedAt!).toLocal();
-    //final createString = DateFormat('yyyy-MM-dd в HH:mm').format(createDT);
-    //final updateString = DateFormat('yyyy-MM-dd в HH:mm').format(updateDT);
-
-    // borderRadius: BorderRadius.circular(12),
-    // color: Colors.transparent,
-    // clipBehavior: Clip.hardEdge,
-
     return LayoutBuilder(
       builder: (context, constraints) {
         return InkWell(
@@ -250,26 +224,10 @@ class AnimeCard extends StatelessWidget {
 
             final t = data.toAnime;
 
-            showModalBottomSheet<void>(
-              context: context,
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width >= 700
-                    ? 700
-                    : double.infinity,
-              ),
-              useRootNavigator: true,
-              isScrollControlled: true,
-              enableDrag: false,
-              useSafeArea: true,
-              elevation: 0,
-              builder: (context) {
-                return SafeArea(
-                  child: AnimeUserRateBottomSheet(
-                    data: t,
-                    needUpdate: false,
-                  ),
-                );
-              },
+            AnimeUserRateBottomSheet.show(
+              context,
+              anime: t,
+              update: false,
             );
           },
           onTap: () {

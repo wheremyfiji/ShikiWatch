@@ -16,7 +16,10 @@ class TitleScreenshots extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.only(
+            top: 10.0,
+            bottom: 4.0,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -30,8 +33,11 @@ class TitleScreenshots extends StatelessWidget {
                       .copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
-              TextButton(
-                style: const ButtonStyle(visualDensity: VisualDensity.compact),
+              IconButton(
+                style: const ButtonStyle(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
                 onPressed: () => Navigator.push(
                   context,
                   PageRouteBuilder(
@@ -44,10 +50,28 @@ class TitleScreenshots extends StatelessWidget {
                     reverseTransitionDuration: Duration.zero,
                   ),
                 ),
-                child: const Text(
-                  'Больше',
+                icon: const Icon(
+                  Icons.chevron_right_rounded,
                 ),
               ),
+              // TextButton(
+              //   style: const ButtonStyle(visualDensity: VisualDensity.compact),
+              //   onPressed: () => Navigator.push(
+              //     context,
+              //     PageRouteBuilder(
+              //       pageBuilder: (context, animation1, animation2) =>
+              //           AnimeScreenshotsPage(
+              //         id: data.id ?? 0,
+              //         name: data.russian ?? data.name ?? '',
+              //       ),
+              //       transitionDuration: Duration.zero,
+              //       reverseTransitionDuration: Duration.zero,
+              //     ),
+              //   ),
+              //   child: const Text(
+              //     'Больше',
+              //   ),
+              // ),
             ],
           ),
         ),

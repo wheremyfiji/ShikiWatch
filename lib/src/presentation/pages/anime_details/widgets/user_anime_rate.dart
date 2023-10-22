@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../constants/config.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../data/data_sources/anime_data_src.dart';
 import '../../../../data/data_sources/user_data_src.dart';
@@ -10,176 +11,14 @@ import '../../../../data/repositories/anime_repo.dart';
 import '../../../../domain/models/anime.dart';
 import '../../../../domain/models/animes.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../providers/library_tab_page_provider.dart';
+import '../../../widgets/cached_image.dart';
 import '../../../widgets/delete_dialog.dart';
 import '../../../widgets/material_you_chip.dart';
 import '../../../widgets/number_field.dart';
 import '../../../widgets/shadowed_overflow_decorator.dart';
-
-// class UserAnimeRateWidget extends HookConsumerWidget {
-//   //final Animes anime;
-//   final Anime data;
-//   //final String imageUrl;
-
-//   const UserAnimeRateWidget(
-//       // this.anime,
-//       this.data,
-//       // this.imageUrl,
-//       {super.key});
-
-//   String getRateStatus(String value) {
-//     String status;
-
-//     const map = {
-//       'planned': 'В планах',
-//       'watching': 'Смотрю',
-//       'rewatching': 'Пересматриваю',
-//       'completed': 'Просмотрено',
-//       'on_hold': 'Отложено',
-//       'dropped': 'Брошено'
-//     };
-
-//     status = map[value] ?? '';
-
-//     return status;
-//   }
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     if (data.userRate == null) {
-//       return SizedBox(
-//         child: Card(
-//           margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-//           shape: const RoundedRectangleBorder(
-//             borderRadius: BorderRadius.only(
-//               topLeft: Radius.circular(24),
-//               topRight: Radius.circular(24),
-//             ),
-//           ),
-//           child: Padding(
-//             padding: const EdgeInsets.symmetric(
-//               vertical: 8,
-//               horizontal: 12,
-//             ),
-//             child: FilledButton.icon(
-//               onPressed: () {
-//                 _openBottomSheet(context);
-//               },
-//               icon: const Icon(Icons.add_rounded),
-//               label: const Text('Добавить в список'),
-//             ),
-//           ),
-//         ),
-//       );
-//     }
-
-//     return SizedBox(
-//       width: double.infinity,
-//       child: Card(
-//         //margin: EdgeInsets.zero,
-//         margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-//         shape: const RoundedRectangleBorder(
-//           borderRadius: BorderRadius.only(
-//             topLeft: Radius.circular(24),
-//             topRight: Radius.circular(24),
-//           ),
-//         ),
-//         child: Padding(
-//           padding: const EdgeInsets.symmetric(
-//             vertical: 8,
-//             horizontal: 12,
-//           ),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               SingleChildScrollView(
-//                 scrollDirection: Axis.horizontal,
-//                 child: Wrap(
-//                   direction: Axis.horizontal,
-//                   alignment: WrapAlignment.start,
-//                   crossAxisAlignment: WrapCrossAlignment.start,
-//                   spacing: 8,
-//                   runSpacing: 0,
-//                   children: [
-//                     CoolChip(
-//                       label: getRateStatus(data.userRate!.status ?? ''),
-//                     ),
-//                     CoolChip(
-//                       label: 'Эпизоды: ${data.userRate!.episodes.toString()}',
-//                     ),
-//                     CoolChip(
-//                       label: 'Оценка: ${data.userRate!.score.toString()}',
-//                     ),
-//                     CoolChip(
-//                       label:
-//                           'Пересмотрено: ${data.userRate!.rewatches.toString()}',
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               SizedBox(
-//                 width: double.infinity,
-//                 child: FilledButton.icon(
-//                   onPressed: () {
-//                     _openBottomSheet(context);
-//                   },
-//                   icon: const Icon(Icons.edit_rounded),
-//                   label: const Text('Изменить'),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   void _openBottomSheet(BuildContext context) {
-//     showModalBottomSheet<void>(
-//       context: context,
-//       constraints: BoxConstraints(
-//         maxWidth:
-//             MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
-//       ),
-//       useRootNavigator: true,
-//       isScrollControlled: true,
-//       enableDrag: false,
-//       useSafeArea: true,
-//       //elevation: 0,
-//       builder: (context) {
-//         return SafeArea(
-//           child: AnimeUserRateBottomSheet(
-//             needUpdate: true,
-//             data: data,
-//             //anime: anime,
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
-// enum UserList { watching, planned, completed, rewatching, onHold, dropped }
-
-// extension UserListName on UserList {
-//   String get name {
-//     switch (this) {
-//       case UserList.watching:
-//         return 'Смотрю';
-//       case UserList.planned:
-//         return 'В планах';
-//       case UserList.completed:
-//         return 'Просмотрено';
-//       case UserList.rewatching:
-//         return 'Пересматриваю';
-//       case UserList.onHold:
-//         return 'Отложено';
-//       case UserList.dropped:
-//         return 'Брошено';
-//     }
-//   }
-// }
 
 final updateAnimeRateButtonProvider = StateNotifierProvider.autoDispose<
     UpdateAnimeRateNotifier, AsyncValue<void>>((ref) {
@@ -674,6 +513,29 @@ class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
     required this.needUpdate,
   });
 
+  static void show(BuildContext context,
+      {required Anime anime, required bool update}) {
+    showModalBottomSheet(
+      context: context,
+      constraints: BoxConstraints(
+        maxWidth:
+            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+      ),
+      useRootNavigator: true,
+      isScrollControlled: true,
+      enableDrag: false,
+      useSafeArea: true,
+      elevation: 0,
+      builder: (_) => SafeArea(
+        bottom: false,
+        child: AnimeUserRateBottomSheet(
+          data: anime,
+          needUpdate: update,
+        ),
+      ),
+    );
+  }
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _AnimeUserRateBottomSheetState();
@@ -682,6 +544,7 @@ class AnimeUserRateBottomSheet extends ConsumerStatefulWidget {
 class _AnimeUserRateBottomSheetState
     extends ConsumerState<AnimeUserRateBottomSheet> {
   late TextEditingController _controller;
+  //late final GlobalKey _globalKey;
 
   String? initStatus;
   int? selectedStatus;
@@ -703,22 +566,24 @@ class _AnimeUserRateBottomSheetState
     final created =
         DateTime.tryParse(widget.data.userRate?.createdAt ?? '')?.toLocal() ??
             DateTime(1970);
-    final createdDate = DateFormat.yMMMMd().format(created);
+    final createdDate = DateFormat.yMMMd().format(created); //yMMMMd
     final createdTime = DateFormat.Hm().format(created);
 
-    createdAt = '$createdDate в $createdTime';
+    createdAt = '$createdDate ($createdTime)';
 
     final updated =
         DateTime.tryParse(widget.data.userRate?.updatedAt ?? '')?.toLocal() ??
             DateTime(1970);
-    final updatedDate = DateFormat.yMMMMd().format(updated);
+    final updatedDate = DateFormat.yMMMd().format(updated);
     final updatedTime = DateFormat.Hm().format(updated);
 
-    updatedAt = '$updatedDate в $updatedTime';
+    updatedAt = '$updatedDate ($updatedTime)';
   }
 
   @override
   void initState() {
+    //_globalKey = GlobalKey();
+
     initStatus = widget.data.userRate?.status;
 
     selectedStatus = _convertStatusStringToInt(widget.data.userRate?.status);
@@ -753,13 +618,10 @@ class _AnimeUserRateBottomSheetState
       updateAnimeRateButtonProvider,
       (_, state) => state.whenOrNull(
         error: (error, stackTrace) {
-          Navigator.of(context).pop();
+          context.navigator.pop();
           showErrorSnackBar(
             ctx: context,
             msg: error.toString(),
-            // dur: const Duration(
-            //   seconds: 4,
-            // ),
           );
         },
       ),
@@ -768,353 +630,389 @@ class _AnimeUserRateBottomSheetState
     final rateState = ref.watch(updateAnimeRateButtonProvider);
     final isLoading = rateState is AsyncLoading<void>;
 
+    final canDelete = (widget.data.userRate != null &&
+        widget.data.userRate?.id != null &&
+        !isLoading);
+
     return WillPopScope(
       onWillPop: () async {
         return !isLoading;
       },
       child: Material(
-        //borderRadius: BorderRadius.circular(28),
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(28.0),
           topLeft: Radius.circular(28.0),
         ),
         clipBehavior: Clip.hardEdge,
         child: SingleChildScrollView(
-          child: Padding(
-            padding: MediaQuery.of(context).viewInsets +
-                const EdgeInsets.only(top: 16, bottom: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16, right: 10, bottom: 10),
-                  child: Text(
-                    (widget.data.russian == ''
-                            ? widget.data.name
-                            : widget.data.russian) ??
-                        '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+          padding: MediaQuery.of(context).viewInsets +
+              const EdgeInsets.only(top: 16.0, bottom: 0.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  bottom: 16.0,
                 ),
-                ShadowedOverflowDecorator(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Wrap(
-                      spacing: 8,
-                      children: [
-                        const SizedBox(
-                          width: 8.0,
-                        ),
-                        ...List<Widget>.generate(
-                          6,
-                          (int index) {
-                            return MaterialYouChip(
-                              title: _getChipLabel(index),
-                              icon: _getChipIcon(index),
-                              onPressed: () {
-                                setState(
-                                  () {
-                                    selectedStatus = index;
-                                  },
-                                );
-                              },
-                              isSelected: selectedStatus == index,
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          width: 8.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (widget.data.userRate != null) ...[
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 7,
-                        horizontal: 16,
-                      ),
-                      child: NumberField(
-                        label: 'Эпизоды:',
-                        initial: progress,
-                        maxValue: epCount,
-                        onChanged: (value) {
-                          setState(() {
-                            progress = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.zero),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Wrap(
-                            children: [
-                              const Text('Повторения:'),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text(rewatches.toString()),
-                            ],
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: SizedBox(
+                        height: 48,
+                        child: AspectRatio(
+                          aspectRatio: 1.0,
+                          child: CachedImage(
+                            '${AppConfig.staticUrl}${widget.data.image?.original}',
+                            fit: BoxFit.cover,
                           ),
-                          Wrap(
-                            children: [
-                              IconButton(
-                                onPressed: rewatches == 0
-                                    ? null
-                                    : () {
-                                        setState(() {
-                                          rewatches--;
-                                        });
-                                      },
-                                icon: const Icon(Icons.remove),
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    rewatches++;
-                                  });
-                                },
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 16.0,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Прогресс',
+                            style: context.textTheme.titleMedium?.copyWith(
+                              //height: 1.4,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            (widget.data.russian == ''
+                                    ? widget.data.name
+                                    : widget.data.russian) ??
+                                '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textTheme.labelLarge?.copyWith(
+                              fontWeight: FontWeight.normal,
+                              //height: 1.2,
+                              color: context.colorScheme.onBackground
+                                  .withOpacity(0.8),
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(12),
-                        bottomRight: Radius.circular(12),
-                      ),
+                    IconButton(
+                      onPressed:
+                          isLoading ? null : () => context.navigator.pop(),
+                      icon: const Icon(Icons.close_rounded),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
+                  ],
+                ),
+              ),
+              ShadowedOverflowDecorator(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      const SizedBox(
+                        width: 8.0,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Wrap(
-                            children: [
-                              const Text('Оценка:'),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              if (currentScore != null && currentScore != 0)
-                                Text('$currentScore'),
-                              const SizedBox(
-                                width: 2,
-                              ),
-                              if (currentScore != null)
+                      ...List<Widget>.generate(
+                        6,
+                        (int index) {
+                          return MaterialYouChip(
+                            title: _getChipLabel(index),
+                            icon: _getChipIcon(index),
+                            onPressed: () {
+                              setState(
+                                () {
+                                  selectedStatus = index;
+                                },
+                              );
+                            },
+                            isSelected: selectedStatus == index,
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        width: 8.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (widget.data.userRate != null) ...[
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 16.0,
+                    //bottom: 12,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: UserRateNumberField(
+                          label: 'Эпизоды',
+                          initial: progress,
+                          maxValue: epCount,
+                          onChanged: (value) {
+                            setState(() {
+                              progress = value;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 16.0,
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Card(
+                          margin: const EdgeInsets.all(0),
+                          elevation: 0,
+                          color: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: context.colorScheme.outline,
+                            ),
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(12.0),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  '(${_getScorePrefix(currentScore)})',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .copyWith(fontSize: 14),
+                                  'Повторения',
+                                  style: context.textTheme.labelLarge,
+                                ),
+                                Text(
+                                  '$rewatches',
+                                  style: context.textTheme.headlineSmall,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton.filledTonal(
+                                      onPressed: rewatches == 0
+                                          ? null
+                                          : () {
+                                              setState(() {
+                                                rewatches--;
+                                              });
+                                            },
+                                      icon: const Icon(
+                                        Icons.remove_rounded,
+                                      ),
+                                      style: ButtonStyle(
+                                        padding: MaterialStateProperty.all<
+                                            EdgeInsetsGeometry>(
+                                          const EdgeInsets.all(0),
+                                        ),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                    const SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    IconButton.filledTonal(
+                                      onPressed: () => setState(() {
+                                        rewatches++;
+                                      }),
+                                      icon: const Icon(
+                                        Icons.add_rounded,
+                                      ),
+                                      style: ButtonStyle(
+                                        padding: MaterialStateProperty.all<
+                                            EdgeInsetsGeometry>(
+                                          const EdgeInsets.all(0),
+                                        ),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (currentScore != null) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          top: 16.0,
+                        ),
+                        child: Text(
+                          'Оценка',
+                          style: context.textTheme.labelLarge,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Slider(
+                              min: 0,
+                              max: 10,
+                              divisions: 10,
+                              value: currentScore!.toDouble(),
+                              onChanged: (double value) {
+                                setState(() {
+                                  currentScore = value.toInt();
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 32, child: Text('$currentScore')),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    bottom: 16.0,
+                  ),
+                  child: TextField(
+                    minLines: 1,
+                    maxLines: 1,
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Заметка',
+                    ),
+                  ),
+                ),
+                Material(
+                  color: context.colorScheme.surface,
+                  surfaceTintColor: context.colorScheme.surfaceTint,
+                  shadowColor: Colors.transparent,
+                  //borderRadius: BorderRadius.circular(12),
+                  type: MaterialType.card,
+                  clipBehavior: Clip.hardEdge,
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
+                    child: Row(
+                      children: [
+                        if (createdAt != null)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.add,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '$createdAt',
+                                    style: context.textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              if (updatedAt != null)
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.edit,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '$updatedAt',
+                                      style: context.textTheme.bodySmall,
+                                    ),
+                                  ],
                                 ),
                             ],
                           ),
-                          Wrap(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  if (currentScore == null) {
-                                    return;
-                                  }
-                                  if (currentScore! <= 1) {
-                                    return;
-                                  }
-                                  setState(() {
-                                    currentScore = currentScore! - 1;
-                                  });
-                                },
-                                icon: const Icon(Icons.remove),
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              IconButton(
-                                onPressed: currentScore == 10
-                                    ? null
-                                    : () {
-                                        if (currentScore == 10) {
-                                          return;
-                                        }
-                                        setState(() {
-                                          if (currentScore == null) {
-                                            currentScore = 1;
-                                            return;
-                                          }
-                                          currentScore = currentScore! + 1;
-                                        });
-                                      },
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
+                        const Spacer(),
+                        if (canDelete)
+                          IconButton(
+                            tooltip: 'Удалить из списка',
+                            onPressed: () async {
+                              bool value = await showDialog<bool>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        const DeleteDialog(),
+                                  ) ??
+                                  false;
+
+                              if (!value) {
+                                return;
+                              }
+
+                              ref
+                                  .read(updateAnimeRateButtonProvider.notifier)
+                                  .deleteRate(
+                                    needUpdate: widget.needUpdate,
+                                    rateId: widget.data.userRate!.id!,
+                                    animeId: widget.data.id!,
+                                    status: initStatus ?? '',
+                                    onFinally: () {
+                                      Navigator.of(context).pop();
+
+                                      showSnackBar(
+                                        ctx: context,
+                                        msg:
+                                            'Удалено из списка "${_getChipLabel(selectedStatus ?? 0)}"',
+                                        dur: const Duration(seconds: 3),
+                                      );
+                                    },
+                                  );
+                            },
+                            icon: const Icon(Icons.delete_rounded),
+                            color: context.colorScheme.error,
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 16, left: 16, right: 16),
-                    child: TextField(
-                      controller: _controller,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                        ),
-                        hintText: 'Заметка',
-                      ),
-                      minLines: 1,
-                      maxLines: 3,
-                    ),
-                  ),
-                ],
-                const SizedBox(
-                  height: 16,
-                ),
-                if (createdAt != null) ...[
-                  SizedBox(
-                    width: double.infinity,
-                    child: Card(
-                      clipBehavior: Clip.hardEdge,
-                      shadowColor: Colors.transparent,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Создано $createdAt'),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            if (updatedAt != null) Text('Изменено $updatedAt'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                ],
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: FilledButton(
-                          // style: FilledButton.styleFrom(
-                          //   padding: const EdgeInsets.all(12.0),
-                          // ),
-
-                          onPressed: isLoading || selectedStatus == -1
+                        FloatingActionButton(
+                          onPressed: isLoading
                               ? null
-                              : () {
-                                  if (widget.data.userRate == null) {
-                                    ref
-                                        .read(updateAnimeRateButtonProvider
-                                            .notifier)
-                                        .createRate(
-                                          needUpdate: widget.needUpdate,
-                                          anime: widget.data,
-                                          selectedStatus:
-                                              _convertStatusIntToString(
-                                                  selectedStatus!),
-                                          currentScore: currentScore ?? 0,
-                                          progress: progress,
-                                          rewatches: rewatches,
-                                          text: _controller.text,
-                                          onFinally: () {
-                                            Navigator.of(context).pop();
+                              : () => ref
+                                  .read(updateAnimeRateButtonProvider.notifier)
+                                  .updateRate(
+                                    needUpdate: widget.needUpdate,
+                                    rateId: widget.data.userRate!.id!,
+                                    animeId: widget.data.id!,
+                                    anime: widget.data,
+                                    selectedStatus: _convertStatusIntToString(
+                                        selectedStatus!),
+                                    initStatus: initStatus!,
+                                    currentScore: currentScore,
+                                    progress: progress,
+                                    rewatches: rewatches,
+                                    text: _controller.text,
+                                    onFinally: () {
+                                      Navigator.of(context).pop();
 
-                                            showSnackBar(
-                                              ctx: context,
-                                              msg:
-                                                  'Добавлено в список "${_getChipLabel(selectedStatus ?? 0)}"',
-                                              dur: const Duration(seconds: 3),
-                                            );
-                                          },
-                                        );
-                                  } else {
-                                    ref
-                                        .read(updateAnimeRateButtonProvider
-                                            .notifier)
-                                        .updateRate(
-                                          needUpdate: widget.needUpdate,
-                                          rateId: widget.data.userRate!.id!,
-                                          animeId: widget.data.id!,
-                                          anime: widget.data,
-                                          selectedStatus:
-                                              _convertStatusIntToString(
-                                                  selectedStatus!),
-                                          initStatus: initStatus!,
-                                          currentScore: currentScore,
-                                          progress: progress,
-                                          rewatches: rewatches,
-                                          text: _controller.text,
-                                          onFinally: () {
-                                            Navigator.of(context).pop();
-
-                                            showSnackBar(
-                                              ctx: context,
-                                              msg: 'Сохранено успешно',
-                                              dur: const Duration(seconds: 3),
-                                            );
-                                          },
-                                        );
-                                  }
-                                },
+                                      showSnackBar(
+                                        ctx: context,
+                                        msg: 'Сохранено успешно',
+                                        dur: const Duration(seconds: 3),
+                                      );
+                                    },
+                                  ),
                           child: isLoading
                               ? const SizedBox.square(
                                   dimension: 24,
@@ -1122,56 +1020,67 @@ class _AnimeUserRateBottomSheetState
                                     strokeWidth: 3,
                                   ),
                                 )
-                              : Text(
-                                  widget.data.userRate == null
-                                      ? 'Добавить'
-                                      : 'Сохранить',
-                                ),
+                              : const Icon(Icons.save_rounded),
                         ),
-                      ),
-                      if (widget.data.userRate != null &&
-                          widget.data.userRate?.id != null &&
-                          !isLoading)
-                        IconButton(
-                          tooltip: 'Удалить из списка',
-                          onPressed: () async {
-                            bool value = await showDialog<bool>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      const DeleteDialog(),
-                                ) ??
-                                false;
-
-                            if (!value) {
-                              return;
-                            }
-
-                            ref
-                                .read(updateAnimeRateButtonProvider.notifier)
-                                .deleteRate(
-                                  needUpdate: widget.needUpdate,
-                                  rateId: widget.data.userRate!.id!,
-                                  animeId: widget.data.id!,
-                                  status: initStatus ?? '',
-                                  onFinally: () {
-                                    Navigator.of(context).pop();
-
-                                    showSnackBar(
-                                      ctx: context,
-                                      msg:
-                                          'Удалено из списка "${_getChipLabel(selectedStatus ?? 0)}"',
-                                      dur: const Duration(seconds: 3),
-                                    );
-                                  },
-                                );
-                          },
-                          icon: const Icon(Icons.delete),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
-            ),
+              if (widget.data.userRate == null)
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
+                    child: FilledButton(
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: isLoading || selectedStatus == -1
+                          ? null
+                          : () {
+                              ref
+                                  .read(updateAnimeRateButtonProvider.notifier)
+                                  .createRate(
+                                    needUpdate: widget.needUpdate,
+                                    anime: widget.data,
+                                    selectedStatus: _convertStatusIntToString(
+                                        selectedStatus!),
+                                    currentScore: currentScore ?? 0,
+                                    progress: progress,
+                                    rewatches: rewatches,
+                                    text: _controller.text,
+                                    onFinally: () {
+                                      Navigator.of(context).pop();
+
+                                      showSnackBar(
+                                        ctx: context,
+                                        msg:
+                                            'Добавлено в список "${_getChipLabel(selectedStatus ?? 0)}"',
+                                        dur: const Duration(seconds: 3),
+                                      );
+                                    },
+                                  );
+                            },
+                      child: isLoading
+                          ? const SizedBox.square(
+                              dimension: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : const Text(
+                              'Добавить',
+                            ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
@@ -1181,19 +1090,19 @@ class _AnimeUserRateBottomSheetState
   static IconData _getChipIcon(int index) {
     switch (index) {
       case 0:
-        return Icons.remove_red_eye;
+        return Icons.remove_red_eye_rounded;
       case 1:
-        return Icons.event_available;
+        return Icons.event_available_rounded;
       case 2:
-        return Icons.done_all;
+        return Icons.done_all_rounded;
       case 3:
-        return Icons.refresh;
+        return Icons.refresh_rounded;
       case 4:
-        return Icons.pause;
+        return Icons.pause_rounded;
       case 5:
-        return Icons.close;
+        return Icons.close_rounded;
       default:
-        return Icons.error;
+        return Icons.error_rounded;
     }
   }
 
@@ -1248,25 +1157,25 @@ class _AnimeUserRateBottomSheetState
     return status;
   }
 
-  static String _getScorePrefix(int? score) {
-    String text;
+  // static String _getScorePrefix(int? score) {
+  //   String text;
 
-    const map = {
-      0: 'Без оценки',
-      1: 'Хуже некуда',
-      2: 'Ужасно',
-      3: 'Очень плохо',
-      4: 'Плохо',
-      5: 'Более-менее',
-      6: 'Нормально',
-      7: 'Хорошо',
-      8: 'Отлично',
-      9: 'Великолепно',
-      10: 'Эпик Вин!',
-    };
+  //   const map = {
+  //     0: 'Без оценки',
+  //     1: 'Хуже некуда',
+  //     2: 'Ужасно',
+  //     3: 'Очень плохо',
+  //     4: 'Плохо',
+  //     5: 'Более-менее',
+  //     6: 'Нормально',
+  //     7: 'Хорошо',
+  //     8: 'Отлично',
+  //     9: 'Великолепно',
+  //     10: 'Эпик Вин!',
+  //   };
 
-    text = map[score] ?? '';
+  //   text = map[score] ?? '';
 
-    return text;
-  }
+  //   return text;
+  // }
 }

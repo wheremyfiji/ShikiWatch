@@ -24,8 +24,8 @@ class AppThemeDataNotifier {
 
   AppThemeData get data => _data;
 
-  static const Color backgroundReducedSmearingColor =
-      Color.fromRGBO(5, 5, 5, 1.0);
+  static const Color backgroundReducedSmearingColor = Colors.black;
+  //Color.fromRGBO(5, 5, 5, 1.0);
 
   AppThemeData fillWith(
       {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {

@@ -64,56 +64,122 @@ class TitleVideosWidget extends StatelessWidget {
                 desc = '${model.hosting} • $desc';
               }
 
-              return GestureDetector(
-                onTap: () => launchUrlString(
-                  model.url ?? '',
-                  mode: LaunchMode.externalApplication,
-                ),
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 16, 0),
-                  height: 180,
-                  child: ClipRRect(
-                    clipBehavior: Clip.hardEdge,
-                    borderRadius: BorderRadius.circular(12),
-                    child: Stack(
-                      children: [
-                        AspectRatio(
-                          aspectRatio: (16 / 9),
-                          child: ImageWithShimmerWidget(
-                            imageUrl: model.imageUrl ?? '',
-                          ),
-                        ),
-                        Positioned(
-                          left: -1,
-                          right: -1,
-                          top: 40,
-                          bottom: -1,
-                          child: Container(
-                            clipBehavior: Clip.hardEdge,
-                            padding: const EdgeInsets.all(6.0),
-                            alignment: Alignment.bottomCenter,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: <Color>[
-                                  Colors.black.withAlpha(0),
-                                  Colors.black54,
-                                  Colors.black87,
-                                ],
-                              ),
-                            ),
-                            child: Text(
-                              desc,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+              return Container(
+                height: 180,
+                margin: EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 16, 0),
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
                   ),
                 ),
+                child: Stack(
+                  children: [
+                    AspectRatio(
+                      aspectRatio: (16 / 9),
+                      child: ImageWithShimmerWidget(
+                        imageUrl: model.imageUrl ?? '',
+                      ),
+                    ),
+                    Positioned(
+                      left: -1,
+                      right: -1,
+                      top: 40,
+                      bottom: -1,
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        padding: const EdgeInsets.all(6.0),
+                        alignment: Alignment.bottomCenter,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[
+                              Colors.transparent,
+                              Colors.black54,
+                              Colors.black87,
+                            ],
+                          ),
+                        ),
+                        child: Text(
+                          desc,
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      child: SizedBox(
+                        height: 180,
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: InkWell(
+                              onTap: () => launchUrlString(
+                                model.url ?? '',
+                                mode: LaunchMode.externalApplication,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               );
+
+              // return GestureDetector(
+              //   onTap: () => launchUrlString(
+              //     model.url ?? '',
+              //     mode: LaunchMode.externalApplication,
+              //   ),
+              //   child: Container(
+              //     margin: EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 16, 0),
+              //     height: 180,
+              //     child: ClipRRect(
+              //       clipBehavior: Clip.hardEdge,
+              //       borderRadius: BorderRadius.circular(12),
+              //       child: Stack(
+              //         children: [
+              //           AspectRatio(
+              //             aspectRatio: (16 / 9),
+              //             child: ImageWithShimmerWidget(
+              //               imageUrl: model.imageUrl ?? '',
+              //             ),
+              //           ),
+              //           Positioned(
+              //             left: -1,
+              //             right: -1,
+              //             top: 40,
+              //             bottom: -1,
+              //             child: Container(
+              //               clipBehavior: Clip.hardEdge,
+              //               padding: const EdgeInsets.all(6.0),
+              //               alignment: Alignment.bottomCenter,
+              //               decoration: BoxDecoration(
+              //                 gradient: LinearGradient(
+              //                   begin: Alignment.topCenter,
+              //                   end: Alignment.bottomCenter,
+              //                   colors: <Color>[
+              //                     Colors.black.withAlpha(0),
+              //                     Colors.black54,
+              //                     Colors.black87,
+              //                   ],
+              //                 ),
+              //               ),
+              //               child: Text(
+              //                 desc,
+              //                 style: const TextStyle(color: Colors.white),
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // );
             },
           ),
         ),

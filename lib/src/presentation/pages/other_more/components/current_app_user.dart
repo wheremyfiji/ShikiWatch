@@ -19,8 +19,10 @@ class CurrentAppUser extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            onTap: () => context.pushNamed('profile_id',
-                pathParameters: {'id': SecureStorageService.instance.userId}),
+            onTap: () => context.pushNamed(
+              'profile_id',
+              pathParameters: {'id': SecureStorageService.instance.userId},
+            ),
             leading: CachedCircleImage(
               SecureStorageService.instance.userProfileImage,
             ),
@@ -31,7 +33,8 @@ class CurrentAppUser extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              'id: ${SecureStorageService.instance.userId}',
+              'Мой профиль',
+              //'id: ${SecureStorageService.instance.userId}',
               style: TextStyle(
                 color: context.colorScheme.onBackground.withOpacity(0.8),
               ),

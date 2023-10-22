@@ -12,9 +12,9 @@ class InfoLinks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
+      margin: const EdgeInsets.all(16.0),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.0),
       ),
       clipBehavior: Clip.hardEdge,
       child: Column(
@@ -80,7 +80,7 @@ class InfoLinks extends StatelessWidget {
           ? null
           : Icon(
               icon,
-              color: context.colorScheme.onBackground,
+              color: context.colorScheme.primary,
             ),
       title: Text(
         title,

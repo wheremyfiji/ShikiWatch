@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/pages_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/custom_info_chip.dart';
 import '../../../widgets/image_with_shimmer.dart';
 import 'library_anime_search_controller.dart';
 
@@ -215,24 +214,34 @@ class _SearchAnimeItem extends StatelessWidget {
                         _RateStatusChip(anime.userRate.status),
                         if (anime.userRate.status != RateStatus.planned &&
                             anime.userRate.status != RateStatus.completed)
-                          CustomInfoChip(
-                            title: 'Эпизоды: ${anime.userRate.episodes}',
+                          Card(
+                            margin: const EdgeInsets.all(0.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                            ),
+                            color: context.colorScheme.secondaryContainer,
+                            elevation: 0.0,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 2.0,
+                                horizontal: 4.0,
+                              ),
+                              child: Text(
+                                'Эпизоды: ${anime.userRate.episodes}',
+                                maxLines: 1,
+                                style: TextStyle(
+                                  color: context.colorScheme.onBackground,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
                           ),
+                        // CustomInfoChip(
+                        //   title: 'Эпизоды: ${anime.userRate.episodes}',
+                        // ),
                       ],
                     ),
-                  ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(top: 6.0, bottom: 2.0),
-                  //   child: _RateStatusChip(anime.userRate.status),
-                  // ),
-                  // if (anime.userRate.status != RateStatus.completed)
-                  //   Text(
-                  //     'Эпизоды: ${anime.userRate.episodes}',
-                  //     style: TextStyle(
-                  //       fontSize: 12,
-                  //       color: Theme.of(context).textTheme.bodySmall!.color,
-                  //     ),
-                  //   ),
+                  )
                 ],
               ),
             ),
@@ -251,11 +260,11 @@ class _RateStatusChip extends StatelessWidget {
   Color getColor({required RateStatus status, required bool dark}) {
     return switch (status) {
       RateStatus.planned =>
-        dark ? Colors.deepPurple.shade400 : Colors.deepPurple.shade300,
-      RateStatus.watching =>
         dark ? Colors.yellow.shade400 : Colors.yellow.shade300,
+      RateStatus.watching =>
+        dark ? Colors.deepPurple.shade400 : Colors.yellow.shade300,
       RateStatus.rewatching =>
-        dark ? Colors.lime.shade400 : Colors.lime.shade300,
+        dark ? Colors.deepPurple.shade400 : Colors.deepPurple.shade300,
       RateStatus.completed =>
         dark ? Colors.green.shade400 : Colors.green.shade300,
       RateStatus.onHold =>

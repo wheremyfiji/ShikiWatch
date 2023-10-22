@@ -35,26 +35,10 @@ class TitleActions extends StatelessWidget {
               ),
               _UserRateItem(
                 anime,
-                onPressed: () => showModalBottomSheet<void>(
-                  context: context,
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width >= 700
-                        ? 700
-                        : double.infinity,
-                  ),
-                  elevation: 0,
-                  useRootNavigator: true,
-                  isScrollControlled: true,
-                  enableDrag: false,
-                  useSafeArea: true,
-                  builder: (context) {
-                    return SafeArea(
-                      child: AnimeUserRateBottomSheet(
-                        data: anime,
-                        needUpdate: true,
-                      ),
-                    );
-                  },
+                onPressed: () => AnimeUserRateBottomSheet.show(
+                  context,
+                  anime: anime,
+                  update: true,
                 ),
               ),
               _ActionItem(
