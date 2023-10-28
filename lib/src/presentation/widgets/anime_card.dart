@@ -5,13 +5,130 @@ import 'package:intl/intl.dart';
 
 import '../pages/anime_details/widgets/user_anime_rate.dart';
 import '../../domain/models/user_anime_rates.dart';
-import 'custom_info_chip.dart';
-import 'custom_linear_progress_indicator.dart';
+import '../../utils/extensions/buildcontext.dart';
 import '../../domain/models/pages_extra.dart';
 import '../widgets/image_with_shimmer.dart';
 import '../../domain/models/animes.dart';
 import '../../utils/shiki_utils.dart';
 import '../../constants/config.dart';
+
+import 'custom_info_chip.dart';
+import 'custom_linear_progress_indicator.dart';
+
+class AnimeCompactListTile extends StatelessWidget {
+  final UserAnimeRates data;
+
+  const AnimeCompactListTile(this.data, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final releasedOnDateTime =
+        DateTime.parse(data.anime!.releasedOn ?? '1917-10-25').toLocal();
+    final releasedOn = DateFormat('yyyy').format(releasedOnDateTime);
+
+    final airedOnDateTime =
+        DateTime.parse(data.anime!.airedOn ?? '1917-10-25').toLocal();
+    final airedOn = DateFormat('yyyy-MM-dd').format(airedOnDateTime);
+
+    return ListTile(
+      visualDensity: VisualDensity.compact,
+      onLongPress: () => AnimeUserRateBottomSheet.show(
+        context,
+        anime: data.toAnime,
+        update: false,
+      ),
+      onTap: () {
+        final extra = AnimeDetailsPageExtra(
+          id: data.anime!.id!,
+          label: (data.anime!.russian == ''
+                  ? data.anime!.name
+                  : data.anime!.russian) ??
+              '',
+        );
+
+        context.pushNamed(
+          'library_anime',
+          pathParameters: <String, String>{
+            'id': (data.anime?.id!).toString(),
+          },
+          extra: extra,
+        );
+      },
+      leading: SizedBox(
+        width: 48,
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: ImageWithShimmerWidget(
+              imageUrl:
+                  AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+            ),
+          ),
+        ),
+      ),
+      title: Text(
+        (data.anime?.russian == '' ? data.anime?.name : data.anime?.russian) ??
+            '',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Row(
+        children: [
+          Text(
+            data.anime?.status == 'released'
+                ? '${releasedOn != '1917' ? releasedOn : airedOn.split('-')[0]} • '
+                : '${getStatus(data.anime?.status ?? '')} • ',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.colorScheme.onBackground.withOpacity(0.8),
+            ),
+          ),
+          Text(
+            data.anime?.episodes == 0
+                ? getKind(data.anime?.kind ?? '')
+                : '${getKind(data.anime?.kind ?? '')} • ${data.anime?.episodes} эп.',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.colorScheme.onBackground.withOpacity(0.8),
+            ),
+          ),
+          if (data.anime?.score != '0.0') ...[
+            Text(
+              ' • ${data.anime?.score}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                color: context.colorScheme.onBackground.withOpacity(0.8),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 2),
+              child: Icon(
+                Icons.star_rounded,
+                size: 10,
+              ),
+            ),
+          ],
+        ],
+      ),
+      trailing: data.episodes == 0
+          ? null
+          : CustomInfoChip(
+              title: data.episodes.toString(),
+            ),
+    );
+  }
+}
 
 class AnimeListTile extends StatelessWidget {
   final UserAnimeRates data;
