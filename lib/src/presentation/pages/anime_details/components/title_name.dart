@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/custom_info_chip.dart';
 
 class TitleName extends StatelessWidget {
@@ -13,7 +11,9 @@ class TitleName extends StatelessWidget {
   final String? subTitle;
   final String rating;
   final String? score;
-  final bool tap;
+  final List<String>? english;
+  final List<String>? japanese;
+  final List<String>? synonyms;
 
   const TitleName({
     super.key,
@@ -22,7 +22,9 @@ class TitleName extends StatelessWidget {
     required this.subTitle,
     required this.rating,
     required this.score,
-    this.tap = true,
+    required this.english,
+    required this.japanese,
+    required this.synonyms,
   });
 
   @override
@@ -30,7 +32,12 @@ class TitleName extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 16),
       child: InkWell(
-        onTap: tap ? () => _showSheet(context) : null,
+        onTap: () => TitleOtherNamesBottomSheet.show(
+          context,
+          english: english,
+          japanese: japanese,
+          synonyms: synonyms,
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -106,148 +113,145 @@ class TitleName extends StatelessWidget {
       ),
     );
   }
+}
 
-  _showSheet(BuildContext c) {
+class TitleOtherNamesBottomSheet extends StatelessWidget {
+  final List<String>? english;
+  final List<String>? japanese;
+  final List<String>? synonyms;
+
+  const TitleOtherNamesBottomSheet({
+    super.key,
+    required this.english,
+    required this.japanese,
+    required this.synonyms,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (english != null && english!.isNotEmpty) ...[
+            // const Text(
+            //   'English',
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 2,
+            // ),
+            // ...List.generate(anime.english!.length,
+            //     ((index) => SelectableText(anime.english![index]))),
+
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodyMedium,
+                children: <TextSpan>[
+                  const TextSpan(
+                    text: 'English:\n',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(text: english!.join('\n')),
+                ],
+              ),
+            ),
+            const Divider(),
+          ],
+          if (japanese != null && japanese!.isNotEmpty) ...[
+            // const Text(
+            //   'Japanese',
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 2,
+            // ),
+            // ...List.generate(anime.japanese!.length,
+            //     ((index) => SelectableText(anime.japanese![index]))),
+
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodyMedium,
+                children: <TextSpan>[
+                  const TextSpan(
+                    text: 'Japanese:\n',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(text: japanese!.join('\n')),
+                ],
+              ),
+            ),
+          ],
+          if (synonyms != null && synonyms!.isNotEmpty) ...[
+            const Divider(),
+            // const Text(
+            //   'Синонимы',
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 2,
+            // ),
+            // ...List.generate(anime.synonyms!.length,
+            //     ((index) => SelectableText(anime.synonyms![index]))),
+
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodyMedium,
+                children: <TextSpan>[
+                  const TextSpan(
+                    text: 'Синонимы:\n',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(text: synonyms!.join('\n')),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  static void show(
+    BuildContext context, {
+    required List<String>? english,
+    required List<String>? japanese,
+    required List<String>? synonyms,
+  }) {
     showModalBottomSheet<void>(
-      context: c,
-      builder: (context) => _AnimeOtherNames(animeId),
+      context: context,
       useRootNavigator: true,
       showDragHandle: true,
       useSafeArea: true,
       isScrollControlled: true,
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(c).size.width >= 700 ? 700 : double.infinity,
+        maxWidth: context.mediaQuery.size.width >= 700 ? 700 : double.infinity,
       ),
-    );
-  }
-}
-
-class _AnimeOtherNames extends ConsumerWidget {
-  final int animeId;
-
-  const _AnimeOtherNames(
-    this.animeId, {
-    // ignore: unused_element
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final anime = ref
-        .watch(titleInfoPageProvider(animeId))
-        .title
-        .whenOrNull(data: (data) => data);
-
-    if (anime == null) {
-      return const SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          height: 120,
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (anime.english != null && anime.english!.isNotEmpty) ...[
-              // const Text(
-              //   'English',
-              //   style: TextStyle(
-              //     fontSize: 16,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 2,
-              // ),
-              // ...List.generate(anime.english!.length,
-              //     ((index) => SelectableText(anime.english![index]))),
-
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  children: <TextSpan>[
-                    const TextSpan(
-                      text: 'English:\n',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(text: anime.english!.join('\n')),
-                  ],
-                ),
-              ),
-              const Divider(),
-            ],
-            if (anime.japanese != null && anime.japanese!.isNotEmpty) ...[
-              // const Text(
-              //   'Japanese',
-              //   style: TextStyle(
-              //     fontSize: 16,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 2,
-              // ),
-              // ...List.generate(anime.japanese!.length,
-              //     ((index) => SelectableText(anime.japanese![index]))),
-
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  children: <TextSpan>[
-                    const TextSpan(
-                      text: 'Japanese:\n',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(text: anime.japanese!.join('\n')),
-                  ],
-                ),
-              ),
-            ],
-            if (anime.synonyms != null && anime.synonyms!.isNotEmpty) ...[
-              const Divider(),
-              // const Text(
-              //   'Синонимы',
-              //   style: TextStyle(
-              //     fontSize: 16,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // const SizedBox(
-              //   height: 2,
-              // ),
-              // ...List.generate(anime.synonyms!.length,
-              //     ((index) => SelectableText(anime.synonyms![index]))),
-
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  children: <TextSpan>[
-                    const TextSpan(
-                      text: 'Синонимы:\n',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(text: anime.synonyms!.join('\n')),
-                  ],
-                ),
-              ),
-            ],
-          ],
+      builder: (_) => SafeArea(
+        child: TitleOtherNamesBottomSheet(
+          english: english,
+          japanese: japanese,
+          synonyms: synonyms,
         ),
       ),
     );

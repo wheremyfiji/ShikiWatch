@@ -99,7 +99,9 @@ class MangaDetailPage extends ConsumerWidget {
                       subTitle: data.name,
                       rating: '?',
                       score: data.score,
-                      tap: false,
+                      english: data.english,
+                      japanese: data.japanese,
+                      synonyms: data.synonyms,
                     ).animate().fade(),
                   ),
                   SliverToBoxAdapter(

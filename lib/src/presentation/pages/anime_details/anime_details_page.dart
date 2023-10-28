@@ -150,6 +150,7 @@ class AnimeDetailsPage extends ConsumerWidget {
           top: false,
           bottom: false,
           child: CustomScrollView(
+            clipBehavior: Clip.none,
             slivers: [
               SliverAppBar(
                 pinned: true,
@@ -216,6 +217,9 @@ class AnimeDetailsPage extends ConsumerWidget {
                       subTitle: anime.name,
                       rating: titleInfo.rating,
                       score: anime.score,
+                      english: anime.english,
+                      japanese: anime.japanese,
+                      synonyms: anime.synonyms,
                     ).animate().fade(),
                   ),
                   SliverToBoxAdapter(
@@ -241,7 +245,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                         ).animate().fade(),
                       ),
                     ),
-                  if (titleInfo.statsValues != [])
+                  if (titleInfo.statsValues.isNotEmpty)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                       sliver: SliverToBoxAdapter(

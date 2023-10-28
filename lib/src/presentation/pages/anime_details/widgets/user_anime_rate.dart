@@ -922,7 +922,7 @@ class _AnimeUserRateBottomSheetState
                                 children: [
                                   const Icon(
                                     Icons.add,
-                                    size: 16,
+                                    size: 14,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
@@ -937,7 +937,7 @@ class _AnimeUserRateBottomSheetState
                                   children: [
                                     const Icon(
                                       Icons.edit,
-                                      size: 16,
+                                      size: 14,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
