@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -35,10 +37,22 @@ class TitlePoster extends HookWidget {
           bottom: -1,
           left: -1,
           right: -1,
-          child: Container(
-            color: context.colorScheme.background.withOpacity(0.8),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+            child: Container(
+              color: context.colorScheme.background.withOpacity(0.8),
+            ),
           ),
         ),
+        // Positioned.fill(
+        //   top: -1,
+        //   bottom: -1,
+        //   left: -1,
+        //   right: -1,
+        //   child: Container(
+        //     color: context.colorScheme.background.withOpacity(0.8),
+        //   ),
+        // ),
         Positioned.fill(
           top: -1,
           bottom: -1,
@@ -88,70 +102,5 @@ class TitlePoster extends HookWidget {
         ),
       ],
     );
-
-    // return SizedBox(
-    //   height: 316,
-    //   child: Stack(
-    //     children: [
-    //       Positioned.fill(
-    //         child: CachedNetworkImage(
-    //           imageUrl: '${AppConfig.staticUrl}$imageUrl',
-    //           fit: BoxFit.cover,
-    //           cacheManager: cacheManager,
-    //         ),
-    //       ),
-    //       Positioned.fill(
-    //         top: -1,
-    //         bottom: -1,
-    //         left: -1,
-    //         right: -1,
-    //         child: Container(
-    //           color: context.colorScheme.background.withOpacity(0.8),
-    //         ),
-    //       ),
-    //       Positioned.fill(
-    //         top: -1,
-    //         bottom: -1,
-    //         left: -1,
-    //         right: -1,
-    //         child: Container(
-    //           //clipBehavior: Clip.hardEdge,
-    //           decoration: BoxDecoration(
-    //             gradient: LinearGradient(
-    //               colors: [
-    //                 context.colorScheme.background,
-    //                 context.colorScheme.background.withOpacity(0.2),
-    //                 context.colorScheme.background,
-    //               ],
-    //               begin: Alignment.topCenter,
-    //               end: Alignment.bottomCenter,
-    //               stops: const [
-    //                 0.1,
-    //                 0.4,
-    //                 0.8,
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //       Align(
-    //         alignment: Alignment.center,
-    //         child: ClipRRect(
-    //           borderRadius: BorderRadius.circular(16),
-    //           child: SizedBox(
-    //             height: 300,
-    //             child: AspectRatio(
-    //               aspectRatio: 0.703,
-    //               child: CachedImage(
-    //                 '${AppConfig.staticUrl}$imageUrl',
-    //                 fit: BoxFit.cover,
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }

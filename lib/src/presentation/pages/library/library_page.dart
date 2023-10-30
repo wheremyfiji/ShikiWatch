@@ -42,6 +42,7 @@ class LibraryPage extends HookConsumerWidget {
       },
       child: Scaffold(
         body: NestedScrollView(
+          clipBehavior: Clip.none,
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               LibraryPageAppBar(

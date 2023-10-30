@@ -134,6 +134,7 @@ class HistoryItem extends ConsumerWidget {
           DeleteFromHistoryBottomSheet.show(
             context: context,
             titleName: animeName,
+            imageUrl: image,
             episode: episode,
             onDelete: () => ref
                 .read(animeDatabaseProvider)
@@ -235,12 +236,14 @@ class HistoryItem extends ConsumerWidget {
 
 class DeleteFromHistoryBottomSheet extends StatelessWidget {
   final String titleName;
+  final String imageUrl;
   final int? episode;
   final Function() onDelete;
 
   const DeleteFromHistoryBottomSheet({
     super.key,
     required this.titleName,
+    required this.imageUrl,
     this.episode,
     required this.onDelete,
   });
@@ -252,29 +255,67 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          child: Text(
-            titleName,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: SizedBox(
+                  height: 48,
+                  child: AspectRatio(
+                    aspectRatio: 1.0,
+                    child: CachedImage(
+                      '${AppConfig.staticUrl}$imageUrl',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 16.0,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Удалить из истории',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      titleName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.normal,
+                        color:
+                            context.colorScheme.onBackground.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
         Card(
           color: context.colorScheme.secondaryContainer,
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 3),
+                  padding: const EdgeInsets.only(right: 6),
                   child: Icon(
                     Icons.info_rounded,
                     color: context.colorScheme.onSecondaryContainer,
+                    size: 18,
                   ),
                 ),
                 Expanded(
@@ -290,18 +331,6 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
             ),
           ),
         ),
-        // Padding(
-        //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
-        //   child: Text(
-        //     'Серия $episode будет удалена из истории просмотра',
-        //     maxLines: 2,
-        //     overflow: TextOverflow.ellipsis,
-        //     style: TextStyle(
-        //       fontSize: 14,
-        //       color: context.colorScheme.onBackground.withOpacity(0.8),
-        //     ),
-        //   ),
-        // ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: SizedBox(
@@ -312,6 +341,9 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
                 onDelete();
               },
               style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
                 backgroundColor: context.colorScheme.error,
                 foregroundColor: context.colorScheme.onError,
               ),
@@ -327,6 +359,7 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
   static void show({
     required BuildContext context,
     required String titleName,
+    required String imageUrl,
     int? episode,
     required Function() onDelete,
   }) {
@@ -343,6 +376,7 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
       builder: (_) => SafeArea(
         child: DeleteFromHistoryBottomSheet(
           titleName: titleName,
+          imageUrl: imageUrl,
           episode: episode,
           onDelete: onDelete,
         ),

@@ -58,7 +58,7 @@ class PlayerBottom extends StatelessWidget {
             icon: const Icon(
               Icons.double_arrow_rounded,
             ),
-            iconSize: 18,
+            iconSize: 21,
             tooltip: 'Перемотать 125 секунд',
           ),
           IconButton(
@@ -69,7 +69,7 @@ class PlayerBottom extends StatelessWidget {
                   ? Icons.close_fullscreen_rounded
                   : Icons.open_in_full_rounded,
             ),
-            iconSize: 18,
+            iconSize: 21,
           ),
           const SizedBox(
             width: 8,

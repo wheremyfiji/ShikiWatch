@@ -17,7 +17,15 @@ class UpdateCard extends ConsumerWidget {
     return release.when(
       data: (data) {
         if (data == null) {
-          return const SizedBox.shrink();
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: ElevatedButton.icon(
+              onPressed: () => ref.invalidate(appReleaseProvider),
+              style: ElevatedButton.styleFrom(elevation: 0),
+              icon: const Icon(Icons.done),
+              label: const Text('Вы используете последнюю версию'),
+            ),
+          );
         }
 
         return Card(
@@ -78,8 +86,30 @@ class UpdateCard extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const SizedBox.shrink(),
-      error: (error, stackTrace) => const SizedBox.shrink(),
+      loading: () => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        child: ElevatedButton.icon(
+          onPressed: null,
+          style: ElevatedButton.styleFrom(elevation: 0),
+          icon: Container(
+            width: 24,
+            height: 24,
+            padding: const EdgeInsets.all(2.0),
+            child: const CircularProgressIndicator(),
+          ),
+          label: const Text('Проверка обновлений..'),
+        ),
+      ),
+      error: (error, stackTrace) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        child: ElevatedButton.icon(
+          onPressed: () => ref.invalidate(appReleaseProvider),
+          style: ElevatedButton.styleFrom(elevation: 0),
+          icon: const Icon(Icons.update),
+          label: const Text('Проверить наличие обновлений'),
+        ),
+      ),
+      //error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
 }
