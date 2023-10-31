@@ -182,14 +182,29 @@ class SeriesSelectPage extends HookConsumerWidget {
                     ),
                   ),
                 ],
-                title: Text(
-                  '$animeName • ${studioName.replaceFirst('.Subtitles', ' (Субтитры)')}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: context.theme.colorScheme.onBackground,
-                  ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      animeName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: context.theme.colorScheme.onBackground,
+                      ),
+                    ),
+                    Text(
+                      studioName.replaceFirst('.Subtitles', ' (Субтитры)'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.theme.colorScheme.onBackground
+                            .withOpacity(0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ),
 

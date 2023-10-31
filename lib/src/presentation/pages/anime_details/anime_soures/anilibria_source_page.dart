@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../../../../anilibria/anilibria_api.dart';
 import '../../../../../anilibria/enums/title_status_code.dart';
 import '../../../../../anilibria/models/title.dart';
 import '../../../../domain/models/anime_database.dart';
@@ -196,6 +201,34 @@ class AnilibriaSourcePage extends HookConsumerWidget {
 
                 return [
                   TitleInfo(title),
+                  if (title.torrent != null &&
+                      title.torrent!.torrentlist != null &&
+                      title.torrent!.torrentlist!.isNotEmpty) ...[
+                    const SliverToBoxAdapter(
+                      child: Divider(),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          right: 16.0,
+                          top: 6.0,
+                          bottom: 8.0,
+                        ),
+                        child: Text(
+                          'Torrent-раздачи',
+                          style: context.textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                    AnilibriaTorrentList(title.torrent!),
+                    const SliverPadding(
+                      padding: EdgeInsets.only(top: 16.0),
+                      sliver: SliverToBoxAdapter(
+                        child: Divider(height: 1),
+                      ),
+                    ),
+                  ],
                   SliverList.builder(
                     itemCount: title.player!.playlist!.length,
                     itemBuilder: (context, index) {
@@ -287,7 +320,7 @@ class AnilibriaEpisodeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+      //contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
       onTap: () async {
         if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
           showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
@@ -416,12 +449,15 @@ class TitleInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
       sliver: SliverToBoxAdapter(
         child: Card(
+          margin: const EdgeInsets.all(0.0),
+          elevation: 4,
           shadowColor: Colors.transparent,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -491,6 +527,149 @@ class TitleInfo extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AnilibriaTorrentList extends StatelessWidget {
+  final AnilibriaTorrent torrent;
+
+  const AnilibriaTorrentList(this.torrent, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList.separated(
+      itemCount: torrent.torrentlist!.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12.0),
+      itemBuilder: (context, index) {
+        final torrentItem = torrent.torrentlist![index];
+
+        final DateTime? uploadedTs = torrentItem.uploadedTimestamp == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(
+                torrentItem.uploadedTimestamp! * 1000,
+              );
+
+        return ListTile(
+          visualDensity: VisualDensity.compact,
+          minVerticalPadding: 0,
+          title: Text(
+            'Серия ${torrentItem.episodes?.string ?? ''} (${torrentItem.quality?.string})',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    torrentItem.sizeString ??
+                        '${((torrentItem.totalSize ?? 0) / 1073741824).toStringAsFixed(1)} GB',
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onBackground.withOpacity(
+                        0.8,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.arrow_upward_rounded,
+                    size: 14,
+                    color: Colors.green,
+                  ),
+                  Text(
+                    (torrentItem.seeders ?? 0).toString(),
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onBackground.withOpacity(
+                        0.8,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.arrow_downward_rounded,
+                    size: 14,
+                    color: Colors.red,
+                  ),
+                  Text(
+                    (torrentItem.leechers ?? 0).toString(),
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: context.colorScheme.onBackground.withOpacity(
+                        0.8,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (uploadedTs != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
+                  child: Row(
+                    children: [
+                      // Icon(
+                      //   Icons.update_rounded,
+                      //   size: 14,
+                      //   color: context.colorScheme.onBackground.withOpacity(
+                      //     0.8,
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          uploadedTs.convertToDaysAgo(),
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: context.colorScheme.onBackground.withOpacity(
+                              0.8,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (torrentItem.magnet != null)
+                IconButton(
+                  onPressed: () async {
+                    try {
+                      await launchUrlString(
+                        torrentItem.magnet!,
+                        mode: LaunchMode.externalNonBrowserApplication,
+                      );
+                    } on PlatformException {
+                      showErrorSnackBar(
+                        ctx: context,
+                        msg:
+                            'Не удалось открыть magnet-ссылку. Установи torrent-клиент',
+                        dur: const Duration(seconds: 5),
+                      );
+                    }
+                  },
+                  icon: const Icon(
+                    FontAwesomeIcons.magnet,
+                    size: 18,
+                  ),
+                ),
+              if (torrentItem.url != null)
+                IconButton(
+                  onPressed: () => launchUrl(
+                    Uri.parse(kAnilibriaStaticUrl + torrentItem.url!),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  icon: const Icon(Icons.download_rounded),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
