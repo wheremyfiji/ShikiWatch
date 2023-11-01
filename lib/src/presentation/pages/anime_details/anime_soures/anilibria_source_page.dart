@@ -320,7 +320,7 @@ class AnilibriaEpisodeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      //contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
       onTap: () async {
         if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
           showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
@@ -552,12 +552,13 @@ class AnilibriaTorrentList extends StatelessWidget {
 
         return ListTile(
           visualDensity: VisualDensity.compact,
+          contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
           minVerticalPadding: 0,
           title: Text(
             'Серия ${torrentItem.episodes?.string ?? ''} (${torrentItem.quality?.string})',
             style: const TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              //fontWeight: FontWeight.w500,
             ),
           ),
           subtitle: Column(
@@ -648,7 +649,7 @@ class AnilibriaTorrentList extends StatelessWidget {
                       showErrorSnackBar(
                         ctx: context,
                         msg:
-                            'Не удалось открыть magnet-ссылку. Установи torrent-клиент',
+                            'Не удалось открыть magnet-ссылку. Отсутствует подходящее приложение',
                         dur: const Duration(seconds: 5),
                       );
                     }
