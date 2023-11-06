@@ -7,8 +7,8 @@ const String kShikiClientIdDesktop = '';
 const String kShikiClientSecretDesktop = '';
 
 const String kKodikToken = '';
-
-const String kAppMetricaApiKey = '';
 const String sentryDsn = '';
-
 const String kDiscordAppId = '';
+
+//оч секретно братан
+const String kAppSignatureSHA1 = '';
