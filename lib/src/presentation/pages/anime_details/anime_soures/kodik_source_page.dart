@@ -242,9 +242,6 @@ class KodikSourcePage extends ConsumerWidget {
                             child: SizedBox.shrink());
                       },
                     ),
-
-                    //const SliverToBoxAdapter(child: Divider(thickness: 2)),
-
                     SliverList.builder(
                       itemBuilder: (context, index) {
                         studioList.sort(
@@ -341,6 +338,11 @@ class KodikSourcePage extends ConsumerWidget {
                         );
                       },
                       itemCount: studioList.length,
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).padding.bottom,
+                      ),
                     ),
                   ];
                 },

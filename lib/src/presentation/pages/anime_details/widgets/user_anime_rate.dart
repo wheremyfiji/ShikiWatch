@@ -708,6 +708,9 @@ class _AnimeUserRateBottomSheetState
                           isLoading ? null : () => context.navigator.pop(),
                       icon: const Icon(Icons.close_rounded),
                     ),
+                    const SizedBox(
+                      width: 8.0,
+                    ),
                   ],
                 ),
               ),
@@ -911,7 +914,12 @@ class _AnimeUserRateBottomSheetState
                   clipBehavior: Clip.hardEdge,
                   elevation: 4,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 32.0),
+                    padding: EdgeInsets.fromLTRB(
+                      16.0,
+                      16.0,
+                      16.0,
+                      context.mediaQuery.padding.bottom,
+                    ),
                     child: Row(
                       children: [
                         if (createdAt != null)

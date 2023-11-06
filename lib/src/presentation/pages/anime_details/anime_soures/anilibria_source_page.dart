@@ -266,6 +266,11 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                       );
                     },
                   ),
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom,
+                    ),
+                  ),
                 ];
               },
               loading: () => [

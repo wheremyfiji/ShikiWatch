@@ -25,13 +25,13 @@ class SourceModalSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const ListTile(
-          title: Text(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+          child: Text(
             'Выбор источника для поиска серий',
-            //style: Theme.of(context).textTheme.headlineSmall,
-            style: TextStyle(
+            style: context.textTheme.titleLarge?.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w500,
             ),

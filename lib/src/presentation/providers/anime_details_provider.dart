@@ -241,17 +241,27 @@ class TitleInfoPageController extends ChangeNotifier {
   // }
 
   String getRating(String r) {
+    // const map = {
+    //   'g': '0+',
+    //   'pg': '6+',
+    //   'pg_13': '16+',
+    //   'r': '18+',
+    //   'r_plus': '18+',
+    //   'rx': 'Hentai',
+    //   'none': '?'
+    // };
+
     const map = {
-      'g': '0+',
-      'pg': '6+',
-      'pg_13': '16+',
-      'r': '18+',
-      'r_plus': '18+',
-      'rx': 'Hentai',
+      'g': 'G',
+      'pg': 'PG',
+      'pg_13': 'PG-13',
+      'r': 'R-17',
+      'r_plus': 'R+',
+      'rx': 'Rx',
       'none': '?'
     };
+
     return map[r] ?? r;
-    //return '';
   }
 
   void fillVariables(Anime data) {

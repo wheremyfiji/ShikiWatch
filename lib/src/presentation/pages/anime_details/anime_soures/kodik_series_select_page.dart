@@ -207,7 +207,6 @@ class SeriesSelectPage extends HookConsumerWidget {
                   ],
                 ),
               ),
-
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
@@ -341,7 +340,11 @@ class SeriesSelectPage extends HookConsumerWidget {
                   childCount: sortedSeriesList.length,
                 ),
               ),
-              //const SliverToBoxAdapter(child: SizedBox(height: 60)),
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom,
+                ),
+              ),
             ],
           ),
         ),

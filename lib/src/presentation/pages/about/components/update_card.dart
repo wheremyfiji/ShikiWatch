@@ -23,7 +23,7 @@ class UpdateCard extends ConsumerWidget {
               onPressed: () => ref.invalidate(appReleaseProvider),
               style: ElevatedButton.styleFrom(elevation: 0),
               icon: const Icon(Icons.done),
-              label: const Text('Вы используете последнюю версию'),
+              label: const Text('Установлена последняя версия'),
             ),
           );
         }

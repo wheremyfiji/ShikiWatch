@@ -52,7 +52,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                 //heroTag: UniqueKey(),
                 heroTag: null,
                 onPressed: () async {
-                  if (titleInfo.rating == '18+') {
+                  // if (titleInfo.rating == '18+') {
+                  if (['R-17', 'R+', 'Rx'].contains(titleInfo.rating)) {
                     final allowExp = ref
                             .read(preferencesProvider)
                             .sharedPreferences
@@ -80,63 +81,64 @@ class AnimeDetailsPage extends ConsumerWidget {
                   final animeSource = ref.read(settingsProvider
                       .select((settings) => settings.animeSource));
 
-                  if (animeSource == AnimeSource.alwaysAsk) {
+                  return switch (animeSource) {
                     // ignore: use_build_context_synchronously
-                    SourceModalSheet.show(
-                      context: context,
-                      shikimoriId: data.id!,
-                      epWatched: titleInfo.currentProgress,
-                      animeName:
-                          (data.russian == '' ? data.name : data.russian) ?? '',
-                      search:
-                          data.name ?? data.english?[0] ?? data.russian ?? '',
-                      imageUrl: data.image?.original ?? '',
-                    );
-                  } else if (animeSource == AnimeSource.libria) {
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation1, animation2) =>
-                            AnilibriaSourcePage(
-                          shikimoriId: data.id!,
-                          animeName:
-                              (data.russian == '' ? data.name : data.russian) ??
-                                  '',
-                          searchName: data.name ??
-                              data.english?[0] ??
-                              data.russian ??
-                              '',
-                          epWatched: titleInfo.currentProgress,
-                          imageUrl: data.image?.original ?? '',
-                        ),
-                        transitionDuration: Duration.zero,
-                        reverseTransitionDuration: Duration.zero,
+                    AnimeSource.alwaysAsk => SourceModalSheet.show(
+                        context: context,
+                        shikimoriId: data.id!,
+                        epWatched: titleInfo.currentProgress,
+                        animeName:
+                            (data.russian == '' ? data.name : data.russian) ??
+                                '',
+                        search:
+                            data.name ?? data.english?[0] ?? data.russian ?? '',
+                        imageUrl: data.image?.original ?? '',
                       ),
-                    );
-                  } else {
                     // ignore: use_build_context_synchronously
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation1, animation2) =>
-                            KodikSourcePage(
-                          shikimoriId: data.id!,
-                          animeName:
-                              (data.russian == '' ? data.name : data.russian) ??
-                                  '',
-                          searchName: data.name ??
-                              data.english?[0] ??
-                              data.russian ??
-                              '',
-                          epWatched: titleInfo.currentProgress,
-                          imageUrl: data.image?.original ?? '',
+                    AnimeSource.libria => Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              AnilibriaSourcePage(
+                            shikimoriId: data.id!,
+                            animeName: (data.russian == ''
+                                    ? data.name
+                                    : data.russian) ??
+                                '',
+                            searchName: data.name ??
+                                data.english?[0] ??
+                                data.russian ??
+                                '',
+                            epWatched: titleInfo.currentProgress,
+                            imageUrl: data.image?.original ?? '',
+                          ),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
                         ),
-                        transitionDuration: Duration.zero,
-                        reverseTransitionDuration: Duration.zero,
                       ),
-                    );
-                  }
+                    // ignore: use_build_context_synchronously
+                    AnimeSource.kodik => Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              KodikSourcePage(
+                            shikimoriId: data.id!,
+                            animeName: (data.russian == ''
+                                    ? data.name
+                                    : data.russian) ??
+                                '',
+                            searchName: data.name ??
+                                data.english?[0] ??
+                                data.russian ??
+                                '',
+                            epWatched: titleInfo.currentProgress,
+                            imageUrl: data.image?.original ?? '',
+                          ),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
+                        ),
+                      ),
+                  };
                 },
                 icon: const Icon(Icons.play_arrow_rounded),
                 label: const Text('Смотреть'),

@@ -50,18 +50,23 @@ class TitleName extends StatelessWidget {
                       title,
                       maxLines: 3,
                       overflow: TextOverflow.fade,
-                      style: const TextStyle(
+                      style: context.textTheme.headlineMedium?.copyWith(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.normal,
                       ),
+                      // style: const TextStyle(
+                      //   fontSize: 18,
+                      //   fontWeight: FontWeight.bold,
+                      // ),
                     ),
                     if (subTitle != null)
                       Text(
                         subTitle!,
                         maxLines: 2,
                         overflow: TextOverflow.fade,
-                        style: context.textTheme.bodySmall?.copyWith(
+                        style: context.textTheme.titleMedium?.copyWith(
                           fontSize: 14,
+                          fontWeight: FontWeight.normal,
                           color: context.colorScheme.onBackground.withOpacity(
                             0.8,
                           ),
