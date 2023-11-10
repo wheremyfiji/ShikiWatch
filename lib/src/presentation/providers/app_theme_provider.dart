@@ -79,25 +79,25 @@ class AppThemeDataNotifier {
         minVerticalPadding: 12,
         iconColor: colorScheme.onSurfaceVariant,
       ),
-      navigationBarTheme: NavigationBarThemeData(
-        labelTextStyle: MaterialStateProperty.resolveWith(
-          (states) {
-            if (states.contains(MaterialState.selected)) {
-              return TextStyle(
-                color: colorScheme.onSurface,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              );
-            }
+      // navigationBarTheme: NavigationBarThemeData(
+      //   labelTextStyle: MaterialStateProperty.resolveWith(
+      //     (states) {
+      //       if (states.contains(MaterialState.selected)) {
+      //         return TextStyle(
+      //           color: colorScheme.onSurface,
+      //           fontSize: 12,
+      //           //fontWeight: FontWeight.bold,
+      //         );
+      //       }
 
-            return TextStyle(
-              color: colorScheme.onSurfaceVariant,
-              fontSize: 12,
-              fontWeight: FontWeight.normal,
-            );
-          },
-        ),
-      ),
+      //       return TextStyle(
+      //         color: colorScheme.onSurfaceVariant,
+      //         fontSize: 12,
+      //         //fontWeight: FontWeight.normal,
+      //       );
+      //     },
+      //   ),
+      // ),
     );
   }
 

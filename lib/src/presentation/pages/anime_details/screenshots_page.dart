@@ -128,6 +128,11 @@ class AnimeScreenshotsPage extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom,
+                    ),
+                  ),
                 ];
               },
               loading: () => [

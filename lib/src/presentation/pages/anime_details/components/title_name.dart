@@ -140,6 +140,7 @@ class TitleOtherNamesBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(width: double.infinity),
           if (english != null && english!.isNotEmpty) ...[
             // const Text(
             //   'English',

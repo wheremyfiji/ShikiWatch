@@ -21,7 +21,10 @@ class UpdateCard extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: ElevatedButton.icon(
               onPressed: () => ref.invalidate(appReleaseProvider),
-              style: ElevatedButton.styleFrom(elevation: 0),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
               icon: const Icon(Icons.done),
               label: const Text('Установлена последняя версия'),
             ),
@@ -90,7 +93,10 @@ class UpdateCard extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: ElevatedButton.icon(
           onPressed: null,
-          style: ElevatedButton.styleFrom(elevation: 0),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+          ),
           icon: Container(
             width: 24,
             height: 24,
@@ -104,7 +110,10 @@ class UpdateCard extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         child: ElevatedButton.icon(
           onPressed: () => ref.invalidate(appReleaseProvider),
-          style: ElevatedButton.styleFrom(elevation: 0),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+          ),
           icon: const Icon(Icons.update),
           label: const Text('Проверить наличие обновлений'),
         ),

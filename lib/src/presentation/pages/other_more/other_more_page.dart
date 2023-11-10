@@ -53,8 +53,10 @@ class OtherMorePage extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: SliverToBoxAdapter(child: DonateWidget()),
             ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: MediaQuery.of(context).padding.bottom),
+            SliverPadding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
             ),
           ],
         ),
