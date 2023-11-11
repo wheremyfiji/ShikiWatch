@@ -31,21 +31,18 @@ class SourceModalSheet extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
           child: Text(
             'Выбор источника для поиска серий',
-            style: context.textTheme.titleLarge?.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: context.textTheme.titleLarge,
           ),
         ),
         Card(
           color: context.colorScheme.secondaryContainer,
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 3),
+                  padding: const EdgeInsets.only(right: 6),
                   child: Icon(
                     Icons.info_rounded,
                     color: context.colorScheme.onSecondaryContainer,

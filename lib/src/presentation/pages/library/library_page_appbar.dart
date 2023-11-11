@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../domain/enums/library_state.dart';
@@ -10,8 +11,6 @@ import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/custom_search_bar.dart';
-
-import 'search/library_anime_search_page.dart';
 
 final libraryStateProvider = StateProvider<LibraryFragmentMode>((ref) {
   final LibraryFragmentMode currentFragment = ref
@@ -41,17 +40,7 @@ class LibraryPageAppBar extends ConsumerWidget {
       snap: false,
       title: state == LibraryFragmentMode.anime
           ? CustomSearchBar(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        const LibraryAnimeSearchPage(),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
-                  ),
-                );
-              },
+              onTap: () => context.pushNamed('library_search'),
               hintText: 'Поиск аниме',
               leading: const Icon(Icons.search),
             )

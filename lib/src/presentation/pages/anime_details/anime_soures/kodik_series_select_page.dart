@@ -207,138 +207,134 @@ class SeriesSelectPage extends HookConsumerWidget {
                   ],
                 ),
               ),
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    final seria = sortedSeriesList[index];
-                    final epList = episodesList;
+              SliverList.builder(
+                itemCount: sortedSeriesList.length,
+                addSemanticIndexes: false,
+                itemBuilder: (context, index) {
+                  final seria = sortedSeriesList[index];
+                  final epList = episodesList;
 
-                    final epIndex = epList?.indexWhere(
-                        (e) => e.nubmer == int.parse(seria.number ?? ''));
+                  final epIndex = epList?.indexWhere(
+                      (e) => e.nubmer == int.parse(seria.number ?? ''));
 
-                    final Episode? episode;
+                  final Episode? episode;
 
-                    if (epIndex == -1) {
-                      episode = null;
-                    } else {
-                      episode = epList?[epIndex!];
-                    }
+                  if (epIndex == -1) {
+                    episode = null;
+                  } else {
+                    episode = epList?[epIndex!];
+                  }
 
-                    //final latestEp = epList?.last;
-                    //final isLatestWatched = episode?.nubmer == latestEp?.nubmer;
+                  //final latestEp = epList?.last;
+                  //final isLatestWatched = episode?.nubmer == latestEp?.nubmer;
 
-                    final int seriaNum = int.parse(seria.number ?? '0');
+                  final int seriaNum = int.parse(seria.number ?? '0');
 
-                    final isComp = seriaNum <= episodeWatched;
+                  final isComp = seriaNum <= episodeWatched;
 
-                    return AutoScrollTag(
-                      controller: autoScrollController,
-                      key: ValueKey(index),
-                      index: index,
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                        onTap: () async {
-                          String startPosition = '';
+                  return AutoScrollTag(
+                    controller: autoScrollController,
+                    key: ValueKey(index),
+                    index: index,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                      onTap: () async {
+                        String startPosition = '';
 
-                          if (episode?.position != null && seria.type == null) {
-                            bool? dialogValue = await showDialog<bool>(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) => const ContinueDialog(),
-                            );
-
-                            if (dialogValue ?? false) {
-                              startPosition = episode?.position ?? '';
-                            }
-                          }
-                          AnimePlayerPageExtra data = AnimePlayerPageExtra(
-                            studioId: studioId,
-                            shikimoriId: shikimoriId,
-                            episodeNumber: int.parse(seria.number ?? ''),
-                            animeName: animeName,
-                            studioName: studioName,
-                            studioType: studioType,
-                            episodeLink: seria.link ?? '',
-                            additInfo: seria.type ?? '',
-                            position: episode?.position,
-                            imageUrl: imageUrl,
-                            startPosition: startPosition,
-                            isLibria: false,
+                        if (episode?.position != null && seria.type == null) {
+                          bool? dialogValue = await showDialog<bool>(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) => const ContinueDialog(),
                           );
 
-                          // ignore: use_build_context_synchronously
-                          GoRouter.of(context).pushNamed('player', extra: data);
-                        },
-                        title: Text("Серия ${seria.number}"),
-                        subtitle: seria.type == null
-                            ? (episode != null
-                                ? Text(
-                                    episode.timeStamp ?? '',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: context.colorScheme.onBackground
-                                          .withOpacity(0.8),
-                                    ),
+                          if (dialogValue ?? false) {
+                            startPosition = episode?.position ?? '';
+                          }
+                        }
+                        AnimePlayerPageExtra data = AnimePlayerPageExtra(
+                          studioId: studioId,
+                          shikimoriId: shikimoriId,
+                          episodeNumber: int.parse(seria.number ?? ''),
+                          animeName: animeName,
+                          studioName: studioName,
+                          studioType: studioType,
+                          episodeLink: seria.link ?? '',
+                          additInfo: seria.type ?? '',
+                          position: episode?.position,
+                          imageUrl: imageUrl,
+                          startPosition: startPosition,
+                          isLibria: false,
+                        );
+
+                        // ignore: use_build_context_synchronously
+                        GoRouter.of(context).pushNamed('player', extra: data);
+                      },
+                      title: Text("Серия ${seria.number}"),
+                      subtitle: seria.type == null
+                          ? (episode != null
+                              ? Text(
+                                  episode.timeStamp ?? '',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: context.colorScheme.onBackground
+                                        .withOpacity(0.8),
+                                  ),
+                                )
+                              : null)
+                          : Text(
+                              seria.type!,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.colorScheme.onBackground
+                                    .withOpacity(0.8),
+                              ),
+                            ),
+                      trailing: seria.type != null
+                          ? null
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (episode != null && !isComp) ...[
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.done),
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   )
-                                : null)
-                            : Text(
-                                seria.type!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: context.colorScheme.onBackground
-                                      .withOpacity(0.8),
-                                ),
-                              ),
-                        trailing: seria.type != null
-                            ? null
-                            : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (episode != null && !isComp) ...[
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(Icons.done),
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    )
-                                  ],
-                                  if (isComp) ...[
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                          Icons.check_circle_rounded),
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    )
-                                  ],
-                                  if (episode != null) ...[
-                                    IconButton(
-                                      onPressed: () {
-                                        removeEpisode(
-                                            int.parse(seria.number ?? ''));
-                                      },
-                                      icon: const Icon(Icons.delete),
-                                      color:
-                                          Theme.of(context).colorScheme.error,
-                                    ),
-                                  ] else ...[
-                                    IconButton(
-                                      onPressed: () {
-                                        addEpisode(
-                                            int.parse(seria.number ?? ''));
-                                      },
-                                      icon: const Icon(Icons.add),
-                                      color:
-                                          context.colorScheme.onSurfaceVariant,
-                                    ),
-                                  ],
                                 ],
-                              ),
-                      ),
-                    );
-                  },
-                  childCount: sortedSeriesList.length,
-                ),
+                                if (isComp) ...[
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon:
+                                        const Icon(Icons.check_circle_rounded),
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  )
+                                ],
+                                if (episode != null) ...[
+                                  IconButton(
+                                    onPressed: () {
+                                      removeEpisode(
+                                          int.parse(seria.number ?? ''));
+                                    },
+                                    icon: const Icon(Icons.delete),
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ] else ...[
+                                  IconButton(
+                                    onPressed: () {
+                                      addEpisode(int.parse(seria.number ?? ''));
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    color: context.colorScheme.onSurfaceVariant,
+                                  ),
+                                ],
+                              ],
+                            ),
+                    ),
+                  );
+                },
               ),
               SliverPadding(
                 padding: EdgeInsets.only(

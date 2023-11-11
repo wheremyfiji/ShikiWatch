@@ -231,7 +231,7 @@ class AllCharactersBottomSheet extends StatelessWidget {
 
                   return ListTile(
                     onTap: () {
-                      Navigator.of(context).pop();
+                      //Navigator.of(context).pop();
                       context.pushNamed(
                         'character',
                         pathParameters: <String, String>{
@@ -261,10 +261,12 @@ class AllCharactersBottomSheet extends StatelessWidget {
       {required BuildContext context, required List<ShikiRole> characters}) {
     showModalBottomSheet(
       context: context,
-      useSafeArea: false,
+      useSafeArea: true,
       isScrollControlled: true,
-      useRootNavigator: true,
+      useRootNavigator: false,
       showDragHandle: true,
+      backgroundColor: context.colorScheme.background,
+      elevation: 0,
       builder: (_) => SafeArea(child: AllCharactersBottomSheet(characters)),
     );
   }

@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:collection/collection.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../services/updater/update_service.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
 import '../../providers/settings_provider.dart';
 import '../../../utils/app_utils.dart';
 
-// const _allDestinations = [
-//   NavigationRailDestination(
-//     label: Text('Библиотека'),
-//     icon: Icon(Icons.book_outlined),
-//     selectedIcon: Icon(Icons.book),
-//   ),
-//   NavigationRailDestination(
-//     label: Text('Главная'),
-//     icon: Icon(Icons.home_outlined),
-//     selectedIcon: Icon(Icons.home_rounded),
-//   ),
-//   NavigationRailDestination(
-//     label: Text('Профиль'),
-//     icon: Icon(Icons.account_circle_outlined),
-//     selectedIcon: Icon(Icons.account_circle),
-//   ),
-// ];
-
 class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
+  final List<Widget> children;
 
   const ScaffoldWithNavBar({
     required this.navigationShell,
+    required this.children,
     Key? key,
   }) : super(key: key ?? const ValueKey<String>('ScaffoldWithNavBar'));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final ext = MediaQuery.of(context).size.width > 1600; //1200
     final screenWidth = MediaQuery.of(context).size.width;
 
     const breakpoint = 600.0;
@@ -107,43 +91,49 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               ),
               const VerticalDivider(thickness: 1, width: 1),
               Expanded(
-                child: navigationShell,
+                child: AnimatedBranchContainer(
+                  currentIndex: navigationShell.currentIndex,
+                  children: children,
+                ),
               ),
             ],
           ),
         ),
       );
-    } else {
-      return Scaffold(
-        body: navigationShell,
-        bottomNavigationBar: NavigationBar(
-          height: navDestLabelBehavior ==
-                  NavigationDestinationLabelBehavior.alwaysHide
-              ? 60
-              : null,
-          labelBehavior: navDestLabelBehavior,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.book_outlined),
-              selectedIcon: Icon(Icons.book),
-              label: 'Библиотека',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.explore_outlined),
-              selectedIcon: Icon(Icons.explore_rounded),
-              label: 'Обзор',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.more_horiz),
-              selectedIcon: Icon(Icons.more_horiz),
-              label: 'Ещё',
-            ),
-          ],
-          selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: _onDestinationSelected,
-        ),
-      );
     }
+
+    return Scaffold(
+      body: AnimatedBranchContainer(
+        currentIndex: navigationShell.currentIndex,
+        children: children,
+      ),
+      bottomNavigationBar: NavigationBar(
+        height: navDestLabelBehavior ==
+                NavigationDestinationLabelBehavior.alwaysHide
+            ? 60
+            : null,
+        labelBehavior: navDestLabelBehavior,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.book_outlined),
+            selectedIcon: Icon(Icons.book),
+            label: 'Библиотека',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore_rounded),
+            label: 'Обзор',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.more_horiz),
+            selectedIcon: Icon(Icons.more_horiz),
+            label: 'Ещё',
+          ),
+        ],
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: _onDestinationSelected,
+      ),
+    );
   }
 
   _onDestinationSelected(int tappedIndex) {
@@ -167,4 +157,47 @@ class ScaffoldWithNavBar extends ConsumerWidget {
   //     navigationShell.goBranch(tappedIndex);
   //   }
   // }
+}
+
+/// Custom branch Navigator container that provides animated transitions
+/// when switching branches.
+class AnimatedBranchContainer extends StatelessWidget {
+  /// Creates a AnimatedBranchContainer
+  const AnimatedBranchContainer({
+    super.key,
+    required this.currentIndex,
+    required this.children,
+  });
+
+  /// The index (in [children]) of the branch Navigator to display.
+  final int currentIndex;
+
+  /// The children (branch Navigators) to display in this container.
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: children.mapIndexed(
+        (int index, Widget navigator) {
+          return AnimatedOpacity(
+            opacity: index == currentIndex ? 1 : 0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.fastOutSlowIn,
+            child: _branchNavigatorWrapper(index, navigator),
+          );
+        },
+      ).toList(),
+    );
+  }
+
+  Widget _branchNavigatorWrapper(int index, Widget navigator) {
+    return IgnorePointer(
+      ignoring: index != currentIndex,
+      child: TickerMode(
+        enabled: index == currentIndex,
+        child: navigator,
+      ),
+    );
+  }
 }

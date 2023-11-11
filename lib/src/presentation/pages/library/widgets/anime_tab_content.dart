@@ -33,12 +33,15 @@ class AnimeTabContent extends StatelessWidget {
         key: pageStorageKey,
         slivers: [
           if (currentLayout != LibraryLayoutMode.compactList)
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 16),
+            const SliverPadding(
+              padding: EdgeInsets.only(bottom: 16.0),
             ),
           switch (currentLayout) {
             LibraryLayoutMode.compactList => SliverList.builder(
                 itemCount: data.length,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                addSemanticIndexes: false,
                 itemBuilder: (context, index) {
                   final animeUserRate = data[index];
 
@@ -47,6 +50,9 @@ class AnimeTabContent extends StatelessWidget {
               ),
             LibraryLayoutMode.list => SliverList.builder(
                 itemCount: data.length,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                addSemanticIndexes: false,
                 itemBuilder: (context, index) {
                   final animeUserRate = data[index];
 
@@ -82,6 +88,11 @@ class AnimeTabContent extends StatelessWidget {
                 ),
               ),
           },
+          SliverPadding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+          ),
         ],
       ),
     );

@@ -17,6 +17,7 @@ import '../presentation/pages/explore/next_season_anime_page.dart';
 import '../presentation/pages/explore/top_anime_page.dart';
 import '../presentation/pages/explore/top_manga_page.dart';
 import '../presentation/pages/library/library_page.dart';
+import '../presentation/pages/library/search/library_anime_search_page.dart';
 import '../presentation/pages/login/login_desktop_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/manga_detail/manga_detail_page.dart';
@@ -174,7 +175,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
             ),
           ],
         ),
-        StatefulShellRoute.indexedStack(
+        StatefulShellRoute(
           branches: <StatefulShellBranch>[
             /// library screen
             StatefulShellBranch(
@@ -192,6 +193,16 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                     key: state.pageKey,
                   ),
                   routes: <RouteBase>[
+                    GoRoute(
+                      name: 'library_search',
+                      path: 'library_search',
+                      pageBuilder: (context, state) {
+                        return FadeTransitionPage(
+                          key: state.pageKey,
+                          child: const LibraryAnimeSearchPage(),
+                        );
+                      },
+                    ),
                     GoRoute(
                       name: 'library_anime',
                       path: 'anime/:id',
@@ -500,10 +511,12 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
           ],
           builder: (BuildContext context, GoRouterState state,
               StatefulNavigationShell navigationShell) {
-            return ExcludeSemantics(
-              child: ScaffoldWithNavBar(
-                navigationShell: navigationShell,
-              ),
+            return navigationShell;
+          },
+          navigatorContainerBuilder: (context, navigationShell, children) {
+            return ScaffoldWithNavBar(
+              navigationShell: navigationShell,
+              children: children,
             );
           },
         ),

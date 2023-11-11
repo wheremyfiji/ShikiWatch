@@ -276,10 +276,9 @@ class AnimeDetailsPage extends ConsumerWidget {
                         child: TitleVideosWidget(anime).animate().fade(),
                       ),
                     ),
-                  //const SliverToBoxAdapter(child: SizedBox(height: 70)),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).padding.bottom + 70,
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + 70,
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 //import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -136,6 +137,7 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
                         !controller.playerController.value.isInitialized) {
                       return;
                     }
+                    HapticFeedback.lightImpact();
                     controller.longPressSeek(true);
                   },
             onLongPressEnd: !longPressSeek
@@ -176,6 +178,8 @@ class _AnimePlayerPageState extends ConsumerState<AnimePlayerPage> {
               if (_seek) {
                 _seek = false;
                 _seekShowUI = true;
+
+                HapticFeedback.lightImpact();
 
                 controller.hideController.permShow();
 
