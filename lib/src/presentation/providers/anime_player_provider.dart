@@ -97,8 +97,9 @@ class PlayerController extends flutter.ChangeNotifier {
       streamAsync = await AsyncValue.guard(
         () async {
           final links = await ref
-              .read(kodikVideoProvider)
+              .read(kodikApiProvider)
               .getHLSLink(episodeLink: extra.episodeLink);
+
           return links;
         },
       );
@@ -237,12 +238,11 @@ class PlayerController extends flutter.ChangeNotifier {
         timeStamp = 'Просмотрено полностью';
       }
 
-      playerController.pause().then(
-        (value) {
-          playerController.dispose();
-          log('PlayerController disposed!', name: 'PlayerController');
-        },
-      );
+      playerController.pause().then((_) {
+        playerController.dispose();
+      });
+
+      hideController.dispose();
 
       if (isError || currentPosDuration == Duration.zero) {
         return;
@@ -264,8 +264,6 @@ class PlayerController extends flutter.ChangeNotifier {
           )
           .then((value) => ref.invalidate(isAnimeInDataBaseProvider));
     });
-
-    hideController.dispose();
   }
 
   Future<void> hideCallback() async {

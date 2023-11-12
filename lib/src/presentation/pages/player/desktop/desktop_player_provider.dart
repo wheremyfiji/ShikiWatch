@@ -111,8 +111,9 @@ class DesktopPlayerNotifier extends ChangeNotifier {
       streamAsync = await AsyncValue.guard(
         () async {
           final links = await ref
-              .read(kodikVideoProvider)
+              .read(kodikApiProvider)
               .getHLSLink(episodeLink: extra.episodeLink);
+
           return links;
         },
       );
