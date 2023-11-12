@@ -39,8 +39,8 @@ class AnimeTabContent extends StatelessWidget {
           switch (currentLayout) {
             LibraryLayoutMode.compactList => SliverList.builder(
                 itemCount: data.length,
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
+                // addAutomaticKeepAlives: false,
+                // addRepaintBoundaries: false,
                 addSemanticIndexes: false,
                 itemBuilder: (context, index) {
                   final animeUserRate = data[index];
@@ -50,8 +50,8 @@ class AnimeTabContent extends StatelessWidget {
               ),
             LibraryLayoutMode.list => SliverList.builder(
                 itemCount: data.length,
-                addAutomaticKeepAlives: false,
-                addRepaintBoundaries: false,
+                // addAutomaticKeepAlives: false,
+                // addRepaintBoundaries: false,
                 addSemanticIndexes: false,
                 itemBuilder: (context, index) {
                   final animeUserRate = data[index];
@@ -69,8 +69,8 @@ class AnimeTabContent extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 sliver: SliverGrid(
                   delegate: SliverChildBuilderDelegate(
-                    addAutomaticKeepAlives: false,
-                    addRepaintBoundaries: false,
+                    // addAutomaticKeepAlives: false,
+                    // addRepaintBoundaries: false,
                     addSemanticIndexes: false,
                     childCount: data.length,
                     (context, index) {
