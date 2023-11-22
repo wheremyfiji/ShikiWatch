@@ -201,10 +201,8 @@ class _MangaUserRateBottomSheetState
     final rateState = ref.watch(updateMangaRateButtonProvider);
     final isLoading = rateState is AsyncLoading<void>;
 
-    return WillPopScope(
-      onWillPop: () async {
-        return !isLoading;
-      },
+    return PopScope(
+      canPop: !isLoading,
       child: Material(
         //borderRadius: BorderRadius.circular(28),
         borderRadius: const BorderRadius.only(

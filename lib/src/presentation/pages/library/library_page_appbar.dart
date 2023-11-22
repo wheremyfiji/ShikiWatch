@@ -77,7 +77,6 @@ class LibraryPageAppBar extends ConsumerWidget {
         controller: tabController,
         isScrollable: true,
         indicatorWeight: 1.5,
-        dividerColor: Colors.transparent,
         splashBorderRadius: BorderRadius.circular(12.0),
         tabs: state == LibraryFragmentMode.manga
             ? const [

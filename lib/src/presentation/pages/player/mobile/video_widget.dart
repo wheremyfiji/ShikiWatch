@@ -24,7 +24,7 @@ class VideoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: FittedBox(
-        fit: expandVideo ? BoxFit.fitWidth : BoxFit.contain,
+        fit: expandVideo ? BoxFit.fitWidth : BoxFit.contain, //fitWidth   fill
         child: SizedBox(
           width: playerController.value.size.width,
           height: playerController.value.size.height,

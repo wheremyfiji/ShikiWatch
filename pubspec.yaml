@@ -6,7 +6,7 @@ version: 0.8.1+52
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
-  #sdk: '>=3.1.0-63.1.beta <4.0.0'
+  flutter: '>=3.16.0'
 
 isar_version: &isar_version 3.1.0+1
 
@@ -22,8 +22,8 @@ dependencies:
       url: https://github.com/alexmercerind/dart_discord_rpc.git
       ref: 48a15a750d9ee50c521a408c466bd681321a38e2
   device_info_plus: ^9.0.2
-  dio: ^5.3.2
-  dio_smart_retry: ^5.0.0
+  dio: ^5.3.3
+  dio_smart_retry: ^6.0.0
   dismissible_page: ^1.0.2
   dynamic_color: ^1.6.8
   easy_image_viewer: ^1.2.1
@@ -96,30 +96,6 @@ flutter:
     #- assets/json/shiki-studios-filtered-sorted.json
     #- .git/
     #- .git/refs/heads/
-    # To add assets to your application, add an assets section, like this:
-    # assets:
-    #   - images/a_dot_burr.jpeg
-    #   - images/a_dot_ham.jpeg
-    # An image asset can refer to one or more resolution-specific "variants", see
-    # https://flutter.dev/assets-and-images/#resolution-aware
-    # For details regarding adding assets from package dependencies, see
-    # https://flutter.dev/assets-and-images/#from-packages
-    # To add custom fonts to your application, add a fonts section here,
-    # in this "flutter" section. Each entry in this list should have a
-    # "family" key with the font family name, and a "fonts" key with a
-    # list giving the asset and other descriptors for the font. For
-    # example: SourceSansPro-Bold
-    # fonts:
-    #   - family: SourceSansPro
-    #     fonts:
-    #       - asset: assets/fonts/SourceSansPro-Regular.ttf
-    #       - asset: assets/fonts/SourceSansPro-Italic.ttf
-    #         style: italic
-    #       - asset: assets/fonts/SourceSansPro-Bold.ttf
-    #         weight: 700
-    #
-    # For details regarding fonts from package dependencies,
-    # see https://flutter.dev/custom-fonts/#from-packages
 
 # Task definition for derry
 scripts: derry.yaml

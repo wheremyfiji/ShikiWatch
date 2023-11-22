@@ -50,12 +50,13 @@ class AppThemeDataNotifier {
     final colorScheme = harmonized.copyWith(
       outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
     );
+
     final origin = isDark
         ? ThemeData.dark(useMaterial3: true)
         : ThemeData.light(useMaterial3: true);
+
     return origin.copyWith(
       visualDensity: VisualDensity.standard,
-      useMaterial3: true,
       colorScheme: colorScheme,
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
@@ -78,6 +79,10 @@ class AppThemeDataNotifier {
       listTileTheme: origin.listTileTheme.copyWith(
         minVerticalPadding: 12,
         iconColor: colorScheme.onSurfaceVariant,
+      ),
+      tabBarTheme: origin.tabBarTheme.copyWith(
+        tabAlignment: TabAlignment.start,
+        dividerColor: Colors.transparent,
       ),
       // navigationBarTheme: NavigationBarThemeData(
       //   labelTextStyle: MaterialStateProperty.resolveWith(

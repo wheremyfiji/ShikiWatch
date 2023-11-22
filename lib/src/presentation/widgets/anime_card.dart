@@ -74,7 +74,7 @@ class AnimeCompactListTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.normal,
         ),
       ),
       subtitle: Row(
@@ -111,11 +111,12 @@ class AnimeCompactListTile extends StatelessWidget {
                 color: context.colorScheme.onBackground.withOpacity(0.8),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 2),
+            Padding(
+              padding: const EdgeInsets.only(left: 2),
               child: Icon(
                 Icons.star_rounded,
                 size: 10,
+                color: context.colorScheme.onBackground.withOpacity(0.8),
               ),
             ),
           ],

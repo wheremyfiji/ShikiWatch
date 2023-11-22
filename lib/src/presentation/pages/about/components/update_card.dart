@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../services/updater/update_service.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/app_update_bottom_sheet.dart';
 
@@ -12,6 +13,10 @@ class UpdateCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (AppUtils.instance.isDesktop) {
+      return const SizedBox.shrink();
+    }
+
     final release = ref.watch(appReleaseProvider);
 
     return release.when(

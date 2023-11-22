@@ -634,10 +634,8 @@ class _AnimeUserRateBottomSheetState
         widget.data.userRate?.id != null &&
         !isLoading);
 
-    return WillPopScope(
-      onWillPop: () async {
-        return !isLoading;
-      },
+    return PopScope(
+      canPop: !isLoading,
       child: Material(
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(28.0),
@@ -918,7 +916,7 @@ class _AnimeUserRateBottomSheetState
                       16.0,
                       16.0,
                       16.0,
-                      context.mediaQuery.padding.bottom,
+                      16.0 + context.mediaQuery.padding.bottom,
                     ),
                     child: Row(
                       children: [

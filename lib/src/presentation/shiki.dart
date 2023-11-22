@@ -57,10 +57,14 @@ class ShikiApp extends ConsumerWidget {
 
             /// fix high textScaleFactor
             final mediaQuery = MediaQuery.of(context);
-            final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+            final scale = mediaQuery.textScaler.clamp(
+              minScaleFactor: 0.8,
+              maxScaleFactor: 1.0,
+            );
 
             return MediaQuery(
-              data: mediaQuery.copyWith(textScaleFactor: scale),
+              data: mediaQuery.copyWith(textScaler: scale),
               child: child!,
             );
           },

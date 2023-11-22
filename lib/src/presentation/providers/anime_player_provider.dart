@@ -84,6 +84,7 @@ class PlayerController extends flutter.ChangeNotifier {
   bool hasConnection = true;
 
   int? sdkVersion;
+  int _playerCallbackUpdateInterval = 0;
 
   Future<void> initState() async {
     sdkVersion = ref.read(environmentProvider).sdkVersion;
@@ -313,8 +314,15 @@ class PlayerController extends flutter.ChangeNotifier {
   Future<void> playerCallback() async {
     if (_disposed) return;
 
-    playBackTime = playerController.value.position.inSeconds;
+    final now = DateTime.now().millisecondsSinceEpoch;
 
+    if (_playerCallbackUpdateInterval > now) {
+      return;
+    }
+
+    _playerCallbackUpdateInterval = now + 500;
+
+    playBackTime = playerController.value.position.inSeconds;
     playbackSpeed = playerController.value.playbackSpeed;
 
     if (playerController.value.hasError) {

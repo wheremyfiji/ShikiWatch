@@ -175,59 +175,59 @@ class DonateWidget extends StatelessWidget {
   }
 }
 
-class _DonateBottomSheet extends StatelessWidget {
-  // ignore: unused_element
-  const _DonateBottomSheet({super.key});
+// class _DonateBottomSheet extends StatelessWidget {
+//   // ignore: unused_element
+//   const _DonateBottomSheet({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Поддержать разработчика',
-              style: context.textTheme.headlineSmall,
-            ),
-          ),
-          ListTile(
-            onTap: () => launchUrlString(
-              'https://new.donatepay.ru/@1156478',
-              mode: LaunchMode.externalApplication,
-            ),
-            leading: const Icon(Icons.attach_money_rounded),
-            title: const Text('DonatePay'),
-            subtitle: const Text('Множество способов оплаты'),
-          ),
-          ListTile(
-            onTap: () => launchUrlString(
-              'https://yoomoney.ru/to/410018275149576',
-              mode: LaunchMode.externalApplication,
-            ),
-            leading: const Icon(Icons.account_balance_wallet_rounded),
-            title: const Text('ЮMoney'),
-            subtitle: const Text('С кошелька или карты любого банка России'),
-          ),
-        ],
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//             child: Text(
+//               'Поддержать разработчика',
+//               style: context.textTheme.headlineSmall,
+//             ),
+//           ),
+//           ListTile(
+//             onTap: () => launchUrlString(
+//               'https://new.donatepay.ru/@1156478',
+//               mode: LaunchMode.externalApplication,
+//             ),
+//             leading: const Icon(Icons.attach_money_rounded),
+//             title: const Text('DonatePay'),
+//             subtitle: const Text('Множество способов оплаты'),
+//           ),
+//           ListTile(
+//             onTap: () => launchUrlString(
+//               'https://yoomoney.ru/to/410018275149576',
+//               mode: LaunchMode.externalApplication,
+//             ),
+//             leading: const Icon(Icons.account_balance_wallet_rounded),
+//             title: const Text('ЮMoney'),
+//             subtitle: const Text('С кошелька или карты любого банка России'),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  static void show(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      useSafeArea: true,
-      isScrollControlled: true,
-      useRootNavigator: true,
-      showDragHandle: true,
-      constraints: BoxConstraints(
-        maxWidth:
-            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
-      ),
-      builder: (_) => const SafeArea(child: _DonateBottomSheet()),
-    );
-  }
-}
+//   static void show(BuildContext context) {
+//     showModalBottomSheet(
+//       context: context,
+//       useSafeArea: true,
+//       isScrollControlled: true,
+//       useRootNavigator: true,
+//       showDragHandle: true,
+//       constraints: BoxConstraints(
+//         maxWidth:
+//             MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+//       ),
+//       builder: (_) => const SafeArea(child: _DonateBottomSheet()),
+//     );
+//   }
+// }

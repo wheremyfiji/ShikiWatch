@@ -651,6 +651,7 @@ class AnilibriaTorrentList extends StatelessWidget {
                         mode: LaunchMode.externalNonBrowserApplication,
                       );
                     } on PlatformException {
+                      // ignore: use_build_context_synchronously
                       showErrorSnackBar(
                         ctx: context,
                         msg:
