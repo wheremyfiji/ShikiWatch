@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../domain/enums/anime_source.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../../kodik/models/kodik_anime.dart';
@@ -66,6 +67,21 @@ class SeriesSelectPage extends HookConsumerWidget {
     void setSortType(EpisodeSortType type) async {
       ref.read(episodeSortTypeProvider.notifier).update((state) => type);
       context.pop();
+    }
+
+    List<PlaylistItem> p() {
+      List<PlaylistItem> t = [];
+
+      for (var e in sortedSeriesList) {
+        t.add(PlaylistItem(
+          episodeNumber: int.parse(e.number ?? ''),
+          link: e.link,
+          libria: null,
+          name: null,
+        ));
+      }
+
+      return t;
     }
 
     void addEpisode(int? episode) async {
@@ -252,23 +268,44 @@ class SeriesSelectPage extends HookConsumerWidget {
                             startPosition = episode?.position ?? '';
                           }
                         }
-                        AnimePlayerPageExtra data = AnimePlayerPageExtra(
-                          studioId: studioId,
-                          shikimoriId: shikimoriId,
-                          episodeNumber: int.parse(seria.number ?? ''),
-                          animeName: animeName,
-                          studioName: studioName,
-                          studioType: studioType,
-                          episodeLink: seria.link ?? '',
-                          additInfo: seria.type ?? '',
-                          position: episode?.position,
-                          imageUrl: imageUrl,
+
+                        final e = PlayerPageExtra(
+                          selected: seriaNum,
+                          info: TitleInfo(
+                            shikimoriId: shikimoriId,
+                            animeName: animeName,
+                            imageUrl: imageUrl,
+                            studioId: studioId,
+                            studioName: studioName,
+                            studioType: studioType,
+                            additInfo: null,
+                          ),
+                          animeSource: AnimeSource.kodik,
                           startPosition: startPosition,
-                          isLibria: false,
+                          playlist: p(),
                         );
 
+                        print('object');
+
+                        //return;
+
+                        // AnimePlayerPageExtra data = AnimePlayerPageExtra(
+                        //   studioId: studioId,
+                        //   shikimoriId: shikimoriId,
+                        //   episodeNumber: int.parse(seria.number ?? ''),
+                        //   animeName: animeName,
+                        //   studioName: studioName,
+                        //   studioType: studioType,
+                        //   episodeLink: seria.link ?? '',
+                        //   additInfo: seria.type ?? '',
+                        //   position: episode?.position,
+                        //   imageUrl: imageUrl,
+                        //   startPosition: startPosition,
+                        //   isLibria: false,
+                        // );
+
                         // ignore: use_build_context_synchronously
-                        GoRouter.of(context).pushNamed('player', extra: data);
+                        GoRouter.of(context).pushNamed('player', extra: e);
                       },
                       title: Text("Серия ${seria.number}"),
                       subtitle: seria.type == null

@@ -17,8 +17,14 @@ const errorFaces = [
 class CustomErrorWidget extends HookWidget {
   final String errorString;
   final Function()? buttonOnPressed;
+  final bool showButton;
 
-  const CustomErrorWidget(this.errorString, this.buttonOnPressed, {super.key});
+  const CustomErrorWidget(
+    this.errorString,
+    this.buttonOnPressed, {
+    super.key,
+    this.showButton = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -55,16 +61,18 @@ class CustomErrorWidget extends HookWidget {
               overflow: TextOverflow.ellipsis,
               style: context.textTheme.bodySmall,
             ),
-            const SizedBox(
-              height: 16,
-            ),
-            FilledButton.icon(
-              onPressed: buttonOnPressed,
-              label: const Text(
-                'Повторить',
+            if (showButton) ...[
+              const SizedBox(
+                height: 16,
               ),
-              icon: const Icon(Icons.refresh_outlined),
-            ),
+              FilledButton.icon(
+                onPressed: buttonOnPressed,
+                label: const Text(
+                  'Повторить',
+                ),
+                icon: const Icon(Icons.refresh_outlined),
+              ),
+            ],
           ],
         ),
       ),

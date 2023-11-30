@@ -12,8 +12,9 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../../../../../anilibria/anilibria_api.dart';
 import '../../../../../anilibria/enums/title_status_code.dart';
 import '../../../../../anilibria/models/title.dart';
+import '../../../../domain/enums/anime_source.dart';
 import '../../../../domain/models/anime_database.dart';
-import '../../../../domain/models/anime_player_page_extra.dart';
+import '../../../../domain/models/anime_player_page_extra.dart' as appe;
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
@@ -130,6 +131,27 @@ class AnilibriaSourcePage extends HookConsumerWidget {
 
       return null;
     }, [episodesList, result]);
+
+    List<appe.PlaylistItem> p(List<AnilibriaEpisode> playlist, String host) {
+      List<appe.PlaylistItem> t = [];
+
+      for (var e in playlist) {
+        t.add(appe.PlaylistItem(
+          episodeNumber: e.episode ?? -1,
+          link: null,
+          libria: appe.LibriaEpisode(
+            //host: 'https://static.libria.fun',
+            host: host,
+            fnd: e.hls!.fhd,
+            hd: e.hls!.hd,
+            sd: e.hls!.sd,
+          ),
+          name: e.name,
+        ));
+      }
+
+      return t;
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -262,6 +284,44 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                           imageUrl: imageUrl,
                           removeEpisode: (e) => removeEpisode(e),
                           addEpisode: (e) => addEpisode(e),
+                          onTap: () async {
+                            String startPosition = '';
+
+                            if (savedEpisode?.position != null) {
+                              bool? dialogValue = await showDialog<bool>(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => const ContinueDialog(),
+                              );
+
+                              if (dialogValue ?? false) {
+                                startPosition = savedEpisode?.position ?? '';
+                              }
+                            }
+
+                            final e = appe.PlayerPageExtra(
+                              selected: ep.episode!,
+                              info: appe.TitleInfo(
+                                shikimoriId: shikimoriId,
+                                animeName: animeName,
+                                imageUrl: imageUrl,
+                                studioId: 610,
+                                studioName: 'AniLibria.TV',
+                                studioType: 'voice',
+                                additInfo: null,
+                              ),
+                              animeSource: AnimeSource.libria,
+                              startPosition: startPosition,
+                              playlist: p(
+                                title.player!.playlist!,
+                                //'https://${title.player!.host!}',
+                                'https://static.libria.fun',
+                              ),
+                            );
+
+                            // ignore: use_build_context_synchronously
+                            GoRouter.of(context).pushNamed('player', extra: e);
+                          },
                         ),
                       );
                     },
@@ -305,6 +365,8 @@ class AnilibriaEpisodeTile extends StatelessWidget {
   final String animeName;
   final String imageUrl;
 
+  final void Function() onTap;
+
   final void Function(int episode) removeEpisode;
   final void Function(int episode) addEpisode;
 
@@ -320,59 +382,61 @@ class AnilibriaEpisodeTile extends StatelessWidget {
     required this.imageUrl,
     required this.removeEpisode,
     required this.addEpisode,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-      onTap: () async {
-        if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
-          showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
+      onTap: onTap,
+      // onTap: () async {
+      //   if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
+      //     showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
 
-          return;
-        }
+      //     return;
+      //   }
 
-        String startPosition = '';
+      //   String startPosition = '';
 
-        if (savedEpisode?.position != null) {
-          bool? dialogValue = await showDialog<bool>(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => const ContinueDialog(),
-          );
+      //   if (savedEpisode?.position != null) {
+      //     bool? dialogValue = await showDialog<bool>(
+      //       barrierDismissible: false,
+      //       context: context,
+      //       builder: (context) => const ContinueDialog(),
+      //     );
 
-          if (dialogValue ?? false) {
-            startPosition = savedEpisode?.position ?? '';
-          }
-        }
+      //     if (dialogValue ?? false) {
+      //       startPosition = savedEpisode?.position ?? '';
+      //     }
+      //   }
 
-        AnimePlayerPageExtra extra = AnimePlayerPageExtra(
-          studioId: 610,
-          shikimoriId: shikimoriId,
-          episodeNumber: ep.episode!,
-          animeName: animeName,
-          studioName: 'AniLibria.TV',
-          studioType: 'voice',
-          episodeLink: '',
-          additInfo: '',
-          position: savedEpisode?.position,
-          imageUrl: imageUrl,
-          startPosition: startPosition,
-          isLibria: true,
-          libriaEpisode: LibriaEpisode(
-            //host: 'https://${title.player!.host!}',
-            host: AppUtils.instance.isDesktop
-                ? 'https://static.libria.fun'
-                : host,
-            fnd: ep.hls?.fhd,
-            hd: ep.hls?.hd,
-          ),
-        );
+      //   // AnimePlayerPageExtra extra = AnimePlayerPageExtra(
+      //   //   studioId: 610,
+      //   //   shikimoriId: shikimoriId,
+      //   //   episodeNumber: ep.episode!,
+      //   //   animeName: animeName,
+      //   //   studioName: 'AniLibria.TV',
+      //   //   studioType: 'voice',
+      //   //   episodeLink: '',
+      //   //   additInfo: '',
+      //   //   position: savedEpisode?.position,
+      //   //   imageUrl: imageUrl,
+      //   //   startPosition: startPosition,
+      //   //   isLibria: true,
+      //   //   libriaEpisode: LibriaEpisode(
+      //   //     //host: 'https://${title.player!.host!}',
+      //   //     host: AppUtils.instance.isDesktop
+      //   //         ? 'https://static.libria.fun'
+      //   //         : host,
+      //   //     fnd: ep.hls?.fhd,
+      //   //     hd: ep.hls?.hd,
+      //   //   ),
+      //   // );
 
-        // ignore: use_build_context_synchronously
-        GoRouter.of(context).pushNamed('player', extra: extra);
-      },
+      //   // // ignore: use_build_context_synchronously
+      //   // GoRouter.of(context).pushNamed('player', extra: extra);
+      // },
       title: Text(
         'Серия ${ep.episode}',
       ),

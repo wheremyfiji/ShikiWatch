@@ -1,4 +1,3 @@
-//extension on Duration {
 extension DurationExt on Duration {
   String printDuration() {
     String twoDigits(int n) => n.toString().padLeft(2, '0');

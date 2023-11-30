@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,35 +7,43 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
-import '../../../providers/anime_details_provider.dart';
-import '../mobile/animated_play_pause.dart';
-import '../../../../utils/app_utils.dart';
-import '../player_error.dart';
+import '../../../widgets/auto_hide.dart';
+import '../../../widgets/error_widget.dart';
+import '../player_provider.dart';
+import '../shared/animated_play_pause.dart';
+import '../shared/buffering_indicator.dart';
+import '../shared/shared.dart';
 
-import 'components/player_volume_slider.dart';
 import 'components/player_info_header.dart';
-import 'desktop_player_provider.dart';
+import 'components/player_volume_slider.dart';
 
-class DesktopPlayerPage extends ConsumerWidget {
-  final AnimePlayerPageExtra extra;
+class DesktopPlayerPage extends ConsumerStatefulWidget {
+  final PlayerPageExtra extra;
 
-  const DesktopPlayerPage({super.key, required this.extra});
+  const DesktopPlayerPage(this.extra, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final p = DesktopPlayerParameters(extra);
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      DesktopPlayerPageState();
+}
 
-    final notifier = ref.watch(desktopPlayerProvider(p));
+class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
+  @override
+  Widget build(BuildContext context) {
+    final p = PlayerProviderParameters(widget.extra);
+
+    final notifier = ref.watch(playerProvider(p));
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: notifier.streamAsync.when(
-        data: (data) {
+      body: notifier.videoLinksAsync.when(
+        data: (_) {
           return Stack(
+            clipBehavior: Clip.none,
             children: [
               Align(
                 child: Video(
                   controller: notifier.playerController,
-                  //filterQuality: FilterQuality.high,
                   fill: Colors.transparent,
                   fit: BoxFit.contain,
                   controls: NoVideoControls,
@@ -75,26 +81,40 @@ class DesktopPlayerPage extends ConsumerWidget {
                           .setVolume((notifier.volume - 5.0).clamp(0.0, 100.0));
                     },
                     const SingleActivator(LogicalKeyboardKey.keyF): () =>
-                        notifier.toggleFullScreen(),
+                        notifier.toggleDFullscreen(),
                     const SingleActivator(LogicalKeyboardKey.escape): () =>
-                        notifier.toggleFullScreen(p: true),
+                        notifier.toggleDFullscreen(p: true),
                   },
                   child: DesktopPlayerControls(p),
                 ),
               ),
-              //if (notifier.buffering)
               Align(
-                child: AnimatedOpacity(
-                  curve: Curves.easeInOut,
-                  opacity: notifier.buffering ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 150),
-                  child: const CircularProgressIndicator(),
+                child: BufferingIndicator(
+                  buffering: notifier.buffering,
                 ),
               ),
             ],
           );
         },
-        error: (error, stackTrace) => PlayerError(error.toString()),
+        error: (e, s) => Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: IconButton(
+                onPressed: () => GoRouter.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
+                color: Colors.white,
+                iconSize: 24.0,
+                tooltip: 'Назад',
+              ),
+            ),
+            CustomErrorWidget(
+              e.toString(),
+              () {},
+              showButton: false,
+            ),
+          ],
+        ),
         loading: () => Stack(
           children: [
             Padding(
@@ -118,8 +138,7 @@ class DesktopPlayerPage extends ConsumerWidget {
 }
 
 class DesktopPlayerControls extends ConsumerStatefulWidget {
-  final DesktopPlayerParameters p;
-
+  final PlayerProviderParameters p;
   const DesktopPlayerControls(this.p, {super.key});
 
   @override
@@ -128,228 +147,186 @@ class DesktopPlayerControls extends ConsumerStatefulWidget {
 }
 
 class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
-  DesktopPlayerParameters get p => widget.p;
-
-  final controlsHoverDuration = const Duration(seconds: 3);
-
-  Timer? _timer;
-
-  bool mount = false;
-  bool visible = false;
-  bool draggingProgressBar = false;
-  bool showUI = false;
+  PlayerProviderParameters get p => widget.p;
 
   @override
   Widget build(BuildContext context) {
-    final notifier = ref.watch(desktopPlayerProvider(p));
+    final notifier = ref.watch(playerProvider(p));
 
     return Focus(
       autofocus: true,
       child: GestureDetector(
-        onTap: () {
-          notifier.player.playOrPause();
-        },
+        onTap: notifier.player.playOrPause,
         child: MouseRegion(
           onHover: (_) {
-            setState(() {
-              mount = true;
-              visible = true;
-            });
-
-            _timer?.cancel();
-            _timer = Timer(controlsHoverDuration, () {
-              if (draggingProgressBar || showUI) {
-                return;
-              }
-
-              if (mounted) {
-                setState(() {
-                  visible = false;
-                });
-              }
-            });
+            notifier.hideController.show();
           },
           onEnter: (_) {
-            setState(() {
-              mount = true;
-              visible = true;
-            });
-
-            _timer?.cancel();
-            _timer = Timer(controlsHoverDuration, () {
-              if (draggingProgressBar || showUI) {
-                return;
-              }
-
-              if (mounted) {
-                setState(() {
-                  visible = false;
-                });
-              }
-            });
+            notifier.hideController.show();
           },
           onExit: (_) {
-            if (showUI) {
-              return;
-            }
-            setState(() {
-              visible = false;
-            });
-            _timer?.cancel();
+            notifier.hideController.hide();
           },
-          child: AnimatedOpacity(
-            curve: Curves.easeInOut,
-            opacity: visible ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
-            onEnd: () {
-              if (!visible) {
-                setState(() {
-                  mount = false;
-                });
-              }
-            },
+          child: AutoHide(
+            controller: notifier.hideController,
+            switchDuration: const Duration(milliseconds: 500),
             child: Stack(
               clipBehavior: Clip.none,
               alignment: Alignment.topLeft,
               children: [
                 Container(color: Colors.black54),
-                if (mount)
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          onPressed: () async {
-                            // exit fullscreen
-                            await notifier.toggleFullScreen(p: true);
-
-                            // update DB
-                            await notifier.updateDataBase().then(
-                              (_) {
-                                ref.invalidate(isAnimeInDataBaseProvider);
-                                GoRouter.of(context).pop();
-                              },
-                            ).catchError(
-                              (e) {
-                                showErrorSnackBar(
-                                    ctx: context,
-                                    msg: 'Ошибка обновления: ${e.toString()}');
-                                GoRouter.of(context).pop();
-                              },
-                            );
-                          },
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(Icons.arrow_back),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          notifier
+                              .toggleDFullscreen(p: true)
+                              .then((value) => GoRouter.of(context).pop());
+                        },
+                        padding: const EdgeInsets.all(0),
+                        icon: const Icon(Icons.arrow_back),
+                        color: Colors.white,
+                        iconSize: 24.0,
+                        tooltip: 'Назад',
+                      ),
+                      const Spacer(),
+                      PlayerInfoHeader(
+                        animeName: p.extra.info.animeName,
+                        animePicture: p.extra.info.imageUrl,
+                        episodeNumber: notifier.currentEpNumber,
+                        studioName: p.extra.info.studioName,
+                        onPressed: () => notifier.player.seek(
+                          notifier.position + const Duration(seconds: 85),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      ProgressBar(
+                        progress: notifier.position,
+                        total: notifier.duration,
+                        buffered: notifier.buffer,
+                        thumbRadius: 8,
+                        timeLabelPadding: 4,
+                        timeLabelTextStyle: const TextStyle(
                           color: Colors.white,
-                          iconSize: 24.0,
-                          tooltip: 'Назад',
                         ),
-                        const Spacer(),
-                        PlayerInfoHeader(
-                          animeName: p.extra.animeName,
-                          animePicture: p.extra.imageUrl,
-                          episodeNumber: p.extra.episodeNumber,
-                          studioName: p.extra.studioName,
-                          onPressed: () => notifier.player.seek(
-                            notifier.position + const Duration(seconds: 85),
+                        thumbGlowRadius: 24,
+                        onSeek: notifier.player.seek,
+                        // onDragUpdate: (_) {
+                        //   if (notifier.hideController.isVisible) {
+                        //     notifier.hideController.show();
+                        //   }
+                        // },
+                        onDragStart: (details) {
+                          notifier.hideController.cancel();
+                          notifier.hideController.permShow();
+                        },
+                        onDragEnd: () {
+                          notifier.hideController.hide();
+                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          PlayerVolumeSlider(
+                            notifier.volume,
+                            onChange: (d) {
+                              notifier.saveVolume(d);
+                              notifier.player.setVolume(d);
+                            },
                           ),
-                        ),
-                        const SizedBox(
-                          height: 24,
-                        ),
-                        ProgressBar(
-                          progress: notifier.position,
-                          total: notifier.duration,
-                          buffered: notifier.buffer,
-                          thumbRadius: 8,
-                          timeLabelPadding: 4,
-                          timeLabelTextStyle:
-                              const TextStyle(color: Colors.white),
-                          thumbGlowRadius: 24,
-                          onSeek: (value) {
-                            notifier.player.seek(value);
-                          },
-                          onDragStart: (details) {
-                            draggingProgressBar = true;
-                          },
-                          onDragEnd: () {
-                            draggingProgressBar = false;
-                          },
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            PlayerVolumeSlider(
-                              notifier.volume,
-                              onChange: (d) {
-                                notifier.saveVolume(d);
-                                notifier.player.setVolume(d);
-                              },
-                            ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Предыдущая серия',
+                                    onPressed: notifier.hasPrevEp
+                                        ? () => notifier.changeEpisode(
+                                            notifier.currentEpNumber - 1)
+                                        : null,
+                                    color: Colors.white,
+                                    iconSize: 32.0,
+                                    icon: const Icon(Icons.skip_previous),
+                                  ),
+                                  const SizedBox(
+                                    width: 24.0,
+                                  ),
+                                  IconButton(
+                                    color: Colors.white,
+                                    iconSize: 48.0,
+                                    icon: AnimatedPlayPause(
+                                      playing: notifier.playing,
                                       color: Colors.white,
-                                      iconSize: 48.0,
-                                      icon: AnimatedPlayPause(
-                                        playing: notifier.playing,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: notifier.player.playOrPause,
                                     ),
-                                  ],
-                                ),
+                                    onPressed: notifier.player.playOrPause,
+                                  ),
+                                  const SizedBox(
+                                    width: 24.0,
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Следующая серия',
+                                    onPressed: notifier.hasNextEp
+                                        ? () => notifier.changeEpisode(
+                                            notifier.currentEpNumber + 1)
+                                        : null,
+                                    color: Colors.white,
+                                    iconSize: 32.0,
+                                    icon: const Icon(Icons.skip_next),
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      tooltip: 'Anime4K шейдеры',
-                                      icon: Icon(notifier.shaders
-                                          ? Icons.four_k
-                                          : Icons.four_k_outlined),
-                                      iconSize: 24.0,
-                                      color: Colors.white,
-                                      onPressed: () {
-                                        notifier.toggleShaders().then(
-                                          (_) {
-                                            if (!notifier.shadersExists) {
-                                              showErrorSnackBar(
-                                                ctx: context,
-                                                msg: 'Шейдеры не найдены',
-                                              );
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    IconButton(
-                                      tooltip: 'Полноэкранный режим',
-                                      icon: const Icon(Icons.fullscreen),
-                                      color: Colors.white,
-                                      iconSize: 24.0,
-                                      onPressed: () =>
-                                          notifier.toggleFullScreen(),
-                                    ),
-                                  ],
-                                ),
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Anime4K шейдеры',
+                                    icon: Icon(notifier.shaders
+                                        ? Icons.four_k
+                                        : Icons.four_k_outlined),
+                                    iconSize: 24.0,
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      // notifier.toggleShaders().then(
+                                      //   (_) {
+                                      //     if (!notifier.shadersExists) {
+                                      //       showErrorSnackBar(
+                                      //         ctx: context,
+                                      //         msg: 'Шейдеры не найдены',
+                                      //       );
+                                      //     }
+                                      //   },
+                                      // );
+                                    },
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Полноэкранный режим',
+                                    icon: const Icon(Icons.fullscreen),
+                                    color: Colors.white,
+                                    iconSize: 24.0,
+                                    onPressed: () =>
+                                        notifier.toggleDFullscreen(),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+                ),
               ],
             ),
           ),

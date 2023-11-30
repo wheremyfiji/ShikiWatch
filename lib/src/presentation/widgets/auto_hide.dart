@@ -45,6 +45,10 @@ class AutoHideController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void cancel() {
+    timer?.cancel();
+  }
+
   void permShow() {
     //timer?.cancel();
     _isVisible = true;
@@ -86,6 +90,7 @@ class AutoHide extends StatelessWidget {
         return IgnorePointer(
           ignoring: !controller.isVisible,
           child: AnimatedOpacity(
+            curve: Curves.easeInOut,
             duration: switchDuration,
             opacity: controller.isVisible ? 1.0 : 0.0,
             child: child,
