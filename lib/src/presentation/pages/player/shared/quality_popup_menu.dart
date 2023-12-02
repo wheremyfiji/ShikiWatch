@@ -8,17 +8,22 @@ class QualityPopUpMenu extends StatelessWidget {
   final VideoLinks videoLinks;
   final StreamQuality selectedQuality;
   final void Function(StreamQuality) onSelected;
+  final void Function() onOpened;
+  final void Function() onCanceled;
 
   const QualityPopUpMenu({
     super.key,
     required this.videoLinks,
     required this.selectedQuality,
     required this.onSelected,
+    required this.onOpened,
+    required this.onCanceled,
   });
 
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<StreamQuality>(
+      tooltip: 'Качество',
       initialValue: selectedQuality,
       itemBuilder: (context) {
         return [
@@ -44,12 +49,8 @@ class QualityPopUpMenu extends StatelessWidget {
             ),
         ];
       },
-      // onOpened: () {
-      //   print('object 1');
-      // },
-      // onCanceled: () {
-      //   print('object 2');
-      // },
+      onOpened: onOpened,
+      onCanceled: onCanceled,
       // onSelected: (q) {
       //   print('object 3');
       //   onSelected(q);
