@@ -8,7 +8,14 @@ import '../../player_provider.dart';
 
 class BottomControls extends ConsumerWidget {
   final PlayerProviderParameters p;
-  const BottomControls(this.p, {super.key});
+  final bool seekShowUI;
+  final Duration seekTo;
+  const BottomControls(
+    this.p, {
+    super.key,
+    required this.seekShowUI,
+    required this.seekTo,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +29,8 @@ class BottomControls extends ConsumerWidget {
         ),
         Expanded(
           child: ProgressBar(
-            progress: notifier.position,
+            //progress: notifier.position,
+            progress: seekShowUI ? seekTo : notifier.position,
             buffered: notifier.buffer,
             total: notifier.duration,
             onDragUpdate: (_) {

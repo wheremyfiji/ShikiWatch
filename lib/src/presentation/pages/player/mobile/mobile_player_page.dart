@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -18,6 +17,7 @@ import '../shared/quality_popup_menu.dart';
 import '../player_provider.dart';
 import '../shared/shared.dart';
 
+import 'components/double_tap_seek_button.dart';
 import 'components/bottom_controls.dart';
 import 'components/seek_indicator.dart';
 
@@ -45,9 +45,12 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
   Duration _seekToDuration = const Duration();
   Duration _savedPosition = const Duration();
 
-  void seekToPosition(
+  static const int horizontalGestureSensitivity = 4;
+  static const int doubleTapSeekValue = 5;
+
+  void _seekToPosition(
       {required Duration currentPosition, required Duration duration}) {
-    final dxDiff = (_currentDx - _startDx) ~/ 5;
+    final dxDiff = (_currentDx - _startDx) ~/ horizontalGestureSensitivity;
     final diffDuration = Duration(seconds: dxDiff);
     final prefix = diffDuration.isNegative ? '-' : '+';
 
@@ -58,6 +61,30 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     setState(() {
       _positionText = '$prefix${diffDuration.printDuration()}';
       _diffText = aimedDuration.printDuration();
+    });
+  }
+
+  Offset? _tapPosition;
+  bool _mountSeekBackwardButton = false;
+  bool _mountSeekForwardButton = false;
+  bool _hideSeekBackwardButton = false;
+  bool _hideSeekForwardButton = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() {
+      _tapPosition = details.localPosition;
+    });
+  }
+
+  void _onDoubleTapSeekBackward() {
+    setState(() {
+      _mountSeekBackwardButton = true;
+    });
+  }
+
+  void _onDoubleTapSeekForward() {
+    setState(() {
+      _mountSeekForwardButton = true;
     });
   }
 
@@ -131,6 +158,13 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                     videoLinks: notifier.videoLinks,
                     selectedQuality: notifier.selectedQuality,
                     onSelected: (q) => notifier.changeQuality(q),
+                    onOpened: () {
+                      notifier.hideController.cancel();
+                      notifier.hideController.permShow();
+                    },
+                    onCanceled: () {
+                      notifier.hideController.toggle();
+                    },
                   ),
                 ],
               ],
@@ -146,266 +180,305 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
           showButton: false,
         ),
         data: (_) {
-          return GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: notifier.hideController.toggle,
-            onLongPressStart: !longPressSeek
-                ? null
-                : (_) {
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Align(
+                child: Video(
+                  key: notifier.videoStateKey,
+                  controller: notifier.playerController,
+                  fill: Colors.transparent,
+                  fit: notifier.playerFit,
+                  controls: NoVideoControls,
+                ),
+              ),
+              AutoHide(
+                switchDuration: switchDuration,
+                controller: notifier.hideController,
+                child: Container(color: Colors.black54),
+              ),
+              Positioned.fill(
+                left: 16.0,
+                top: 16.0,
+                right: 16.0,
+                bottom: 16.0,
+                child: GestureDetector(
+                  //behavior: HitTestBehavior.translucent,
+                  onTap: notifier.hideController.toggle,
+                  onDoubleTapDown: _handleTapDown,
+                  onDoubleTap: () {
+                    if (_tapPosition != null &&
+                        _tapPosition!.dx >
+                            MediaQuery.of(context).size.width / 2) {
+                      _onDoubleTapSeekForward();
+                    } else {
+                      _onDoubleTapSeekBackward();
+                    }
+                  },
+                  onLongPressStart: !longPressSeek
+                      ? null
+                      : (_) {
+                          if (!notifier.init) {
+                            return;
+                          }
+                          //HapticFeedback.lightImpact();
+                          notifier.longPressSeek(true);
+                        },
+                  onLongPressEnd: !longPressSeek
+                      ? null
+                      : (_) {
+                          notifier.longPressSeek(false);
+                        },
+                  onHorizontalDragStart: (DragStartDetails details) {
                     if (!notifier.init) {
                       return;
                     }
-                    HapticFeedback.lightImpact();
-                    notifier.longPressSeek(true);
+
+                    _currentDx = 0;
+                    _seekToDuration = Duration.zero;
+                    _savedPosition = notifier.position;
+                    _startDx = details.localPosition.dx;
+                    _seek = true;
                   },
-            onLongPressEnd: !longPressSeek
-                ? null
-                : (_) {
-                    notifier.longPressSeek(false);
+                  onHorizontalDragUpdate: (DragUpdateDetails details) {
+                    if (!notifier.init) {
+                      _seek = false;
+                      _seekShowUI = false;
+                      return;
+                    }
+
+                    if ((details.localPosition.dx - _startDx).abs() <
+                        _seekOffset) {
+                      _seekToDuration = _savedPosition;
+                      return;
+                    }
+
+                    if (_seek) {
+                      _seek = false;
+                      _seekShowUI = true;
+
+                      //HapticFeedback.lightImpact();
+
+                      notifier.hideController.cancel();
+
+                      notifier.hideController.permShow();
+                    }
+
+                    if ((details.localPosition.dx - _startDx).isNegative) {
+                      _currentDx = details.localPosition.dx + _seekOffset;
+                    } else {
+                      _currentDx = details.localPosition.dx - _seekOffset;
+                    }
+
+                    _seekToPosition(
+                      currentPosition: notifier.position,
+                      duration: notifier.duration,
+                    );
                   },
-            onHorizontalDragStart: (DragStartDetails details) {
-              if (!notifier.init) {
-                return;
-              }
+                  onHorizontalDragEnd: (DragEndDetails details) {
+                    _seek = false;
+                    _seekShowUI = false;
 
-              _currentDx = 0;
-              _seekToDuration = Duration.zero;
-              _savedPosition = notifier.position;
-              _startDx = details.localPosition.dx;
-              _seek = true;
-            },
-            onHorizontalDragUpdate: (DragUpdateDetails details) {
-              if (!notifier.init) {
-                _seek = false;
-                _seekShowUI = false;
-                return;
-              }
+                    if (!notifier.init) {
+                      return;
+                    }
 
-              if ((details.localPosition.dx - _startDx).abs() < _seekOffset) {
-                _seekToDuration = _savedPosition;
-                return;
-              }
+                    notifier.hideController.hide();
 
-              if (_seek) {
-                _seek = false;
-                _seekShowUI = true;
+                    if (_seekToDuration == _savedPosition) {
+                      return;
+                    }
 
-                HapticFeedback.lightImpact();
-
-                notifier.hideController.cancel();
-
-                notifier.hideController.permShow();
-              }
-
-              if ((details.localPosition.dx - _startDx).isNegative) {
-                _currentDx = details.localPosition.dx + _seekOffset;
-              } else {
-                _currentDx = details.localPosition.dx - _seekOffset;
-              }
-
-              seekToPosition(
-                currentPosition: notifier.position,
-                duration: notifier.duration,
-              );
-            },
-            onHorizontalDragEnd: (DragEndDetails details) {
-              _seek = false;
-              _seekShowUI = false;
-
-              if (!notifier.init) {
-                return;
-              }
-
-              notifier.hideController.hide();
-
-              if (_seekToDuration == _savedPosition) {
-                return;
-              }
-
-              notifier.player.seek(_seekToDuration.clampToRange(
-                notifier.duration,
-              ));
-            },
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Align(
-                  child: Video(
-                    key: notifier.videoStateKey,
-                    controller: notifier.playerController,
-                    fill: Colors.transparent,
-                    fit: notifier.playerFit,
-                    controls: NoVideoControls,
+                    notifier.player.seek(_seekToDuration.clampToRange(
+                      notifier.duration,
+                    ));
+                  },
+                  child: Container(
+                    color: const Color(0x00000000),
                   ),
                 ),
-                AutoHide(
-                  switchDuration: switchDuration,
-                  controller: notifier.hideController,
-                  child: Container(color: Colors.black54),
+              ),
+              Align(
+                child: BufferingIndicator(
+                  buffering: notifier.buffering,
                 ),
-                Align(
-                  child: BufferingIndicator(
-                    buffering: notifier.buffering,
-                  ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 150),
-                  child: _seekShowUI
-                      ? Align(
-                          child: SeekIndicator(
-                            position: _positionText,
-                            diff: _diffText,
-                          ),
-                        )
-                      :
-                      //const SizedBox.shrink(),
-                      AutoHide(
-                          switchDuration: switchDuration,
-                          controller: notifier.hideController,
-                          child: Align(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const SizedBox.shrink(),
-                                IconButton(
-                                  tooltip: 'Предыдущая серия',
-                                  onPressed: notifier.hasPrevEp
-                                      ? () => notifier.changeEpisode(
-                                          notifier.currentEpNumber - 1)
-                                      : null,
-                                  color: Colors.white,
-                                  iconSize: 32.0,
-                                  icon: const Icon(Icons.skip_previous),
+              ),
+              if (_mountSeekBackwardButton || _mountSeekForwardButton)
+                Positioned.fill(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _mountSeekBackwardButton
+                            ? TweenAnimationBuilder<double>(
+                                tween: Tween<double>(
+                                  begin: 0.0,
+                                  end: _hideSeekBackwardButton ? 0.0 : 1.0,
                                 ),
-                                // const SizedBox(width: 24),
-                                IgnorePointer(
-                                  ignoring: notifier.buffering,
-                                  child: AnimatedOpacity(
-                                    curve: Curves.easeInOut,
-                                    opacity: !notifier.buffering ? 1.0 : 0.0,
-                                    duration: const Duration(milliseconds: 150),
-                                    child: IconButton(
+                                duration: const Duration(milliseconds: 200),
+                                builder: (context, value, child) => Opacity(
+                                  opacity: value,
+                                  child: child,
+                                ),
+                                onEnd: () {
+                                  if (_hideSeekBackwardButton) {
+                                    setState(() {
+                                      _hideSeekBackwardButton = false;
+                                      _mountSeekBackwardButton = false;
+                                    });
+                                  }
+                                },
+                                child: DoubleTapSeekButton(
+                                  action: DoubleTapSeekAction.backward,
+                                  value: doubleTapSeekValue,
+                                  onChanged: (value) {},
+                                  onSubmitted: (value) {
+                                    setState(() {
+                                      _hideSeekBackwardButton = true;
+                                    });
+                                    var result = notifier.position - value;
+                                    result = result.clampToRange(
+                                      notifier.duration,
+                                    );
+                                    notifier.player.seek(result);
+                                  },
+                                ),
+                              )
+                            : const SizedBox(),
+                      ),
+                      Expanded(
+                        child: _mountSeekForwardButton
+                            ? TweenAnimationBuilder<double>(
+                                tween: Tween<double>(
+                                  begin: 0.0,
+                                  end: _hideSeekForwardButton ? 0.0 : 1.0,
+                                ),
+                                duration: const Duration(milliseconds: 200),
+                                builder: (context, value, child) => Opacity(
+                                  opacity: value,
+                                  child: child,
+                                ),
+                                onEnd: () {
+                                  if (_hideSeekForwardButton) {
+                                    setState(() {
+                                      _hideSeekForwardButton = false;
+                                      _mountSeekForwardButton = false;
+                                    });
+                                  }
+                                },
+                                child: DoubleTapSeekButton(
+                                  action: DoubleTapSeekAction.forward,
+                                  value: doubleTapSeekValue,
+                                  onChanged: (value) {},
+                                  onSubmitted: (value) {
+                                    setState(() {
+                                      _hideSeekForwardButton = true;
+                                    });
+                                    var result = notifier.position + value;
+                                    result = result.clampToRange(
+                                      notifier.duration,
+                                    );
+                                    notifier.player.seek(result);
+                                  },
+                                ),
+                              )
+                            : const SizedBox(),
+                      ),
+                    ],
+                  ),
+                ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 150),
+                child: _seekShowUI
+                    ? Align(
+                        child: SeekIndicator(
+                          position: _positionText,
+                          diff: _diffText,
+                        ),
+                      )
+                    : AutoHide(
+                        switchDuration: switchDuration,
+                        controller: notifier.hideController,
+                        child: Align(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              const SizedBox.shrink(),
+                              IconButton(
+                                tooltip: 'Предыдущая серия',
+                                onPressed: notifier.hasPrevEp
+                                    ? () => notifier.changeEpisode(
+                                        notifier.currentEpNumber - 1)
+                                    : null,
+                                color: Colors.white,
+                                iconSize: 32.0,
+                                icon: const Icon(Icons.skip_previous),
+                              ),
+                              // const SizedBox(width: 24),
+                              IgnorePointer(
+                                ignoring: notifier.buffering,
+                                child: AnimatedOpacity(
+                                  curve: Curves.easeInOut,
+                                  opacity: !notifier.buffering ? 1.0 : 0.0,
+                                  duration: const Duration(milliseconds: 150),
+                                  child: IconButton(
+                                    color: Colors.white,
+                                    iconSize: 48.0,
+                                    icon: AnimatedPlayPause(
+                                      playing: notifier.playing,
                                       color: Colors.white,
-                                      iconSize: 48.0,
-                                      icon: AnimatedPlayPause(
-                                        playing: notifier.playing,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: notifier.player.playOrPause,
                                     ),
+                                    onPressed: notifier.player.playOrPause,
                                   ),
                                 ),
-                                // const SizedBox(width: 24),
-                                IconButton(
-                                  tooltip: 'Следующая серия',
-                                  onPressed: notifier.hasNextEp
-                                      ? () => notifier.changeEpisode(
-                                          notifier.currentEpNumber + 1)
-                                      : null,
-                                  color: Colors.white,
-                                  iconSize: 32.0,
-                                  icon: const Icon(Icons.skip_next),
-                                ),
-                                const SizedBox.shrink(),
-                              ],
-                            ),
+                              ),
+                              // const SizedBox(width: 24),
+                              IconButton(
+                                tooltip: 'Следующая серия',
+                                onPressed: notifier.hasNextEp
+                                    ? () => notifier.changeEpisode(
+                                        notifier.currentEpNumber + 1)
+                                    : null,
+                                color: Colors.white,
+                                iconSize: 32.0,
+                                icon: const Icon(Icons.skip_next),
+                              ),
+                              const SizedBox.shrink(),
+                            ],
                           ),
                         ),
-                ),
-                // if (!_seekShowUI)
-                //   AutoHide(
-                //     switchDuration: switchDuration,
-                //     controller: notifier.hideController,
-                //     child: Align(
-                //       child: Row(
-                //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //         children: [
-                //           const SizedBox.shrink(),
-                //           IconButton(
-                //             tooltip: 'Предыдущая серия',
-                //             onPressed: notifier.prevEp
-                //                 ? () => notifier
-                //                     .changeEpisode(notifier.currentEpNumber - 1)
-                //                 : null,
-                //             color: Colors.white,
-                //             iconSize: 32.0,
-                //             icon: const Icon(Icons.skip_previous),
-                //           ),
-                //           // const SizedBox(width: 24),
-                //           IgnorePointer(
-                //             ignoring: notifier.buffering,
-                //             child: AnimatedOpacity(
-                //               curve: Curves.easeInOut,
-                //               opacity: !notifier.buffering ? 1.0 : 0.0,
-                //               duration: const Duration(milliseconds: 150),
-                //               child: IconButton(
-                //                 color: Colors.white,
-                //                 iconSize: 48.0,
-                //                 icon: AnimatedPlayPause(
-                //                   playing: notifier.playing,
-                //                   color: Colors.white,
-                //                 ),
-                //                 onPressed: notifier.player.playOrPause,
-                //               ),
-                //             ),
-                //           ),
-                //           // const SizedBox(width: 24),
-                //           IconButton(
-                //             tooltip: 'Следующая серия',
-                //             onPressed: notifier.nextEp
-                //                 ? () => notifier
-                //                     .changeEpisode(notifier.currentEpNumber + 1)
-                //                 : null,
-                //             color: Colors.white,
-                //             iconSize: 32.0,
-                //             icon: const Icon(Icons.skip_next),
-                //           ),
-                //           const SizedBox.shrink(),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                AutoHide(
-                  switchDuration: switchDuration,
-                  controller: notifier.hideController,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SafeArea(
-                      top: false,
-                      //bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 24.0),
-                        child: BottomControls(p),
+                      ),
+              ),
+              AutoHide(
+                switchDuration: switchDuration,
+                controller: notifier.hideController,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: BottomControls(
+                        p,
+                        seekShowUI: _seekShowUI,
+                        seekTo: _seekToDuration,
                       ),
                     ),
                   ),
                 ),
-                // Align(
-                //   alignment: Alignment.bottomCenter,
-                //   child: Column(
-                //     mainAxisAlignment: MainAxisAlignment.end,
-                //     children: [
-                //       Text('completed ${notifier.completed}'),
-                //       Text('currentEpNumber ${notifier.currentEpNumber}'),
-                //       Text('selectedQuality ${notifier.selectedQuality}'),
-                //       Text('retryCount ${notifier.retryCount}'),
-                //       FilledButton(
-                //         onPressed: () {
-                //           notifier.changeQuality(StreamQuality.fhd);
-                //         },
-                //         child: const Text('Fhd'),
-                //       ),
-                //       FilledButton(
-                //         onPressed: () {
-                //           notifier.changeQuality(StreamQuality.hd);
-                //         },
-                //         child: const Text('Hd'),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ],
-            ),
+              ),
+              // Align(
+              //   alignment: Alignment.bottomCenter,
+              //   child: Column(
+              //     mainAxisAlignment: MainAxisAlignment.end,
+              //     children: [
+              //       Text('completed ${notifier.completed}'),
+              //       Text('currentEpNumber ${notifier.currentEpNumber}'),
+              //       Text('selectedQuality ${notifier.selectedQuality}'),
+              //       Text('retryCount ${notifier.retryCount}'),
+              //     ],
+              //   ),
+              // ),
+            ],
           );
         },
       ),
