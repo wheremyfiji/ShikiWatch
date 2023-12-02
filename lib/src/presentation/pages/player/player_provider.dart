@@ -79,7 +79,7 @@ class PlayerNotifier extends w.ChangeNotifier {
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
       bufferSize: 32 * 1024 * 1024,
-      logLevel: !kDebugMode ? MPVLogLevel.debug : MPVLogLevel.error,
+      logLevel: kDebugMode ? MPVLogLevel.debug : MPVLogLevel.error,
     ),
   );
 
@@ -117,13 +117,12 @@ class PlayerNotifier extends w.ChangeNotifier {
   bool discordRpc = false;
   bool shaders = false;
   bool shadersExists = false;
+  int _videoW = 0;
+  int _videoH = 0;
   Directory? _appDir;
 
   AudioSession? _audioSession;
   final List<StreamSubscription> _audioSessionSubscriptions = [];
-
-  int _videoW = 0;
-  int _videoH = 0;
 
   void initState() async {
     _sdkVersion = AppUtils.instance.isDesktop
@@ -326,12 +325,10 @@ class PlayerNotifier extends w.ChangeNotifier {
       return;
     }
 
-    return;
-
-    hideController.isVisible == false
-        ? await SystemChrome.setEnabledSystemUIMode(
-            SystemUiMode.immersiveSticky)
-        : await _unfullscreen();
+    // hideController.isVisible == false
+    //     ? await SystemChrome.setEnabledSystemUIMode(
+    //         SystemUiMode.immersiveSticky)
+    //     : await _unfullscreen();
   }
 
   void setPlaybackSpeed(double speed) async {
