@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -19,6 +21,7 @@ import '../../../domain/enums/stream_quality.dart';
 import '../../../domain/models/anime_player_page_extra.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../utils/app_utils.dart';
+import '../../../utils/shaders.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../providers/environment_provider.dart';
 import '../../providers/settings_provider.dart';
@@ -114,9 +117,13 @@ class PlayerNotifier extends w.ChangeNotifier {
   bool discordRpc = false;
   bool shaders = false;
   bool shadersExists = false;
+  Directory? _appDir;
 
   AudioSession? _audioSession;
   final List<StreamSubscription> _audioSessionSubscriptions = [];
+
+  int _videoW = 0;
+  int _videoH = 0;
 
   void initState() async {
     _sdkVersion = AppUtils.instance.isDesktop
@@ -173,6 +180,7 @@ class PlayerNotifier extends w.ChangeNotifier {
 
       if (AppUtils.instance.isDesktop) {
         prefs = await SharedPreferences.getInstance();
+        _appDir = await getApplicationSupportDirectory();
         await player.setVolume(prefs.getDouble('player_volume') ?? 40.0);
       }
 
@@ -441,6 +449,69 @@ class PlayerNotifier extends w.ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future<void> toggleShaders() async {
+    if (shaders) {
+      await (player.platform as NativePlayer).setProperty('glsl-shaders', '');
+      await _resizeVideoTexture(true);
+      shaders = false;
+
+      notifyListeners();
+    } else {
+      bool exists = await Directory(getShadersDir(_appDir!.path)).exists();
+      shadersExists = exists;
+      if (!exists) {
+        notifyListeners();
+        return;
+      }
+
+      final resize = await _resizeVideoTexture(false);
+      if (!resize) {
+        return;
+      }
+
+      await (player.platform as NativePlayer).setProperty(
+        'glsl-shaders',
+        anime4kModeAFast(_appDir!.path),
+      ); //  anime4kModeDoubleA  || anime4kModeAFast || anime4kModeGan
+
+      shaders = true;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> _resizeVideoTexture(bool revert) async {
+    if (e.animeSource == AnimeSource.libria &&
+        selectedQuality == StreamQuality.fhd) {
+      return true;
+    }
+
+    final width = player.state.width;
+    final height = player.state.height;
+
+    if (width == null || height == null) {
+      return false;
+    }
+
+    if (revert && _videoW != 0) {
+      await playerController.setSize(
+        width: _videoW,
+        height: _videoH,
+      );
+
+      return true;
+    }
+
+    _videoW = width;
+    _videoH = height;
+
+    await playerController.setSize(
+      width: width * 2,
+      height: height * 2,
+    );
+
+    return true;
   }
 
   Future<void> _updateDb() async {

@@ -7,11 +7,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
+import '../../../../utils/app_utils.dart';
 import '../../../widgets/auto_hide.dart';
 import '../../../widgets/error_widget.dart';
 import '../player_provider.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
+import '../shared/quality_popup_menu.dart';
 import '../shared/shared.dart';
 
 import 'components/player_info_header.dart';
@@ -290,26 +292,43 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  IconButton(
-                                    tooltip: 'Anime4K шейдеры',
-                                    icon: Icon(notifier.shaders
-                                        ? Icons.four_k
-                                        : Icons.four_k_outlined),
-                                    iconSize: 24.0,
-                                    color: Colors.white,
-                                    onPressed: () {
-                                      // notifier.toggleShaders().then(
-                                      //   (_) {
-                                      //     if (!notifier.shadersExists) {
-                                      //       showErrorSnackBar(
-                                      //         ctx: context,
-                                      //         msg: 'Шейдеры не найдены',
-                                      //       );
-                                      //     }
-                                      //   },
-                                      // );
-                                    },
-                                  ),
+                                  if (notifier.init && !notifier.error) ...[
+                                    // const SizedBox(
+                                    //   width: 16.0,
+                                    // ),
+                                    // PlayerSpeedPopUp(
+                                    //   playbackSpeed: notifier.playbackSpeed,
+                                    //   onSelected: notifier.setPlaybackSpeed,
+                                    // ),
+                                    QualityPopUpMenu(
+                                      videoLinks: notifier.videoLinks,
+                                      selectedQuality: notifier.selectedQuality,
+                                      onSelected: (q) =>
+                                          notifier.changeQuality(q),
+                                      onOpened: () {},
+                                      onCanceled: () {},
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Anime4K шейдеры',
+                                      icon: Icon(notifier.shaders
+                                          ? Icons.four_k
+                                          : Icons.four_k_outlined),
+                                      iconSize: 24.0,
+                                      color: Colors.white,
+                                      onPressed: () {
+                                        notifier.toggleShaders().then(
+                                          (_) {
+                                            if (!notifier.shadersExists) {
+                                              showErrorSnackBar(
+                                                ctx: context,
+                                                msg: 'Шейдеры не найдены',
+                                              );
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
                                   IconButton(
                                     tooltip: 'Полноэкранный режим',
                                     icon: const Icon(Icons.fullscreen),
