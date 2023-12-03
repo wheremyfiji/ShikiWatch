@@ -61,50 +61,33 @@ class _DoubleTapSeekButtonState extends State<DoubleTapSeekButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: widget.action == DoubleTapSeekAction.forward
-              ? [
-                  const Color(0x00767676),
-                  const Color(0x88767676),
-                ]
-              : [
-                  const Color(0x88767676),
-                  const Color(0x00767676),
-                ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
-      child: InkWell(
-        splashColor: const Color(0x44767676),
-        onTap: increment,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Icon(
-                widget.action == DoubleTapSeekAction.forward
-                    ? Icons.fast_forward
-                    : Icons.fast_rewind,
-                size: 24.0,
-                color: const Color(0xFFFFFFFF),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: increment,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              widget.action == DoubleTapSeekAction.forward
+                  ? Icons.fast_forward
+                  : Icons.fast_rewind,
+              size: 24.0,
+              color: const Color(0xFFFFFFFF),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              widget.action == DoubleTapSeekAction.forward
+                  ? '+${value.inSeconds} секунд'
+                  : '-${value.inSeconds} секунд',
+              style: const TextStyle(
+                fontSize: 12.0,
+                color: Color(0xFFFFFFFF),
               ),
-              const SizedBox(height: 8.0),
-              Text(
-                widget.action == DoubleTapSeekAction.forward
-                    ? '+${value.inSeconds} секунд'
-                    : '-${value.inSeconds} секунд',
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Color(0xFFFFFFFF),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
