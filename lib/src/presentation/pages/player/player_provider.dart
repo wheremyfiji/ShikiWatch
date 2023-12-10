@@ -1,16 +1,15 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
-import 'package:path_provider/path_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
@@ -79,7 +78,7 @@ class PlayerNotifier extends w.ChangeNotifier {
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
       bufferSize: 32 * 1024 * 1024,
-      logLevel: kDebugMode ? MPVLogLevel.debug : MPVLogLevel.error,
+      logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
     ),
   );
 
@@ -154,7 +153,7 @@ class PlayerNotifier extends w.ChangeNotifier {
 
       await (player.platform as NativePlayer).setProperty(
         'demuxer-lavf-o',
-        'http_persistent=0,seg_max_retry=5',
+        'http_persistent=0,seg_max_retry=10',
       );
 
       await player.open(
@@ -223,7 +222,7 @@ class PlayerNotifier extends w.ChangeNotifier {
               return;
             }
 
-            log(event, name: 'Player Error');
+            //log(event, name: 'Player Error');
 
             _onPlayerError(event);
           }),
@@ -573,6 +572,9 @@ class PlayerNotifier extends w.ChangeNotifier {
 
       return;
     }
+
+    //tcp: ffurl_read returned
+    //return
 
     // TODO
     return;
