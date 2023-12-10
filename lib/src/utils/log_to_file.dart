@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-Future<File> createLogFile(bool static) async {
+Future<File> createLogFile(String name, {String? dirName}) async {
   final dir = await getApplicationSupportDirectory();
-  final path = p.join(dir.path, 'logs');
+  final path = p.join(dir.path, dirName ?? 'logs');
   bool exists = await Directory(path).exists();
 
   if (!exists) {
@@ -14,7 +14,7 @@ Future<File> createLogFile(bool static) async {
   }
 
   final ts = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-  final fileName = static ? 'static_$ts.txt' : 'cache_$ts.txt';
+  final fileName = '${name}_$ts.txt';
 
   final file = File(p.join(path, fileName));
   return file;
