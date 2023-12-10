@@ -44,11 +44,14 @@ class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
             clipBehavior: Clip.none,
             children: [
               Align(
-                child: Video(
-                  controller: notifier.playerController,
-                  fill: Colors.transparent,
-                  fit: BoxFit.contain,
-                  controls: NoVideoControls,
+                child: RepaintBoundary(
+                  child: Video(
+                    key: notifier.videoStateKey,
+                    controller: notifier.playerController,
+                    fill: Colors.transparent,
+                    fit: BoxFit.contain,
+                    controls: NoVideoControls,
+                  ),
                 ),
               ),
               Positioned.fill(

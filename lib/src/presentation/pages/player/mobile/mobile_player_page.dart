@@ -184,12 +184,14 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
             clipBehavior: Clip.none,
             children: [
               Align(
-                child: Video(
-                  key: notifier.videoStateKey,
-                  controller: notifier.playerController,
-                  fill: Colors.transparent,
-                  fit: notifier.playerFit,
-                  controls: NoVideoControls,
+                child: RepaintBoundary(
+                  child: Video(
+                    key: notifier.videoStateKey,
+                    controller: notifier.playerController,
+                    fill: Colors.transparent,
+                    fit: notifier.playerFit,
+                    controls: NoVideoControls,
+                  ),
                 ),
               ),
               AutoHide(
