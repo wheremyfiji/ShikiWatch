@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -77,10 +76,12 @@ void initApp() async {
 
   await SecureStorageService.initialize();
 
+  MediaKit.ensureInitialized();
+
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
-    MediaKit.ensureInitialized();
-    DiscordRPC.initialize();
+
+    //DiscordRPC.initialize();
 
     WindowOptions windowOptions = const WindowOptions(
       //size: Size(1200, 1200 / (16 / 9)),

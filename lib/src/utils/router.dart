@@ -22,7 +22,7 @@ import '../presentation/pages/login/login_desktop_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/manga_detail/manga_detail_page.dart';
 import '../presentation/pages/other_more/other_more_page.dart';
-import '../presentation/pages/player/anime_player_page.dart';
+import '../presentation/pages/player/mobile/mobile_player_page.dart';
 import '../presentation/pages/player/desktop/desktop_player_page.dart';
 import '../presentation/pages/profile/my_profile_page.dart';
 import '../presentation/pages/profile/user_clubs_page.dart';
@@ -137,13 +137,13 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
           name: 'player',
           parentNavigatorKey: _rootNavigatorKey,
           pageBuilder: (context, state) {
-            AnimePlayerPageExtra data = state.extra as AnimePlayerPageExtra;
+            PlayerPageExtra extra = state.extra as PlayerPageExtra;
 
             return FadeTransitionPage(
               key: state.pageKey,
               child: AppUtils.instance.isDesktop
-                  ? DesktopPlayerPage(extra: data)
-                  : AnimePlayerPage(data: data),
+                  ? DesktopPlayerPage(extra)
+                  : MobilePlayerPage(extra),
             );
           },
         ),
