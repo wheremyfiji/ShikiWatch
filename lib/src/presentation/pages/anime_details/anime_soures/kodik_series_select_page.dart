@@ -144,7 +144,7 @@ class SeriesSelectPage extends HookConsumerWidget {
         useAutoScrollController(suggestedRowHeight: 48);
 
     useEffect(() {
-      final latestEpisode = episodesList?.last;
+      final latestEpisode = episodesList?.lastOrNull;
 
       if (latestEpisode == null) {
         return null;
@@ -284,8 +284,6 @@ class SeriesSelectPage extends HookConsumerWidget {
                           startPosition: startPosition,
                           playlist: p(),
                         );
-
-                        print('object');
 
                         //return;
 

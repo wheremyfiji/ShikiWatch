@@ -108,7 +108,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
         return null;
       }
 
-      final latestEpisode = episodesList?.last;
+      final latestEpisode = episodesList?.lastOrNull;
 
       if (latestEpisode == null) {
         return null;
