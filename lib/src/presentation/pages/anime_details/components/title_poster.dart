@@ -32,18 +32,18 @@ class TitlePoster extends HookWidget {
             cacheManager: cacheManager,
           ),
         ),
-        Positioned.fill(
-          top: -1,
-          bottom: -1,
-          left: -1,
-          right: -1,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-            child: Container(
-              color: context.colorScheme.background.withOpacity(0.8),
-            ),
-          ),
-        ),
+        // Positioned.fill(
+        //   top: -1,
+        //   bottom: -1,
+        //   left: -1,
+        //   right: -1,
+        //   child: BackdropFilter(
+        //     filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+        //     child: Container(
+        //       color: context.colorScheme.background.withOpacity(0.8),
+        //     ),
+        //   ),
+        // ),
         // Positioned.fill(
         //   top: -1,
         //   bottom: -1,
@@ -51,6 +51,7 @@ class TitlePoster extends HookWidget {
         //   right: -1,
         //   child: Container(
         //     color: context.colorScheme.background.withOpacity(0.8),
+        //     //color: Colors.black.withOpacity(0.6),
         //   ),
         // ),
         Positioned.fill(
@@ -64,15 +65,15 @@ class TitlePoster extends HookWidget {
               gradient: LinearGradient(
                 colors: [
                   context.colorScheme.background,
-                  context.colorScheme.background.withOpacity(0.2),
+                  context.colorScheme.background.withOpacity(0.84),
                   context.colorScheme.background,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 stops: const [
-                  0.1,
+                  0.0,
                   0.4,
-                  0.8,
+                  1.0,
                 ],
               ),
             ),
