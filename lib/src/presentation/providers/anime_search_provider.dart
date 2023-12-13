@@ -613,6 +613,7 @@ List<AnimeFilter> animeStatusList = [
   AnimeFilter('anons', 'Анонс'),
   AnimeFilter('ongoing', 'Онгоинг'),
   AnimeFilter('released', 'Вышло'),
+  AnimeFilter('latest', 'Недавно вышедшее'),
 ];
 
 List<AnimeFilter> animeKindList = [
