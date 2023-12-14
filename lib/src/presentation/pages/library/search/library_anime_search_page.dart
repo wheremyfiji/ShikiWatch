@@ -262,7 +262,7 @@ class _RateStatusChip extends StatelessWidget {
       RateStatus.planned =>
         dark ? Colors.yellow.shade400 : Colors.yellow.shade300,
       RateStatus.watching =>
-        dark ? Colors.deepPurple.shade400 : Colors.yellow.shade300,
+        dark ? Colors.deepPurple.shade400 : Colors.deepPurple.shade300,
       RateStatus.rewatching =>
         dark ? Colors.deepPurple.shade400 : Colors.deepPurple.shade300,
       RateStatus.completed =>
