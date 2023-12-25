@@ -11,6 +11,7 @@ class SourceModalSheet extends StatelessWidget {
   final String animeName;
   final String searchName;
   final String imageUrl;
+  final List<String> searchList;
 
   const SourceModalSheet({
     super.key,
@@ -19,6 +20,7 @@ class SourceModalSheet extends StatelessWidget {
     required this.animeName,
     required this.searchName,
     required this.imageUrl,
+    required this.searchList,
   });
 
   @override
@@ -75,6 +77,7 @@ class SourceModalSheet extends StatelessWidget {
                   searchName: searchName,
                   epWatched: epWatched,
                   imageUrl: imageUrl,
+                  searchList: searchList,
                 ),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
@@ -97,6 +100,7 @@ class SourceModalSheet extends StatelessWidget {
                   searchName: searchName,
                   epWatched: epWatched,
                   imageUrl: imageUrl,
+                  searchList: searchList,
                 ),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
@@ -109,13 +113,14 @@ class SourceModalSheet extends StatelessWidget {
     );
   }
 
-  static void show({
-    required BuildContext context,
+  static void show(
+    BuildContext context, {
     required int shikimoriId,
     required int epWatched,
     required String animeName,
     required String search,
     required String imageUrl,
+    required List<String> searchList,
   }) {
     showModalBottomSheet(
       context: context,
@@ -135,6 +140,7 @@ class SourceModalSheet extends StatelessWidget {
           animeName: animeName,
           searchName: search,
           imageUrl: imageUrl,
+          searchList: searchList,
         ),
       ),
     );

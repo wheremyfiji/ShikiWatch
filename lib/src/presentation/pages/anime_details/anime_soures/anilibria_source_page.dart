@@ -33,6 +33,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
   final String animeName;
   final String searchName;
   final String imageUrl;
+  final List<String> searchList;
 
   const AnilibriaSourcePage({
     super.key,
@@ -41,11 +42,13 @@ class AnilibriaSourcePage extends HookConsumerWidget {
     required this.animeName,
     required this.searchName,
     required this.imageUrl,
+    required this.searchList,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final result = ref.watch(anilibriaSearchProvider(searchName));
+    final searchPhrase = useState(searchList[0]);
+    final result = ref.watch(anilibriaSearchProvider(searchPhrase.value));
     final anime = ref.watch(isAnimeInDataBaseProvider(shikimoriId));
 
     void addEpisode(int episode) {
@@ -177,6 +180,22 @@ class AnilibriaSourcePage extends HookConsumerWidget {
               ),
               pinned: true,
               actions: [
+                PopupMenuButton<String>(
+                  itemBuilder: (context) {
+                    return List.generate(
+                      searchList.length,
+                      (index) => PopupMenuItem(
+                        value: searchList[index],
+                        child: Text(searchList[index]),
+                      ),
+                    );
+                  },
+                  onSelected: (value) {
+                    searchPhrase.value = value;
+                  },
+                  elevation: 8,
+                  icon: const Icon(Icons.manage_search_rounded),
+                ),
                 IconButton(
                   onPressed: () => showDialog<void>(
                     context: context,
@@ -214,6 +233,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                         animeName: animeName,
                         searchName: searchName,
                         imageUrl: imageUrl,
+                        searchList: searchList,
                       ),
                     ),
                   ];
@@ -751,6 +771,7 @@ class NothingFound extends StatelessWidget {
   final String animeName;
   final String searchName;
   final String imageUrl;
+  final List<String> searchList;
 
   const NothingFound({
     super.key,
@@ -759,6 +780,7 @@ class NothingFound extends StatelessWidget {
     required this.animeName,
     required this.searchName,
     required this.imageUrl,
+    required this.searchList,
   });
 
   @override
@@ -803,6 +825,7 @@ class NothingFound extends StatelessWidget {
                       searchName: searchName,
                       epWatched: epWatched,
                       imageUrl: imageUrl,
+                      searchList: searchList,
                     ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,

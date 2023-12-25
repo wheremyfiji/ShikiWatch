@@ -81,10 +81,22 @@ class AnimeDetailsPage extends ConsumerWidget {
                   final animeSource = ref.read(settingsProvider
                       .select((settings) => settings.animeSource));
 
+                  List<String> searchList = [data.name ?? ''];
+
+                  data.english?.forEach((e) {
+                    searchList.add(e);
+                  });
+
+                  data.synonyms?.forEach((e) {
+                    searchList.add(e);
+                  });
+
+                  searchList.add(data.russian ?? '');
+
                   return switch (animeSource) {
                     // ignore: use_build_context_synchronously
                     AnimeSource.alwaysAsk => SourceModalSheet.show(
-                        context: context,
+                        context,
                         shikimoriId: data.id!,
                         epWatched: titleInfo.currentProgress,
                         animeName:
@@ -93,6 +105,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                         search:
                             data.name ?? data.english?[0] ?? data.russian ?? '',
                         imageUrl: data.image?.original ?? '',
+                        searchList: searchList,
                       ),
                     // ignore: use_build_context_synchronously
                     AnimeSource.libria => Navigator.push(
@@ -111,6 +124,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                                 '',
                             epWatched: titleInfo.currentProgress,
                             imageUrl: data.image?.original ?? '',
+                            searchList: searchList,
                           ),
                           transitionDuration: Duration.zero,
                           reverseTransitionDuration: Duration.zero,
@@ -133,6 +147,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                                 '',
                             epWatched: titleInfo.currentProgress,
                             imageUrl: data.image?.original ?? '',
+                            searchList: searchList,
                           ),
                           transitionDuration: Duration.zero,
                           reverseTransitionDuration: Duration.zero,

@@ -47,6 +47,7 @@ class KodikSourcePage extends ConsumerWidget {
   final String animeName;
   final String searchName;
   final String imageUrl;
+  final List<String> searchList;
 
   const KodikSourcePage({
     super.key,
@@ -55,6 +56,7 @@ class KodikSourcePage extends ConsumerWidget {
     required this.animeName,
     required this.searchName,
     required this.imageUrl,
+    required this.searchList,
   });
 
   @override
@@ -153,6 +155,7 @@ class KodikSourcePage extends ConsumerWidget {
                               searchName: searchName,
                               epWatched: epWatched,
                               imageUrl: imageUrl,
+                              searchList: searchList,
                             ),
                             transitionDuration: Duration.zero,
                             reverseTransitionDuration: Duration.zero,
