@@ -20,9 +20,8 @@ class AppUtils {
     _instance.isDesktop =
         Platform.isWindows || Platform.isLinux || Platform.isMacOS;
 
-    _instance.userAgent = _instance.isDesktop
-        ? 'Shikimori Flutter Windows App'
-        : 'Shikimori Flutter App';
+    _instance.userAgent =
+        _instance.isDesktop ? 'Shikimori Flutter Windows App' : 'ShikiWatch';
   }
 }
 
