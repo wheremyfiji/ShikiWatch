@@ -124,11 +124,13 @@ class PlayerNotifier extends w.ChangeNotifier {
   final List<StreamSubscription> _audioSessionSubscriptions = [];
 
   void initState() async {
-    _sdkVersion = AppUtils.instance.isDesktop
-        ? null
-        : ref.read(environmentProvider).sdkVersion;
-
     if (!AppUtils.instance.isDesktop) {
+      _sdkVersion = ref.read(environmentProvider).sdkVersion;
+
+      await SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight],
+      );
+
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
       _audioSession = await AudioSession.instance;
@@ -150,6 +152,11 @@ class PlayerNotifier extends w.ChangeNotifier {
       }
 
       //_pipeLogsToConsole(player);
+
+      await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
+      await (player.platform as NativePlayer).setProperty('insecure', 'yes');
+      await (player.platform as NativePlayer)
+          .setProperty('force-seekable', 'yes');
 
       await (player.platform as NativePlayer).setProperty(
         'demuxer-lavf-o',
@@ -298,16 +305,14 @@ class PlayerNotifier extends w.ChangeNotifier {
 
     if (_audioSession != null) {
       await _audioSession!.setActive(false);
+
+      for (final s in _audioSessionSubscriptions) {
+        await s.cancel();
+      }
     }
 
     for (final s in subscriptions) {
       await s.cancel();
-    }
-
-    if (_audioSession != null) {
-      for (final s in _audioSessionSubscriptions) {
-        await s.cancel();
-      }
     }
 
     videoLinksAsync.whenData((_) async {
@@ -675,6 +680,8 @@ class PlayerNotifier extends w.ChangeNotifier {
     if (AppUtils.instance.isDesktop) {
       return;
     }
+
+    await SystemChrome.setPreferredOrientations([]);
 
     if ((_sdkVersion ?? 0) < 29) {
       await SystemChrome.setEnabledSystemUIMode(
