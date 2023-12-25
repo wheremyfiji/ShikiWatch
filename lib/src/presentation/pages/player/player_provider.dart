@@ -72,6 +72,8 @@ class PlayerNotifier extends w.ChangeNotifier {
   bool get hasNextEp => _nextPlaylistItem != null;
   int get currentEpNumber => _currentEpNumber;
 
+  bool _playerOrientationLock = false;
+
   late SharedPreferences prefs;
 
   late final Player player = Player(
@@ -127,9 +129,14 @@ class PlayerNotifier extends w.ChangeNotifier {
     if (!AppUtils.instance.isDesktop) {
       _sdkVersion = ref.read(environmentProvider).sdkVersion;
 
-      await SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight],
-      );
+      _playerOrientationLock = ref.read(settingsProvider
+          .select((settings) => settings.playerOrientationLock));
+
+      if (_playerOrientationLock) {
+        await SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight],
+        );
+      }
 
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
@@ -681,7 +688,9 @@ class PlayerNotifier extends w.ChangeNotifier {
       return;
     }
 
-    await SystemChrome.setPreferredOrientations([]);
+    if (_playerOrientationLock) {
+      await SystemChrome.setPreferredOrientations([]);
+    }
 
     if ((_sdkVersion ?? 0) < 29) {
       await SystemChrome.setEnabledSystemUIMode(

@@ -32,6 +32,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       animeSource: _preferencesService.getAnimeSource(),
       playerSpeed: _preferencesService.getPlayerSpeed(),
       playerLongPressSeek: _preferencesService.getPlayerLongPressSeek(),
+      playerOrientationLock: _preferencesService.getPlayerOrientationLock(),
     );
   }
 
@@ -103,6 +104,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setPlayerLongPressSeek(newValue);
     state = state.copyWith(
       playerLongPressSeek: newValue,
+    );
+  }
+
+  Future<void> setPlayerOrientationLock(bool newValue) async {
+    await _preferencesService.setPlayerOrientationLock(newValue);
+    state = state.copyWith(
+      playerOrientationLock: newValue,
     );
   }
 }

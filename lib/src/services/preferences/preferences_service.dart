@@ -18,6 +18,7 @@ const _libraryLayoutModeKey = 'libraryLayoutModeKey';
 const _animeSource = 'animeSourceKey';
 const _playerSpeedKey = 'playerSpeedKey';
 const _playerLongPressSeek = 'playerLongPressSeekKey';
+const _playerOrientationLock = 'playerOrientationLockKey';
 
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
@@ -172,5 +173,15 @@ class PreferencesService {
 
   Future<void> setPlayerLongPressSeek(bool v) async {
     await _preferences.setBool(_playerLongPressSeek, v);
+  }
+
+  bool getPlayerOrientationLock() {
+    final value = _preferences.getBool(_playerOrientationLock);
+
+    return value ?? false;
+  }
+
+  Future<void> setPlayerOrientationLock(bool v) async {
+    await _preferences.setBool(_playerOrientationLock, v);
   }
 }

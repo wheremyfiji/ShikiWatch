@@ -21,6 +21,7 @@ import 'widgets/nav_dest_label_behavior_option.dart';
 import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/player_long_press_seek.dart';
+import 'widgets/player_orientation_lock.dart';
 import 'widgets/player_playback_speed.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
@@ -69,6 +70,7 @@ class SettingsPage extends ConsumerWidget {
                       if (!AppUtils.instance.isDesktop) ...[
                         const PlayerPlaybackSpeedOption(),
                         const PlayerLongPressSeekOption(),
+                        const PlayerOrientationLockOption(),
                       ],
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),

@@ -21,5 +21,6 @@ class SettingsState with _$SettingsState {
     required AnimeSource animeSource,
     required double playerSpeed,
     required bool playerLongPressSeek,
+    required bool playerOrientationLock,
   }) = _SettingsState;
 }
