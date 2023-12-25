@@ -126,6 +126,11 @@ class CharacterPage extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: CharacterMangas(data.mangas!).animate().fade(),
                   ),
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
+                ),
               ],
               error: (e, _) => [
                 SliverFillRemaining(

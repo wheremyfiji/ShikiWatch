@@ -88,6 +88,11 @@ class ExplorePage extends ConsumerWidget {
                 ),
               ),
             ),
+            SliverPadding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+            ),
             //const SliverToBoxAdapter(child: SizedBox(height: 60)),
           ],
         ),
