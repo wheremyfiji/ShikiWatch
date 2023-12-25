@@ -61,33 +61,52 @@ class _DoubleTapSeekButtonState extends State<DoubleTapSeekButton> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: increment,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              widget.action == DoubleTapSeekAction.forward
-                  ? Icons.fast_forward
-                  : Icons.fast_rewind,
-              size: 24.0,
-              color: const Color(0xFFFFFFFF),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              widget.action == DoubleTapSeekAction.forward
-                  ? '+${value.inSeconds} секунд'
-                  : '-${value.inSeconds} секунд',
-              style: const TextStyle(
-                fontSize: 12.0,
-                color: Color(0xFFFFFFFF),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: widget.action == DoubleTapSeekAction.forward
+              ? [
+                  Colors.transparent,
+                  Colors.black54,
+                ]
+              : [
+                  Colors.black54,
+                  Colors.transparent,
+                ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+      ),
+      child: InkWell(
+        onTap: increment,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                widget.action == DoubleTapSeekAction.forward
+                    ? Icons.fast_forward
+                    : Icons.fast_rewind,
+                size: 24.0,
+                color: const Color(0xFFFFFFFF),
               ),
-            ),
-          ],
+              const SizedBox(height: 8.0),
+              Text(
+                widget.action == DoubleTapSeekAction.forward
+                    ? '+${value.inSeconds} секунд'
+                    : '-${value.inSeconds} секунд',
+                style: const TextStyle(
+                  fontSize: 12.0,
+                  color: Color(0xFFFFFFFF),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
