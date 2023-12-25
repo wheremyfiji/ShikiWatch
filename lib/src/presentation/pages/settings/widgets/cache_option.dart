@@ -12,39 +12,26 @@ import '../../../widgets/cached_image.dart';
 import 'setting_option.dart';
 
 final cacheSizeProvider = FutureProvider.autoDispose<double>((ref) async {
-  final dir = await path_prov.getTemporaryDirectory();
+  final cacheDir = await path_prov.getTemporaryDirectory();
 
-  final path = p.join(dir.path, 'imageCache');
+  final cachePath = p.join(cacheDir.path, 'imageCache');
 
-  final directory = Directory(path);
+  final imageCacheDir = Directory(cachePath);
 
-  final exists = await directory.exists();
+  final exists = await imageCacheDir.exists();
 
   if (!exists) {
-    return 0;
+    return 0.0;
   }
 
-  int totalSize = 0;
+  final entityList = await imageCacheDir.list(recursive: false).toList();
 
-  final entityList = await directory.list(recursive: false).toList();
+  final imageCacheSize = entityList.fold(
+    0,
+    (int sum, file) => sum + file.statSync().size,
+  );
 
-  await Future.forEach(entityList, (entity) async {
-    if (entity is File) {
-      final fileBytes = await File(entity.path).readAsBytes();
-      totalSize += fileBytes.lengthInBytes;
-    }
-  });
-
-  // await Directory(path)
-  //     .list(recursive: true, followLinks: false)
-  //     .forEach((FileSystemEntity entity) async {
-  //   if (entity is File) {
-  //     final length = await entity.length();
-  //     totalSize += length;
-  //   }
-  // });
-
-  return totalSize / (1024 * 1024);
+  return imageCacheSize / (1024 * 1024);
 }, name: 'cacheSizeProvider');
 
 class ClearCacheWidget extends ConsumerWidget {
@@ -63,9 +50,9 @@ class ClearCacheWidget extends ConsumerWidget {
 
       await clearImageCache();
 
-      if (!AppUtils.instance.isDesktop) {
-        ref.invalidate(cacheSizeProvider);
-      }
+      //if (!AppUtils.instance.isDesktop) {
+      ref.invalidate(cacheSizeProvider);
+      //}
 
       if (context.mounted) {
         showSnackBar(
