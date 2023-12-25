@@ -19,11 +19,13 @@ Future<void> clearImageCache() async => await cacheManager.emptyCache();
 class CachedCircleImage extends StatelessWidget {
   final String url;
   final double? radius;
+  final Clip? clipBehavior;
 
   const CachedCircleImage(
     this.url, {
     super.key,
     this.radius,
+    this.clipBehavior,
   });
 
   static const double _defaultRadius = 20.0;
@@ -63,7 +65,7 @@ class CachedCircleImage extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       child: ClipOval(
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: clipBehavior ?? Clip.hardEdge,
         child: CachedNetworkImage(
           imageUrl: url,
           fit: BoxFit.cover,

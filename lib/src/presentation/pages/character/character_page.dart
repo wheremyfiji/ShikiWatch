@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -97,21 +98,34 @@ class CharacterPage extends ConsumerWidget {
               data: (data) => [
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  sliver: CharacterHeader(data),
+                  sliver: SliverToBoxAdapter(
+                    child: CharacterHeader(data)
+                        .animate()
+                        .fade()
+                        .slideY(begin: .05, end: 0, curve: Curves.easeOutCirc),
+                  ),
                 ),
                 if (data.description != null && data.description!.isNotEmpty)
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverToBoxAdapter(
-                      child: TitleDescription(data.description ?? ''),
+                      child: TitleDescription(data.description ?? '')
+                          .animate()
+                          .fade(),
                     ),
                   ),
                 if (data.seyu != null && data.seyu!.isNotEmpty)
-                  SliverToBoxAdapter(child: CharacterSeyu(data.seyu!)),
+                  SliverToBoxAdapter(
+                    child: CharacterSeyu(data.seyu!).animate().fade(),
+                  ),
                 if (data.animes != null && data.animes!.isNotEmpty)
-                  SliverToBoxAdapter(child: CharacterAnimes(data.animes!)),
+                  SliverToBoxAdapter(
+                    child: CharacterAnimes(data.animes!).animate().fade(),
+                  ),
                 if (data.mangas != null && data.mangas!.isNotEmpty)
-                  SliverToBoxAdapter(child: CharacterMangas(data.mangas!)),
+                  SliverToBoxAdapter(
+                    child: CharacterMangas(data.mangas!).animate().fade(),
+                  ),
               ],
               error: (e, _) => [
                 SliverFillRemaining(
@@ -141,55 +155,54 @@ class CharacterHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: CachedCircleImage(
-              AppConfig.staticUrl + (data.image?.original ?? ''),
-              radius: 72,
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: CachedCircleImage(
+            AppConfig.staticUrl + (data.image?.original ?? ''),
+            radius: 72,
+            clipBehavior: Clip.antiAlias,
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                data.name ?? '[Без имени]',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              if (data.russian != null && data.russian!.isNotEmpty)
                 Text(
-                  data.name ?? '[Без имени]',
-                  maxLines: 2,
+                  data.russian ?? '',
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: context.colorScheme.onBackground.withOpacity(0.8),
                   ),
                 ),
-                if (data.russian != null && data.russian!.isNotEmpty)
-                  Text(
-                    data.russian ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: context.colorScheme.onBackground.withOpacity(0.8),
-                    ),
+              if (data.japanese != null && data.japanese!.isNotEmpty)
+                Text(
+                  data.japanese ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colorScheme.onBackground.withOpacity(0.6),
                   ),
-                if (data.japanese != null && data.japanese!.isNotEmpty)
-                  Text(
-                    data.japanese ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.colorScheme.onBackground.withOpacity(0.6),
-                    ),
-                  ),
-              ],
-            ),
+                ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -202,13 +215,13 @@ class CharacterSeyu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
               'Сэйю',
               style: Theme.of(context)
@@ -219,28 +232,42 @@ class CharacterSeyu extends StatelessWidget {
           ),
           SizedBox(
             height: 120,
-            child: ListView.separated(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: seyuList.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
+                final isFirstItem = index == 0;
+                final isLastItem = index == seyuList.length - 1;
                 final seyu = seyuList[index];
 
-                return Column(
-                  children: [
-                    CachedCircleImage(
-                      AppConfig.staticUrl + (seyu.image?.original ?? ''),
-                      radius: 48,
+                return Container(
+                  margin: EdgeInsets.fromLTRB(
+                    isFirstItem ? 16.0 : 0.0,
+                    0.0,
+                    isLastItem ? 16.0 : 8.0,
+                    0.0,
+                  ),
+                  child: InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Column(
+                      children: [
+                        CachedCircleImage(
+                          AppConfig.staticUrl + (seyu.image?.original ?? ''),
+                          radius: 48,
+                          clipBehavior: Clip.antiAlias,
+                        ),
+                        LimitedBox(
+                          maxWidth: 100,
+                          child: Text(
+                            seyu.name ?? '[Без имени]',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
-                    LimitedBox(
-                      maxWidth: 100,
-                      child: Text(
-                        seyu.name ?? '[Без имени]',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                  ),
                 );
               },
             ),
@@ -259,13 +286,13 @@ class CharacterAnimes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
               'Аниме',
               style: Theme.of(context)
@@ -276,18 +303,27 @@ class CharacterAnimes extends StatelessWidget {
           ),
           SizedBox(
             height: 210,
-            child: ListView.separated(
+            child: ListView.builder(
               addRepaintBoundaries: false,
               addSemanticIndexes: false,
               scrollDirection: Axis.horizontal,
               itemCount: animeList.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
+                final isFirstItem = index == 0;
+                final isLastItem = index == animeList.length - 1;
                 final anime = animeList[index];
 
-                return AspectRatio(
-                  aspectRatio: 0.55,
-                  child: AnimeTileExp(anime),
+                return Container(
+                  margin: EdgeInsets.fromLTRB(
+                    isFirstItem ? 16.0 : 0.0,
+                    0.0,
+                    isLastItem ? 16.0 : 8.0,
+                    0.0,
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: 0.55,
+                    child: AnimeTileExp(anime),
+                  ),
                 );
               },
             ),
@@ -306,13 +342,13 @@ class CharacterMangas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
               'Манга и ранобе',
               style: Theme.of(context)
@@ -323,18 +359,27 @@ class CharacterMangas extends StatelessWidget {
           ),
           SizedBox(
             height: 210,
-            child: ListView.separated(
+            child: ListView.builder(
               addRepaintBoundaries: false,
               addSemanticIndexes: false,
               scrollDirection: Axis.horizontal,
               itemCount: mangaList.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
+                final isFirstItem = index == 0;
+                final isLastItem = index == mangaList.length - 1;
                 final manga = mangaList[index];
 
-                return AspectRatio(
-                  aspectRatio: 0.55,
-                  child: MangaCardEx(manga),
+                return Container(
+                  margin: EdgeInsets.fromLTRB(
+                    isFirstItem ? 16.0 : 0.0,
+                    0.0,
+                    isLastItem ? 16.0 : 8.0,
+                    0.0,
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: 0.55,
+                    child: MangaCardEx(manga),
+                  ),
                 );
               },
             ),
