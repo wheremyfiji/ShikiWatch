@@ -11,7 +11,7 @@ import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/shiki_utils.dart';
 import '../../../providers/manga_details_provider.dart';
 import '../../../widgets/image_with_shimmer.dart';
-import '../../anime_details/related_titles.dart';
+import '../../anime_details/components/title_related.dart';
 
 class MangaRelatedWidget extends ConsumerWidget {
   final int id;
@@ -66,14 +66,9 @@ class MangaRelatedWidget extends ConsumerWidget {
                         visualDensity: VisualDensity.compact,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      onPressed: () => Navigator.push(
+                      onPressed: () => TitleRelatedBottomSheet.show(
                         context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation1, animation2) =>
-                              RelatedTitles(related: dataList),
-                          transitionDuration: Duration.zero,
-                          reverseTransitionDuration: Duration.zero,
-                        ),
+                        related: dataList,
                       ),
                       icon: const Icon(
                         Icons.chevron_right_rounded,
