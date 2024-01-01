@@ -331,106 +331,102 @@ class AnimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return InkWell(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          splashFactory: NoSplash.splashFactory,
-          onLongPress: () {
-            FocusScope.of(context).unfocus();
+    return InkWell(
+      onTap: () {
+        FocusScope.of(context).unfocus();
 
-            final t = data.toAnime;
-
-            AnimeUserRateBottomSheet.show(
-              context,
-              anime: t,
-              update: false,
-            );
+        context.pushNamed(
+          'library_anime',
+          pathParameters: <String, String>{
+            'id': (data.anime!.id!).toString(),
           },
-          onTap: () {
-            FocusScope.of(context).unfocus();
-
-            final extra = AnimeDetailsPageExtra(
-              id: data.anime!.id!,
-              label: (data.anime!.russian == ''
-                      ? data.anime!.name
-                      : data.anime!.russian) ??
-                  '',
-            );
-
-            context.pushNamed(
-              'library_anime',
-              pathParameters: <String, String>{
-                'id': (data.anime?.id!).toString(),
-              },
-              extra: extra,
-            );
-          },
-          child: Column(
-            children: [
-              SizedBox(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight / 1.4,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: ImageWithShimmerWidget(
-                    imageUrl: AppConfig.staticUrl +
-                        (data.anime?.image?.original ?? ''),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              SizedBox(
-                width: constraints.maxWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      (data.anime?.russian == ''
-                              ? data.anime?.name
-                              : data.anime?.russian) ??
-                          '',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    data.anime?.status == 'released'
-                        ? Text(
-                            '${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color:
-                                  Theme.of(context).textTheme.bodySmall!.color,
-                            ),
-                          )
-                        : Text(
-                            '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color:
-                                  Theme.of(context).textTheme.bodySmall!.color,
-                            ),
-                          ),
-                  ],
-                ),
-              )
-            ],
+          extra: AnimeDetailsPageExtra(
+            id: data.anime!.id!,
+            label: (data.anime!.russian == ''
+                    ? data.anime!.name
+                    : data.anime!.russian) ??
+                '',
           ),
         );
       },
+      onLongPress: () {
+        FocusScope.of(context).unfocus();
+
+        AnimeUserRateBottomSheet.show(
+          context,
+          anime: data.toAnime,
+          update: false,
+        );
+      },
+      //splashFactory: NoSplash.splashFactory,
+      borderRadius: BorderRadius.circular(12.0),
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Column(
+        children: [
+          Flexible(
+            flex: 8, //8
+            fit: FlexFit.tight,
+            child: SizedBox(
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: ImageWithShimmerWidget(
+                  imageUrl:
+                      AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Flexible(
+            flex: 3,
+            fit: FlexFit.tight,
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (data.anime?.russian == ''
+                            ? data.anime?.name
+                            : data.anime?.russian) ??
+                        '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2,
+                  ),
+                  data.anime?.status == 'released'
+                      ? Text(
+                          '${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).textTheme.bodySmall!.color,
+                          ),
+                        )
+                      : Text(
+                          '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).textTheme.bodySmall!.color,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

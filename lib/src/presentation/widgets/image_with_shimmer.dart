@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../../utils/extensions/buildcontext.dart';
 import 'cached_image.dart';
 import 'custom_shimmer.dart';
 
@@ -23,17 +24,16 @@ class ImageWithShimmerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
-      // placeholder: (context, url) {
-      //   return Shimmer.fromColors(
-      //     baseColor: Theme.of(context).colorScheme.surfaceVariant,
-      //     highlightColor: Theme.of(context).colorScheme.onInverseSurface,
-      //     child: Container(
-      //       color: Colors.black,
-      //     ),
-      //   );
-      // },
       placeholder: (context, url) => const CustomShimmer(),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
+      errorWidget: (context, url, error) {
+        return Container(
+          color: context.colorScheme.secondaryContainer,
+          child: Icon(
+            Icons.broken_image_rounded,
+            color: context.colorScheme.onSecondaryContainer,
+          ),
+        );
+      },
       fit: fit,
       width: width,
       height: height,
