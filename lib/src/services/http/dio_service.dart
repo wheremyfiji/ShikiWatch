@@ -4,10 +4,6 @@ import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:network_logger/network_logger.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:dio/dio.dart';
-//import 'package:nirikshak/nirikshak.dart';
-
-//import 'package:native_dio_adapter/native_dio_adapter.dart';
-//import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../../constants/config.dart';
 import '../../data/repositories/http_service.dart';
@@ -16,19 +12,10 @@ import '../../utils/app_utils.dart';
 import 'interceptors/request_interceptor.dart';
 import 'interceptors/refresh_token_interceptor.dart';
 
-// const _defaultConnectTimeout = 30000;
-// const _defaultReceiveTimeout = 30000;
-
-//Nirikshak nirikshak = Nirikshak();
-
 class DioHttpService implements HttpService {
   /// Creates new instance of [DioHttpService]
   DioHttpService() {
     dio = Dio(baseOptions);
-
-    // if (Platform.isIOS || Platform.isMacOS || Platform.isAndroid) {
-    //   dio.httpClientAdapter = NativeAdapter();
-    // }
 
     dio.interceptors.add(RetryInterceptor(
       dio: dio,
@@ -47,18 +34,18 @@ class DioHttpService implements HttpService {
     //   dio.interceptors.add(PrettyDioLogger(
     //     requestHeader: true,
     //     requestBody: true,
+    //     responseHeader: false,
     //     responseBody: false,
-    //     responseHeader: true,
     //     error: true,
     //     compact: true,
     //     maxWidth: 100,
     //     logPrint: (object) {
-    //       log(object.toString(), name: 'Dio');
+    //       log(object.toString(), name: 'DioLogger');
     //     },
     //   ));
     // }
+
     dio.interceptors.add(DioNetworkLogger());
-    //dio.interceptors.add(nirikshak.getDioInterceptor());
     dio.addSentry();
   }
 
@@ -70,8 +57,9 @@ class DioHttpService implements HttpService {
         headers: headers,
         connectTimeout: const Duration(seconds: 12),
         receiveTimeout: const Duration(seconds: 30),
-        //connectTimeout: _defaultConnectTimeout,
-        //receiveTimeout: _defaultReceiveTimeout,
+        //contentType: 'application/json; charset=utf-8',
+        responseType: ResponseType.json,
+        followRedirects: false,
       );
 
   @override
@@ -79,6 +67,7 @@ class DioHttpService implements HttpService {
 
   @override
   Map<String, String> headers = {
+    //'Content-Type': 'application/json; charset=utf-8',
     'User-Agent': AppUtils.instance.userAgent,
   };
 
@@ -176,55 +165,3 @@ class DioHttpService implements HttpService {
         .onError((_, __) => false);
   }
 }
-
-// class CustomInterceptors implements Interceptor {
-//   CustomInterceptors();
-
-//   @override
-//   void onError(DioError err, ErrorInterceptorHandler handler) {
-//     final code = err.response?.statusMessage;
-//     log('ERROR[$code] => PATH: ${err.requestOptions.path}');
-//     return handler.next(err);
-//   }
-
-//   @override
-//   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-//     log('REQUEST[${options.method}] => PATH: ${options.path}');
-//     return handler.next(options);
-//   }
-
-//   /// Method that intercepts Dio response
-//   @override
-//   void onResponse(
-//     Response<dynamic> response,
-//     ResponseInterceptorHandler handler,
-//   ) {
-//     final code = response.statusCode;
-//     log('::onResponse -> code: $code');
-//     return handler.next(response);
-//     log('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-//     return handler.next(response);
-//   }
-// }
-
-// class CustomInterceptors2 extends Interceptor {
-//   @override
-//   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-//     print('REQUEST[${options.method}] => PATH: ${options.path}');
-//     super.onRequest(options, handler);
-//   }
-
-//   @override
-//   void onResponse(Response response, ResponseInterceptorHandler handler) {
-//     print(
-//         'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-//     super.onResponse(response, handler);
-//   }
-
-//   @override
-//   void onError(DioError err, ErrorInterceptorHandler handler) {
-//     print(
-//         'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
-//     super.onError(err, handler);
-//   }
-// }
