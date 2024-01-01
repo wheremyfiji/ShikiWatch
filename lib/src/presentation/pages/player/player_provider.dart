@@ -160,10 +160,10 @@ class PlayerNotifier extends w.ChangeNotifier {
 
       //_pipeLogsToConsole(player);
 
-      await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
-      await (player.platform as NativePlayer).setProperty('insecure', 'yes');
-      await (player.platform as NativePlayer)
-          .setProperty('force-seekable', 'yes');
+      // await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
+      // await (player.platform as NativePlayer).setProperty('insecure', 'yes');
+      // await (player.platform as NativePlayer)
+      //     .setProperty('force-seekable', 'yes');
 
       await (player.platform as NativePlayer).setProperty(
         'demuxer-lavf-o',
