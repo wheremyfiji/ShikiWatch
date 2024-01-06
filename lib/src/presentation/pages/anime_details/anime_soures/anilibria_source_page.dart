@@ -181,6 +181,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
               pinned: true,
               actions: [
                 PopupMenuButton<String>(
+                  tooltip: 'Поиск по другому названию',
                   itemBuilder: (context) {
                     return List.generate(
                       searchList.length,
@@ -410,53 +411,6 @@ class AnilibriaEpisodeTile extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
       onTap: onTap,
-      // onTap: () async {
-      //   if (ep.hls == null || (ep.hls?.fhd == null && ep.hls?.hd == null)) {
-      //     showErrorSnackBar(ctx: context, msg: 'Серия не найдена');
-
-      //     return;
-      //   }
-
-      //   String startPosition = '';
-
-      //   if (savedEpisode?.position != null) {
-      //     bool? dialogValue = await showDialog<bool>(
-      //       barrierDismissible: false,
-      //       context: context,
-      //       builder: (context) => const ContinueDialog(),
-      //     );
-
-      //     if (dialogValue ?? false) {
-      //       startPosition = savedEpisode?.position ?? '';
-      //     }
-      //   }
-
-      //   // AnimePlayerPageExtra extra = AnimePlayerPageExtra(
-      //   //   studioId: 610,
-      //   //   shikimoriId: shikimoriId,
-      //   //   episodeNumber: ep.episode!,
-      //   //   animeName: animeName,
-      //   //   studioName: 'AniLibria.TV',
-      //   //   studioType: 'voice',
-      //   //   episodeLink: '',
-      //   //   additInfo: '',
-      //   //   position: savedEpisode?.position,
-      //   //   imageUrl: imageUrl,
-      //   //   startPosition: startPosition,
-      //   //   isLibria: true,
-      //   //   libriaEpisode: LibriaEpisode(
-      //   //     //host: 'https://${title.player!.host!}',
-      //   //     host: AppUtils.instance.isDesktop
-      //   //         ? 'https://static.libria.fun'
-      //   //         : host,
-      //   //     fnd: ep.hls?.fhd,
-      //   //     hd: ep.hls?.hd,
-      //   //   ),
-      //   // );
-
-      //   // // ignore: use_build_context_synchronously
-      //   // GoRouter.of(context).pushNamed('player', extra: extra);
-      // },
       title: Text(
         'Серия ${ep.episode}',
       ),
@@ -713,7 +667,7 @@ class AnilibriaTorrentList extends StatelessWidget {
                           uploadedTs.convertToDaysAgo(),
                           style: context.textTheme.bodySmall?.copyWith(
                             color: context.colorScheme.onBackground.withOpacity(
-                              0.8,
+                              0.6,
                             ),
                           ),
                         ),
