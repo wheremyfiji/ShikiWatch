@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/image_with_shimmer.dart';
+import '../../../widgets/cached_image.dart';
 import '../../../../domain/models/anime.dart';
 
 class TitleVideosWidget extends StatelessWidget {
@@ -77,8 +77,8 @@ class TitleVideosWidget extends StatelessWidget {
                   children: [
                     AspectRatio(
                       aspectRatio: (16 / 9),
-                      child: ImageWithShimmerWidget(
-                        imageUrl: model.imageUrl ?? '',
+                      child: CachedImage(
+                        model.imageUrl ?? '',
                       ),
                     ),
                     Positioned(

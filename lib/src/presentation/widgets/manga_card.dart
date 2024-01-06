@@ -8,7 +8,8 @@ import '../../domain/models/manga_short.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/shiki_utils.dart';
 import '../../utils/app_utils.dart';
-import '../widgets/image_with_shimmer.dart';
+
+import 'cached_image.dart';
 
 class MangaCard extends StatelessWidget {
   final UserAnimeRates data;
@@ -52,9 +53,8 @@ class MangaCard extends StatelessWidget {
                   height: constraints.maxHeight / 1.4,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
-                    child: ImageWithShimmerWidget(
-                      imageUrl: AppConfig.staticUrl +
-                          (data.manga?.image?.original ?? ''),
+                    child: CachedImage(
+                      AppConfig.staticUrl + (data.manga?.image?.original ?? ''),
                     ),
                   ),
                 ),
@@ -131,9 +131,8 @@ class MangaCardEx extends StatelessWidget {
                 height: constraints.maxHeight / 1.4,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: ImageWithShimmerWidget(
-                    imageUrl:
-                        AppConfig.staticUrl + (data.image?.original ?? ''),
+                  child: CachedImage(
+                    AppConfig.staticUrl + (data.image?.original ?? ''),
                   ),
                 ),
               ),

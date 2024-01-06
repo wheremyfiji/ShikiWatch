@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../constants/config.dart';
 import '../../../../domain/models/anime.dart';
-import '../../../widgets/image_with_shimmer.dart';
+import '../../../widgets/cached_image.dart';
 
 import '../screenshots_page.dart';
 
@@ -134,9 +134,9 @@ class TitleScreenshots extends StatelessWidget {
                       aspectRatio: (16 / 9),
                       child: Container(
                         color: Colors.black,
-                        child: ImageWithShimmerWidget(
+                        child: CachedImage(
+                          AppConfig.staticUrl + url,
                           fit: BoxFit.contain,
-                          imageUrl: AppConfig.staticUrl + url,
                         ),
                       ),
                     ),

@@ -10,7 +10,7 @@ import '../../../../domain/models/pages_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/shiki_utils.dart';
 import '../../../providers/manga_details_provider.dart';
-import '../../../widgets/image_with_shimmer.dart';
+import '../../../widgets/cached_image.dart';
 import '../../anime_details/components/title_related.dart';
 
 class MangaRelatedWidget extends ConsumerWidget {
@@ -136,8 +136,8 @@ class MangaRelatedWidget extends ConsumerWidget {
                           aspectRatio: 0.703,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: ImageWithShimmerWidget(
-                              imageUrl: AppConfig.staticUrl +
+                            child: CachedImage(
+                              AppConfig.staticUrl +
                                   (title?.image?.original ?? ''),
                             ),
                           ),

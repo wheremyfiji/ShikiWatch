@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/pages_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/image_with_shimmer.dart';
+import '../../../widgets/cached_image.dart';
 import 'library_anime_search_controller.dart';
 
 class LibraryAnimeSearchPage extends ConsumerWidget {
@@ -183,8 +183,8 @@ class _SearchAnimeItem extends StatelessWidget {
                 aspectRatio: 0.703,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: ImageWithShimmerWidget(
-                    imageUrl: anime.poster?.mainAltUrl ?? '',
+                  child: CachedImage(
+                    anime.poster?.mainAltUrl ?? '',
                   ),
                 ),
               ),

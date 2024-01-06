@@ -17,7 +17,7 @@ import '../../../domain/models/user_history.dart';
 import '../../../domain/models/shiki_title.dart';
 import '../../../domain/models/pages_extra.dart';
 import '../../../utils/shiki_utils.dart';
-import '../../widgets/image_with_shimmer.dart';
+import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 import '../../../constants/config.dart';
 
@@ -187,8 +187,8 @@ class HistoryTargetItem extends StatelessWidget {
                   aspectRatio: 0.703,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
-                    child: ImageWithShimmerWidget(
-                      imageUrl: AppConfig.staticUrl +
+                    child: CachedImage(
+                      AppConfig.staticUrl +
                           (historyItem.target!.image?.original ??
                               historyItem.target!.image?.preview ??
                               ''),

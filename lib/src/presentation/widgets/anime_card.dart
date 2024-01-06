@@ -7,11 +7,11 @@ import '../pages/anime_details/widgets/user_anime_rate.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/extensions/buildcontext.dart';
 import '../../domain/models/pages_extra.dart';
-import '../widgets/image_with_shimmer.dart';
 import '../../domain/models/animes.dart';
 import '../../utils/shiki_utils.dart';
 import '../../constants/config.dart';
 
+import 'cached_image.dart';
 import 'custom_info_chip.dart';
 import 'custom_linear_progress_indicator.dart';
 
@@ -60,9 +60,8 @@ class AnimeCompactListTile extends StatelessWidget {
           aspectRatio: 1,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: ImageWithShimmerWidget(
-              imageUrl:
-                  AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+            child: CachedImage(
+              AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
             ),
           ),
         ),
@@ -213,9 +212,8 @@ class AnimeListTile extends StatelessWidget {
                 aspectRatio: 0.703,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: ImageWithShimmerWidget(
-                    imageUrl: AppConfig.staticUrl +
-                        (data.anime?.image?.original ?? ''),
+                  child: CachedImage(
+                    AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
                   ),
                 ),
               ),
@@ -371,9 +369,8 @@ class AnimeCard extends StatelessWidget {
               width: double.infinity,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: ImageWithShimmerWidget(
-                  imageUrl:
-                      AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+                child: CachedImage(
+                  AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
                 ),
               ),
             ),
@@ -397,10 +394,11 @@ class AnimeCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.w500,
+                      height: 1.2,
                     ),
                   ),
                   const SizedBox(
-                    height: 2,
+                    height: 4,
                   ),
                   data.anime?.status == 'released'
                       ? Text(
@@ -465,9 +463,8 @@ class AnimeTileExp extends StatelessWidget {
                 height: constraints.maxHeight / 1.4,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.0),
-                  child: ImageWithShimmerWidget(
-                    imageUrl:
-                        AppConfig.staticUrl + (data.image?.original ?? ''),
+                  child: CachedImage(
+                    AppConfig.staticUrl + (data.image?.original ?? ''),
                   ),
                 ),
               ),

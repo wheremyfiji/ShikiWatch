@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dismissible_page/dismissible_page.dart';
 
+import '../../utils/extensions/buildcontext.dart';
 import 'custom_shimmer.dart';
 
 final cacheManager = CacheManager(
@@ -71,9 +72,15 @@ class CachedCircleImage extends StatelessWidget {
           fit: BoxFit.cover,
           cacheManager: cacheManager,
           placeholder: (context, url) => const CustomShimmer(),
-          errorWidget: (context, url, error) => const Center(
-            child: Icon(Icons.error_outline_rounded),
-          ),
+          errorWidget: (context, url, error) {
+            return Container(
+              color: context.colorScheme.secondaryContainer,
+              child: Icon(
+                Icons.broken_image_rounded,
+                color: context.colorScheme.onSecondaryContainer,
+              ),
+            );
+          },
         ),
       ),
     );
@@ -115,10 +122,7 @@ class CachedImage extends StatelessWidget {
   const CachedImage(
     this.imageUrl, {
     super.key,
-    //this.fit = BoxFit.cover,
-    // this.width = double.infinity,
-    // this.height = double.infinity,
-    this.fit,
+    this.fit = BoxFit.cover,
     this.width,
     this.height,
   });
@@ -132,14 +136,15 @@ class CachedImage extends StatelessWidget {
       height: height,
       cacheManager: cacheManager,
       placeholder: (context, url) => const CustomShimmer(),
-      errorWidget: (context, url, error) => const Center(
-        child: Icon(Icons.error_outline_rounded),
-      ),
-      // progressIndicatorBuilder: (context, _, p) => Center(
-      //   child: CircularProgressIndicator(
-      //     value: p.progress,
-      //   ),
-      // ),
+      errorWidget: (context, url, error) {
+        return Container(
+          color: context.colorScheme.secondaryContainer,
+          child: Icon(
+            Icons.broken_image_rounded,
+            color: context.colorScheme.onSecondaryContainer,
+          ),
+        );
+      },
     );
   }
 }

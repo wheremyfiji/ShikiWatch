@@ -11,7 +11,7 @@ import '../../../../domain/models/related_title.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/shiki_utils.dart';
 import '../../../providers/anime_details_provider.dart';
-import '../../../widgets/image_with_shimmer.dart';
+import '../../../widgets/cached_image.dart';
 
 class TitleRelatedWidget extends ConsumerWidget {
   final int id;
@@ -136,8 +136,8 @@ class TitleRelatedWidget extends ConsumerWidget {
                           aspectRatio: 0.703,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: ImageWithShimmerWidget(
-                              imageUrl: AppConfig.staticUrl +
+                            child: CachedImage(
+                              AppConfig.staticUrl +
                                   (title?.image?.original ?? ''),
                             ),
                           ),
@@ -328,8 +328,8 @@ class TitleRelatedBottomSheet extends StatelessWidget {
                         aspectRatio: 1,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
-                          child: ImageWithShimmerWidget(
-                            imageUrl: AppConfig.staticUrl +
+                          child: CachedImage(
+                            AppConfig.staticUrl +
                                 (title?.image?.original ?? ''),
                           ),
                         ),

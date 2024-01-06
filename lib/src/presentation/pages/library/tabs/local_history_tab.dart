@@ -12,7 +12,6 @@ import '../../../../domain/models/pages_extra.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
 import '../../../../constants/config.dart';
-import '../../../widgets/image_with_shimmer.dart';
 
 class LocalHistoryTab extends ConsumerWidget {
   const LocalHistoryTab({super.key});
@@ -176,8 +175,8 @@ class HistoryItem extends ConsumerWidget {
                     aspectRatio: 0.703,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: ImageWithShimmerWidget(
-                        imageUrl: AppConfig.staticUrl + image,
+                      child: CachedImage(
+                        AppConfig.staticUrl + image,
                       ),
                     ),
                   ),
