@@ -51,9 +51,21 @@ class AppThemeDataNotifier {
       outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
     );
 
+    // final origin = isDark
+    //     ? ThemeData.dark(useMaterial3: true)
+    //     : ThemeData.light(useMaterial3: true);
+
     final origin = isDark
-        ? ThemeData.dark(useMaterial3: true)
-        : ThemeData.light(useMaterial3: true);
+        ? ThemeData(
+            brightness: Brightness.dark,
+            useMaterial3: true,
+            fontFamily: 'Jost',
+          )
+        : ThemeData(
+            brightness: Brightness.light,
+            useMaterial3: true,
+            fontFamily: 'Jost',
+          );
 
     return origin.copyWith(
       visualDensity: VisualDensity.standard,
