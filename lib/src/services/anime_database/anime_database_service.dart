@@ -27,7 +27,7 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
         [AnimeDatabaseSchema],
         name: "animeDatabase",
         directory: appDocDir.path,
-        compactOnLaunch: const CompactCondition(minRatio: 2.0),
+        //compactOnLaunch: const CompactCondition(minRatio: 2.0),
       ),
     );
   }
