@@ -255,6 +255,10 @@ class PlayerNotifier extends w.ChangeNotifier {
 
             completed = event;
 
+            if (event) {
+              hideController.permShow();
+            }
+
             notifyListeners();
           }),
           player.stream.buffering.listen((event) {
@@ -305,6 +309,10 @@ class PlayerNotifier extends w.ChangeNotifier {
 
     hideController.dispose();
 
+    if (_playerOrientationLock) {
+      await SystemChrome.setPreferredOrientations([]);
+    }
+
     await _unfullscreen();
 
     await player.pause();
@@ -336,10 +344,10 @@ class PlayerNotifier extends w.ChangeNotifier {
       return;
     }
 
-    // hideController.isVisible == false
-    //     ? await SystemChrome.setEnabledSystemUIMode(
-    //         SystemUiMode.immersiveSticky)
-    //     : await _unfullscreen();
+    hideController.isVisible == false
+        ? await SystemChrome.setEnabledSystemUIMode(
+            SystemUiMode.immersiveSticky)
+        : await _unfullscreen();
   }
 
   void setPlaybackSpeed(double speed) async {
@@ -686,10 +694,6 @@ class PlayerNotifier extends w.ChangeNotifier {
   Future<void> _unfullscreen() async {
     if (AppUtils.instance.isDesktop) {
       return;
-    }
-
-    if (_playerOrientationLock) {
-      await SystemChrome.setPreferredOrientations([]);
     }
 
     if ((_sdkVersion ?? 0) < 29) {

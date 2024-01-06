@@ -45,6 +45,12 @@ class _DoubleTapSeekButtonState extends State<DoubleTapSeekButton> {
     });
   }
 
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
   void increment() {
     timer?.cancel();
 

@@ -14,6 +14,7 @@ class SeekIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           position,
@@ -27,7 +28,7 @@ class SeekIndicator extends StatelessWidget {
           diff,
           style: const TextStyle(
             fontSize: 18,
-            color: Colors.white,
+            color: Colors.white70,
           ),
         ),
       ],

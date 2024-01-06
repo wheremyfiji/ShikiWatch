@@ -17,7 +17,7 @@ class BufferingIndicator extends StatelessWidget {
           end: buffering ? 1.0 : 0.0,
         ),
         curve: Curves.easeInOut,
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 50),
         builder: (context, value, child) {
           if (value > 0.0) {
             return Opacity(
