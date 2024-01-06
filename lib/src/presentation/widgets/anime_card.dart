@@ -482,6 +482,7 @@ class AnimeTileExp extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.w500,
+                        height: 1.2,
                       ),
                     ),
                     const SizedBox(
