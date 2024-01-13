@@ -68,8 +68,13 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
 
   @override
   Future<List<Studio>?> getStudios({required int shikimoriId}) async {
+    // final anime = await isardb.animeDatabases
+    //     .filter()
+    //     .shikimoriIdEqualTo(shikimoriId)
+    //     .findFirst();
+
     final anime = await isardb.animeDatabases
-        .filter()
+        .where()
         .shikimoriIdEqualTo(shikimoriId)
         .findFirst();
 
@@ -78,10 +83,17 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
 
   @override
   Future<AnimeDatabase?> getAnime({required int shikimoriId}) async {
-    return await isardb.animeDatabases
-        .filter()
+    // return await isardb.animeDatabases
+    //     .filter()
+    //     .shikimoriIdEqualTo(shikimoriId)
+    //     .findFirst();
+
+    final anime = await isardb.animeDatabases
+        .where()
         .shikimoriIdEqualTo(shikimoriId)
         .findFirst();
+
+    return anime;
   }
 
   @override
@@ -99,8 +111,13 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
     required int studioId,
     required int episodeNumber,
   }) async {
+    // final anime = await isardb.animeDatabases
+    //     .filter()
+    //     .shikimoriIdEqualTo(shikimoriId)
+    //     .findFirst();
+
     final anime = await isardb.animeDatabases
-        .filter()
+        .where()
         .shikimoriIdEqualTo(shikimoriId)
         .findFirst();
 
@@ -163,8 +180,13 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
     String? additionalInfo = '',
     String? position,
   }) async {
+    // final anime = await isardb.animeDatabases
+    //     .filter()
+    //     .shikimoriIdEqualTo(shikimoriId)
+    //     .findFirst();
+
     final anime = await isardb.animeDatabases
-        .filter()
+        .where()
         .shikimoriIdEqualTo(shikimoriId)
         .findFirst();
 
