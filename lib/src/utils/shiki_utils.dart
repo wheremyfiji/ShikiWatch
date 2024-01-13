@@ -17,13 +17,32 @@ String getStatus(String value) {
 String getKind(String value) {
   String kind;
 
+  // const map = {
+  //   'tv': 'TV',
+  //   'movie': 'Фильм',
+  //   'ova': 'OVA',
+  //   'ona': 'ONA',
+  //   'special': 'Спешл',
+  //   'music': 'Клип',
+  //   'manga': 'Манга',
+  //   'light_novel': 'Ранобе',
+  //   'novel': 'Новелла',
+  //   'one_shot': 'Ваншот',
+  //   'doujin': 'Додзинси',
+  //   'manhwa': 'Манхва', //корейский прикол
+  //   'manhua': 'Маньхуа', //китайский прикол
+  // };
+
   const map = {
     'tv': 'TV',
     'movie': 'Фильм',
     'ova': 'OVA',
     'ona': 'ONA',
     'special': 'Спешл',
+    'tv_special': 'TV спешл',
     'music': 'Клип',
+    'pv': 'Промо',
+    'cm': 'Реклама',
     'manga': 'Манга',
     'light_novel': 'Ранобе',
     'novel': 'Новелла',
