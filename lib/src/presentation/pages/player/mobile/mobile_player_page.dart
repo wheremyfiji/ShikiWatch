@@ -170,6 +170,16 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           _widgetWidth = constraints.maxWidth;
