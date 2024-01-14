@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../utils/extensions/string_ext.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../../domain/models/anime.dart';
+import '../videos_page.dart';
 
 class TitleVideosWidget extends StatelessWidget {
   final Anime data;
@@ -16,33 +18,46 @@ class TitleVideosWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 16),
-              child: Text(
-                'Видео',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 10.0,
+            bottom: 4.0,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  'Видео',
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-
-            // InkWell(
-            //   onTap: () {},
-            //   child: Text(
-            //     'Больше',
-            //     style: context.textTheme.bodyLarge?.copyWith(
-            //       fontWeight: FontWeight.bold,
-            //       color: context.theme.colorScheme.primary,
-            //     ),
-            //   ),
-            // ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
+              IconButton(
+                style: const ButtonStyle(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        AnimeVideosPage(
+                      id: data.id ?? 0,
+                      name: data.russian ?? data.name ?? '',
+                    ),
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.chevron_right_rounded,
+                ),
+              ),
+            ],
+          ),
         ),
         SizedBox(
           height: 180,
@@ -61,7 +76,7 @@ class TitleVideosWidget extends StatelessWidget {
               }
 
               if (model.hosting != null && model.hosting!.isNotEmpty) {
-                desc = '${model.hosting} • $desc';
+                desc = '${model.hosting.capitalizeFirst} • $desc';
               }
 
               return Container(
@@ -129,57 +144,6 @@ class TitleVideosWidget extends StatelessWidget {
                   ],
                 ),
               );
-
-              // return GestureDetector(
-              //   onTap: () => launchUrlString(
-              //     model.url ?? '',
-              //     mode: LaunchMode.externalApplication,
-              //   ),
-              //   child: Container(
-              //     margin: EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 16, 0),
-              //     height: 180,
-              //     child: ClipRRect(
-              //       clipBehavior: Clip.hardEdge,
-              //       borderRadius: BorderRadius.circular(12),
-              //       child: Stack(
-              //         children: [
-              //           AspectRatio(
-              //             aspectRatio: (16 / 9),
-              //             child: ImageWithShimmerWidget(
-              //               imageUrl: model.imageUrl ?? '',
-              //             ),
-              //           ),
-              //           Positioned(
-              //             left: -1,
-              //             right: -1,
-              //             top: 40,
-              //             bottom: -1,
-              //             child: Container(
-              //               clipBehavior: Clip.hardEdge,
-              //               padding: const EdgeInsets.all(6.0),
-              //               alignment: Alignment.bottomCenter,
-              //               decoration: BoxDecoration(
-              //                 gradient: LinearGradient(
-              //                   begin: Alignment.topCenter,
-              //                   end: Alignment.bottomCenter,
-              //                   colors: <Color>[
-              //                     Colors.black.withAlpha(0),
-              //                     Colors.black54,
-              //                     Colors.black87,
-              //                   ],
-              //                 ),
-              //               ),
-              //               child: Text(
-              //                 desc,
-              //                 style: const TextStyle(color: Colors.white),
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // );
             },
           ),
         ),
