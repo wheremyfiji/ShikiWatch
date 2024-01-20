@@ -45,6 +45,7 @@ class TitleScreenshots extends StatelessWidget {
                         AnimeScreenshotsPage(
                       id: data.id ?? 0,
                       name: data.russian ?? data.name ?? '',
+                      selectedIndex: -1,
                     ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
@@ -54,30 +55,9 @@ class TitleScreenshots extends StatelessWidget {
                   Icons.chevron_right_rounded,
                 ),
               ),
-              // TextButton(
-              //   style: const ButtonStyle(visualDensity: VisualDensity.compact),
-              //   onPressed: () => Navigator.push(
-              //     context,
-              //     PageRouteBuilder(
-              //       pageBuilder: (context, animation1, animation2) =>
-              //           AnimeScreenshotsPage(
-              //         id: data.id ?? 0,
-              //         name: data.russian ?? data.name ?? '',
-              //       ),
-              //       transitionDuration: Duration.zero,
-              //       reverseTransitionDuration: Duration.zero,
-              //     ),
-              //   ),
-              //   child: const Text(
-              //     'Больше',
-              //   ),
-              // ),
             ],
           ),
         ),
-        // const SizedBox(
-        //   height: 8,
-        // ),
         SizedBox(
           height: 180,
           child: ListView.builder(
@@ -91,46 +71,18 @@ class TitleScreenshots extends StatelessWidget {
 
               final isFirstItem = index == 0;
 
-              return GestureDetector(
-                // onTap: () => showSlideUp(
-                //   context,
-                //   ImageViewer(
-                //     AppConfig.staticUrl + url,
-                //     cached: true,
-                //   ),
-                // ),
-
-                onTap: () {
-                  // MultiImageProvider multiImageProvider = MultiImageProvider(
-                  //   [
-                  //     CachedNetworkImageProvider(
-                  //       AppConfig.staticUrl + data.screenshots![0].original!,
-                  //       cacheManager: cacheManager,
-                  //     ),
-                  //     CachedNetworkImageProvider(
-                  //       AppConfig.staticUrl + data.screenshots![1].original!,
-                  //       cacheManager: cacheManager,
-                  //     ),
-                  //   ],
-                  //   initialIndex: index,
-                  // );
-
-                  // showImageViewerPager(
-                  //   context,
-                  //   multiImageProvider,
-                  //   doubleTapZoomable: true,
-                  //   swipeDismissible: true,
-                  //   backgroundColor: Colors.black,
-                  //   closeButtonColor: Colors.white,
-                  // );
-                },
-
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 16, 0),
-                  height: 180,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: AspectRatio(
+              return Container(
+                height: 180,
+                margin: EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 16, 0),
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    AspectRatio(
                       aspectRatio: (16 / 9),
                       child: Container(
                         color: Colors.black,
@@ -140,7 +92,34 @@ class TitleScreenshots extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
+                    Align(
+                      child: SizedBox(
+                        height: 180,
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: InkWell(
+                              onTap: () => Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          AnimeScreenshotsPage(
+                                    id: data.id ?? 0,
+                                    name: data.russian ?? data.name ?? '',
+                                    selectedIndex: index,
+                                  ),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },

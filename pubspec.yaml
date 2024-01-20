@@ -15,7 +15,7 @@ dependencies:
   audio_video_progress_bar: ^2.0.1
   #git_info: ^1.1.2
   #bottom_sheet: ^3.1.2
-  cached_network_image: ^3.3.0
+  cached_network_image: ^3.3.1
   collection: ^1.17.1
   connectivity_plus: ^5.0.2
   dart_discord_rpc:
@@ -25,9 +25,7 @@ dependencies:
   device_info_plus: ^9.1.1
   dio: ^5.4.0
   dio_smart_retry: ^6.0.0
-  dismissible_page: ^1.0.2
   dynamic_color: ^1.6.8
-  easy_image_viewer: ^1.2.1
   equatable: ^2.0.5
   expandable_text: ^2.3.0
   file_picker: ^5.5.0
@@ -49,6 +47,7 @@ dependencies:
   html: ^0.15.4
   http: ^1.1.2
   infinite_scroll_pagination: ^4.0.0
+  interactiveviewer_gallery: ^0.6.0
   #yaml: ^3.1.1
   intl: ^0.18.1
   isar: *isar_version

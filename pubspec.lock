@@ -141,26 +141,26 @@ packages:
     dependency: "direct main"
     description:
       name: cached_network_image
-      sha256: f98972704692ba679db144261172a8e20feb145636c617af0eb4022132a6797f
+      sha256: "28ea9690a8207179c319965c13cd8df184d5ee721ae2ce60f398ced1219cea1f"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "3.3.1"
   cached_network_image_platform_interface:
     dependency: transitive
     description:
       name: cached_network_image_platform_interface
-      sha256: "56aa42a7a01e3c9db8456d9f3f999931f1e05535b5a424271e9a38cabf066613"
+      sha256: "9e90e78ae72caa874a323d78fa6301b3fb8fa7ea76a8f96dc5b5bf79f283bf2f"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.0.0"
   cached_network_image_web:
     dependency: transitive
     description:
       name: cached_network_image_web
-      sha256: "759b9a9f8f6ccbb66c185df805fac107f05730b1dab9c64626d1008cca532257"
+      sha256: "42a835caa27c220d1294311ac409a43361088625a4f23c820b006dd9bffb3316"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1"
   characters:
     dependency: transitive
     description:
@@ -314,14 +314,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  dismissible_page:
-    dependency: "direct main"
-    description:
-      name: dismissible_page
-      sha256: "5b2316f770fe83583f770df1f6505cb19102081c5971979806e77f2e507a9958"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   dynamic_color:
     dependency: "direct main"
     description:
@@ -330,14 +322,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.8"
-  easy_image_viewer:
-    dependency: "direct main"
-    description:
-      name: easy_image_viewer
-      sha256: "8d11a4630e9beb7aacf043c98da2dd4b3bc3b47aa4073d2016ba696376161272"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.1"
   equatable:
     dependency: "direct main"
     description:
@@ -665,6 +649,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  interactiveviewer_gallery:
+    dependency: "direct main"
+    description:
+      name: interactiveviewer_gallery
+      sha256: fd8413c1226a57b11a7c6c231dc9951ebd9b05b6cfdf86f217df7fe518836ae8
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0"
   intl:
     dependency: "direct main"
     description:
