@@ -6,9 +6,14 @@ class DisclaimerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Дисклеймер'),
+      title: const Text(
+        'Дисклеймер',
+        textAlign: TextAlign.center,
+      ),
       content: const Text(
-          'Весь контент, представленный в приложении, предназначен для бесплатного, домашнего, ознакомительного просмотра.\n\nАвтор приложения никак не связан с размещением и распространением контента.'),
+        'Весь контент, представленный в приложении, предназначен для бесплатного, домашнего, ознакомительного просмотра.\n\nАвтор приложения никак не связан с размещением и распространением контента.',
+        textAlign: TextAlign.left,
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
