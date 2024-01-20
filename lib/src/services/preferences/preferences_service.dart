@@ -67,7 +67,7 @@ class PreferencesService {
     final value = _preferences.getBool(_dynamicColorsKey);
 
     if (value == null) {
-      return false;
+      return true;
     }
 
     return value;
