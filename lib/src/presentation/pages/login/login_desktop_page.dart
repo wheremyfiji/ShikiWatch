@@ -19,6 +19,72 @@ Future<void> _launchUrl() async {
   }
 }
 
+// class LoginDesktopPage extends StatelessWidget {
+//   const LoginDesktopPage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Row(
+//         children: [
+//           const Expanded(flex: 2, child: SizedBox.shrink()),
+//           Expanded(
+//             flex: 5,
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   'ShikiWatch',
+//                   style: context.textTheme.displayLarge,
+//                 ),
+//                 Text(
+//                   'Неофициальное приложение для Шикимори',
+//                   textAlign: TextAlign.center,
+//                   style: context.textTheme.titleMedium?.copyWith(
+//                     color: context.colorScheme.onBackground.withOpacity(
+//                       0.8,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(
+//                   height: 16.0,
+//                 ),
+//                 const FeatureTile(
+//                   icon: Icons.video_library_rounded,
+//                   title: 'Просмотр аниме',
+//                   subtitle: 'Выбор источников и удобный встроенный плеер',
+//                   zeroPadding: true,
+//                 ),
+//                 const FeatureTile(
+//                   icon: Icons.book_rounded,
+//                   title: 'Библиотека',
+//                   subtitle: 'Быстрый доступ к личным спискам тайтлов',
+//                   zeroPadding: true,
+//                 ),
+//                 const FeatureTile(
+//                   icon: Icons.auto_awesome_rounded,
+//                   title: 'Кастомизация',
+//                   subtitle: 'Продвинутый уровень настройки приложения',
+//                   zeroPadding: true,
+//                 ),
+//               ],
+//             ),
+//           ),
+//           //const Expanded(child: SizedBox.shrink()),
+//           Flexible(
+//             flex: 4,
+//             child: FilledButton(
+//               onPressed: () {},
+//               child: const Text('Войти с помощью браузера'),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
+
 class LoginDesktopPage extends ConsumerStatefulWidget {
   const LoginDesktopPage({super.key});
 

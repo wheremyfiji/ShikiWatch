@@ -10,35 +10,73 @@ import '../../../utils/router.dart';
 
 import '../../providers/environment_provider.dart';
 import 'disclaimer_dialog.dart';
+import 'feature_tile.dart';
 import 'user_login_notifier.dart';
 
-class _FeatureTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _FeatureTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+class LoginPage extends ConsumerWidget {
+  const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: context.colorScheme.secondary,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final height = context.mediaQuery.size.height;
+
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      bottomNavigationBar: const _BottomBar(),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          automaticallyImplyLeading: false,
+        ),
       ),
-      title: Text(
-        title,
-        style: context.textTheme.bodyLarge,
-      ),
-      subtitle: Text(
-        subtitle,
-        style: context.textTheme.bodySmall?.copyWith(
-          fontSize: 14.0,
-          color: context.colorScheme.onBackground.withOpacity(0.8),
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      //height: 148.0,
+                      height: height / 4,
+                    ),
+                    Text(
+                      'ShikiWatch',
+                      style: context.textTheme.displaySmall, //headlineLarge
+                    ),
+                    Text(
+                      'Неофициальное приложение для Шикимори',
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.titleSmall?.copyWith(
+                        color: context.colorScheme.onBackground.withOpacity(
+                          0.8,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    const FeatureTile(
+                      icon: Icons.video_library_rounded,
+                      title: 'Просмотр аниме',
+                      subtitle: 'Выбор источников и удобный встроенный плеер',
+                    ),
+                    const FeatureTile(
+                      icon: Icons.book_rounded,
+                      title: 'Библиотека',
+                      subtitle: 'Быстрый доступ к личным спискам тайтлов',
+                    ),
+                    const FeatureTile(
+                      icon: Icons.auto_awesome_rounded,
+                      title: 'Кастомизация',
+                      subtitle: 'Продвинутый уровень настройки приложения',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -168,76 +206,6 @@ class _BottomBar extends ConsumerWidget {
                     // ),
                   ],
                 ),
-        ),
-      ),
-    );
-  }
-}
-
-class LoginPage extends ConsumerWidget {
-  const LoginPage({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final height = context.mediaQuery.size.height;
-
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      bottomNavigationBar: const _BottomBar(),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(0),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-        ),
-      ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      //height: 148.0,
-                      height: height / 4,
-                    ),
-                    Text(
-                      'ShikiWatch',
-                      style: context.textTheme.displaySmall, //headlineLarge
-                    ),
-                    Text(
-                      'Неофициальное приложение для Шикимори',
-                      textAlign: TextAlign.center,
-                      style: context.textTheme.titleSmall?.copyWith(
-                        color: context.colorScheme.onBackground.withOpacity(
-                          0.8,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    const _FeatureTile(
-                      icon: Icons.video_library_rounded,
-                      title: 'Просмотр аниме',
-                      subtitle: 'Выбор источников и удобный встроенный плеер',
-                    ),
-                    const _FeatureTile(
-                      icon: Icons.book_rounded,
-                      title: 'Библиотека',
-                      subtitle: 'Быстрый доступ к личным спискам тайтлов',
-                    ),
-                    const _FeatureTile(
-                      icon: Icons.auto_awesome_rounded,
-                      title: 'Кастомизация',
-                      subtitle: 'Продвинутый уровень настройки приложения',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
