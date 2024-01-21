@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -45,15 +44,31 @@ Future<void> main() async {
 }
 
 void initApp() async {
-  try {
-    debugPrint(Platform.version);
-    debugPrint(Platform.operatingSystemVersion);
-  } catch (exception, stacktrace) {
-    debugPrint(exception.toString());
-    debugPrint(stacktrace.toString());
-  }
+  debugPrint(Platform.version);
+  debugPrint(Platform.operatingSystemVersion);
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows) {
+    await windowManager.ensureInitialized();
+
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(1200, 800),
+      minimumSize: Size(900, 900 / (16 / 9)),
+      center: true,
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.normal,
+      title: 'ShikiWatch',
+    );
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
+
+  MediaKit.ensureInitialized();
 
   Intl.defaultLocale = 'ru_RU';
   initializeDateFormatting("ru_RU", null);
@@ -62,45 +77,7 @@ void initApp() async {
   final appCacheDir = await path_prov.getTemporaryDirectory();
   AppUtils.init(appCacheDir);
 
-  // if (Platform.isAndroid) {
-  //   try {
-  //     await FlutterDisplayMode.setHighRefreshRate();
-  //     final t = await FlutterDisplayMode.preferred;
-  //     debugPrint('refresh rate: ${t.refreshRate}');
-  //   } on PlatformException catch (e) {
-  //     debugPrint('setHighRefreshRate failed ($e)');
-  //   }
-  //   // https://stackoverflow.com/a/64184001
-  //   //GestureBinding.instance.resamplingEnabled = true;
-  // }
-
   await SecureStorageService.initialize();
-
-  MediaKit.ensureInitialized();
-
-  if (Platform.isWindows) {
-    await windowManager.ensureInitialized();
-
-    //DiscordRPC.initialize();
-
-    WindowOptions windowOptions = const WindowOptions(
-      //size: Size(1200, 1200 / (16 / 9)),
-      size: Size(1200, 800),
-      // minimumSize: Size(900, 500),
-      minimumSize: Size(900, 900 / (16 / 9)),
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
-      title: 'ShikiWatch',
-      //alwaysOnTop: true,
-    );
-
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
-  }
 
   final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
   final preferencesService = await PreferencesService.initialize();
@@ -110,16 +87,17 @@ void initApp() async {
   AndroidDeviceInfo? androidInfo;
   WindowsDeviceInfo? windowsInfo;
 
+  if (Platform.isWindows) {
+    windowsInfo = await DeviceInfoPlugin().windowsInfo;
+    //DiscordRPC.initialize();
+  }
+
   if (Platform.isAndroid) {
     androidInfo = await DeviceInfoPlugin().androidInfo;
 
     if (androidInfo.version.sdkInt > 28) {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
-  }
-
-  if (Platform.isWindows) {
-    windowsInfo = await DeviceInfoPlugin().windowsInfo;
   }
 
   //debugRepaintRainbowEnabled = true;
@@ -144,48 +122,4 @@ void initApp() async {
       child: const ShikiApp(),
     ),
   );
-}
-
-/// Logs all riverpod provider changes
-class ProviderLogger extends ProviderObserver {
-  /// Logs all riverpod provider changes
-  const ProviderLogger();
-
-  @override
-  void didAddProvider(
-    final ProviderBase provider,
-    final Object? value,
-    final ProviderContainer container,
-  ) {
-    log(
-      'add: ${provider.name ?? provider.runtimeType}, '
-      'value: $value',
-      name: 'Riverpod',
-    );
-  }
-
-  @override
-  void didUpdateProvider(
-    final ProviderBase provider,
-    final Object? previousValue,
-    final Object? newValue,
-    final ProviderContainer container,
-  ) {
-    log(
-      'update: ${provider.name ?? provider.runtimeType}, '
-      'value: $newValue',
-      name: 'Riverpod',
-    );
-  }
-
-  @override
-  void didDisposeProvider(
-    final ProviderBase provider,
-    final ProviderContainer container,
-  ) {
-    log(
-      'dispose: ${provider.name ?? provider.runtimeType}',
-      name: 'Riverpod',
-    );
-  }
 }
