@@ -89,6 +89,7 @@ class TitleScreenshots extends StatelessWidget {
                         child: CachedImage(
                           AppConfig.staticUrl + url,
                           fit: BoxFit.contain,
+                          memCacheHeight: 270,
                         ),
                       ),
                     ),

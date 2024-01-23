@@ -117,6 +117,8 @@ class CachedImage extends StatelessWidget {
   final BoxFit? fit;
   final double? width;
   final double? height;
+  final int? memCacheWidth;
+  final int? memCacheHeight;
   final PlaceholderWidgetBuilder? placeholder;
   final Duration? fadeOutDuration;
 
@@ -126,6 +128,8 @@ class CachedImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.width,
     this.height,
+    this.memCacheWidth,
+    this.memCacheHeight,
     this.fadeOutDuration,
     this.placeholder,
   });
@@ -138,6 +142,8 @@ class CachedImage extends StatelessWidget {
       width: width,
       height: height,
       cacheManager: cacheManager,
+      memCacheWidth: memCacheWidth,
+      memCacheHeight: memCacheHeight,
       placeholder: placeholder ?? (context, url) => const CustomShimmer(),
       fadeOutDuration: fadeOutDuration,
       errorWidget: (context, url, error) {

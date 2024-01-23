@@ -188,6 +188,7 @@ class AnimeScreenshotsPage extends HookConsumerWidget {
                                       child: CachedImage(
                                         url,
                                         fit: BoxFit.contain,
+                                        memCacheHeight: 270,
                                       ),
                                     ),
                                   ),
@@ -208,9 +209,9 @@ class AnimeScreenshotsPage extends HookConsumerWidget {
                         childCount: data.length,
                       ),
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
                         childAspectRatio: 16 / 9,
+                        maxCrossAxisExtent: 300.0,
                         mainAxisSpacing: 8,
                         crossAxisSpacing: 8,
                       ),
