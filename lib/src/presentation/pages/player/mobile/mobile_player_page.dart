@@ -166,7 +166,15 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     final longPressSeek = ref.watch(
         settingsProvider.select((settings) => settings.playerLongPressSeek));
 
-    final safePadding = useMemoized(() => context.mediaQuery.padding);
+    final viewPadding = context.viewPadding;
+    final safePaddingTop = useState(viewPadding.top);
+    final safePaddingBottom = useState(viewPadding.bottom);
+    if (viewPadding.top > 0) {
+      safePaddingTop.value = viewPadding.top;
+    }
+    if (viewPadding.bottom > 0) {
+      safePaddingBottom.value = viewPadding.bottom;
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -185,7 +193,6 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
           _widgetWidth = constraints.maxWidth;
 
           return notifier.videoLinksAsync.when(
-            //loading: () => const Center(child: CircularProgressIndicator()),
             loading: () {
               return Stack(
                 children: [
@@ -195,7 +202,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       top: false,
                       bottom: false,
                       child: Padding(
-                        padding: EdgeInsets.only(top: safePadding.top),
+                        padding: EdgeInsets.only(top: safePaddingTop.value),
                         child: PlayerTopBar(
                           title: notifier.e.info.animeName,
                           subtitle:
@@ -209,11 +216,6 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                 ],
               );
             },
-            // error: (e, s) => CustomErrorWidget(
-            //   e.toString(),
-            //   () {},
-            //   showButton: false,
-            // ),
             error: (error, _) {
               return Stack(
                 children: [
@@ -223,7 +225,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       top: false,
                       bottom: false,
                       child: Padding(
-                        padding: EdgeInsets.only(top: safePadding.top),
+                        padding: EdgeInsets.only(top: safePaddingTop.value),
                         child: PlayerTopBar(
                           title: notifier.e.info.animeName,
                           subtitle:
@@ -388,7 +390,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                         top: false,
                         bottom: false,
                         child: Padding(
-                          padding: EdgeInsets.only(top: safePadding.top),
+                          padding: EdgeInsets.only(top: safePaddingTop.value),
                           child: PlayerTopBar(
                             title: notifier.e.info.animeName,
                             subtitle:
@@ -460,7 +462,8 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                                           _hideSeekBackwardButton = true;
                                         });
 
-                                        var result = notifier.position - value;
+                                        Duration result =
+                                            notifier.position - value;
                                         result = result.clampToRange(
                                           notifier.duration,
                                         );
@@ -497,7 +500,8 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                                         setState(() {
                                           _hideSeekForwardButton = true;
                                         });
-                                        var result = notifier.position + value;
+                                        Duration result =
+                                            notifier.position + value;
                                         result = result.clampToRange(
                                           notifier.duration,
                                         );
@@ -586,9 +590,11 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                         bottom: false,
                         child: Padding(
                           padding: EdgeInsets.only(
-                              bottom: safePadding.bottom == 0.0
-                                  ? 24.0
-                                  : safePadding.bottom),
+                            // bottom: safePadding.bottom == 0.0
+                            //     ? 24.0
+                            //     : safePadding.bottom,
+                            bottom: safePaddingBottom.value,
+                          ),
                           child: BottomControls(
                             p,
                             seekShowUI: _seekShowUI,

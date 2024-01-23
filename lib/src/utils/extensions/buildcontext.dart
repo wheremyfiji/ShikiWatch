@@ -8,6 +8,10 @@ extension BuildContextExt on BuildContext {
   ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
   IconThemeData get iconTheme => IconTheme.of(this);
 
+  EdgeInsets get viewPadding => MediaQuery.viewPaddingOf(this);
+  EdgeInsets get viewInsets => MediaQuery.viewInsetsOf(this);
+  EdgeInsets get padding => MediaQuery.paddingOf(this);
+
   Brightness get brightness => theme.brightness;
   ColorScheme get colorScheme => theme.colorScheme;
   bool get isDarkThemed => brightness == Brightness.dark;
