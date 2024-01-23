@@ -18,7 +18,7 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final height = context.mediaQuery.size.height;
+    final viewPadding = context.viewPadding;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -27,56 +27,65 @@ class LoginPage extends ConsumerWidget {
         preferredSize: const Size.fromHeight(0),
         child: AppBar(
           automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
         ),
       ),
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      //height: 148.0,
-                      height: height / 4,
-                    ),
-                    Text(
-                      'ShikiWatch',
-                      style: context.textTheme.displaySmall, //headlineLarge
-                    ),
-                    Text(
-                      'Неофициальное приложение для Шикимори',
-                      textAlign: TextAlign.center,
-                      style: context.textTheme.titleSmall?.copyWith(
-                        color: context.colorScheme.onBackground.withOpacity(
-                          0.8,
-                        ),
+        top: false,
+        child: Align(
+          //alignment: Alignment.bottomCenter,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    16.0,
+                    viewPadding.top,
+                    16.0,
+                    0.0,
+                  ),
+                  child: Text(
+                    'ShikiWatch',
+                    style: context
+                        .textTheme.displayMedium, //headlineLarge  displaySmall
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    bottom: 16.0,
+                  ),
+                  child: Text(
+                    'Неофициальное приложение для Шикимори',
+                    textAlign: TextAlign.center,
+                    style: context.textTheme.titleSmall?.copyWith(
+                      color: context.colorScheme.onBackground.withOpacity(
+                        0.8,
                       ),
                     ),
-                    const SizedBox(
-                      height: 16.0,
-                    ),
-                    const FeatureTile(
-                      icon: Icons.video_library_rounded,
-                      title: 'Просмотр аниме',
-                      subtitle: 'Выбор источников и удобный встроенный плеер',
-                    ),
-                    const FeatureTile(
-                      icon: Icons.book_rounded,
-                      title: 'Библиотека',
-                      subtitle: 'Быстрый доступ к личным спискам тайтлов',
-                    ),
-                    const FeatureTile(
-                      icon: Icons.auto_awesome_rounded,
-                      title: 'Кастомизация',
-                      subtitle: 'Продвинутый уровень настройки приложения',
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                const FeatureTile(
+                  icon: Icons.video_library_rounded,
+                  title: 'Просмотр аниме',
+                  subtitle: 'Выбор источников и удобный встроенный плеер',
+                ),
+                const FeatureTile(
+                  icon: Icons.book_rounded,
+                  title: 'Библиотека',
+                  subtitle: 'Быстрый доступ к личным спискам тайтлов',
+                ),
+                const FeatureTile(
+                  icon: Icons.auto_awesome_rounded,
+                  title: 'Кастомизация',
+                  subtitle: 'Продвинутый уровень настройки приложения',
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -111,10 +120,10 @@ class _BottomBar extends ConsumerWidget {
       color: context.colorScheme.surface,
       surfaceTintColor: context.colorScheme.surfaceTint,
       shadowColor: Colors.transparent,
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(12.0),
-        topRight: Radius.circular(12.0),
-      ),
+      // borderRadius: const BorderRadius.only(
+      //   topLeft: Radius.circular(12.0),
+      //   topRight: Radius.circular(12.0),
+      // ),
       type: MaterialType.card,
       clipBehavior: Clip.hardEdge,
       elevation: 3,
@@ -123,7 +132,7 @@ class _BottomBar extends ConsumerWidget {
           16.0,
           16.0,
           16.0,
-          MediaQuery.paddingOf(context).bottom,
+          MediaQuery.paddingOf(context).bottom + 6.0,
         ),
         child: AnimatedSize(
           alignment: Alignment.topCenter,
