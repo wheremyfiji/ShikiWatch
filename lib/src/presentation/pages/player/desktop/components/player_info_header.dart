@@ -8,6 +8,7 @@ class PlayerInfoHeader extends StatelessWidget {
   final String animePicture;
   final int episodeNumber;
   final String studioName;
+  final Widget skipButton;
   final VoidCallback? onPressed;
 
   const PlayerInfoHeader({
@@ -16,6 +17,7 @@ class PlayerInfoHeader extends StatelessWidget {
     required this.animePicture,
     required this.episodeNumber,
     required this.studioName,
+    required this.skipButton,
     this.onPressed,
   });
 
@@ -62,13 +64,14 @@ class PlayerInfoHeader extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        IconButton(
-          tooltip: 'Перемотать 125 секунд',
-          iconSize: 32,
-          color: Colors.white,
-          onPressed: onPressed,
-          icon: const Icon(Icons.double_arrow_rounded),
-        ),
+        skipButton,
+        // IconButton(
+        //   tooltip: 'Перемотать 125 секунд',
+        //   iconSize: 32,
+        //   color: Colors.white,
+        //   onPressed: onPressed,
+        //   icon: const Icon(Icons.double_arrow_rounded),
+        // ),
       ],
     );
   }

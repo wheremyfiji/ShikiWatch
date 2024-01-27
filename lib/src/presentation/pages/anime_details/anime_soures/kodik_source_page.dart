@@ -278,7 +278,7 @@ class KodikSourcePage extends ConsumerWidget {
                           //     : null,
                           title: Row(
                             mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            //crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Flexible(
                                 child: Text(
@@ -467,7 +467,8 @@ class _CustomInfoChip extends StatelessWidget {
       color: context.theme.colorScheme.tertiaryContainer,
       //elevation: 0.0,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        //padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
         child: Text(
           title,
           style: TextStyle(

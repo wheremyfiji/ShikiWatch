@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -124,6 +125,8 @@ class PlayerNotifier extends w.ChangeNotifier {
 
   AudioSession? _audioSession;
   final List<StreamSubscription> _audioSessionSubscriptions = [];
+
+  List<int> opTimecode = [];
 
   void initState() async {
     if (!AppUtils.instance.isDesktop) {
@@ -635,8 +638,26 @@ class PlayerNotifier extends w.ChangeNotifier {
               : _playlistItem.libria!.host + _playlistItem.libria!.sd!,
         ),
       );
+
+      opTimecode = _playlistItem.libria!.opSkip ?? [];
     } else if (_animeSourceType == AnimeSource.kodik &&
         _playlistItem.link != null) {
+      try {
+        opTimecode =
+            await ref.read(kodikApiProvider).getSkips(_playlistItem.link!);
+      } catch (error, stackTrace) {
+        // todo
+        await Sentry.captureException(
+          error,
+          stackTrace: stackTrace,
+          withScope: (scope) {
+            scope.setExtra('shiki_anime_id', e.info.shikimoriId);
+            scope.setExtra('kodik_url', _playlistItem.link);
+            scope.level = SentryLevel.error;
+          },
+        );
+      }
+
       videoLinksAsync = await AsyncValue.guard(
         () async {
           final links = await ref.read(kodikApiProvider).getHLSLink(

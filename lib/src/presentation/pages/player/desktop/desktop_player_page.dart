@@ -16,6 +16,7 @@ import '../shared/buffering_indicator.dart';
 import '../shared/quality_popup_menu.dart';
 import '../shared/shared.dart';
 
+import '../shared/skip_fragment_button.dart';
 import 'components/player_info_header.dart';
 import 'components/player_volume_slider.dart';
 
@@ -158,6 +159,11 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
   Widget build(BuildContext context) {
     final notifier = ref.watch(playerProvider(p));
 
+    final opTimecode = notifier.opTimecode;
+    final showSkip = opTimecode.isNotEmpty &&
+        (opTimecode.first) <= notifier.position.inSeconds &&
+        opTimecode.last > notifier.position.inSeconds;
+
     return Focus(
       autofocus: true,
       child: GestureDetector(
@@ -198,14 +204,49 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                         tooltip: 'Назад',
                       ),
                       const Spacer(),
+                      // Visibility(
+                      //   visible: !showSkip,
+                      //   child: SkipFragmentButton(
+                      //     onSkip: () {
+                      //       print('onSkip');
+                      //     },
+                      //     onClose: () {
+                      //       print('onClose');
+                      //     },
+                      //   ),
+                      //   // FilledButton(
+                      //   //   onPressed: () {},
+                      //   //   child: const Text('Пропустить опенинг'),
+                      //   // ),
+                      // ),
+
                       PlayerInfoHeader(
                         animeName: p.extra.info.animeName,
                         animePicture: p.extra.info.imageUrl,
                         episodeNumber: notifier.currentEpNumber,
                         studioName: p.extra.info.studioName,
-                        onPressed: () => notifier.player.seek(
-                          notifier.position + const Duration(seconds: 85),
+                        skipButton: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 500),
+                          child: showSkip
+                              ? SkipFragmentButton(
+                                  onSkip: () => notifier.player
+                                      .seek(Duration(seconds: opTimecode.last)),
+                                  onClose: () => notifier.opTimecode = [],
+                                )
+                              : IconButton(
+                                  tooltip: 'Перемотать 125 секунд',
+                                  iconSize: 32,
+                                  color: Colors.white,
+                                  onPressed: () => notifier.player.seek(
+                                    notifier.position +
+                                        const Duration(seconds: 85),
+                                  ),
+                                  icon: const Icon(Icons.double_arrow_rounded),
+                                ),
                         ),
+                        // onPressed: () => notifier.player.seek(
+                        //   notifier.position + const Duration(seconds: 85),
+                        // ),
                       ),
                       const SizedBox(
                         height: 24,

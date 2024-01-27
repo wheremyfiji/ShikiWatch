@@ -56,11 +56,13 @@ class LibriaEpisode {
   final String? fnd;
   final String? hd;
   final String? sd;
+  final List<int>? opSkip;
 
   const LibriaEpisode({
     required this.host,
     required this.fnd,
     required this.hd,
     this.sd,
+    this.opSkip,
   });
 }

@@ -148,6 +148,12 @@ class AnilibriaSourcePage extends HookConsumerWidget {
             fnd: e.hls!.fhd,
             hd: e.hls!.hd,
             sd: e.hls!.sd,
+            opSkip: e.skips?.opening == null
+                ? []
+                : [
+                    e.skips!.opening!.start ?? 0,
+                    e.skips!.opening!.stop!,
+                  ],
           ),
           name: e.name,
         ));
