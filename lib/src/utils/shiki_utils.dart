@@ -1,3 +1,94 @@
+import 'dart:convert' as convert;
+
+import 'package:flutter/material.dart';
+
+import 'package:url_launcher/url_launcher_string.dart' as url_launcher;
+import 'package:go_router/go_router.dart';
+
+import '../domain/models/pages_extra.dart';
+
+class ShikiUtils {
+  ShikiUtils._();
+
+  static final ShikiUtils _instance = ShikiUtils._();
+
+  static ShikiUtils get instance => _instance;
+
+  static const List<String> _allowedType = ['anime', 'manga', 'character'];
+
+  void handleShikiHtmlLinkTap(
+    BuildContext ctx, {
+    required String url,
+    required Map<String, String> attributes,
+  }) {
+    //print('url: $url\n attributes: $attributes\n');
+    final dataAttrs = attributes['data-attrs'];
+
+    if (dataAttrs == null || dataAttrs.isEmpty) {
+      url_launcher.launchUrlString(
+        url,
+        mode: url_launcher.LaunchMode.externalApplication,
+      );
+      return;
+    }
+
+    final jsonData = convert.json.decode(dataAttrs);
+
+    if (jsonData['type'] is! String ||
+        !_allowedType.contains(jsonData['type'])) {
+      url_launcher.launchUrlString(
+        url,
+        mode: url_launcher.LaunchMode.externalApplication,
+      );
+      return;
+    }
+
+    final id = jsonData['id'];
+
+    switch (jsonData['type']) {
+      case 'anime':
+        {
+          final extra = AnimeDetailsPageExtra(
+            id: id,
+            label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
+          );
+
+          ctx.pushNamed(
+            'library_anime',
+            pathParameters: <String, String>{
+              'id': id.toString(),
+            },
+            extra: extra,
+          );
+        }
+      case 'manga':
+        {
+          // final extra = AnimeDetailsPageExtra(
+          //   id: id,
+          //   label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
+          // );
+
+          // ctx.pushNamed(
+          //   'library_manga',
+          //   pathParameters: <String, String>{
+          //     'id': id.toString(),
+          //   },
+          //   extra: extra,
+          // );
+        }
+      case 'character':
+        {
+          ctx.pushNamed(
+            'character',
+            pathParameters: <String, String>{
+              'id': id.toString(),
+            },
+          );
+        }
+    }
+  }
+}
+
 String getStatus(String value) {
   String status;
 

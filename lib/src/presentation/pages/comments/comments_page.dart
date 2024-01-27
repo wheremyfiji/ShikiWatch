@@ -1,17 +1,15 @@
-import 'dart:convert' as convert;
-
 import 'package:flutter/material.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:url_launcher/url_launcher_string.dart' as url_launcher;
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../utils/extensions/date_time_ext.dart';
 import '../../../domain/models/shiki_comment.dart';
-import '../../../domain/models/pages_extra.dart';
 import '../../providers/comments_provider.dart';
+import '../../../utils/shiki_utils.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/cool_chip.dart';
 
@@ -150,7 +148,11 @@ class CommentWidget extends StatelessWidget {
                   return;
                 }
 
-                _handleHtmlLinkTap(context, url: url, attributes: attributes);
+                ShikiUtils.instance.handleShikiHtmlLinkTap(
+                  context,
+                  url: url,
+                  attributes: attributes,
+                );
 
                 // url_launcher.launchUrlString(
                 //   url,
@@ -168,69 +170,5 @@ class CommentWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-void _handleHtmlLinkTap(
-  BuildContext ctx, {
-  required String url,
-  required Map<String, String> attributes,
-}) {
-  //print('url: $url\n attributes: $attributes\n');
-  final dataAttrs = attributes['data-attrs'];
-
-  if (dataAttrs == null || dataAttrs.isEmpty) {
-    url_launcher.launchUrlString(
-      url,
-      mode: url_launcher.LaunchMode.externalApplication,
-    );
-    return;
-  }
-
-  final jsonData = convert.json.decode(dataAttrs);
-
-  if (jsonData['type'] is! String || jsonData['type'] != 'anime'
-      //|| jsonData['type'] != 'manga'
-      ) {
-    url_launcher.launchUrlString(
-      url,
-      mode: url_launcher.LaunchMode.externalApplication,
-    );
-    return;
-  }
-
-  final id = jsonData['id'];
-
-  switch (jsonData['type']) {
-    case 'anime':
-      {
-        final extra = AnimeDetailsPageExtra(
-          id: id,
-          label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
-        );
-
-        ctx.pushNamed(
-          'library_anime',
-          pathParameters: <String, String>{
-            'id': id.toString(),
-          },
-          extra: extra,
-        );
-      }
-    case 'manga':
-      {
-        // final extra = AnimeDetailsPageExtra(
-        //   id: id,
-        //   label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
-        // );
-
-        // ctx.pushNamed(
-        //   'library_manga',
-        //   pathParameters: <String, String>{
-        //     'id': id.toString(),
-        //   },
-        //   extra: extra,
-        // );
-      }
   }
 }
