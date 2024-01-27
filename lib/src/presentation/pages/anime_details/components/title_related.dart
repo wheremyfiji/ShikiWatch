@@ -50,15 +50,20 @@ class TitleRelatedWidget extends ConsumerWidget {
                           .copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Text(
-                    '(${dataList.length})',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.colorScheme.onBackground.withOpacity(
-                        0.8,
-                      ),
-                    ),
+                  Badge.count(
+                    count: dataList.length,
+                    backgroundColor: context.colorScheme.secondary,
+                    textColor: context.colorScheme.onSecondary,
                   ),
+                  // Text(
+                  //   '(${dataList.length})',
+                  //   style: TextStyle(
+                  //     fontSize: 12,
+                  //     color: context.colorScheme.onBackground.withOpacity(
+                  //       0.8,
+                  //     ),
+                  //   ),
+                  // ),
                   if (hasMore) ...[
                     const Spacer(),
                     IconButton(

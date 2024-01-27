@@ -9,8 +9,13 @@ import '../../widgets/error_widget.dart';
 
 class SimilarAnimesPage extends ConsumerWidget {
   final int animeId;
+  final String name;
 
-  const SimilarAnimesPage({super.key, required this.animeId});
+  const SimilarAnimesPage({
+    super.key,
+    required this.animeId,
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,37 +25,55 @@ class SimilarAnimesPage extends ConsumerWidget {
       body: SafeArea(
         top: false,
         bottom: false,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverAppBar.large(
-                forceElevated: innerBoxIsScrolled,
-                automaticallyImplyLeading: false,
-                leading: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.arrow_back),
-                ),
-                title: const Text(
-                  'Похожее',
-                ),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              pinned: true,
+              leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
               ),
-            ];
-          },
-          body: similarAnimes.when(
-            data: (data) {
-              if (data.isEmpty) {
-                return Center(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Похожее',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: context.theme.colorScheme.onBackground,
+                    ),
+                  ),
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: context.theme.colorScheme.onBackground
+                          .withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ...similarAnimes.when(
+              data: (data) {
+                if (data.isEmpty) {
+                  return [
+                    SliverFillRemaining(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             'Σ(ಠ_ಠ)',
                             textAlign: TextAlign.center,
                             style: context.textTheme.displayMedium,
+                          ),
+                          const SizedBox(
+                            height: 10.0,
                           ),
                           Text(
                             'Похоже тут пусто..',
@@ -59,22 +82,19 @@ class SimilarAnimesPage extends ConsumerWidget {
                               fontSize: 14,
                             ),
                           ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text(
-                              'Назад',
-                            ),
-                          )
                         ],
                       ),
-                    ),
-                  ),
-                );
-              }
-              return CustomScrollView(
-                slivers: [
+                    )
+                  ];
+                }
+                return [
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      0,
+                      16,
+                      context.padding.bottom,
+                    ),
                     sliver: SliverGrid(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
@@ -93,15 +113,23 @@ class SimilarAnimesPage extends ConsumerWidget {
                       ),
                     ),
                   ),
-                ],
-              );
-            },
-            error: (err, stack) => CustomErrorWidget(err.toString(),
-                () => ref.refresh(similarTitlesAnimeProvider(animeId))),
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
+                ];
+              },
+              loading: () => [
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              ],
+              error: (err, stack) => [
+                SliverFillRemaining(
+                  child: CustomErrorWidget(
+                    err.toString(),
+                    () => ref.refresh(similarTitlesAnimeProvider(animeId)),
+                  ),
+                ),
+              ],
             ),
-          ),
+          ],
         ),
       ),
     );

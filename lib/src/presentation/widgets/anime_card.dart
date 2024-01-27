@@ -111,7 +111,7 @@ class AnimeCompactListTile extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 2),
+              padding: const EdgeInsets.only(left: 3),
               child: Icon(
                 Icons.star_rounded,
                 size: 10,
@@ -121,11 +121,16 @@ class AnimeCompactListTile extends StatelessWidget {
           ],
         ],
       ),
-      trailing: data.episodes == 0
+      trailing: (data.episodes == null || data.episodes == 0)
           ? null
-          : CustomInfoChip(
-              title: data.episodes.toString(),
+          : Badge.count(
+              count: data.episodes!,
+              backgroundColor: context.colorScheme.primary,
+              textColor: context.colorScheme.onPrimary,
             ),
+      // CustomInfoChip(
+      //     title: data.episodes.toString(),
+      //   ),
     );
   }
 }

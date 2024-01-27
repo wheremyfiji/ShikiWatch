@@ -57,14 +57,13 @@ class ExplorePage extends ConsumerWidget {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               sliver: PagedSliverGrid<int, Animes>(
-                //addRepaintBoundaries: false,
+                key: const PageStorageKey<String>('ExplorePageGrid'),
                 addSemanticIndexes: false,
                 addRepaintBoundaries: false,
                 showNewPageErrorIndicatorAsGridChild: false,
                 pagingController: controller.pageController,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 140, //150
-                  //mainAxisExtent: 230,
                   childAspectRatio: 0.55,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
@@ -90,10 +89,9 @@ class ExplorePage extends ConsumerWidget {
             ),
             SliverPadding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom,
+                bottom: context.padding.bottom,
               ),
             ),
-            //const SliverToBoxAdapter(child: SizedBox(height: 60)),
           ],
         ),
       ),

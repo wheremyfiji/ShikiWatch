@@ -77,7 +77,10 @@ class TitleActions extends StatelessWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) =>
-                        SimilarAnimesPage(animeId: anime.id!),
+                        SimilarAnimesPage(
+                      animeId: anime.id!,
+                      name: anime.russian ?? anime.name ?? '',
+                    ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),

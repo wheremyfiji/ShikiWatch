@@ -40,6 +40,8 @@ class UserAccountGroup extends ConsumerWidget {
               builder: (context) => AlertDialog(
                 icon: const Icon(Icons.logout_rounded),
                 title: const Text('Выйти из аккаунта?'),
+                content: const Text(
+                    'Локальная история и настройки останутся на месте'),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),

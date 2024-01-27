@@ -22,7 +22,7 @@ class ExploreActions extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              width: 8,
+              width: 16,
             ),
             Expanded(
               child: CustomCardButton(
@@ -64,7 +64,7 @@ class ExploreActions extends StatelessWidget {
         //   ],
         // ),
         const SizedBox(
-          height: 8,
+          height: 12,
         ),
         CustomCardButton(
           label: 'Календарь онгоингов',

@@ -64,16 +64,21 @@ class TitleCharactersWidget extends StatelessWidget {
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Text(
-                      '(${characters.length})',
-                      //style: context.textTheme.bodySmall,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: context.colorScheme.onBackground.withOpacity(
-                          0.8,
-                        ),
-                      ),
+                    Badge.count(
+                      count: characters.length,
+                      backgroundColor: context.colorScheme.secondary,
+                      textColor: context.colorScheme.onSecondary,
                     ),
+                    // Text(
+                    //   '(${characters.length})',
+                    //   //style: context.textTheme.bodySmall,
+                    //   style: TextStyle(
+                    //     fontSize: 12,
+                    //     color: context.colorScheme.onBackground.withOpacity(
+                    //       0.8,
+                    //     ),
+                    //   ),
+                    // ),
                     if (characters.length > 5) ...[
                       const Spacer(),
                       IconButton(
@@ -96,15 +101,16 @@ class TitleCharactersWidget extends StatelessWidget {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: characters.length,
-                  // separatorBuilder: (context, index) =>
-                  //     const SizedBox(width: 8),
                   itemBuilder: (context, index) {
-                    final isFirstItem = index == 0;
                     final item = characters[index];
+                    final isFirstItem = index == 0;
+                    final isLast = index == characters.length - 1;
 
                     return Container(
-                      margin:
-                          EdgeInsets.fromLTRB(isFirstItem ? 16 : 0, 0, 8, 0),
+                      margin: EdgeInsets.only(
+                        left: isFirstItem ? 16 : 0,
+                        right: isLast ? 16 : 8,
+                      ),
                       height: 120,
                       child: CharacterCard(item.character!),
                     );

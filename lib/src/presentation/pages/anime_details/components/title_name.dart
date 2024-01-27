@@ -83,9 +83,10 @@ class TitleName extends StatelessWidget {
                               itemCount: 5,
                               itemBuilder: (context, index) => Icon(
                                 Icons.star_rounded,
-                                color: context.isDarkThemed
-                                    ? Colors.amber.shade200
-                                    : Colors.amber.shade600,
+                                // color: context.isDarkThemed
+                                //     ? Colors.amber.shade200
+                                //     : Colors.amber.shade600,
+                                color: context.colorScheme.secondary,
                               ),
                             ),
                           ),

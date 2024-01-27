@@ -21,7 +21,7 @@ class CustomCardButton extends StatelessWidget {
       child: Card(
         clipBehavior: Clip.hardEdge,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
+          borderRadius: BorderRadius.circular(12.0),
         ),
         margin: const EdgeInsets.all(0.0),
         child: InkWell(
@@ -35,21 +35,25 @@ class CustomCardButton extends StatelessWidget {
                 Icon(
                   icon,
                   size: 18,
-                  color: context.theme.colorScheme.primary,
+                  color: context.theme.colorScheme.secondary,
                 ),
                 const SizedBox(
                   width: 8,
                 ),
               ],
-              Expanded(
+              Flexible(
                 child: Text(
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
+              ),
+              const SizedBox(
+                width: 4,
               ),
             ],
           ),
