@@ -2,40 +2,23 @@ import 'package:flutter/material.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
 
-Size measureText({
-  required BuildContext context,
-  required String text,
-  required TextStyle textStyle,
-}) {
-  assert(textStyle.fontSize != null);
-  return (TextPainter(
-    text: TextSpan(
-      text: text,
-      style: textStyle.copyWith(
-          fontSize:
-              MediaQuery.textScalerOf(context).scale(textStyle.fontSize!)),
-    ),
-    maxLines: 1,
-    textDirection: Directionality.of(context),
-  )..layout())
-      .size;
-}
-
 class SkipFragmentButton extends StatelessWidget {
   const SkipFragmentButton({
     super.key,
+    required this.title,
     required this.onSkip,
     required this.onClose,
   });
 
+  final String title;
   final VoidCallback onSkip;
   final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
-    final size = measureText(
+    final size = _measureText(
       context: context,
-      text: 'Пропустить фрагмент',
+      text: title,
       textStyle: context.textTheme.bodyMedium!,
     );
 
@@ -58,7 +41,7 @@ class SkipFragmentButton extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 Text(
-                  'Пропустить опенинг', //  фрагмент
+                  title, // Пропустить фрагмент
                   style: TextStyle(
                     color: context.colorScheme.onPrimaryContainer,
                   ),
@@ -106,4 +89,23 @@ class SkipFragmentButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Size _measureText({
+  required BuildContext context,
+  required String text,
+  required TextStyle textStyle,
+}) {
+  assert(textStyle.fontSize != null);
+  return (TextPainter(
+    text: TextSpan(
+      text: text,
+      style: textStyle.copyWith(
+          fontSize:
+              MediaQuery.textScalerOf(context).scale(textStyle.fontSize!)),
+    ),
+    maxLines: 1,
+    textDirection: Directionality.of(context),
+  )..layout())
+      .size;
 }

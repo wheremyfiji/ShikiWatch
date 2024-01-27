@@ -229,6 +229,7 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                           duration: const Duration(milliseconds: 500),
                           child: showSkip
                               ? SkipFragmentButton(
+                                  title: 'Пропустить опенинг',
                                   onSkip: () => notifier.player
                                       .seek(Duration(seconds: opTimecode.last)),
                                   onClose: () => notifier.opTimecode = [],
