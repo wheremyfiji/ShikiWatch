@@ -115,12 +115,21 @@ class MangaDetailPage extends ConsumerWidget {
                       publishers: data.publishers,
                     ).animate().fade(),
                   ),
+                  // if (data.description != null && data.description!.isNotEmpty)
+                  //   SliverPadding(
+                  //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                  //     sliver: SliverToBoxAdapter(
+                  //       child: TitleDescription(
+                  //         data.description!,
+                  //       ).animate().fade(),
+                  //     ),
+                  //   ),
                   if (data.description != null && data.description!.isNotEmpty)
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       sliver: SliverToBoxAdapter(
-                        child: TitleDescription(
-                          data.description!,
+                        child: TitleDescriptionFromHtml(
+                          data.descriptionHtml!,
                         ).animate().fade(),
                       ),
                     ),
