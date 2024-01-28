@@ -42,7 +42,7 @@ class TopicsPageController extends ChangeNotifier {
         forum: 'news',
       );
 
-      if (data.isNotEmpty) {
+      if (data.length > _limit) {
         data.removeLast();
       }
 
