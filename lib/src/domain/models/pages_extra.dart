@@ -1,11 +1,9 @@
-class AnimeDetailsPageExtra {
-  final int id;
-  final String label;
-  //final String image;
-
-  AnimeDetailsPageExtra({
+class TitleDetailsPageExtra {
+  TitleDetailsPageExtra({
     required this.id,
     required this.label,
-    //required this.image,
   });
+
+  final int id;
+  final String label;
 }
