@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 
 import '../../../../utils/app_utils.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
+import '../../../widgets/flexible_sliver_app_bar.dart';
 import 'anilibria_source_page.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
@@ -73,10 +74,8 @@ class KodikSourcePage extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
-              SliverAppBar(
+              FlexibleSliverAppBar(
                 automaticallyImplyLeading: false,
-                pinned: true,
-                //floating: true,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
@@ -90,49 +89,38 @@ class KodikSourcePage extends ConsumerWidget {
                     color: context.theme.colorScheme.onBackground,
                   ),
                 ),
-                expandedHeight: kToolbarHeight * 2,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                bottomContent: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 0,
                     children: [
-                      SizedBox(
-                        height: kToolbarHeight + context.padding.top,
+                      const SizedBox(
+                        width: 8.0,
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 0,
-                          children: [
-                            const SizedBox(
-                              width: 8.0,
-                            ),
-                            ChoiceChip(
-                              label: const Text('Все'),
-                              selected: studioType == KodikStudioType.all,
-                              onSelected: (value) => ref
-                                  .read(kodikStudioTypeProvider.notifier)
-                                  .state = KodikStudioType.all,
-                            ),
-                            ChoiceChip(
-                              label: const Text('Озвучка'),
-                              selected: studioType == KodikStudioType.voice,
-                              onSelected: (value) => ref
-                                  .read(kodikStudioTypeProvider.notifier)
-                                  .state = KodikStudioType.voice,
-                            ),
-                            ChoiceChip(
-                              label: const Text('Субтитры'),
-                              selected: studioType == KodikStudioType.sub,
-                              onSelected: (value) => ref
-                                  .read(kodikStudioTypeProvider.notifier)
-                                  .state = KodikStudioType.sub,
-                            ),
-                            const SizedBox(
-                              width: 8.0,
-                            ),
-                          ],
-                        ),
+                      ChoiceChip(
+                        label: const Text('Все'),
+                        selected: studioType == KodikStudioType.all,
+                        onSelected: (value) => ref
+                            .read(kodikStudioTypeProvider.notifier)
+                            .state = KodikStudioType.all,
+                      ),
+                      ChoiceChip(
+                        label: const Text('Озвучка'),
+                        selected: studioType == KodikStudioType.voice,
+                        onSelected: (value) => ref
+                            .read(kodikStudioTypeProvider.notifier)
+                            .state = KodikStudioType.voice,
+                      ),
+                      ChoiceChip(
+                        label: const Text('Субтитры'),
+                        selected: studioType == KodikStudioType.sub,
+                        onSelected: (value) => ref
+                            .read(kodikStudioTypeProvider.notifier)
+                            .state = KodikStudioType.sub,
+                      ),
+                      const SizedBox(
+                        width: 8.0,
                       ),
                     ],
                   ),
