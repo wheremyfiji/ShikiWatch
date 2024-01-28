@@ -150,8 +150,15 @@ class HistoryTargetItem extends StatelessWidget {
           onTap: historyItem.target!.kind == null
               ? null
               : () {
+                  final extra = TitleDetailsPageExtra(
+                    id: historyItem.target!.id!,
+                    label: (historyItem.target!.russian == ''
+                            ? historyItem.target!.name
+                            : historyItem.target!.russian) ??
+                        '',
+                  );
+
                   if (kindIsManga(historyItem.target!.kind!)) {
-                    final extra = historyItem.target!.toMangaShort;
                     GoRouter.of(context).pushNamed(
                       'library_manga',
                       pathParameters: <String, String>{
@@ -162,13 +169,6 @@ class HistoryTargetItem extends StatelessWidget {
 
                     return;
                   }
-                  final extra = AnimeDetailsPageExtra(
-                    id: historyItem.target!.id!,
-                    label: (historyItem.target!.russian == ''
-                            ? historyItem.target!.name
-                            : historyItem.target!.russian) ??
-                        '',
-                  );
 
                   GoRouter.of(context).pushNamed(
                     'library_anime',

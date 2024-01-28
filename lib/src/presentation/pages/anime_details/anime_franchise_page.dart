@@ -124,7 +124,7 @@ class FranchiseListItem extends StatelessWidget {
         onTap: item.id == currentId || item.id == null || item.id == 0
             ? null
             : () {
-                final extra = AnimeDetailsPageExtra(
+                final extra = TitleDetailsPageExtra(
                   id: item.id!,
                   label: item.name ?? '[Без названия]',
                 );

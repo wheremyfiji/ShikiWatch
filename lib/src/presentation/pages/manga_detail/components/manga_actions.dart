@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../../../../domain/models/manga_ranobe.dart';
-import '../../../../domain/models/manga_short.dart';
-import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/shadowed_overflow_decorator.dart';
+import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../domain/models/manga_ranobe.dart';
 import '../../comments/comments_page.dart';
 import '../manga_links_page.dart';
 import '../manga_similar_page.dart';
 import '../manga_user_rate.dart';
 
 class MangaActions extends StatelessWidget {
-  final MangaShort manga;
   final MangaRanobe data;
 
   const MangaActions({
     super.key,
-    required this.manga,
     required this.data,
   });
 
@@ -49,10 +46,7 @@ class MangaActions extends StatelessWidget {
                   elevation: 0,
                   builder: (context) {
                     return SafeArea(
-                      child: MangaUserRateBottomSheet(
-                        manga: manga,
-                        data: data,
-                      ),
+                      child: MangaUserRateBottomSheet(data),
                     );
                   },
                 ),
@@ -85,7 +79,7 @@ class MangaActions extends StatelessWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) =>
-                        MangaSimilarPage(manga.id!),
+                        MangaSimilarPage(data.id!),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),

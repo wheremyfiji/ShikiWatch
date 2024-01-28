@@ -208,7 +208,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       name: 'library_anime',
                       path: 'anime/:id',
                       pageBuilder: (context, state) {
-                        final extra = state.extra as AnimeDetailsPageExtra;
+                        final extra = state.extra as TitleDetailsPageExtra;
 
                         return SharedAxisTransition(
                           key: state.pageKey,
@@ -232,13 +232,16 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       name: 'library_manga',
                       path: 'manga/:id',
                       pageBuilder: (context, state) {
-                        MangaShort data = state.extra as MangaShort;
+                        //MangaShort data = state.extra as MangaShort;
+
+                        final extra = state.extra as TitleDetailsPageExtra;
 
                         return SharedAxisTransition(
                           key: state.pageKey,
                           child: MangaDetailPage(
                             key: state.pageKey,
-                            manga: data,
+                            //manga: data,
+                            extra: extra,
                           ),
                         );
                       },
@@ -312,7 +315,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       name: 'explore_id',
                       path: r':id(\d+)',
                       pageBuilder: (context, state) {
-                        final extra = state.extra as AnimeDetailsPageExtra;
+                        final extra = state.extra as TitleDetailsPageExtra;
 
                         return SharedAxisTransition(
                           key: state.pageKey,

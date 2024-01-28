@@ -163,7 +163,7 @@ class _SearchAnimeItem extends StatelessWidget {
         onTap: () {
           FocusScope.of(context).unfocus();
 
-          final extra = AnimeDetailsPageExtra(
+          final extra = TitleDetailsPageExtra(
             id: anime.id,
             label: (anime.russian == '' ? anime.name : anime.russian) ?? '',
           );

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../constants/config.dart';
 import '../../domain/models/manga_short.dart';
+import '../../domain/models/pages_extra.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/shiki_utils.dart';
 import '../../utils/app_utils.dart';
@@ -38,12 +39,21 @@ class MangaCard extends StatelessWidget {
             splashFactory: NoSplash.splashFactory,
             onTap: () {
               FocusScope.of(context).unfocus();
+
+              final extra = TitleDetailsPageExtra(
+                id: data.manga!.id!,
+                label: (data.manga?.russian == ''
+                        ? data.manga?.name
+                        : data.manga?.russian) ??
+                    '',
+              );
+
               context.pushNamed(
                 'library_manga',
                 pathParameters: <String, String>{
                   'id': (data.manga?.id!).toString(),
                 },
-                extra: data.manga,
+                extra: extra,
               );
             },
             child: Column(
@@ -117,13 +127,20 @@ class MangaCardEx extends StatelessWidget {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           splashFactory: NoSplash.splashFactory,
-          onTap: () => context.pushNamed(
-            'library_manga',
-            pathParameters: <String, String>{
-              'id': (data.id!).toString(),
-            },
-            extra: data,
-          ),
+          onTap: () {
+            final extra = TitleDetailsPageExtra(
+              id: data.id!,
+              label: (data.russian == '' ? data.name : data.russian) ?? '',
+            );
+
+            context.pushNamed(
+              'library_manga',
+              pathParameters: <String, String>{
+                'id': (data.id!).toString(),
+              },
+              extra: extra,
+            );
+          },
           child: Column(
             children: [
               SizedBox(

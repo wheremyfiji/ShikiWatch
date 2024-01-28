@@ -107,22 +107,22 @@ class TitleRelatedWidget extends ConsumerWidget {
                 clipBehavior: Clip.hardEdge,
                 child: InkWell(
                   onTap: () {
+                    final extra = TitleDetailsPageExtra(
+                      id: title.id!,
+                      label:
+                          (title.russian == '' ? title.name : title.russian) ??
+                              '',
+                    );
+
                     if (isManga) {
                       context.pushNamed(
                         'library_manga',
                         pathParameters: <String, String>{
                           'id': (title!.id!).toString(),
                         },
-                        extra: title,
+                        extra: extra,
                       );
                     } else {
-                      final extra = AnimeDetailsPageExtra(
-                        id: title.id!,
-                        label: (title.russian == ''
-                                ? title.name
-                                : title.russian) ??
-                            '',
-                      );
                       context.pushNamed(
                         'library_anime',
                         pathParameters: <String, String>{
@@ -302,22 +302,23 @@ class TitleRelatedBottomSheet extends StatelessWidget {
                   return ListTile(
                     visualDensity: VisualDensity.compact,
                     onTap: () {
+                      final extra = TitleDetailsPageExtra(
+                        id: title.id!,
+                        label: (title.russian == ''
+                                ? title.name
+                                : title.russian) ??
+                            '',
+                      );
+
                       if (isManga) {
                         context.pushNamed(
                           'library_manga',
                           pathParameters: <String, String>{
                             'id': (title!.id!).toString(),
                           },
-                          extra: title,
+                          extra: extra,
                         );
                       } else {
-                        final extra = AnimeDetailsPageExtra(
-                          id: title.id!,
-                          label: (title.russian == ''
-                                  ? title.name
-                                  : title.russian) ??
-                              '',
-                        );
                         context.pushNamed(
                           'library_anime',
                           pathParameters: <String, String>{

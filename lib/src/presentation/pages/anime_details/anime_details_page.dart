@@ -33,7 +33,7 @@ import 'components/title_videos.dart';
 import 'rating_dialog.dart';
 
 class AnimeDetailsPage extends ConsumerWidget {
-  final AnimeDetailsPageExtra extra;
+  final TitleDetailsPageExtra extra;
 
   const AnimeDetailsPage({
     super.key,

@@ -16,14 +16,12 @@ import '../../widgets/number_field.dart';
 import '../../widgets/shadowed_overflow_decorator.dart';
 
 class MangaUserRateBottomSheet extends ConsumerStatefulWidget {
-  final MangaShort manga;
-  final MangaRanobe data;
-
-  const MangaUserRateBottomSheet({
+  const MangaUserRateBottomSheet(
+    this.data, {
     super.key,
-    required this.manga,
-    required this.data,
   });
+
+  final MangaRanobe data;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -497,8 +495,8 @@ class _MangaUserRateBottomSheetState
                                         .read(updateMangaRateButtonProvider
                                             .notifier)
                                         .createRate(
-                                          mangaId: widget.manga.id!,
-                                          manga: widget.manga,
+                                          mangaId: widget.data.id!,
+                                          manga: widget.data,
                                           selectedStatus:
                                               convertStatusIntToString(
                                                   selectedStatus!),
@@ -519,7 +517,7 @@ class _MangaUserRateBottomSheetState
                                             .notifier)
                                         .updateRate(
                                           rateId: widget.data.userRate!.id!,
-                                          manga: widget.manga,
+                                          manga: widget.data,
                                           selectedStatus:
                                               convertStatusIntToString(
                                                   selectedStatus!),
@@ -574,7 +572,7 @@ class _MangaUserRateBottomSheetState
                                 .read(updateMangaRateButtonProvider.notifier)
                                 .deleteRate(
                                   rateId: widget.data.userRate!.id!,
-                                  mangaId: widget.manga.id!,
+                                  mangaId: widget.data.id!,
                                   status: initStatus ?? '',
                                   onFinally: () {
                                     Navigator.of(context).pop();
@@ -617,12 +615,27 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
 
   Future<void> createRate({
     required int mangaId,
-    required MangaShort manga,
+    required MangaRanobe manga,
     required String selectedStatus,
     required VoidCallback onFinally,
   }) async {
     try {
       state = const AsyncValue.loading();
+
+      final mangaShort = MangaShort(
+        id: manga.id,
+        name: manga.name,
+        russian: manga.russian,
+        url: manga.url,
+        image: manga.image,
+        kind: manga.kind,
+        score: manga.score,
+        status: manga.status,
+        chapters: manga.chapters,
+        volumes: manga.volumes,
+        airedOn: manga.airedOn,
+        releasedOn: manga.releasedOn,
+      );
 
       final rate = await ref.read(userDataSourceProvider).createUserRate(
             token: SecureStorageService.instance.token,
@@ -636,7 +649,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
         case 'watching':
           {
             ref.read(readingMangaTabProvider).addManga(
-                  mangaInfo: manga,
+                  mangaInfo: mangaShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -650,7 +663,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
         case 'planned':
           {
             ref.read(plannedMangaTabProvider).addManga(
-                  mangaInfo: manga,
+                  mangaInfo: mangaShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -664,7 +677,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
         case 'completed':
           {
             ref.read(completedMangaTabProvider).addManga(
-                  mangaInfo: manga,
+                  mangaInfo: mangaShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -678,7 +691,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
         case 'rewatching':
           {
             ref.read(reReadingMangaTabProvider).addManga(
-                  mangaInfo: manga,
+                  mangaInfo: mangaShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -692,7 +705,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
         case 'on_hold':
           {
             ref.read(onHoldMangaTabProvider).addManga(
-                  mangaInfo: manga,
+                  mangaInfo: mangaShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -706,7 +719,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
         case 'dropped':
           {
             ref.read(droppedMangaTabProvider).addManga(
-                  mangaInfo: manga,
+                  mangaInfo: mangaShort,
                   rateId: rate.id!,
                   createdAt: rate.createdAt!,
                   updatedAt: rate.updatedAt!,
@@ -741,7 +754,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
   }
 
   Future<void> updateRate({
-    required MangaShort manga,
+    required MangaRanobe manga,
     required int rateId,
     required String initStatus,
     required String selectedStatus,
@@ -753,6 +766,21 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
   }) async {
     try {
       state = const AsyncValue.loading();
+
+      final mangaShort = MangaShort(
+        id: manga.id,
+        name: manga.name,
+        russian: manga.russian,
+        url: manga.url,
+        image: manga.image,
+        kind: manga.kind,
+        score: manga.score,
+        status: manga.status,
+        chapters: manga.chapters,
+        volumes: manga.volumes,
+        airedOn: manga.airedOn,
+        releasedOn: manga.releasedOn,
+      );
 
       final rate = await ref.read(userDataSourceProvider).updateUserRate(
             token: SecureStorageService.instance.token,
@@ -803,7 +831,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
           case 'watching':
             {
               ref.read(readingMangaTabProvider).addManga(
-                    mangaInfo: manga,
+                    mangaInfo: mangaShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -817,7 +845,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
           case 'planned':
             {
               ref.read(plannedMangaTabProvider).addManga(
-                    mangaInfo: manga,
+                    mangaInfo: mangaShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -831,7 +859,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
           case 'completed':
             {
               ref.read(completedMangaTabProvider).addManga(
-                    mangaInfo: manga,
+                    mangaInfo: mangaShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -845,7 +873,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
           case 'rewatching':
             {
               ref.read(reReadingMangaTabProvider).addManga(
-                    mangaInfo: manga,
+                    mangaInfo: mangaShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -859,7 +887,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
           case 'on_hold':
             {
               ref.read(onHoldMangaTabProvider).addManga(
-                    mangaInfo: manga,
+                    mangaInfo: mangaShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,
@@ -873,7 +901,7 @@ class UpdatMangaRateNotifierNotifier extends StateNotifier<AsyncValue<void>> {
           case 'dropped':
             {
               ref.read(droppedMangaTabProvider).addManga(
-                    mangaInfo: manga,
+                    mangaInfo: mangaShort,
                     rateId: rate.id!,
                     createdAt: rate.createdAt!,
                     updatedAt: rate.updatedAt!,

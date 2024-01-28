@@ -48,7 +48,7 @@ class ShikiUtils {
     switch (jsonData['type']) {
       case 'anime':
         {
-          final extra = AnimeDetailsPageExtra(
+          final extra = TitleDetailsPageExtra(
             id: id,
             label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
           );
@@ -63,18 +63,18 @@ class ShikiUtils {
         }
       case 'manga':
         {
-          // final extra = AnimeDetailsPageExtra(
-          //   id: id,
-          //   label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
-          // );
+          final extra = TitleDetailsPageExtra(
+            id: id,
+            label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
+          );
 
-          // ctx.pushNamed(
-          //   'library_manga',
-          //   pathParameters: <String, String>{
-          //     'id': id.toString(),
-          //   },
-          //   extra: extra,
-          // );
+          ctx.pushNamed(
+            'library_manga',
+            pathParameters: <String, String>{
+              'id': id.toString(),
+            },
+            extra: extra,
+          );
         }
       case 'character':
         {

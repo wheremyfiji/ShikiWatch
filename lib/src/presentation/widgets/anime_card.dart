@@ -38,7 +38,7 @@ class AnimeCompactListTile extends StatelessWidget {
         update: false,
       ),
       onTap: () {
-        final extra = AnimeDetailsPageExtra(
+        final extra = TitleDetailsPageExtra(
           id: data.anime!.id!,
           label: (data.anime!.russian == ''
                   ? data.anime!.name
@@ -192,7 +192,7 @@ class AnimeListTile extends StatelessWidget {
         onTap: () {
           FocusScope.of(context).unfocus();
 
-          final extra = AnimeDetailsPageExtra(
+          final extra = TitleDetailsPageExtra(
             id: data.anime!.id!,
             label: (data.anime!.russian == ''
                     ? data.anime!.name
@@ -343,7 +343,7 @@ class AnimeCard extends StatelessWidget {
           pathParameters: <String, String>{
             'id': (data.anime!.id!).toString(),
           },
-          extra: AnimeDetailsPageExtra(
+          extra: TitleDetailsPageExtra(
             id: data.anime!.id!,
             label: (data.anime!.russian == ''
                     ? data.anime!.name
@@ -454,7 +454,7 @@ class AnimeTileExp extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
           //onTap: () => context.push('/explore/${data.id!}', extra: data),
           onTap: () {
-            final extra = AnimeDetailsPageExtra(
+            final extra = TitleDetailsPageExtra(
               id: data.id!,
               label: (data.russian == '' ? data.name : data.russian) ?? '',
             );

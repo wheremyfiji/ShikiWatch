@@ -150,7 +150,7 @@ class HistoryItem extends ConsumerWidget {
           );
         },
         onTap: () {
-          final extra = AnimeDetailsPageExtra(
+          final extra = TitleDetailsPageExtra(
             id: shikimoriId,
             label: animeName,
           );
