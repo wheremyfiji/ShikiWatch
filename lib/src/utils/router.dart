@@ -34,6 +34,7 @@ import '../presentation/pages/search/anime_filter_page.dart';
 import '../presentation/pages/search/anime_search_page.dart';
 import '../presentation/pages/settings/local_database_manage_page.dart';
 import '../presentation/pages/settings/settings_page.dart';
+import '../presentation/pages/topics/topics_page.dart';
 import '../presentation/providers/anime_search_provider.dart';
 import '../services/secure_storage/secure_storage_service.dart';
 
@@ -394,6 +395,23 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       },
                     ),
                   ],
+                ),
+              ],
+            ),
+
+            /// topics sceen
+            StatefulShellBranch(
+              observers: [
+                SentryNavigatorObserver(),
+                HeroController(),
+              ],
+              routes: <RouteBase>[
+                GoRoute(
+                  name: 'topics',
+                  path: '/topics',
+                  builder: (context, state) => TopicsRootPage(
+                    key: state.pageKey,
+                  ),
                 ),
               ],
             ),
