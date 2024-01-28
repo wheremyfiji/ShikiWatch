@@ -649,14 +649,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
-  interactiveviewer_gallery:
-    dependency: "direct main"
-    description:
-      name: interactiveviewer_gallery
-      sha256: fd8413c1226a57b11a7c6c231dc9951ebd9b05b6cfdf86f217df7fe518836ae8
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.0"
   intl:
     dependency: "direct main"
     description:

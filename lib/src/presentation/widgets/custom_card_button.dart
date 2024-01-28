@@ -17,7 +17,7 @@ class CustomCardButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 48,
+      height: 52, // это второй
       child: Card(
         clipBehavior: Clip.hardEdge,
         shape: RoundedRectangleBorder(
@@ -29,12 +29,12 @@ class CustomCardButton extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(
-                width: 8,
+                width: 10,
               ),
               if (icon != null) ...[
                 Icon(
                   icon,
-                  size: 18,
+                  size: 16,
                   color: context.theme.colorScheme.secondary,
                 ),
                 const SizedBox(
@@ -49,6 +49,7 @@ class CustomCardButton extends StatelessWidget {
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: context.colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.w500,
+                    fontSize: 14,
                   ),
                 ),
               ),

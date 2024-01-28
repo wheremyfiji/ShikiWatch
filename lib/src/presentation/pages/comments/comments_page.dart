@@ -6,6 +6,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_html/src/tree/image_element.dart' as ie;
+
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../utils/extensions/date_time_ext.dart';
 import '../../../domain/models/shiki_comment.dart';
 import '../../providers/comments_provider.dart';
@@ -138,9 +141,57 @@ class CommentWidget extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Html(
               data: comment.htmlBody,
+              // extensions: [
+              //   ImageExtension(
+              //     builder: (extensionContext) {
+              //       final element =
+              //           extensionContext.styledElement as ie.ImageElement;
+              //       //as ImageElement;
+
+              //       print('element: $element');
+
+              //       final url = element.src;
+              //       final w = double.tryParse(
+              //         element.attributes['data-width'] ?? '',
+              //       ); //"data-width" -> "700"
+
+              //       final h = double.tryParse(
+              //         element.attributes['data-height'] ?? '',
+              //       ); //"data-height" -> "500"
+
+              //       print('url: $url');
+              //       print('width: $w');
+              //       print('height: $h');
+
+              //       if (h == null || w == null) {
+              //         return const SizedBox.shrink();
+              //       }
+
+              //       return SizedBox(
+              //         width: w / 4,
+              //         height: h / 4,
+              //         child: CachedImage(
+              //           url,
+              //           fit: BoxFit.contain,
+              //         ),
+              //       );
+
+              //       return const SizedBox.shrink();
+              //     },
+              //   ),
+              //   OnImageTapExtension(
+              //     onImageTap: (url, attributes, element) {
+              //       print('url: $url\n attributes: $attributes');
+              //     },
+              //   ),
+              // ],
               style: {
                 "body": Style(
                   margin: Margins.all(0),
+                ),
+                'a': Style(
+                  textDecoration: TextDecoration.none,
+                  color: context.colorScheme.primary,
                 ),
               },
               onLinkTap: (url, attributes, element) {

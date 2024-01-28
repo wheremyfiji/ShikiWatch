@@ -33,12 +33,12 @@ class _ExpandedSectionState extends State<ExpandedSection>
   void prepareAnimations() {
     expandController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
     );
 
     curve = CurvedAnimation(
       parent: expandController,
-      curve: Curves.fastOutSlowIn,
+      curve: Curves.easeInOutCubic, //  fastOutSlowIn
     );
 
     animation = Tween(begin: 0.4, end: 1.0).animate(curve);

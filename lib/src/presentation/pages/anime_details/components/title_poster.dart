@@ -1,9 +1,10 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../../../../../interactiveviewer_gallery/hero_dialog_route.dart';
+import '../../../../../interactiveviewer_gallery/interactiveviewer_gallery.dart';
 import '../../../../constants/config.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/cached_image.dart';
@@ -16,6 +17,8 @@ class TitlePoster extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final expand = useState(false);
+
+    final heroKey = UniqueKey();
 
     final imageMaxWidth =
         MediaQuery.of(context).orientation == Orientation.portrait
@@ -82,20 +85,47 @@ class TitlePoster extends HookWidget {
         Align(
           alignment: Alignment.center,
           child: GestureDetector(
-            onTap: () => expand.value = !expand.value, // onDoubleTap ?
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.fastEaseInToSlowEaseOut,
-              width: expand.value ? imageMaxWidth : 220,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(expand.value ? 0 : 16),
-              ),
-              clipBehavior: Clip.hardEdge,
-              child: AspectRatio(
-                aspectRatio: 0.703,
-                child: CachedImage(
-                  '${AppConfig.staticUrl}$imageUrl',
-                  fit: BoxFit.cover,
+            //onTap: () => expand.value = !expand.value, // onDoubleTap ?
+            onTap: () {
+              Navigator.of(context, rootNavigator: true).push(
+                HeroDialogRoute(
+                  builder: (ctx) => InteractiveviewerGallery(
+                    sources: ['${AppConfig.staticUrl}$imageUrl'],
+                    initIndex: 0,
+                    maxScale: 3.0,
+                    itemBuilder: (context, imageIndex, isFocus) {
+                      return Center(
+                        child: Hero(
+                          tag: heroKey,
+                          child: CachedImage(
+                            '${AppConfig.staticUrl}$imageUrl',
+                            fadeOutDuration: const Duration(milliseconds: 200),
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+            child: Hero(
+              tag: heroKey,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.fastEaseInToSlowEaseOut,
+                width: expand.value ? imageMaxWidth : 220,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(expand.value ? 0 : 16),
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: AspectRatio(
+                  aspectRatio: 0.703,
+                  child: CachedImage(
+                    '${AppConfig.staticUrl}$imageUrl',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:interactiveviewer_gallery/interactiveviewer_gallery.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../../../utils/extensions/buildcontext.dart';
+import '../../../../interactiveviewer_gallery/hero_dialog_route.dart';
+import '../../../../interactiveviewer_gallery/interactiveviewer_gallery.dart';
 import '../../../utils/extensions/riverpod_extensions.dart';
 import '../../../services/http/http_service_provider.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 import '../../../constants/config.dart';
@@ -70,7 +71,7 @@ class AnimeScreenshotsPage extends HookConsumerWidget {
     required List<AnimeScreenshots> sources,
   }) =>
       Navigator.of(ctx, rootNavigator: true).push(
-        _HeroDialogRoute(
+        HeroDialogRoute(
           builder: (ctx) => InteractiveviewerGallery(
             sources: sources,
             initIndex: index,
@@ -244,50 +245,4 @@ class AnimeScreenshotsPage extends HookConsumerWidget {
       ),
     );
   }
-}
-
-class _HeroDialogRoute<T> extends PageRoute<T> {
-  _HeroDialogRoute({required this.builder}) : super();
-
-  final WidgetBuilder builder;
-
-  @override
-  bool get opaque => false;
-
-  @override
-  bool get barrierDismissible => true;
-
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 300);
-
-  @override
-  bool get maintainState => true;
-
-  @override
-  Color get barrierColor => Colors.black54;
-
-  @override
-  Widget buildTransitions(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return FadeTransition(
-      opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-      child: child,
-    );
-  }
-
-  @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
-    return builder(context);
-  }
-
-  @override
-  String? get barrierLabel => '';
 }
