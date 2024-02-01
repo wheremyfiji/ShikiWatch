@@ -7,16 +7,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
-import '../../../../utils/app_utils.dart';
-import '../../../widgets/auto_hide.dart';
-import '../../../widgets/error_widget.dart';
-import '../player_provider.dart';
+import '../shared/skip_fragment_button.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
+import '../shared/player_speed_popup.dart';
 import '../shared/quality_popup_menu.dart';
+import '../../../widgets/error_widget.dart';
+import '../../../../utils/app_utils.dart';
+import '../../../widgets/auto_hide.dart';
+import '../player_provider.dart';
 import '../shared/shared.dart';
 
-import '../shared/skip_fragment_button.dart';
 import 'components/player_info_header.dart';
 import 'components/player_volume_slider.dart';
 
@@ -338,13 +339,10 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   if (notifier.init && !notifier.error) ...[
-                                    // const SizedBox(
-                                    //   width: 16.0,
-                                    // ),
-                                    // PlayerSpeedPopUp(
-                                    //   playbackSpeed: notifier.playbackSpeed,
-                                    //   onSelected: notifier.setPlaybackSpeed,
-                                    // ),
+                                    PlayerSpeedPopUp(
+                                      playbackSpeed: notifier.playbackSpeed,
+                                      onSelected: notifier.setPlaybackSpeed,
+                                    ),
                                     QualityPopUpMenu(
                                       videoLinks: notifier.videoLinks,
                                       selectedQuality: notifier.selectedQuality,
@@ -366,7 +364,8 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                                             if (!notifier.shadersExists) {
                                               showErrorSnackBar(
                                                 ctx: context,
-                                                msg: 'Шейдеры не найдены',
+                                                msg:
+                                                    'Шейдеры не найдены, инструкция в тг канале',
                                               );
                                             }
                                           },

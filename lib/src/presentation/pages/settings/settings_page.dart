@@ -67,8 +67,8 @@ class SettingsPage extends ConsumerWidget {
                     title: 'Плеер',
                     options: [
                       const AnimeSourceOption(),
+                      const PlayerPlaybackSpeedOption(),
                       if (!AppUtils.instance.isDesktop) ...[
-                        const PlayerPlaybackSpeedOption(),
                         const PlayerLongPressSeekOption(),
                         const PlayerOrientationLockOption(),
                       ],

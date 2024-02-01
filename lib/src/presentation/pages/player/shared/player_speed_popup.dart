@@ -35,15 +35,24 @@ class PlayerSpeedPopUp extends StatelessWidget {
         ];
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          '${playbackSpeed}x',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '${playbackSpeed}x',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            const SizedBox(
+              width: 4,
+            ),
+            const Icon(Icons.expand_more)
+          ],
         ),
       ),
     );
