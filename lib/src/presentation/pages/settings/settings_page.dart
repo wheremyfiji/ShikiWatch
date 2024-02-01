@@ -74,8 +74,8 @@ class SettingsPage extends ConsumerWidget {
                       ],
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
-                      // if (AppUtils.instance.isDesktop)
-                      //   const PlayerDiscordRpcOption(),
+                      if (AppUtils.instance.isDesktop)
+                        const PlayerDiscordRpcOption(),
                     ],
                   ),
                   const SettingsGroup(

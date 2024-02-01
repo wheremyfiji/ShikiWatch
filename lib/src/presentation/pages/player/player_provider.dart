@@ -4,10 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,17 +16,19 @@ import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
 
-import '../../../../kodik/kodik.dart';
-import '../../../domain/enums/anime_source.dart';
-import '../../../domain/enums/stream_quality.dart';
-import '../../../domain/models/anime_player_page_extra.dart';
 import '../../../services/anime_database/anime_database_provider.dart';
-import '../../../utils/app_utils.dart';
-import '../../../utils/shaders.dart';
+import '../../../domain/models/anime_player_page_extra.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../providers/environment_provider.dart';
+import '../../../domain/enums/stream_quality.dart';
+import '../../../domain/enums/anime_source.dart';
 import '../../providers/settings_provider.dart';
+import '../../../constants/config.dart';
+import '../../../utils/app_utils.dart';
+import '../../../../kodik/kodik.dart';
 import '../../widgets/auto_hide.dart';
+import '../../../utils/shaders.dart';
+import '../../../../secret.dart';
 
 import 'shared/shared.dart';
 
@@ -98,10 +101,11 @@ class PlayerNotifier extends w.ChangeNotifier {
   AsyncValue<VideoLinks> videoLinksAsync;
   late VideoLinks videoLinks;
   late AnimeSource _animeSourceType;
-
   StreamQuality selectedQuality = StreamQuality.idk;
 
   final List<StreamSubscription> subscriptions = [];
+
+  late DiscordRPC _discordRPC;
 
   bool playing = false;
   bool completed = false;
@@ -116,7 +120,7 @@ class PlayerNotifier extends w.ChangeNotifier {
   int retryCount = 0;
 
   int? _sdkVersion;
-  bool discordRpc = false;
+  bool _useDiscordRPC = false;
   bool shaders = false;
   bool shadersExists = false;
   int _videoW = 0;
@@ -145,6 +149,15 @@ class PlayerNotifier extends w.ChangeNotifier {
 
       _audioSession = await AudioSession.instance;
       await _configureAudioSession();
+    }
+
+    if (AppUtils.instance.isDesktop) {
+      _useDiscordRPC = ref.read(
+          settingsProvider.select((settings) => settings.playerDiscordRpc));
+
+      _discordRPC = DiscordRPC(
+        applicationId: kDiscordAppId,
+      );
     }
 
     hideController.addListener(hideCallback);
@@ -197,6 +210,8 @@ class PlayerNotifier extends w.ChangeNotifier {
         prefs = await SharedPreferences.getInstance();
         _appDir = await getApplicationSupportDirectory();
         await player.setVolume(prefs.getDouble('player_volume') ?? 40.0);
+
+        _updateDiscordRpc();
       }
 
       await player.play();
@@ -312,6 +327,10 @@ class PlayerNotifier extends w.ChangeNotifier {
 
     hideController.dispose();
 
+    if (AppUtils.instance.isDesktop) {
+      _discordRPC.clearPresence();
+    }
+
     if (_playerOrientationLock) {
       await SystemChrome.setPreferredOrientations([]);
     }
@@ -426,6 +445,8 @@ class PlayerNotifier extends w.ChangeNotifier {
       if (!_parseQuality()) {
         return;
       }
+
+      _updateDiscordRpc();
 
       await (player.platform as NativePlayer).setProperty(
         'start',
@@ -774,6 +795,31 @@ class PlayerNotifier extends w.ChangeNotifier {
           }
         }),
       ],
+    );
+  }
+
+  void _updateDiscordRpc() {
+    if (!_useDiscordRPC) {
+      return;
+    }
+
+    if (!AppUtils.instance.isDesktop) {
+      return;
+    }
+
+    _discordRPC.start(autoRegister: true);
+    _discordRPC.updatePresence(
+      DiscordPresence(
+        details: 'Смотрит "${e.info.animeName}"',
+        state: 'Серия $_currentEpNumber',
+        //startTimeStamp: DateTime.now().millisecondsSinceEpoch,
+        largeImageKey: AppConfig.staticUrl + e.info.imageUrl,
+        largeImageText: 'гайки хавать будешь?',
+        button1Label: 'Открыть',
+        button1Url: '${AppConfig.staticUrl}/animes/${e.info.shikimoriId}',
+        button2Label: 'че за прила??',
+        button2Url: 'https://github.com/wheremyfiji/ShikiWatch/',
+      ),
     );
   }
 

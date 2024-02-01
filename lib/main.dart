@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -89,7 +90,7 @@ void initApp() async {
 
   if (Platform.isWindows) {
     windowsInfo = await DeviceInfoPlugin().windowsInfo;
-    //DiscordRPC.initialize();
+    DiscordRPC.initialize();
   }
 
   if (Platform.isAndroid) {
