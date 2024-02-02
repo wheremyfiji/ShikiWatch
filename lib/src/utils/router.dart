@@ -5,7 +5,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/models/anime_player_page_extra.dart';
-import '../domain/models/manga_short.dart';
 import '../domain/models/pages_extra.dart';
 import '../domain/models/user.dart';
 import '../presentation/pages/about/about_page.dart';
@@ -583,8 +582,10 @@ class SharedAxisTransition extends CustomTransitionPage<void> {
     required Widget child,
   }) : super(
           key: key,
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 150),
+          // transitionDuration: const Duration(milliseconds: 300),
+          // reverseTransitionDuration: const Duration(milliseconds: 150),
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (BuildContext context,
               Animation<double> animation,
               Animation<double> secondaryAnimation,
@@ -607,8 +608,8 @@ class SharedAxisTransition extends CustomTransitionPage<void> {
         );
 
   static final Animatable<double> _fadeInTransition = CurveTween(
-    curve: decelerateEasing,
-  ).chain(CurveTween(curve: const Interval(0.3, 1.0)));
+    curve: standardEasing, //decelerateEasing
+  ).chain(CurveTween(curve: const Interval(0.0, 1.0))); //  0.3
 
   static final Animatable<Offset> slideInTransition = Tween<Offset>(
     begin: const Offset(30.0, 0.0),
