@@ -1,19 +1,13 @@
-//import 'dart:developer';
-
 import 'package:flutter/material.dart';
+
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_html/flutter_html.dart';
-//import 'package:flutter_html/flutter_html.dart';
-//import 'package:html/parser.dart' as html_parser;
 
 import '../../utils/extensions/buildcontext.dart';
 import '../../utils/shiki_utils.dart';
 
 import 'expanded_section.dart';
-
-// CustomRenderMatcher birdMatcher() =>
-//     (context) => context.tree.element?.localName == 'character';
 
 class TitleDescription extends StatelessWidget {
   final String description;
@@ -56,13 +50,44 @@ class TitleDescription extends StatelessWidget {
 }
 
 class TitleDescriptionFromHtml extends HookWidget {
-  final String descriptionHtml;
+  const TitleDescriptionFromHtml(
+    this.descriptionHtml, {
+    super.key,
+    this.shouldExpand = true,
+  });
 
-  const TitleDescriptionFromHtml(this.descriptionHtml, {super.key});
+  final String descriptionHtml;
+  final bool shouldExpand;
 
   @override
   Widget build(BuildContext context) {
     final expand = useState(false);
+    // final shouldExpand = useMemoized(() => descriptionHtml.length > 800);
+
+    if (!shouldExpand) {
+      return Html(
+        data: descriptionHtml,
+        style: {
+          'body': Style(
+            margin: Margins.all(0),
+          ),
+          'a': Style(
+            textDecoration: TextDecoration.none,
+            color: context.colorScheme.primary,
+          ),
+        },
+        onLinkTap: (url, attributes, element) {
+          if (url == null || url.isEmpty) {
+            return;
+          }
+          ShikiUtils.instance.handleShikiHtmlLinkTap(
+            context,
+            url: url,
+            attributes: attributes,
+          );
+        },
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,39 +144,6 @@ class TitleDescriptionFromHtml extends HookWidget {
   }
 }
 
-// class TitleDescriptionFromHtml extends StatelessWidget {
-//   final String descriptionHtml;
-
-//   const TitleDescriptionFromHtml(this.descriptionHtml, {super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final document = html_parser.parse(descriptionHtml);
-//     final String parsedString =
-//         html_parser.parse(document.body?.text).documentElement!.text;
-
-//     return ExpandableText(
-//       parsedString,
-//       expandText: 'Развернуть',
-//       collapseText: 'Свернуть',
-//       maxLines: 6,
-//       animation: true,
-//       animationDuration: const Duration(milliseconds: 500),
-//       linkStyle: const TextStyle(fontWeight: FontWeight.bold),
-//       urlStyle: const TextStyle(
-//         color: Colors.red,
-//         decoration: TextDecoration.underline,
-//       ),
-//       style: context.textTheme.bodyMedium?.copyWith(fontSize: 14),
-//       expandOnTextTap: true,
-//       collapseOnTextTap: true,
-//       onUrlTap: (value) {
-//         print(value);
-//       },
-//     );
-//   }
-// }
-
 class _ExpandButton extends StatelessWidget {
   const _ExpandButton({
     required this.expanded,
@@ -174,36 +166,5 @@ class _ExpandButton extends StatelessWidget {
         ),
       ),
     );
-
-    // return InkWell(
-    //   onTap: onTap,
-    //   borderRadius: BorderRadius.circular(12.0),
-    //   child: Padding(
-    //     padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
-    //     child: Row(
-    //       //mainAxisAlignment: MainAxisAlignment.center,
-    //       crossAxisAlignment: CrossAxisAlignment.center,
-    //       mainAxisSize: MainAxisSize.min,
-    //       children: [
-    //         Icon(
-    //           expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
-    //           color: context.colorScheme.secondary,
-    //           size: 16.0,
-    //         ),
-    //         const SizedBox(
-    //           width: 6.0,
-    //         ),
-    //         Text(
-    //           expanded ? 'Свернуть' : 'Развернуть',
-    //           style: context.textTheme.labelLarge?.copyWith(
-    //             color: context.colorScheme.secondary,
-    //             fontSize: 14.0,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

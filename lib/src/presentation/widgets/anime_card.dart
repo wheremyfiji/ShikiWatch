@@ -62,6 +62,7 @@ class AnimeCompactListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.0),
             child: CachedImage(
               AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+              memCacheWidth: 144,
             ),
           ),
         ),

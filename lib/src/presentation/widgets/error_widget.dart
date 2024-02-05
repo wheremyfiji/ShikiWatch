@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../../utils/extensions/buildcontext.dart';
@@ -18,12 +19,14 @@ class CustomErrorWidget extends HookWidget {
   final String errorString;
   final Function()? buttonOnPressed;
   final bool showButton;
+  final String? stackTrace;
 
   const CustomErrorWidget(
     this.errorString,
     this.buttonOnPressed, {
     super.key,
     this.showButton = true,
+    this.stackTrace,
   });
 
   @override
@@ -73,6 +76,16 @@ class CustomErrorWidget extends HookWidget {
                 icon: const Icon(Icons.refresh_outlined),
               ),
             ],
+            if (stackTrace != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: FilledButton.tonal(
+                  onPressed: () => Clipboard.setData(ClipboardData(
+                    text: 'Error:\n$errorString\n\nStacktrace:\n$stackTrace',
+                  )),
+                  child: const Text('copy stack trace'),
+                ),
+              ),
           ],
         ),
       ),

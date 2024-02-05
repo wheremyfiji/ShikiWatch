@@ -216,7 +216,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                 ],
               );
             },
-            error: (error, _) {
+            error: (error, stackTrace) {
               return Stack(
                 children: [
                   Align(
@@ -240,6 +240,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       error.toString(),
                       () {},
                       showButton: false,
+                      stackTrace: stackTrace.toString(),
                     ),
                   ),
                 ],

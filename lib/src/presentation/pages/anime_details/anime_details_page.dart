@@ -267,9 +267,12 @@ class AnimeDetailsPage extends ConsumerWidget {
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       sliver: SliverToBoxAdapter(
-                        child: TitleDescriptionFromHtml(
-                          anime.descriptionHtml!,
-                        ).animate().fade(),
+                        child: RepaintBoundary(
+                          child: TitleDescriptionFromHtml(
+                            anime.descriptionHtml!,
+                            shouldExpand: anime.description!.length > 500,
+                          ).animate().fade(),
+                        ),
                       ),
                     ),
                   if (titleInfo.statsValues.isNotEmpty)
