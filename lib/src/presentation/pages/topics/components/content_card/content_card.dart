@@ -16,7 +16,7 @@ class TopicContentCard extends StatelessWidget {
     final body = _removeTags(content.body);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Material(
         clipBehavior: Clip.hardEdge,
         type: MaterialType.card,
@@ -28,13 +28,12 @@ class TopicContentCard extends StatelessWidget {
         child: InkWell(
           onTap: () {},
           child: Padding(
-            // padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 12), //8
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     content.topicTitle,
                     maxLines: 2,
@@ -53,16 +52,16 @@ class TopicContentCard extends StatelessWidget {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Wrap(
-                    spacing: 6,
+                    spacing: 8,
                     runSpacing: 0,
                     children: [
                       const SizedBox(
-                        width: 6.0,
+                        width: 8.0,
                       ),
                       _CustomInfoChip(content.forum.name),
                       _CustomInfoChip(content.linkedType.rusName),
                       const SizedBox(
-                        width: 6.0,
+                        width: 8.0,
                       ),
                     ],
                   ),
@@ -73,7 +72,7 @@ class TopicContentCard extends StatelessWidget {
                     height: 8.0,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       body, // content.body
                       maxLines: 3,
@@ -90,7 +89,7 @@ class TopicContentCard extends StatelessWidget {
 
                 // footer
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: ContentCardFooter(
                     userImageUrl: content.user.image!.x64!,
                     userNickname: content.user.nickname ?? '',

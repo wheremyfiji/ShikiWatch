@@ -61,7 +61,7 @@ class TopicsRootPage extends ConsumerWidget {
                 addSemanticIndexes: false,
                 pagingController: controller.pageController,
                 separatorBuilder: (context, index) =>
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                 builderDelegate: PagedChildBuilderDelegate<ShikiTopic>(
                   firstPageProgressIndicatorBuilder: (context) {
                     return const Align(
