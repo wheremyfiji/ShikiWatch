@@ -8,7 +8,6 @@ import 'package:flutter/widgets.dart' as w;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -663,27 +662,29 @@ class PlayerNotifier extends w.ChangeNotifier {
       opTimecode = _playlistItem.libria!.opSkip ?? [];
     } else if (_animeSourceType == AnimeSource.kodik &&
         _playlistItem.link != null) {
-      try {
-        opTimecode =
-            await ref.read(kodikApiProvider).getSkips(_playlistItem.link!);
-      } catch (error, stackTrace) {
-        // todo
-        await Sentry.captureException(
-          error,
-          stackTrace: stackTrace,
-          withScope: (scope) {
-            scope.setExtra('shiki_anime_id', e.info.shikimoriId);
-            scope.setExtra('kodik_url', _playlistItem.link);
-            scope.level = SentryLevel.error;
-          },
-        );
-      }
+      // try {
+      //   opTimecode =
+      //       await ref.read(kodikApiProvider).getSkips(_playlistItem.link!);
+      // } catch (error, stackTrace) {
+      //   // todo
+      //   await Sentry.captureException(
+      //     error,
+      //     stackTrace: stackTrace,
+      //     withScope: (scope) {
+      //       scope.setExtra('shiki_anime_id', e.info.shikimoriId);
+      //       scope.setExtra('kodik_url', _playlistItem.link);
+      //       scope.level = SentryLevel.error;
+      //     },
+      //   );
+      // }
 
       videoLinksAsync = await AsyncValue.guard(
         () async {
           final links = await ref.read(kodikApiProvider).getHLSLink(
                 episodeLink: _playlistItem.link!,
               );
+
+          opTimecode = links.opTimecode ?? [];
 
           return VideoLinks(
             hd: links.video720,
