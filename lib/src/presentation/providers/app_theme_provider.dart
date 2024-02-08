@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-final appThemeDataProvider = Provider.autoDispose<AppThemeDataNotifier>((ref) {
+final appThemeDataProvider = Provider<AppThemeDataNotifier>((ref) {
   return AppThemeDataNotifier();
 });
 
