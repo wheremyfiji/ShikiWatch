@@ -23,6 +23,7 @@ dependencies:
       url: https://github.com/alexmercerind/dart_discord_rpc.git
       ref: 48a15a750d9ee50c521a408c466bd681321a38e2
   device_info_plus: ^9.1.2
+  diffutil_dart: ^4.0.1
   dio: ^5.4.0
   dio_smart_retry: ^6.0.0
   dynamic_color: ^1.6.9
@@ -61,12 +62,10 @@ dependencies:
   media_kit_video: ^1.2.4
 
   #nirikshak: ^0.1.0
-
   # network_logger:
   #   git:
   #     url: https://github.com/themisir/flutter-network-logger.git
   #     ref: master # branch name
-
   network_logger:
     path: external/flutter-network-logger-master
 

@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
 import '../../../../utils/extensions/date_time_ext.dart';
+import '../../../widgets/auto_sliver_animated_list.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/flexible_sliver_app_bar.dart';
 import '../../../../../kodik/models/kodik_anime.dart';
@@ -86,7 +87,7 @@ class KodikSourcePage extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 18,
-                    color: context.theme.colorScheme.onBackground,
+                    color: context.theme.colorScheme.onSurface,
                   ),
                 ),
                 bottomContent: SingleChildScrollView(
@@ -240,8 +241,10 @@ class KodikSourcePage extends ConsumerWidget {
                             child: SizedBox.shrink());
                       },
                     ),
-                    SliverList.builder(
-                      itemBuilder: (context, index) {
+
+                    AutoAnimatedSliverList(
+                      items: studioList,
+                      itemBuilder: (context, _, index, animation) {
                         studioList.sort(
                           (a, b) {
                             final int sortByEpCount =
@@ -260,36 +263,91 @@ class KodikSourcePage extends ConsumerWidget {
                         final updatedAtDateTime =
                             DateTime.parse(studio.updatedAt!).toLocal();
 
-                        return StudioListTile(
-                          name: studio.name ?? '',
-                          type: studio.type ?? '',
-                          update: updatedAtDateTime.convertToDaysAgo(),
-                          episodeCount: studio.episodesCount ?? 0,
-                          onTap: () => Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              settings: const RouteSettings(
-                                name: 'series select page',
+                        return SizeFadeTransition(
+                          animation: animation,
+                          child: StudioListTile(
+                            name: studio.name ?? '',
+                            type: studio.type ?? '',
+                            update: updatedAtDateTime.convertToDaysAgo(),
+                            episodeCount: studio.episodesCount ?? 0,
+                            onTap: () => Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                settings: const RouteSettings(
+                                  name: 'series select page',
+                                ),
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        SeriesSelectPage(
+                                  seriesList: studio.kodikSeries,
+                                  studioId: studio.studioId ?? 0,
+                                  shikimoriId: shikimoriId,
+                                  episodeWatched: epWatched,
+                                  animeName: animeName,
+                                  studioName: studio.name ?? '',
+                                  studioType: studio.type ?? '',
+                                  imageUrl: imageUrl,
+                                ),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
                               ),
-                              pageBuilder: (context, animation1, animation2) =>
-                                  SeriesSelectPage(
-                                seriesList: studio.kodikSeries,
-                                studioId: studio.studioId ?? 0,
-                                shikimoriId: shikimoriId,
-                                episodeWatched: epWatched,
-                                animeName: animeName,
-                                studioName: studio.name ?? '',
-                                studioType: studio.type ?? '',
-                                imageUrl: imageUrl,
-                              ),
-                              transitionDuration: Duration.zero,
-                              reverseTransitionDuration: Duration.zero,
                             ),
                           ),
                         );
                       },
-                      itemCount: studioList.length,
                     ),
+
+                    // SliverList.builder(
+                    //   itemBuilder: (context, index) {
+                    //     studioList.sort(
+                    //       (a, b) {
+                    //         final int sortByEpCount =
+                    //             -a.episodesCount!.compareTo(b.episodesCount!);
+                    //         if (sortByEpCount == 0) {
+                    //           final int sortByUpdate =
+                    //               -a.updatedAt!.compareTo(b.updatedAt!);
+                    //           return sortByUpdate;
+                    //         }
+                    //         return sortByEpCount;
+                    //       },
+                    //     );
+
+                    //     final studio = studioList[index];
+
+                    //     final updatedAtDateTime =
+                    //         DateTime.parse(studio.updatedAt!).toLocal();
+
+                    //     return StudioListTile(
+                    //       name: studio.name ?? '',
+                    //       type: studio.type ?? '',
+                    //       update: updatedAtDateTime.convertToDaysAgo(),
+                    //       episodeCount: studio.episodesCount ?? 0,
+                    //       onTap: () => Navigator.push(
+                    //         context,
+                    //         PageRouteBuilder(
+                    //           settings: const RouteSettings(
+                    //             name: 'series select page',
+                    //           ),
+                    //           pageBuilder: (context, animation1, animation2) =>
+                    //               SeriesSelectPage(
+                    //             seriesList: studio.kodikSeries,
+                    //             studioId: studio.studioId ?? 0,
+                    //             shikimoriId: shikimoriId,
+                    //             episodeWatched: epWatched,
+                    //             animeName: animeName,
+                    //             studioName: studio.name ?? '',
+                    //             studioType: studio.type ?? '',
+                    //             imageUrl: imageUrl,
+                    //           ),
+                    //           transitionDuration: Duration.zero,
+                    //           reverseTransitionDuration: Duration.zero,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   itemCount: studioList.length,
+                    // ),
+
                     SliverPadding(
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).padding.bottom,
