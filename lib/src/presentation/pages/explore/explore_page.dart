@@ -50,7 +50,9 @@ class ExplorePage extends ConsumerWidget {
               sliver: SliverToBoxAdapter(
                 child: Text(
                   'Сейчас выходит',
-                  style: context.textTheme.titleLarge,
+                  style: context.textTheme.titleLarge?.copyWith(
+                    color: context.colorScheme.onSurface,
+                  ),
                 ),
               ),
             ),

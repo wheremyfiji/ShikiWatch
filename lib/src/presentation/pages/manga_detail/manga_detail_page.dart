@@ -135,9 +135,12 @@ class MangaDetailPage extends ConsumerWidget {
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       sliver: SliverToBoxAdapter(
-                        child: TitleDescriptionFromHtml(
-                          data.descriptionHtml!,
-                        ).animate().fade(),
+                        child: RepaintBoundary(
+                          child: TitleDescriptionFromHtml(
+                            data.descriptionHtml!,
+                            shouldExpand: data.description!.length > 500,
+                          ).animate().fade(),
+                        ),
                       ),
                     ),
                   if (mangaDetails.statsValues != [])

@@ -207,7 +207,7 @@ class SeriesSelectPage extends HookConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 16,
-                        color: context.theme.colorScheme.onBackground,
+                        color: context.theme.colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -216,8 +216,7 @@ class SeriesSelectPage extends HookConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
-                        color: context.theme.colorScheme.onBackground
-                            .withOpacity(0.8),
+                        color: context.theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
