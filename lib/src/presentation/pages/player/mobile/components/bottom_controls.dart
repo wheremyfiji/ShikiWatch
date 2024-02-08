@@ -23,7 +23,7 @@ class BottomControls extends ConsumerWidget {
     final notifier = ref.watch(playerProvider(p));
 
     final opTimecode = notifier.opTimecode;
-    final showSkip = opTimecode.isNotEmpty &&
+    final showSkip = opTimecode.length == 2 &&
         (opTimecode.first) <= notifier.position.inSeconds &&
         opTimecode.last > notifier.position.inSeconds;
 

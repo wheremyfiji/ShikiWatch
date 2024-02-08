@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../domain/models/anime_player_page_extra.dart';
+import '../../../providers/app_theme_provider.dart';
 import '../shared/skip_fragment_button.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
@@ -37,107 +38,111 @@ class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
     final p = PlayerProviderParameters(widget.extra);
 
     final notifier = ref.watch(playerProvider(p));
+    final appTheme = ref.watch(appThemeDataProvider).data;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: notifier.videoLinksAsync.when(
-        data: (_) {
-          return Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Align(
-                child: RepaintBoundary(
-                  child: Video(
-                    key: notifier.videoStateKey,
-                    controller: notifier.playerController,
-                    fill: Colors.transparent,
-                    fit: BoxFit.contain,
-                    controls: NoVideoControls,
+    return Theme(
+      data: appTheme.dark,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: notifier.videoLinksAsync.when(
+          data: (_) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Align(
+                  child: RepaintBoundary(
+                    child: Video(
+                      key: notifier.videoStateKey,
+                      controller: notifier.playerController,
+                      fill: Colors.transparent,
+                      fit: BoxFit.contain,
+                      controls: NoVideoControls,
+                    ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: CallbackShortcuts(
-                  bindings: {
-                    const SingleActivator(LogicalKeyboardKey.space): () =>
-                        notifier.player.playOrPause(),
-                    const SingleActivator(LogicalKeyboardKey.keyJ): () {
-                      notifier.player.seek(
-                          notifier.position - const Duration(seconds: 10));
+                Positioned.fill(
+                  child: CallbackShortcuts(
+                    bindings: {
+                      const SingleActivator(LogicalKeyboardKey.space): () =>
+                          notifier.player.playOrPause(),
+                      const SingleActivator(LogicalKeyboardKey.keyJ): () {
+                        notifier.player.seek(
+                            notifier.position - const Duration(seconds: 10));
+                      },
+                      const SingleActivator(LogicalKeyboardKey.keyL): () {
+                        notifier.player.seek(
+                            notifier.position + const Duration(seconds: 10));
+                      },
+                      const SingleActivator(LogicalKeyboardKey.keyK): () =>
+                          notifier.player.playOrPause(),
+                      const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
+                        notifier.player.seek(
+                            notifier.position - const Duration(seconds: 2));
+                      },
+                      const SingleActivator(LogicalKeyboardKey.arrowRight): () {
+                        notifier.player.seek(
+                            notifier.position + const Duration(seconds: 2));
+                      },
+                      const SingleActivator(LogicalKeyboardKey.arrowUp): () {
+                        notifier.player.setVolume(
+                            (notifier.volume + 5.0).clamp(0.0, 100.0));
+                      },
+                      const SingleActivator(LogicalKeyboardKey.arrowDown): () {
+                        notifier.player.setVolume(
+                            (notifier.volume - 5.0).clamp(0.0, 100.0));
+                      },
+                      const SingleActivator(LogicalKeyboardKey.keyF): () =>
+                          notifier.toggleDFullscreen(),
+                      const SingleActivator(LogicalKeyboardKey.escape): () =>
+                          notifier.toggleDFullscreen(p: true),
                     },
-                    const SingleActivator(LogicalKeyboardKey.keyL): () {
-                      notifier.player.seek(
-                          notifier.position + const Duration(seconds: 10));
-                    },
-                    const SingleActivator(LogicalKeyboardKey.keyK): () =>
-                        notifier.player.playOrPause(),
-                    const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
-                      notifier.player
-                          .seek(notifier.position - const Duration(seconds: 2));
-                    },
-                    const SingleActivator(LogicalKeyboardKey.arrowRight): () {
-                      notifier.player
-                          .seek(notifier.position + const Duration(seconds: 2));
-                    },
-                    const SingleActivator(LogicalKeyboardKey.arrowUp): () {
-                      notifier.player
-                          .setVolume((notifier.volume + 5.0).clamp(0.0, 100.0));
-                    },
-                    const SingleActivator(LogicalKeyboardKey.arrowDown): () {
-                      notifier.player
-                          .setVolume((notifier.volume - 5.0).clamp(0.0, 100.0));
-                    },
-                    const SingleActivator(LogicalKeyboardKey.keyF): () =>
-                        notifier.toggleDFullscreen(),
-                    const SingleActivator(LogicalKeyboardKey.escape): () =>
-                        notifier.toggleDFullscreen(p: true),
-                  },
-                  child: DesktopPlayerControls(p),
+                    child: DesktopPlayerControls(p),
+                  ),
+                ),
+                Align(
+                  child: BufferingIndicator(
+                    buffering: notifier.buffering,
+                  ),
+                ),
+              ],
+            );
+          },
+          error: (e, s) => Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: IconButton(
+                  onPressed: () => GoRouter.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  iconSize: 24.0,
+                  tooltip: 'Назад',
                 ),
               ),
-              Align(
-                child: BufferingIndicator(
-                  buffering: notifier.buffering,
-                ),
+              CustomErrorWidget(
+                e.toString(),
+                () {},
+                showButton: false,
               ),
             ],
-          );
-        },
-        error: (e, s) => Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: IconButton(
-                onPressed: () => GoRouter.of(context).pop(),
-                icon: const Icon(Icons.arrow_back),
-                color: Colors.white,
-                iconSize: 24.0,
-                tooltip: 'Назад',
+          ),
+          loading: () => Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: IconButton(
+                  onPressed: () => GoRouter.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  iconSize: 24.0,
+                  tooltip: 'Назад',
+                ),
               ),
-            ),
-            CustomErrorWidget(
-              e.toString(),
-              () {},
-              showButton: false,
-            ),
-          ],
-        ),
-        loading: () => Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: IconButton(
-                onPressed: () => GoRouter.of(context).pop(),
-                icon: const Icon(Icons.arrow_back),
-                color: Colors.white,
-                iconSize: 24.0,
-                tooltip: 'Назад',
+              const Align(
+                child: CircularProgressIndicator(),
               ),
-            ),
-            const Align(
-              child: CircularProgressIndicator(),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -161,7 +166,7 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
     final notifier = ref.watch(playerProvider(p));
 
     final opTimecode = notifier.opTimecode;
-    final showSkip = opTimecode.isNotEmpty &&
+    final showSkip = opTimecode.length == 2 &&
         (opTimecode.first) <= notifier.position.inSeconds &&
         opTimecode.last > notifier.position.inSeconds;
 
