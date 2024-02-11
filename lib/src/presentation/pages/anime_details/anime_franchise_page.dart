@@ -11,13 +11,18 @@ import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 
 class AnimeFranchisePage extends ConsumerWidget {
-  final int animeId;
+  final int id;
+  final String name;
 
-  const AnimeFranchisePage(this.animeId, {super.key});
+  const AnimeFranchisePage({
+    super.key,
+    required this.id,
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final franchise = ref.watch(animeFranchiseProvider(animeId));
+    final franchise = ref.watch(animeFranchiseProvider(id));
 
     return Scaffold(
       body: SafeArea(
@@ -25,13 +30,36 @@ class AnimeFranchisePage extends ConsumerWidget {
         bottom: false,
         child: CustomScrollView(
           slivers: [
-            SliverAppBar.large(
+            SliverAppBar(
               automaticallyImplyLeading: false,
+              pinned: true,
               leading: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.arrow_back),
               ),
-              title: const Text('Хронология'),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Хронология',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: context.theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: context.theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
             franchise.when(
               data: (data) {
@@ -80,7 +108,7 @@ class AnimeFranchisePage extends ConsumerWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                       child: FranchiseListItem(
                         item,
-                        currentId: data.currentId ?? animeId,
+                        currentId: data.currentId ?? id,
                       ),
                     );
                   },
@@ -90,7 +118,7 @@ class AnimeFranchisePage extends ConsumerWidget {
               error: (e, _) => SliverFillRemaining(
                 child: CustomErrorWidget(
                   e.toString(),
-                  () => ref.refresh(animeFranchiseProvider(animeId)),
+                  () => ref.refresh(animeFranchiseProvider(id)),
                 ),
               ),
               loading: () => const SliverFillRemaining(
@@ -118,7 +146,7 @@ class FranchiseListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(12),
-      color: Colors.transparent,
+      type: MaterialType.transparency,
       clipBehavior: Clip.hardEdge,
       child: InkWell(
         onTap: item.id == currentId || item.id == null || item.id == 0
@@ -143,7 +171,7 @@ class FranchiseListItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: SizedBox(
-                width: 100, //120
+                width: 96.0,
                 child: AspectRatio(
                   aspectRatio: 0.703,
                   child: ClipRRect(
@@ -181,8 +209,7 @@ class FranchiseListItem extends StatelessWidget {
                   if (item.id == currentId)
                     Chip(
                       padding: const EdgeInsets.all(0.0),
-                      shadowColor: Colors.transparent,
-                      elevation: 0.0,
+                      visualDensity: VisualDensity.compact,
                       side: const BorderSide(
                         width: 0.0,
                         color: Colors.transparent,
@@ -191,7 +218,7 @@ class FranchiseListItem extends StatelessWidget {
                         color: context.colorScheme.onTertiaryContainer,
                       ),
                       backgroundColor: context.colorScheme.tertiaryContainer,
-                      label: const Text('Вы здесь'),
+                      label: const Text('Открытое'),
                     ),
                 ],
               ),

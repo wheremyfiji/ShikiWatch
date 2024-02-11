@@ -18,10 +18,6 @@ class TitleGenresStudios extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (genres == null || genres!.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 8),
       child: ShadowedOverflowDecorator(

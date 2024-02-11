@@ -9,7 +9,6 @@ class PlayerInfoHeader extends StatelessWidget {
   final int episodeNumber;
   final String studioName;
   final Widget skipButton;
-  final VoidCallback? onPressed;
 
   const PlayerInfoHeader({
     super.key,
@@ -18,7 +17,6 @@ class PlayerInfoHeader extends StatelessWidget {
     required this.episodeNumber,
     required this.studioName,
     required this.skipButton,
-    this.onPressed,
   });
 
   @override
@@ -65,13 +63,6 @@ class PlayerInfoHeader extends StatelessWidget {
         ),
         const Spacer(),
         skipButton,
-        // IconButton(
-        //   tooltip: 'Перемотать 125 секунд',
-        //   iconSize: 32,
-        //   color: Colors.white,
-        //   onPressed: onPressed,
-        //   icon: const Icon(Icons.double_arrow_rounded),
-        // ),
       ],
     );
   }

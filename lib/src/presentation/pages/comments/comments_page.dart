@@ -18,7 +18,13 @@ import '../../widgets/cool_chip.dart';
 
 class CommentsPage extends ConsumerWidget {
   final int topicId;
-  const CommentsPage({super.key, required this.topicId});
+  final String name;
+
+  const CommentsPage({
+    super.key,
+    required this.topicId,
+    required this.name,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,13 +40,36 @@ class CommentsPage extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
-              SliverAppBar.large(
+              SliverAppBar(
                 automaticallyImplyLeading: false,
+                pinned: true,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back),
                 ),
-                title: const Text('Обсуждение'),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Обсуждение',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: context.theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: context.theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

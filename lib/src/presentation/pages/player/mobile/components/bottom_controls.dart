@@ -36,11 +36,14 @@ class BottomControls extends ConsumerWidget {
             AnimatedOpacity(
               opacity: showSkip ? 1 : 0,
               duration: const Duration(milliseconds: 500),
-              child: SkipFragmentButton(
-                title: 'Пропустить опенинг',
-                onSkip: () =>
-                    notifier.player.seek(Duration(seconds: opTimecode.last)),
-                onClose: () => notifier.opTimecode = [],
+              child: IgnorePointer(
+                ignoring: !showSkip,
+                child: SkipFragmentButton(
+                  title: 'Пропустить опенинг',
+                  onSkip: () =>
+                      notifier.player.seek(Duration(seconds: opTimecode.last)),
+                  onClose: () => notifier.opTimecode = [],
+                ),
               ),
             ),
             const SizedBox(

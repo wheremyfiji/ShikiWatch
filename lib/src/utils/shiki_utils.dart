@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 
 import '../domain/models/pages_extra.dart';
 
+import 'app_utils.dart';
+
 class ShikiUtils {
   ShikiUtils._();
 
@@ -14,21 +16,33 @@ class ShikiUtils {
 
   static ShikiUtils get instance => _instance;
 
-  static const List<String> _allowedType = ['anime', 'manga', 'character'];
+  static const List<String> _allowedType = [
+    'anime',
+    'manga',
+    'ranobe',
+    'character',
+  ];
 
   void handleShikiHtmlLinkTap(
     BuildContext ctx, {
     required String url,
     required Map<String, String> attributes,
-  }) {
+  }) async {
     //print('url: $url\n attributes: $attributes\n');
     final dataAttrs = attributes['data-attrs'];
 
     if (dataAttrs == null || dataAttrs.isEmpty) {
-      url_launcher.launchUrlString(
-        url,
-        mode: url_launcher.LaunchMode.externalApplication,
-      );
+      // url_launcher.launchUrlString(
+      //   url,
+      //   mode: url_launcher.LaunchMode.externalApplication,
+      // );
+
+      final b = await _launchUrl(url);
+
+      if (!b && ctx.mounted) {
+        showErrorSnackBar(ctx: ctx, msg: 'Данная ссылка не поддерживается');
+      }
+
       return;
     }
 
@@ -36,10 +50,16 @@ class ShikiUtils {
 
     if (jsonData['type'] is! String ||
         !_allowedType.contains(jsonData['type'])) {
-      url_launcher.launchUrlString(
-        url,
-        mode: url_launcher.LaunchMode.externalApplication,
-      );
+      // url_launcher.launchUrlString(
+      //   url,
+      //   mode: url_launcher.LaunchMode.externalApplication,
+      // );
+      final b = await _launchUrl(url);
+
+      if (!b && ctx.mounted) {
+        showErrorSnackBar(ctx: ctx, msg: 'Данная ссылка не поддерживается');
+      }
+
       return;
     }
 
@@ -76,6 +96,21 @@ class ShikiUtils {
             extra: extra,
           );
         }
+      case 'ranobe':
+        {
+          final extra = TitleDetailsPageExtra(
+            id: id,
+            label: jsonData['russian'] ?? jsonData['name'] ?? '[Без названия]',
+          );
+
+          ctx.pushNamed(
+            'library_manga',
+            pathParameters: <String, String>{
+              'id': id.toString(),
+            },
+            extra: extra,
+          );
+        }
       case 'character':
         {
           ctx.pushNamed(
@@ -87,6 +122,18 @@ class ShikiUtils {
         }
     }
   }
+
+  Future<bool> _launchUrl(String urlString) =>
+      url_launcher.canLaunchUrlString(urlString).then(
+        (v) {
+          if (v) {
+            url_launcher.launchUrlString(urlString);
+            return true;
+          } else {
+            return false;
+          }
+        },
+      );
 }
 
 String getStatus(String value) {

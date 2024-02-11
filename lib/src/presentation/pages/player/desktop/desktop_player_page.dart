@@ -234,11 +234,14 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                         skipButton: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 500),
                           child: showSkip
-                              ? SkipFragmentButton(
-                                  title: 'Пропустить опенинг',
-                                  onSkip: () => notifier.player
-                                      .seek(Duration(seconds: opTimecode.last)),
-                                  onClose: () => notifier.opTimecode = [],
+                              ? IgnorePointer(
+                                  ignoring: !showSkip,
+                                  child: SkipFragmentButton(
+                                    title: 'Пропустить опенинг',
+                                    onSkip: () => notifier.player.seek(
+                                        Duration(seconds: opTimecode.last)),
+                                    onClose: () => notifier.opTimecode = [],
+                                  ),
                                 )
                               : IconButton(
                                   tooltip: 'Перемотать 125 секунд',
@@ -251,9 +254,6 @@ class _DesktopPlayerControlsState extends ConsumerState<DesktopPlayerControls> {
                                   icon: const Icon(Icons.double_arrow_rounded),
                                 ),
                         ),
-                        // onPressed: () => notifier.player.seek(
-                        //   notifier.position + const Duration(seconds: 85),
-                        // ),
                       ),
                       const SizedBox(
                         height: 24,

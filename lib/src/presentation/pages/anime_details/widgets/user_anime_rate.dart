@@ -689,7 +689,7 @@ class _AnimeUserRateBottomSheetState
                                     ? widget.data.name
                                     : widget.data.russian) ??
                                 '',
-                            maxLines: 2,
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: context.textTheme.labelLarge?.copyWith(
                               fontWeight: FontWeight.normal,

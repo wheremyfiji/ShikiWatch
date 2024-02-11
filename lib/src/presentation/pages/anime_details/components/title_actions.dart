@@ -48,7 +48,12 @@ class TitleActions extends StatelessWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) =>
-                        AnimeFranchisePage(anime.id!),
+                        AnimeFranchisePage(
+                      id: anime.id!,
+                      name:
+                          (anime.russian == '' ? anime.name : anime.russian) ??
+                              '',
+                    ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),
@@ -64,6 +69,10 @@ class TitleActions extends StatelessWidget {
                       pageBuilder: (context, animation1, animation2) =>
                           CommentsPage(
                         topicId: anime.topicId!,
+                        name: (anime.russian == ''
+                                ? anime.name
+                                : anime.russian) ??
+                            '',
                       ),
                       transitionDuration: Duration.zero,
                       reverseTransitionDuration: Duration.zero,
@@ -79,7 +88,9 @@ class TitleActions extends StatelessWidget {
                     pageBuilder: (context, animation1, animation2) =>
                         SimilarAnimesPage(
                       animeId: anime.id!,
-                      name: anime.russian ?? anime.name ?? '',
+                      name:
+                          (anime.russian == '' ? anime.name : anime.russian) ??
+                              '',
                     ),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,

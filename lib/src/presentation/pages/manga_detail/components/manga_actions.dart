@@ -66,6 +66,8 @@ class MangaActions extends StatelessWidget {
                       pageBuilder: (context, animation1, animation2) =>
                           CommentsPage(
                         topicId: data.topicId!,
+                        name: (data.russian == '' ? data.name : data.russian) ??
+                            '',
                       ),
                       transitionDuration: Duration.zero,
                       reverseTransitionDuration: Duration.zero,
