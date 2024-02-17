@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:async';
 import 'dart:io';
 
@@ -132,6 +133,8 @@ class PlayerNotifier extends w.ChangeNotifier {
   List<int> opTimecode = [];
 
   void initState() async {
+    _pipeLogsToConsole(player);
+
     if (!AppUtils.instance.isDesktop) {
       _sdkVersion = ref.read(environmentProvider).sdkVersion;
 
@@ -173,16 +176,26 @@ class PlayerNotifier extends w.ChangeNotifier {
         return;
       }
 
-      //_pipeLogsToConsole(player);
+      await _setupMpvExtras(player.platform as NativePlayer);
 
-      // await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
-      // await (player.platform as NativePlayer).setProperty('insecure', 'yes');
-      // await (player.platform as NativePlayer)
-      //     .setProperty('force-seekable', 'yes');
+      await (player.platform as NativePlayer).setProperty(
+        'User-Agent',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 YaBrowser/24.1.0.0 Safari/537.36',
+      );
+
+      await (player.platform as NativePlayer).setProperty(
+        'http-header-fields',
+        'Referer: ${_getReferer(e.animeSource)}',
+      );
+
+      // await (player.platform as NativePlayer).setProperty(
+      //   'demuxer-lavf-hacks',
+      //   'yes',
+      // );
 
       await (player.platform as NativePlayer).setProperty(
         'demuxer-lavf-o',
-        'http_persistent=0,seg_max_retry=10',
+        'http_persistent=0,seg_max_retry=10', //  fflags=+discardcorrupt
       );
 
       await player.open(
@@ -197,8 +210,6 @@ class PlayerNotifier extends w.ChangeNotifier {
         );
         await player.seek(_parseDuration(e.startPosition));
       }
-
-      //await pt();
 
       final speed =
           ref.read(settingsProvider.select((settings) => settings.playerSpeed));
@@ -601,14 +612,19 @@ class PlayerNotifier extends w.ChangeNotifier {
           .then(
         (_) {
           retryCount += 1;
+
           if (e.startPosition.isNotEmpty && _currentEpNumber == e.selected) {
             (player.platform as NativePlayer)
                 .setProperty(
                   "start",
                   e.startPosition,
                 )
-                .then((_) => player.seek(_parseDuration(e.startPosition)))
-                .then((_) => player.play());
+                .then(
+                  (_) => player.seek(_parseDuration(e.startPosition)),
+                )
+                .then(
+                  (_) => player.play(),
+                );
           }
         },
       );
@@ -662,22 +678,6 @@ class PlayerNotifier extends w.ChangeNotifier {
       opTimecode = _playlistItem.libria!.opSkip ?? [];
     } else if (_animeSourceType == AnimeSource.kodik &&
         _playlistItem.link != null) {
-      // try {
-      //   opTimecode =
-      //       await ref.read(kodikApiProvider).getSkips(_playlistItem.link!);
-      // } catch (error, stackTrace) {
-      //   // todo
-      //   await Sentry.captureException(
-      //     error,
-      //     stackTrace: stackTrace,
-      //     withScope: (scope) {
-      //       scope.setExtra('shiki_anime_id', e.info.shikimoriId);
-      //       scope.setExtra('kodik_url', _playlistItem.link);
-      //       scope.level = SentryLevel.error;
-      //     },
-      //   );
-      // }
-
       videoLinksAsync = await AsyncValue.guard(
         () async {
           final links = await ref.read(kodikApiProvider).getHLSLink(
@@ -844,6 +844,62 @@ class PlayerNotifier extends w.ChangeNotifier {
     return tmp.replaceFirst('00:', '');
   }
 
+  Future<void> _setupMpvExtras(NativePlayer player) async {
+    await player.setProperty(
+      'deband',
+      'yes',
+    );
+
+    await player.setProperty(
+      'deband-iterations',
+      '2',
+    );
+
+    await player.setProperty(
+      'deband-threshold',
+      '35',
+    );
+
+    await player.setProperty(
+      'deband-range',
+      '20',
+    );
+
+    await player.setProperty(
+      'deband-grain',
+      '5',
+    );
+
+    await player.setProperty(
+      'dither-depth',
+      'auto',
+    );
+
+    await player.setProperty(
+      'interpolation',
+      'yes',
+    );
+
+    await player.setProperty(
+      'tscale',
+      'bicubic',
+    );
+
+    await player.setProperty(
+      'video-sync',
+      'display-resample',
+    );
+  }
+
+  String _getReferer(AnimeSource sourceType) {
+    const map = {
+      AnimeSource.kodik: 'https://kodik.info/',
+      AnimeSource.libria: 'https://anilibria.tv/',
+    };
+
+    return map[sourceType] ?? '';
+  }
+
   // Future<void> _test() async {
   //   await (player.platform as NativePlayer).setProperty(
   //     'brightness',
@@ -866,18 +922,18 @@ class PlayerNotifier extends w.ChangeNotifier {
   //   );
   // }
 
-  // void _pipeLogsToConsole(Player player) {
-  //   if (!kDebugMode) {
-  //     return;
-  //   }
+  void _pipeLogsToConsole(Player player) {
+    if (!kDebugMode) {
+      return;
+    }
 
-  //   player.stream.log.listen(
-  //     (event) {
-  //       if (kDebugMode) {
-  //         log('${event.prefix}: ${event.level}: ${event.text}',
-  //             name: 'mpv player');
-  //       }
-  //     },
-  //   );
-  // }
+    player.stream.log.listen(
+      (event) {
+        if (kDebugMode) {
+          log('${event.prefix}: ${event.level}: ${event.text}',
+              name: 'mpv player');
+        }
+      },
+    );
+  }
 }
