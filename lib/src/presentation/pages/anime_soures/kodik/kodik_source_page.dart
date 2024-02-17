@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
+import '../../../../domain/models/pages_extra.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
 import '../../../widgets/auto_sliver_animated_list.dart';
 import '../../../../utils/extensions/buildcontext.dart';
@@ -43,33 +44,24 @@ final filteredStudiosProvider = Provider.autoDispose
 }, name: 'filteredStudiosProvider');
 
 class KodikSourcePage extends ConsumerWidget {
-  final int shikimoriId;
-  final int epWatched;
-  final String animeName;
-  final String searchName;
-  final String imageUrl;
-  final List<String> searchList;
-
-  const KodikSourcePage({
+  const KodikSourcePage(
+    this.extra, {
     super.key,
-    required this.shikimoriId,
-    required this.epWatched,
-    required this.animeName,
-    required this.searchName,
-    required this.imageUrl,
-    required this.searchList,
   });
+
+  final AnimeSourcePageExtra extra;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<KodikAnime> studiosAsync =
-        ref.watch(kodikAnimeProvider(shikimoriId));
-    final latestStudio = ref.watch(latestStudioProvider(shikimoriId));
+        ref.watch(kodikAnimeProvider(extra.shikimoriId));
+    final latestStudio = ref.watch(latestStudioProvider(extra.shikimoriId));
     final studioFilter = ref.watch(studioFilterProvider);
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => ref.refresh(kodikAnimeProvider(shikimoriId).future),
+        onRefresh: () =>
+            ref.refresh(kodikAnimeProvider(extra.shikimoriId).future),
         child: SafeArea(
           top: false,
           bottom: false,
@@ -82,7 +74,7 @@ class KodikSourcePage extends ConsumerWidget {
                   icon: const Icon(Icons.arrow_back),
                 ),
                 title: Text(
-                  animeName,
+                  extra.animeName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -146,12 +138,7 @@ class KodikSourcePage extends ConsumerWidget {
                           PageRouteBuilder(
                             pageBuilder: (context, animation1, animation2) =>
                                 AnilibriaSourcePage(
-                              shikimoriId: shikimoriId,
-                              animeName: animeName,
-                              searchName: searchName,
-                              epWatched: epWatched,
-                              imageUrl: imageUrl,
-                              searchList: searchList,
+                              extra,
                             ),
                             transitionDuration: Duration.zero,
                             reverseTransitionDuration: Duration.zero,
@@ -174,8 +161,10 @@ class KodikSourcePage extends ConsumerWidget {
                 ],
                 error: (err, stack) => [
                   SliverFillRemaining(
-                    child: CustomErrorWidget(err.toString(),
-                        () => ref.refresh(kodikAnimeProvider(shikimoriId))),
+                    child: CustomErrorWidget(
+                        err.toString(),
+                        () =>
+                            ref.refresh(kodikAnimeProvider(extra.shikimoriId))),
                   ),
                 ],
                 data: (studios) {
@@ -222,12 +211,12 @@ class KodikSourcePage extends ConsumerWidget {
                                         SeriesSelectPage(
                                   seriesList: element.kodikSeries,
                                   studioId: element.studioId ?? 0,
-                                  shikimoriId: shikimoriId,
-                                  episodeWatched: epWatched,
-                                  animeName: animeName,
+                                  shikimoriId: extra.shikimoriId,
+                                  episodeWatched: extra.epWatched,
+                                  animeName: extra.animeName,
                                   studioName: element.name ?? '',
                                   studioType: element.type ?? '',
-                                  imageUrl: imageUrl,
+                                  imageUrl: extra.imageUrl,
                                 ),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,
@@ -281,12 +270,12 @@ class KodikSourcePage extends ConsumerWidget {
                                         SeriesSelectPage(
                                   seriesList: studio.kodikSeries,
                                   studioId: studio.studioId ?? 0,
-                                  shikimoriId: shikimoriId,
-                                  episodeWatched: epWatched,
-                                  animeName: animeName,
+                                  shikimoriId: extra.shikimoriId,
+                                  episodeWatched: extra.epWatched,
+                                  animeName: extra.animeName,
                                   studioName: studio.name ?? '',
                                   studioType: studio.type ?? '',
-                                  imageUrl: imageUrl,
+                                  imageUrl: extra.imageUrl,
                                 ),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,

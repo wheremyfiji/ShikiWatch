@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../../domain/models/pages_extra.dart';
 import '../../../utils/extensions/buildcontext.dart';
 
 import 'kodik/kodik_source_page.dart';
 import 'anilibria_source_page.dart';
 
 class SelectSourceSheet extends StatelessWidget {
-  final int shikimoriId;
-  final int epWatched;
-  final String animeName;
-  final String searchName;
-  final String imageUrl;
-  final List<String> searchList;
-
-  const SelectSourceSheet({
+  const SelectSourceSheet(
+    this.extra, {
     super.key,
-    required this.shikimoriId,
-    required this.epWatched,
-    required this.animeName,
-    required this.searchName,
-    required this.imageUrl,
-    required this.searchList,
   });
+
+  final AnimeSourcePageExtra extra;
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +62,7 @@ class SelectSourceSheet extends StatelessWidget {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    KodikSourcePage(
-                  shikimoriId: shikimoriId,
-                  animeName: animeName,
-                  searchName: searchName,
-                  epWatched: epWatched,
-                  imageUrl: imageUrl,
-                  searchList: searchList,
-                ),
+                    KodikSourcePage(extra),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ),
@@ -94,14 +78,23 @@ class SelectSourceSheet extends StatelessWidget {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    AnilibriaSourcePage(
-                  shikimoriId: shikimoriId,
-                  animeName: animeName,
-                  searchName: searchName,
-                  epWatched: epWatched,
-                  imageUrl: imageUrl,
-                  searchList: searchList,
-                ),
+                    AnilibriaSourcePage(extra),
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero,
+              ),
+            );
+          },
+          title: const Text('AniLib'),
+        ),
+        ListTile(
+          onTap: () {
+            Navigator.pop(context);
+
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) =>
+                    AnilibriaSourcePage(extra),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ),
@@ -115,12 +108,7 @@ class SelectSourceSheet extends StatelessWidget {
 
   static void show(
     BuildContext context, {
-    required int shikimoriId,
-    required int epWatched,
-    required String animeName,
-    required String search,
-    required String imageUrl,
-    required List<String> searchList,
+    required AnimeSourcePageExtra extra,
   }) {
     showModalBottomSheet(
       context: context,
@@ -134,14 +122,7 @@ class SelectSourceSheet extends StatelessWidget {
             MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
       ),
       builder: (_) => SafeArea(
-        child: SelectSourceSheet(
-          shikimoriId: shikimoriId,
-          epWatched: epWatched,
-          animeName: animeName,
-          searchName: search,
-          imageUrl: imageUrl,
-          searchList: searchList,
-        ),
+        child: SelectSourceSheet(extra),
       ),
     );
   }
