@@ -85,11 +85,11 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                             selectedIcon: Icon(Icons.explore_rounded),
                             label: Text('Обзор'),
                           ),
-                          NavigationRailDestination(
-                            icon: Icon(Icons.forum_outlined),
-                            selectedIcon: Icon(Icons.forum_rounded),
-                            label: Text('Топики'),
-                          ),
+                          // NavigationRailDestination(
+                          //   icon: Icon(Icons.forum_outlined),
+                          //   selectedIcon: Icon(Icons.forum_rounded),
+                          //   label: Text('Топики'),
+                          // ),
                           NavigationRailDestination(
                             icon: Icon(Icons.more_horiz),
                             selectedIcon: Icon(Icons.more_horiz),
@@ -141,11 +141,11 @@ class ScaffoldWithNavBar extends ConsumerWidget {
               selectedIcon: Icon(Icons.explore_rounded),
               label: 'Обзор',
             ),
-            NavigationDestination(
-              icon: Icon(Icons.forum_outlined),
-              selectedIcon: Icon(Icons.forum_rounded),
-              label: 'Топики',
-            ),
+            // NavigationDestination(
+            //   icon: Icon(Icons.forum_outlined),
+            //   selectedIcon: Icon(Icons.forum_rounded),
+            //   label: 'Топики',
+            // ),
             NavigationDestination(
               icon: Icon(Icons.more_horiz),
               selectedIcon: Icon(Icons.more_horiz),

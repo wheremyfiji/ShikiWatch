@@ -402,21 +402,21 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
             ),
 
             /// topics sceen
-            StatefulShellBranch(
-              observers: [
-                SentryNavigatorObserver(),
-                HeroController(),
-              ],
-              routes: <RouteBase>[
-                GoRoute(
-                  name: 'topics',
-                  path: '/topics',
-                  builder: (context, state) => TopicsRootPage(
-                    key: state.pageKey,
-                  ),
-                ),
-              ],
-            ),
+            // StatefulShellBranch(
+            //   observers: [
+            //     SentryNavigatorObserver(),
+            //     HeroController(),
+            //   ],
+            //   routes: <RouteBase>[
+            //     GoRoute(
+            //       name: 'topics',
+            //       path: '/topics',
+            //       builder: (context, state) => TopicsRootPage(
+            //         key: state.pageKey,
+            //       ),
+            //     ),
+            //   ],
+            // ),
 
             /// profile screen
             StatefulShellBranch(
