@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/extensions/buildcontext.dart';
+import '../../../utils/extensions/buildcontext.dart';
 
+import 'kodik/kodik_source_page.dart';
 import 'anilibria_source_page.dart';
-import 'kodik_source_page.dart';
 
-class SourceModalSheet extends StatelessWidget {
+class SelectSourceSheet extends StatelessWidget {
   final int shikimoriId;
   final int epWatched;
   final String animeName;
@@ -13,7 +13,7 @@ class SourceModalSheet extends StatelessWidget {
   final String imageUrl;
   final List<String> searchList;
 
-  const SourceModalSheet({
+  const SelectSourceSheet({
     super.key,
     required this.shikimoriId,
     required this.epWatched,
@@ -134,7 +134,7 @@ class SourceModalSheet extends StatelessWidget {
             MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
       ),
       builder: (_) => SafeArea(
-        child: SourceModalSheet(
+        child: SelectSourceSheet(
           shikimoriId: shikimoriId,
           epWatched: epWatched,
           animeName: animeName,

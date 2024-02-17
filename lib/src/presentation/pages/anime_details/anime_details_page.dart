@@ -15,9 +15,9 @@ import '../../widgets/error_widget.dart';
 import '../../../domain/enums/anime_source.dart';
 import '../../widgets/title_description.dart';
 
-import 'anime_soures/anilibria_source_page.dart' hide TitleInfo;
-import 'anime_soures/kodik_source_page.dart';
-import 'anime_soures/source_modal_sheet.dart';
+import '../anime_soures/anilibria_source_page.dart' hide TitleInfo;
+import '../anime_soures/kodik/kodik_source_page.dart';
+import '../anime_soures/source_modal_sheet.dart';
 
 import 'components/title_actions.dart';
 import 'components/title_characters.dart';
@@ -94,8 +94,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                   searchList.add(data.russian ?? '');
 
                   return switch (animeSource) {
-                    // ignore: use_build_context_synchronously
-                    AnimeSource.alwaysAsk => SourceModalSheet.show(
+                    AnimeSource.alwaysAsk => SelectSourceSheet.show(
+                        // ignore: use_build_context_synchronously
                         context,
                         shikimoriId: data.id!,
                         epWatched: titleInfo.currentProgress,
@@ -107,8 +107,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                         imageUrl: data.image?.original ?? '',
                         searchList: searchList,
                       ),
-                    // ignore: use_build_context_synchronously
                     AnimeSource.libria => Navigator.push(
+                        // ignore: use_build_context_synchronously
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation1, animation2) =>
@@ -130,8 +130,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                           reverseTransitionDuration: Duration.zero,
                         ),
                       ),
-                    // ignore: use_build_context_synchronously
                     AnimeSource.kodik => Navigator.push(
+                        // ignore: use_build_context_synchronously
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation1, animation2) =>

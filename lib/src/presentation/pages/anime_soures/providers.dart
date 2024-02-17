@@ -1,9 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../../anilibria/anilibria_api.dart';
-import '../../../../../anilibria/models/search.dart';
-import '../../../../domain/models/anime_database.dart';
-import '../../../providers/anime_details_provider.dart';
+import '../../providers/anime_details_provider.dart';
+import '../../../domain/models/anime_database.dart';
+import '../../../../anilibria/models/search.dart';
+import '../../../../anilibria/anilibria_api.dart';
 
 final anilibriaSearchProvider = FutureProvider.autoDispose
     .family<AnilibriaSearch, String>((ref, name) async {

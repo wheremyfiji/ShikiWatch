@@ -13,34 +13,34 @@ import '../../../../utils/app_utils.dart';
 import '../../../../../kodik/kodik.dart';
 
 import 'kodik_series_select_page.dart';
-import 'anilibria_source_page.dart';
-import 'latest_studio.dart';
-import 'providers.dart';
+import '../anilibria_source_page.dart';
+import '../latest_studio.dart';
+import '../providers.dart';
 
-enum KodikStudioType {
+enum StudioFilter {
   all,
   voice,
   sub,
 }
 
-final kodikStudioTypeProvider = StateProvider<KodikStudioType>(
-  (ref) => KodikStudioType.all,
-  name: 'kodikStudioTypeProvider',
+final studioFilterProvider = StateProvider<StudioFilter>(
+  (ref) => StudioFilter.all,
+  name: 'studioFilterProvider',
 );
 
-final sortedStudiosProvider = Provider.autoDispose
+final filteredStudiosProvider = Provider.autoDispose
     .family<List<KodikStudio>, List<KodikStudio>>((ref, rawList) {
-  final sortType = ref.watch(kodikStudioTypeProvider);
+  final sortType = ref.watch(studioFilterProvider);
 
   switch (sortType) {
-    case KodikStudioType.all:
+    case StudioFilter.all:
       return rawList;
-    case KodikStudioType.voice:
+    case StudioFilter.voice:
       return rawList.where((e) => e.type == 'voice').toList();
-    case KodikStudioType.sub:
+    case StudioFilter.sub:
       return rawList.where((e) => e.type == 'subtitles').toList();
   }
-}, name: 'sortedStudiosProvider');
+}, name: 'filteredStudiosProvider');
 
 class KodikSourcePage extends ConsumerWidget {
   final int shikimoriId;
@@ -62,10 +62,10 @@ class KodikSourcePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<KodikAnime> studios =
+    final AsyncValue<KodikAnime> studiosAsync =
         ref.watch(kodikAnimeProvider(shikimoriId));
     final latestStudio = ref.watch(latestStudioProvider(shikimoriId));
-    final studioType = ref.watch(kodikStudioTypeProvider);
+    final studioFilter = ref.watch(studioFilterProvider);
 
     return Scaffold(
       body: RefreshIndicator(
@@ -101,24 +101,24 @@ class KodikSourcePage extends ConsumerWidget {
                       ),
                       ChoiceChip(
                         label: const Text('Все'),
-                        selected: studioType == KodikStudioType.all,
+                        selected: studioFilter == StudioFilter.all,
                         onSelected: (value) => ref
-                            .read(kodikStudioTypeProvider.notifier)
-                            .state = KodikStudioType.all,
+                            .read(studioFilterProvider.notifier)
+                            .state = StudioFilter.all,
                       ),
                       ChoiceChip(
                         label: const Text('Озвучка'),
-                        selected: studioType == KodikStudioType.voice,
+                        selected: studioFilter == StudioFilter.voice,
                         onSelected: (value) => ref
-                            .read(kodikStudioTypeProvider.notifier)
-                            .state = KodikStudioType.voice,
+                            .read(studioFilterProvider.notifier)
+                            .state = StudioFilter.voice,
                       ),
                       ChoiceChip(
                         label: const Text('Субтитры'),
-                        selected: studioType == KodikStudioType.sub,
+                        selected: studioFilter == StudioFilter.sub,
                         onSelected: (value) => ref
-                            .read(kodikStudioTypeProvider.notifier)
-                            .state = KodikStudioType.sub,
+                            .read(studioFilterProvider.notifier)
+                            .state = StudioFilter.sub,
                       ),
                       const SizedBox(
                         width: 8.0,
@@ -167,7 +167,7 @@ class KodikSourcePage extends ConsumerWidget {
                   height: 1,
                 ),
               ),
-              ...studios.when(
+              ...studiosAsync.when(
                 loading: () => [
                   const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator())),
@@ -178,13 +178,13 @@ class KodikSourcePage extends ConsumerWidget {
                         () => ref.refresh(kodikAnimeProvider(shikimoriId))),
                   ),
                 ],
-                data: (data) {
-                  if (data.total == 0 || data.studio == null) {
+                data: (studios) {
+                  if (studios.total == 0 || studios.studio == null) {
                     return [const KodikNothingFound()];
                   }
 
                   final studioList =
-                      ref.watch(sortedStudiosProvider(data.studio!));
+                      ref.watch(filteredStudiosProvider(studios.studio!));
 
                   if (studioList.isEmpty) {
                     return [const KodikNothingFound()];
@@ -203,7 +203,7 @@ class KodikSourcePage extends ConsumerWidget {
                         return LatestStudio(
                           studio: latestStudio,
                           onContinue: () {
-                            final element = data.studio!.firstWhereOrNull(
+                            final element = studios.studio!.firstWhereOrNull(
                                 (e) => e.studioId == latestStudio.id);
                             if (element == null) {
                               showErrorSnackBar(
@@ -397,7 +397,6 @@ class StudioListTile extends StatelessWidget {
               maxLines: 2,
             ),
           ),
-          //if (studio.name!.contains('.Subtitles'))
           if (type == 'subtitles')
             const _CustomInfoChip(
               title: 'Субтитры',
