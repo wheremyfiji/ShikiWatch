@@ -2,14 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Flutter",
-            "request": "launch",
+            "name": "Flutter Debug",
             "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
             "flutterMode": "debug",
             "args": [
                 "--flavor",
                 "dev",
             ]
+        },
+        {
+            "name": "Flutter Debug Windows",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "args": []
         }
     ],
 }
