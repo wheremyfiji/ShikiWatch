@@ -11,8 +11,10 @@ import '../../../../../kodik/models/kodik_anime.dart';
 import '../../../../domain/models/pages_extra.dart';
 import '../anilibria/anilibria_source_page.dart';
 import '../../../widgets/error_widget.dart';
+import '../shared/compact_info_chip.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../../kodik/kodik.dart';
+import '../shared/nothing_found.dart';
 import '../latest_studio.dart';
 import '../providers.dart';
 
@@ -145,14 +147,14 @@ class KodikSourcePage extends ConsumerWidget {
                 ],
                 data: (studios) {
                   if (studios.total == 0 || studios.studio == null) {
-                    return [const KodikNothingFound()];
+                    return [const SourceNothingFound()];
                   }
 
                   final studioList =
                       ref.watch(filteredStudiosProvider(studios.studio!));
 
                   if (studioList.isEmpty) {
-                    return [const KodikNothingFound()];
+                    return [const SourceNothingFound()];
                   }
 
                   return [
@@ -363,8 +365,8 @@ class StudioListTile extends StatelessWidget {
             ),
           ),
           if (type == 'subtitles')
-            const _CustomInfoChip(
-              title: 'Субтитры',
+            const CompactInfoChip(
+              'Субтитры',
             ),
         ],
       ),
@@ -387,78 +389,6 @@ class StudioListTile extends StatelessWidget {
         ),
       ),
       onTap: onTap,
-    );
-  }
-}
-
-class _CustomInfoChip extends StatelessWidget {
-  final String title;
-
-  const _CustomInfoChip({
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      //margin: const EdgeInsets.all(0.0),
-      margin: const EdgeInsets.only(left: 4, right: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      color: context.theme.colorScheme.tertiaryContainer,
-      //elevation: 0.0,
-      child: Padding(
-        //padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: context.theme.colorScheme.onTertiaryContainer,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class KodikNothingFound extends StatelessWidget {
-  const KodikNothingFound({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  'Σ(ಠ_ಠ)',
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.displayMedium,
-                ),
-              ),
-              const Flexible(
-                child: Text(
-                  'Ничего не найдено',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

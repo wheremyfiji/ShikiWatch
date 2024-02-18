@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../domain/models/pages_extra.dart';
-
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../domain/models/pages_extra.dart';
 import '../../../widgets/error_widget.dart';
+import '../shared/nothing_found.dart';
+
+import 'anilib_studio_select_page.dart';
 import 'anilib_source_controller.dart';
 
 class AnilibSourcePage extends ConsumerWidget {
@@ -17,8 +19,13 @@ class AnilibSourcePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = AnilibNotifierParameters(extra);
 
-    final controller = ref.watch(anilibSourceProvider(p));
-    final playlistAsync = controller.playlistAsync;
+    final playlistAsync = ref.watch(
+      anilibSourceProvider(p).select((v) => v.playlistAsync),
+    ); //  controller
+
+    //final playlistAsync = controller.playlistAsync;
+
+    print('AnilibSourcePage BULD');
 
     return Scaffold(
       body: RefreshIndicator(
@@ -49,9 +56,7 @@ class AnilibSourcePage extends ConsumerWidget {
                 data: (playlist) {
                   if (playlist.isEmpty) {
                     return [
-                      const SliverFillRemaining(
-                        child: Center(child: Text('playlist is empty')),
-                      ),
+                      const SourceNothingFound(),
                     ];
                   }
 
@@ -60,8 +65,21 @@ class AnilibSourcePage extends ConsumerWidget {
                       itemCount: playlist.length,
                       itemBuilder: (context, index) {
                         final item = playlist[index];
+
                         return ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation1, animation2) =>
+                                        AnilibStudioSelectPage(extra,
+                                            episodeId: item.id),
+                                transitionDuration: Duration.zero,
+                                reverseTransitionDuration: Duration.zero,
+                              ),
+                            );
+                          },
                           title: Text('Серия ${item.number}'),
                           subtitle:
                               item.name.isNotEmpty ? Text(item.name) : null,

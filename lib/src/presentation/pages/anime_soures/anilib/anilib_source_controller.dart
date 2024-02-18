@@ -5,8 +5,8 @@ import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../../anime_lib/models/models.dart';
-import '../../../../../anime_lib/anilib_api.dart';
 import '../../../../domain/models/pages_extra.dart';
+import '../../../../../anime_lib/anilib_api.dart';
 
 class AnilibNotifierParameters extends Equatable {
   const AnilibNotifierParameters(
@@ -18,6 +18,13 @@ class AnilibNotifierParameters extends Equatable {
   @override
   List<Object> get props => [extra];
 }
+
+final anilibEpisodeProvider = FutureProvider.family
+    .autoDispose<AnilibEpisode, int>((ref, episodeId) async {
+  final episode = await ref.read(anilibApiProvider).getEpisode(episodeId);
+
+  return episode;
+}, name: 'anilibEpisodeProvider');
 
 final anilibSourceProvider = ChangeNotifierProvider.family
     .autoDispose<AnilibSourceNotifier, AnilibNotifierParameters>((ref, p) {
@@ -41,10 +48,10 @@ class AnilibSourceNotifier extends ChangeNotifier {
   AsyncValue<List<AnilibPlaylist>> playlistAsync;
 
   void init() async {
-    await fetch();
+    await fetchPlaylist();
   }
 
-  Future<void> fetch() async {
+  Future<void> fetchPlaylist() async {
     playlistAsync = await AsyncValue.guard(
       () async {
         final search = await api.search(extra.searchName);
