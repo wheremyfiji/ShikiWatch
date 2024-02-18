@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../domain/models/pages_extra.dart';
 import '../../../utils/extensions/buildcontext.dart';
 
+import 'anilib/anilib_source_page.dart';
 import 'kodik/kodik_source_page.dart';
-import 'anilibria_source_page.dart';
+import 'anilibria/anilibria_source_page.dart';
 
 class SelectSourceSheet extends StatelessWidget {
   const SelectSourceSheet(
@@ -78,7 +79,7 @@ class SelectSourceSheet extends StatelessWidget {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    AnilibriaSourcePage(extra),
+                    AnilibSourcePage(extra),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ),

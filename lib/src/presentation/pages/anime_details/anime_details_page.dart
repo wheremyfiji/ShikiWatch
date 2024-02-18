@@ -15,7 +15,8 @@ import '../../widgets/error_widget.dart';
 import '../../../domain/enums/anime_source.dart';
 import '../../widgets/title_description.dart';
 
-import '../anime_soures/anilibria_source_page.dart' hide TitleInfo;
+import '../anime_soures/anilibria/anilibria_source_page.dart' hide TitleInfo;
+import '../anime_soures/anilib/anilib_source_page.dart';
 import '../anime_soures/kodik/kodik_source_page.dart';
 import '../anime_soures/source_modal_sheet.dart';
 
@@ -135,7 +136,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation1, animation2) =>
-                              KodikSourcePage(extra),
+                              AnilibSourcePage(extra),
                           transitionDuration: Duration.zero,
                           reverseTransitionDuration: Duration.zero,
                         ),
