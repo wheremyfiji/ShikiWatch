@@ -10,8 +10,8 @@ import '../../../../../anime_lib/anilib_api.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
 import '../shared/compact_info_chip.dart';
-
 import '../shared/nothing_found.dart';
+
 import 'anilib_source_controller.dart';
 
 class AnilibStudioSelectPage extends ConsumerWidget {
