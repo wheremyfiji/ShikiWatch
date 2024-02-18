@@ -3,45 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
-import '../../../../domain/models/pages_extra.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
 import '../../../widgets/auto_sliver_animated_list.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/flexible_sliver_app_bar.dart';
 import '../../../../../kodik/models/kodik_anime.dart';
+import '../../../../domain/models/pages_extra.dart';
+import '../anilibria/anilibria_source_page.dart';
 import '../../../widgets/error_widget.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../../kodik/kodik.dart';
-
-import 'kodik_series_select_page.dart';
-import '../anilibria_source_page.dart';
 import '../latest_studio.dart';
 import '../providers.dart';
 
-enum StudioFilter {
-  all,
-  voice,
-  sub,
-}
-
-final studioFilterProvider = StateProvider<StudioFilter>(
-  (ref) => StudioFilter.all,
-  name: 'studioFilterProvider',
-);
-
-final filteredStudiosProvider = Provider.autoDispose
-    .family<List<KodikStudio>, List<KodikStudio>>((ref, rawList) {
-  final sortType = ref.watch(studioFilterProvider);
-
-  switch (sortType) {
-    case StudioFilter.all:
-      return rawList;
-    case StudioFilter.voice:
-      return rawList.where((e) => e.type == 'voice').toList();
-    case StudioFilter.sub:
-      return rawList.where((e) => e.type == 'subtitles').toList();
-  }
-}, name: 'filteredStudiosProvider');
+import 'kodik_series_select_page.dart';
+import 'kodik_source_controller.dart';
 
 class KodikSourcePage extends ConsumerWidget {
   const KodikSourcePage(

@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../anilibria/anilibria_api.dart';
-import '../../../../anilibria/enums/title_status_code.dart';
-import '../../../../anilibria/models/title.dart';
-import '../../../domain/enums/anime_source.dart';
-import '../../../domain/models/anime_database.dart';
-import '../../../domain/models/anime_player_page_extra.dart' as appe;
-import '../../../domain/models/pages_extra.dart';
-import '../../../services/anime_database/anime_database_provider.dart';
-import '../../../utils/extensions/buildcontext.dart';
-import '../../../utils/extensions/date_time_ext.dart';
-import '../../../utils/app_utils.dart';
-import '../../hooks/use_auto_scroll_controller.dart';
-import '../../providers/anime_details_provider.dart';
-import '../../widgets/error_widget.dart';
+import '../../../../../anilibria/anilibria_api.dart';
+import '../../../../../anilibria/enums/title_status_code.dart';
+import '../../../../../anilibria/models/title.dart';
+import '../../../../domain/enums/anime_source.dart';
+import '../../../../domain/models/anime_database.dart';
+import '../../../../domain/models/anime_player_page_extra.dart' as appe;
+import '../../../../domain/models/pages_extra.dart';
+import '../../../../services/anime_database/anime_database_provider.dart';
+import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../utils/extensions/date_time_ext.dart';
+import '../../../../utils/app_utils.dart';
+import '../../../hooks/use_auto_scroll_controller.dart';
+import '../../../providers/anime_details_provider.dart';
+import '../../../widgets/error_widget.dart';
+import '../../player/continue_dialog.dart';
+import '../kodik/kodik_source_page.dart';
 
-import '../player/continue_dialog.dart';
-import 'kodik/kodik_source_page.dart';
-import 'providers.dart';
+import 'anilibria_source_controller.dart';
 
 class AnilibriaSourcePage extends HookConsumerWidget {
   const AnilibriaSourcePage(

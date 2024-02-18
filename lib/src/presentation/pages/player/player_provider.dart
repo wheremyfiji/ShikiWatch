@@ -23,6 +23,7 @@ import '../../providers/environment_provider.dart';
 import '../../../domain/enums/stream_quality.dart';
 import '../../../domain/enums/anime_source.dart';
 import '../../providers/settings_provider.dart';
+import '../../../../anime_lib/anilib_api.dart';
 import '../../../constants/config.dart';
 import '../../../utils/app_utils.dart';
 import '../../../../kodik/kodik.dart';
@@ -892,9 +893,10 @@ class PlayerNotifier extends w.ChangeNotifier {
   }
 
   String _getReferer(AnimeSource sourceType) {
-    const map = {
+    final map = {
       AnimeSource.kodik: 'https://kodik.info/',
       AnimeSource.libria: 'https://anilibria.tv/',
+      AnimeSource.anilib: AnilibUtils.kReferer,
     };
 
     return map[sourceType] ?? '';

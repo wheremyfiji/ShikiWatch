@@ -15,24 +15,9 @@ import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../hooks/use_auto_scroll_controller.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../player/continue_dialog.dart';
+import '../providers.dart';
 
-enum EpisodeSortType { newest, oldest }
-
-final episodeSortTypeProvider =
-    StateProvider<EpisodeSortType>((ref) => EpisodeSortType.oldest);
-
-final seriesSortProvider = StateProvider.family
-    .autoDispose<List<KodikSeries>, List<KodikSeries>>((ref, series) {
-  final sortType = ref.watch(episodeSortTypeProvider);
-  switch (sortType) {
-    case EpisodeSortType.oldest:
-      return series;
-    case EpisodeSortType.newest:
-      return series.reversed.toList();
-    default:
-      return series;
-  }
-}, name: 'episodeSortProvider');
+import 'kodik_source_controller.dart';
 
 class SeriesSelectPage extends HookConsumerWidget {
   final List<KodikSeries>? seriesList;
