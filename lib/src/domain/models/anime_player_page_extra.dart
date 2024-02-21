@@ -1,3 +1,4 @@
+import '../../../anime_lib/models/models.dart';
 import '../enums/anime_source.dart';
 
 class PlayerPageExtra {
@@ -8,26 +9,34 @@ class PlayerPageExtra {
   final List<PlaylistItem> playlist;
   final String startPosition;
 
+  final String? anilibHost;
+  final AnilibEpisode? anilibEpisode;
+
   PlayerPageExtra({
     required this.selected,
     required this.info,
     required this.animeSource,
     required this.startPosition,
     required this.playlist,
+    this.anilibEpisode,
+    this.anilibHost,
   });
 }
 
 class PlaylistItem {
-  final int episodeNumber;
+  /// kodik link
   final String? link;
-  final LibriaEpisode? libria;
   final String? name;
+  final int episodeNumber;
+  final LibriaEpisode? libria;
+  final AnilibPlayerEpisode? anilibEpisode;
 
   PlaylistItem({
     required this.episodeNumber,
     required this.link,
     required this.libria,
     required this.name,
+    required this.anilibEpisode,
   });
 }
 
@@ -65,4 +74,14 @@ class LibriaEpisode {
     this.sd,
     this.opSkip,
   });
+}
+
+class AnilibPlayerEpisode {
+  const AnilibPlayerEpisode({
+    required this.video,
+    required this.subtitles,
+  });
+
+  final List<AnilibVideo> video;
+  final List<AnilibVideoSubtitle> subtitles;
 }

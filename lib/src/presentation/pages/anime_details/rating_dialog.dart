@@ -27,6 +27,7 @@ class RatingDialog extends StatelessWidget {
                 ),
               ],
             ),
+            textAlign: TextAlign.center,
           ),
           RichText(
             text: TextSpan(
@@ -43,6 +44,7 @@ class RatingDialog extends StatelessWidget {
                 ),
               ],
             ),
+            textAlign: TextAlign.center,
           ),
           // const Text(
           //   'Для продолжения необходимо подтвердить, что тебе уже исполнилось 18 лет',

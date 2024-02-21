@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../../domain/models/pages_extra.dart';
 import '../../../../../anime_lib/models/models.dart';
+import '../../../../domain/models/pages_extra.dart';
+import '../../../../domain/enums/anime_source.dart';
 import '../../../../../anime_lib/enums/enums.dart';
 import '../../../../../anime_lib/anilib_api.dart';
 import '../../../widgets/cached_image.dart';
@@ -19,10 +22,14 @@ class AnilibStudioSelectPage extends ConsumerWidget {
     this.extra, {
     super.key,
     required this.episodeId,
+    required this.playlist,
+    required this.selectedEpisode,
   });
 
   final AnimeSourcePageExtra extra;
   final int episodeId;
+  final int selectedEpisode;
+  final List<AnilibPlaylist> playlist;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,8 +63,7 @@ class AnilibStudioSelectPage extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      'Серия 1',
-                      //studioName.replaceFirst('.Subtitles', ' (Субтитры)'),
+                      'Серия $selectedEpisode',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -80,7 +86,44 @@ class AnilibStudioSelectPage extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final item = studios.players[index];
 
-                        return StudioListItem(item);
+                        return StudioListItem(
+                          item,
+                          onTap: () {
+                            //   final videoLink = AnilibUtils.kVideoHosts[0] + item.video[0].href;
+                            //   print('LINK: $videoLink');
+
+                            final e = PlayerPageExtra(
+                              selected: selectedEpisode,
+                              info: TitleInfo(
+                                shikimoriId: extra.shikimoriId,
+                                animeName: extra.animeName,
+                                imageUrl: extra.imageUrl,
+                                studioId: item.team.id,
+                                studioName: item.team.name,
+                                studioType: item.translationType.name,
+                                additInfo: null,
+                              ),
+                              animeSource: AnimeSource.anilib,
+                              startPosition: '',
+                              anilibHost: AnilibUtils.kVideoHosts[0],
+                              playlist: [
+                                PlaylistItem(
+                                  episodeNumber: selectedEpisode,
+                                  link: null,
+                                  libria: null,
+                                  name: studios.name,
+                                  anilibEpisode: AnilibPlayerEpisode(
+                                    subtitles: item.subtitles,
+                                    video: item.video,
+                                  ),
+                                ),
+                              ],
+                              //anilibEpisode: null,
+                            );
+
+                            GoRouter.of(context).pushNamed('player', extra: e);
+                          },
+                        );
                       },
                     ),
                   ];
@@ -109,31 +152,31 @@ class AnilibStudioSelectPage extends ConsumerWidget {
 }
 
 class StudioListItem extends StatelessWidget {
-  const StudioListItem(this.item, {super.key});
+  const StudioListItem(
+    this.item, {
+    super.key,
+    required this.onTap,
+  });
 
   final AnilibPlayer item;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     // final subtitle =
     //     '${item.translationType.name} / ${item.video[0].quality.toShort}';
 
+    final teamName = item.team.name
+        .replaceFirst('.Subtitles', '')
+        .replaceFirst('|Субтитры', '');
+
     return ListTile(
-      onTap: () {
-        final videoLink = AnilibUtils.kVideoHosts[0] + item.video[0].href;
-
-        print('LINK: $videoLink');
-
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => PlayerPage(videoLink: videoLink),
-        //   ),
-        // );
-      },
+      onTap: onTap,
       leading: CachedCircleImage(
         item.team.teamCover,
         httpHeaders: const {
-          'Referer': 'https://test-front.anilib.me/',
+          'Origin': AnilibUtils.kOrigin,
+          'Referer': AnilibUtils.kReferer,
           'User-Agent': AnilibUtils.kUserAgent,
         },
       ),
@@ -142,7 +185,7 @@ class StudioListItem extends StatelessWidget {
         children: [
           Flexible(
             child: Text(
-              item.team.name.replaceFirst('.Subtitles', ''),
+              teamName,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),

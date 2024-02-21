@@ -16,8 +16,12 @@ import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert' show utf8;
+
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../domain/models/anime_player_page_extra.dart';
+import '../../../utils/player/player_utils.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../providers/environment_provider.dart';
 import '../../../domain/enums/stream_quality.dart';
@@ -84,6 +88,7 @@ class PlayerNotifier extends w.ChangeNotifier {
   late final Player player = Player(
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
+      libass: true,
       bufferSize: 32 * 1024 * 1024,
       logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
     ),
@@ -134,8 +139,6 @@ class PlayerNotifier extends w.ChangeNotifier {
   List<int> opTimecode = [];
 
   void initState() async {
-    _pipeLogsToConsole(player);
-
     if (!AppUtils.instance.isDesktop) {
       _sdkVersion = ref.read(environmentProvider).sdkVersion;
 
@@ -172,22 +175,45 @@ class PlayerNotifier extends w.ChangeNotifier {
 
     await _parseEpisode();
 
+    String? subsData;
+
+    if (e.animeSource == AnimeSource.anilib &&
+        e.playlist.firstOrNull?.anilibEpisode?.subtitles.firstOrNull?.src !=
+            null) {
+      subsData =
+          await _loadSubs(e.playlist.first.anilibEpisode!.subtitles.first.src);
+    }
+
+    //_pipeLogsToConsole(player);
+
     videoLinksAsync.whenData((_) async {
       if (!_parseQuality()) {
         return;
       }
 
-      await _setupMpvExtras(player.platform as NativePlayer);
+      await _setMpvExtras(player.platform as NativePlayer);
 
-      await (player.platform as NativePlayer).setProperty(
-        'User-Agent',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 YaBrowser/24.1.0.0 Safari/537.36',
-      );
+      await _setAndroidSubFont();
 
-      await (player.platform as NativePlayer).setProperty(
-        'http-header-fields',
-        'Referer: ${_getReferer(e.animeSource)}',
-      );
+      // await (player.platform as NativePlayer).setProperty(
+      //   'User-Agent',
+      //   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 YaBrowser/24.1.0.0 Safari/537.36',
+      // );
+
+      if (_animeSourceType == AnimeSource.anilib) {
+        await (player.platform as NativePlayer).setProperty(
+          'User-Agent',
+          AnilibUtils.kUserAgent,
+        );
+
+        await (player.platform as NativePlayer).setProperty(
+          'http-header-fields',
+          'Referer: ${_getReferer(e.animeSource)}',
+          //'Referer: ${_getReferer(e.animeSource)}, Origin: https://test-front.anilib.me',
+          //'Referer: https://anilib.me/, Origin: https://anilib.me',
+          //'Referer: https://anilib.me, Origin: https://anilib.me',
+        );
+      }
 
       // await (player.platform as NativePlayer).setProperty(
       //   'demuxer-lavf-hacks',
@@ -203,6 +229,17 @@ class PlayerNotifier extends w.ChangeNotifier {
         Media(videoLinks.getMaxQ()),
         play: false,
       );
+
+      // TODO
+      if (subsData != null && subsData.isNotEmpty) {
+        await (player.platform as NativePlayer).setSubtitleTrack(
+          // SubtitleTrack.uri(
+          //   e.playlist.first.anilibEpisode!.subtitles.first.src,
+          // ),
+          SubtitleTrack.data(subsData),
+          // synchronized: false,
+        );
+      }
 
       if (e.startPosition.isNotEmpty) {
         await (player.platform as NativePlayer).setProperty(
@@ -348,7 +385,11 @@ class PlayerNotifier extends w.ChangeNotifier {
 
     await _unfullscreen();
 
-    await player.pause();
+    for (final s in subscriptions) {
+      await s.cancel();
+    }
+
+    //await player.pause();
     await player.dispose();
 
     if (_audioSession != null) {
@@ -357,10 +398,6 @@ class PlayerNotifier extends w.ChangeNotifier {
       for (final s in _audioSessionSubscriptions) {
         await s.cancel();
       }
-    }
-
-    for (final s in subscriptions) {
-      await s.cancel();
     }
 
     videoLinksAsync.whenData((_) async {
@@ -566,6 +603,11 @@ class PlayerNotifier extends w.ChangeNotifier {
   }
 
   Future<void> _updateDb() async {
+    // TODO
+    if (e.animeSource == AnimeSource.anilib) {
+      return;
+    }
+
     if (error) {
       return;
     }
@@ -693,6 +735,17 @@ class PlayerNotifier extends w.ChangeNotifier {
             low: links.video360,
           );
         },
+      );
+    } else if (_animeSourceType == AnimeSource.anilib &&
+        _playlistItem.anilibEpisode != null) {
+      videoLinksAsync = AsyncValue.data(
+        VideoLinks(
+          fhd: _playlistItem.anilibEpisode!.video.firstOrNull == null
+              ? null
+              : '${e.anilibHost!}${_playlistItem.anilibEpisode!.video[0].href}',
+          hd: null,
+          sd: null,
+        ),
       );
     }
 
@@ -845,7 +898,7 @@ class PlayerNotifier extends w.ChangeNotifier {
     return tmp.replaceFirst('00:', '');
   }
 
-  Future<void> _setupMpvExtras(NativePlayer player) async {
+  Future<void> _setMpvExtras(NativePlayer player) async {
     await player.setProperty(
       'deband',
       'yes',
@@ -902,6 +955,21 @@ class PlayerNotifier extends w.ChangeNotifier {
     return map[sourceType] ?? '';
   }
 
+  Future<void> _setAndroidSubFont() async {
+    if (AppUtils.instance.isDesktop) {
+      return;
+    }
+
+    await (player.platform as NativePlayer).setProperty(
+      'sub-fonts-dir',
+      PlayerUtils.instance.fontsDirPath,
+    );
+    await (player.platform as NativePlayer).setProperty(
+      'sub-font',
+      'Noto Sans',
+    );
+  }
+
   // Future<void> _test() async {
   //   await (player.platform as NativePlayer).setProperty(
   //     'brightness',
@@ -923,6 +991,30 @@ class PlayerNotifier extends w.ChangeNotifier {
   //     '-20',
   //   );
   // }
+
+  Future<String> _loadSubs(String url) async {
+    final httpClient = http.Client();
+    String subs = '';
+
+    try {
+      final response = await httpClient.get(
+        Uri.parse(url),
+      );
+
+      if (response.statusCode != 200) {
+        throw 'Не удалось загрузить субтитры';
+      }
+
+      subs = utf8.decode(response.body.codeUnits);
+    } catch (e) {
+      //subs = '';
+      throw 'Не удалось загрузить субтитры';
+    } finally {
+      httpClient.close();
+    }
+
+    return subs;
+  }
 
   void _pipeLogsToConsole(Player player) {
     if (!kDebugMode) {

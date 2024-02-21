@@ -73,8 +73,12 @@ class AnilibSourcePage extends ConsumerWidget {
                               PageRouteBuilder(
                                 pageBuilder:
                                     (context, animation1, animation2) =>
-                                        AnilibStudioSelectPage(extra,
-                                            episodeId: item.id),
+                                        AnilibStudioSelectPage(
+                                  extra,
+                                  episodeId: item.id,
+                                  playlist: playlist,
+                                  selectedEpisode: item.number,
+                                ),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,
                               ),

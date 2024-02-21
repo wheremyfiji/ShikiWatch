@@ -59,6 +59,7 @@ class SeriesSelectPage extends HookConsumerWidget {
 
       for (var e in sortedSeriesList) {
         t.add(PlaylistItem(
+          anilibEpisode: null,
           episodeNumber: int.parse(e.number ?? ''),
           link: e.link,
           libria: null,
@@ -267,6 +268,7 @@ class SeriesSelectPage extends HookConsumerWidget {
                           animeSource: AnimeSource.kodik,
                           startPosition: startPosition,
                           playlist: p(),
+                          anilibEpisode: null,
                         );
 
                         //return;

@@ -133,6 +133,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
         t.add(appe.PlaylistItem(
           episodeNumber: e.episode ?? -1,
           link: null,
+          anilibEpisode: null,
           libria: appe.LibriaEpisode(
             //host: 'https://static.libria.fun',
             host: host,
@@ -328,6 +329,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                                 //'https://${title.player!.host!}',
                                 'https://static.libria.fun',
                               ),
+                              anilibEpisode: null,
                             );
 
                             // ignore: use_build_context_synchronously

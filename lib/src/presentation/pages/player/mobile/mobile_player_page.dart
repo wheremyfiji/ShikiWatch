@@ -178,6 +178,18 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
       safePaddingBottom.value = viewPadding.bottom;
     }
 
+    final playerWidget = Align(
+      child: RepaintBoundary(
+        child: Video(
+          key: notifier.videoStateKey,
+          controller: notifier.playerController,
+          fill: Colors.transparent,
+          fit: notifier.playerFit,
+          controls: NoVideoControls,
+        ),
+      ),
+    );
+
     return Theme(
       data: appTheme.dark,
       child: Scaffold(
@@ -200,6 +212,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
               loading: () {
                 return Stack(
                   children: [
+                    playerWidget,
                     Align(
                       alignment: Alignment.topLeft,
                       child: SafeArea(
@@ -223,6 +236,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
               error: (error, stackTrace) {
                 return Stack(
                   children: [
+                    playerWidget,
                     Align(
                       alignment: Alignment.topLeft,
                       child: SafeArea(
@@ -254,17 +268,18 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Align(
-                      child: RepaintBoundary(
-                        child: Video(
-                          key: notifier.videoStateKey,
-                          controller: notifier.playerController,
-                          fill: Colors.transparent,
-                          fit: notifier.playerFit,
-                          controls: NoVideoControls,
-                        ),
-                      ),
-                    ),
+                    playerWidget,
+                    // Align(
+                    //   child: RepaintBoundary(
+                    //     child: Video(
+                    //       key: notifier.videoStateKey,
+                    //       controller: notifier.playerController,
+                    //       fill: Colors.transparent,
+                    //       fit: notifier.playerFit,
+                    //       controls: NoVideoControls,
+                    //     ),
+                    //   ),
+                    // ),
                     AutoHide(
                       switchDuration: switchDuration,
                       controller: notifier.hideController,

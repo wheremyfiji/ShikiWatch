@@ -40,6 +40,18 @@ class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
     final notifier = ref.watch(playerProvider(p));
     final appTheme = ref.watch(appThemeDataProvider).data;
 
+    final playerWidget = Align(
+      child: RepaintBoundary(
+        child: Video(
+          key: notifier.videoStateKey,
+          controller: notifier.playerController,
+          fill: Colors.transparent,
+          fit: BoxFit.contain,
+          controls: NoVideoControls,
+        ),
+      ),
+    );
+
     return Theme(
       data: appTheme.dark,
       child: Scaffold(
@@ -49,17 +61,7 @@ class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
             return Stack(
               clipBehavior: Clip.none,
               children: [
-                Align(
-                  child: RepaintBoundary(
-                    child: Video(
-                      key: notifier.videoStateKey,
-                      controller: notifier.playerController,
-                      fill: Colors.transparent,
-                      fit: BoxFit.contain,
-                      controls: NoVideoControls,
-                    ),
-                  ),
-                ),
+                playerWidget,
                 Positioned.fill(
                   child: CallbackShortcuts(
                     bindings: {
@@ -109,6 +111,7 @@ class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
           },
           error: (e, s) => Stack(
             children: [
+              playerWidget,
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: IconButton(
@@ -128,6 +131,7 @@ class DesktopPlayerPageState extends ConsumerState<DesktopPlayerPage> {
           ),
           loading: () => Stack(
             children: [
+              playerWidget,
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: IconButton(
