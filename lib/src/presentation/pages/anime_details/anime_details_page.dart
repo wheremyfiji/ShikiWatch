@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/models/pages_extra.dart';
 import '../../../services/preferences/preferences_service.dart';
+import '../../../utils/app_utils.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../constants/config.dart';
@@ -258,7 +259,8 @@ class AnimeDetailsPage extends ConsumerWidget {
                         child: RepaintBoundary(
                           child: TitleDescriptionFromHtml(
                             anime.descriptionHtml!,
-                            shouldExpand: anime.description!.length > 500,
+                            shouldExpand: !AppUtils.instance.isDesktop &&
+                                anime.description!.length > 500,
                           ).animate().fade(),
                         ),
                       ),
