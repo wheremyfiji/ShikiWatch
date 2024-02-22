@@ -35,27 +35,29 @@ class TitleVideosWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                style: const ButtonStyle(
-                  visualDensity: VisualDensity.compact,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation1, animation2) =>
-                        AnimeVideosPage(
-                      id: data.id ?? 0,
-                      name: data.russian ?? data.name ?? '',
+              if (data.videos!.length > 1) ...[
+                IconButton(
+                  style: const ButtonStyle(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () => Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          AnimeVideosPage(
+                        id: data.id ?? 0,
+                        name: data.russian ?? data.name ?? '',
+                      ),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
                     ),
-                    transitionDuration: Duration.zero,
-                    reverseTransitionDuration: Duration.zero,
+                  ),
+                  icon: const Icon(
+                    Icons.chevron_right_rounded,
                   ),
                 ),
-                icon: const Icon(
-                  Icons.chevron_right_rounded,
-                ),
-              ),
+              ],
             ],
           ),
         ),
