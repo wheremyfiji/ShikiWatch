@@ -28,6 +28,7 @@ import 'src/presentation/shiki.dart';
 import 'src/utils/app_utils.dart';
 
 import 'secret.dart';
+import 'src/utils/player/player_utils.dart';
 
 Future<void> main() async {
   if (kReleaseMode) {
@@ -77,6 +78,10 @@ void initApp() async {
 
   final appCacheDir = await path_prov.getTemporaryDirectory();
   AppUtils.init(appCacheDir);
+
+  final appDocumentsPath =
+      await path_prov.getApplicationSupportDirectory().then((d) => d.path);
+  PlayerUtils.init(appDocumentsPath);
 
   await SecureStorageService.initialize();
 
