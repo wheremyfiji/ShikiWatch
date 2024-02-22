@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../utils/extensions/buildcontext.dart';
 
@@ -176,24 +179,65 @@ class _DonateBottomSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Поддержать разработчика',
-              style: context.textTheme.headlineSmall,
+              style: context.textTheme.headlineMedium,
             ),
           ),
           ListTile(
             onTap: () => launchUrlString(
-              'https://new.donatepay.ru/@1156478',
+              'https://boosty.to/wheremyfiji/donate',
               mode: LaunchMode.externalApplication,
             ),
-            leading: const Icon(Icons.attach_money_rounded),
-            title: const Text('DonatePay'),
-            subtitle: const Text('Онлайн способ'),
+            leading: SvgPicture.asset(
+              'assets/svg/boosty.svg',
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.onSurfaceVariant,
+                BlendMode.srcIn,
+              ),
+            ),
+            title: const Text('Boosty'),
+            subtitle: const Text('Открыть в браузере'),
+          ),
+          ListTile(
+            onTap: () => Clipboard.setData(
+              const ClipboardData(
+                text: 'UQBd8aIQ0TF0Oz_pXhX_yJPmh6GzzTj0hiwLk3OZbh0ZeBj7',
+              ),
+            ),
+            leading: const Icon(
+              Icons.diamond_rounded,
+              //color: context.colorScheme.onSurfaceVariant,
+              size: 24,
+            ),
+            title: const Text('Toncoin (TON)'),
+            subtitle: const Text('Скопировать адрес'),
+          ),
+          ListTile(
+            onTap: () => Clipboard.setData(
+              const ClipboardData(
+                text: 'TRetqKdTt9CkkxXRPjtVT9mjFYpYUxnquE',
+              ),
+            ),
+            leading: SvgPicture.asset(
+              'assets/svg/usdt.svg',
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.onSurfaceVariant,
+                BlendMode.srcIn,
+              ),
+            ),
+            title: const Text('USDT TRC20'),
+            subtitle: const Text('Скопировать адрес'),
           ),
           ListTile(
             onTap: () => launchUrlString(
               'https://t.me/wheremyfiji',
               mode: LaunchMode.externalApplication,
             ),
-            leading: const Icon(FontAwesomeIcons.telegram),
+            leading: const Icon(
+              FontAwesomeIcons.telegram,
+              size: 24,
+            ),
             title: const Text('Telegram'),
             subtitle: const Text('Обсудить лично'),
           ),

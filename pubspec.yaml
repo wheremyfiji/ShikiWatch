@@ -40,6 +40,7 @@ dependencies:
   flutter_markdown: ^0.6.18+3
   flutter_rating_bar: ^4.0.1
   flutter_secure_storage: ^9.0.0
+  flutter_svg: ^2.0.10+1
   flutter_web_auth: ^0.5.0
   font_awesome_flutter: ^10.7.0
   freezed_annotation: ^2.4.1
@@ -122,6 +123,8 @@ flutter:
           weight: 900
   assets:
     - assets/img/app-logo.png
+    - assets/svg/boosty.svg
+    - assets/svg/usdt.svg
     #- assets/json/shiki-studios-filtered-sorted.json
     #- .git/
     #- .git/refs/heads/
