@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/player_provider_parameters.dart';
+import '../shared/skip_fragment_button.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/quality_popup_menu.dart';
 import '../shared/player_speed_popup.dart';
@@ -99,12 +100,10 @@ class _OtherControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (init, error, playableContent, selectedQuality) = ref.watch(
-        playerPageProvider(providerParameters).select((value) => (
+    final (init, error) =
+        ref.watch(playerPageProvider(providerParameters).select((value) => (
               value.init,
               value.error,
-              value.playableContent,
-              value.selectedQuality
             )));
 
     final (playbackSpeed) =
@@ -120,14 +119,24 @@ class _OtherControls extends ConsumerWidget {
                 .read(playerPageProvider(providerParameters))
                 .setPlaybackSpeed,
           ),
-          QualityPopUpMenu(
-            playableContent: playableContent,
-            selectedQuality: selectedQuality,
-            onSelected: (q) => ref
-                .read(playerPageProvider(providerParameters))
-                .changeQuality(q),
-            onOpened: () {},
-            onCanceled: () {},
+          Consumer(
+            builder: (context, ref, child) {
+              final (playableContent, selectedQuality) = ref.watch(
+                  playerPageProvider(providerParameters).select((value) => (
+                        value.playableContent,
+                        value.selectedQuality,
+                      )));
+
+              return QualityPopUpMenu(
+                playableContent: playableContent,
+                selectedQuality: selectedQuality,
+                onSelected: (q) => ref
+                    .read(playerPageProvider(providerParameters))
+                    .changeQuality(q),
+                onOpened: () {},
+                onCanceled: () {},
+              );
+            },
           ),
           _ShadersButton(providerParameters),
         ],
@@ -283,7 +292,50 @@ class _PlayerInfoHeader extends ConsumerWidget {
       animePicture: extra.titleInfo.imageUrl,
       episodeNumber: currentEpNumber,
       studioName: extra.studio.name,
-      skipButton: const SizedBox.shrink(),
+      skipButton: _SkipButton(providerParameters),
+    );
+  }
+}
+
+class _SkipButton extends ConsumerWidget {
+  const _SkipButton(this.providerParameters);
+
+  final PlayerProviderParameters providerParameters;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final opTimecode = ref.watch(playerPageProvider(providerParameters)
+        .select((value) => value.opTimecode));
+
+    final (player, position) =
+        ref.watch(playerStateProvider.select((s) => (s.player, s.position)));
+
+    final showSkip = opTimecode.length == 2 &&
+        (opTimecode.first) <= position.inSeconds &&
+        opTimecode.last > position.inSeconds;
+
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      child: showSkip
+          ? IgnorePointer(
+              ignoring: !showSkip,
+              child: SkipFragmentButton(
+                title: 'Пропустить опенинг',
+                onSkip: () => player.seek(Duration(seconds: opTimecode.last)),
+                onClose: () => ref
+                    .read(playerPageProvider(providerParameters))
+                    .opTimecode = [],
+              ),
+            )
+          : IconButton(
+              tooltip: 'Перемотать 125 секунд',
+              iconSize: 32,
+              color: Colors.white,
+              onPressed: () => player.seek(
+                position + const Duration(seconds: 85),
+              ),
+              icon: const Icon(Icons.double_arrow_rounded),
+            ),
     );
   }
 }
