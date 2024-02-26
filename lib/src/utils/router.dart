@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:go_router/go_router.dart';
 
-import '../domain/models/anime_player_page_extra.dart';
 import '../domain/models/pages_extra.dart';
 import '../domain/models/user.dart';
 import '../presentation/pages/about/about_page.dart';
@@ -21,8 +20,9 @@ import '../presentation/pages/login/login_desktop_page.dart';
 import '../presentation/pages/login/login_page.dart';
 import '../presentation/pages/manga_detail/manga_detail_page.dart';
 import '../presentation/pages/other_more/other_more_page.dart';
-import '../presentation/pages/player/mobile/mobile_player_page.dart';
 import '../presentation/pages/player/desktop/desktop_player_page.dart';
+import '../presentation/pages/player/domain/player_page_extra.dart';
+import '../presentation/pages/player/mobile/mobile_player_page.dart';
 import '../presentation/pages/profile/my_profile_page.dart';
 import '../presentation/pages/profile/user_clubs_page.dart';
 import '../presentation/pages/profile/user_history_page.dart';
@@ -33,7 +33,6 @@ import '../presentation/pages/search/anime_filter_page.dart';
 import '../presentation/pages/search/anime_search_page.dart';
 import '../presentation/pages/settings/local_database_manage_page.dart';
 import '../presentation/pages/settings/settings_page.dart';
-import '../presentation/pages/topics/topics_page.dart';
 import '../presentation/providers/anime_search_provider.dart';
 import '../services/secure_storage/secure_storage_service.dart';
 

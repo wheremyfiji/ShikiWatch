@@ -1,4 +1,5 @@
 enum StreamQuality {
+  fourK,
   fhd,
   hd,
   sd,
@@ -7,6 +8,7 @@ enum StreamQuality {
 
   String get name {
     return switch (this) {
+      StreamQuality.fourK => '2160p',
       StreamQuality.fhd => '1080p',
       StreamQuality.hd => '720p',
       StreamQuality.sd => '480p',

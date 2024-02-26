@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../../anime_lib/models/models.dart';
 import '../../../../domain/models/pages_extra.dart';
@@ -12,6 +11,7 @@ import '../../../../../anime_lib/enums/enums.dart';
 import '../../../../../anime_lib/anilib_api.dart';
 import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
+import '../../player/domain/player_page_extra.dart' as ppe;
 import '../shared/compact_info_chip.dart';
 import '../shared/nothing_found.dart';
 
@@ -89,36 +89,28 @@ class AnilibStudioSelectPage extends ConsumerWidget {
                         return StudioListItem(
                           item,
                           onTap: () {
-                            //   final videoLink = AnilibUtils.kVideoHosts[0] + item.video[0].href;
-                            //   print('LINK: $videoLink');
+                            final anilib = ppe.AnilibPlayerList(
+                              host: AnilibUtils.kVideoHosts[0],
+                              playlist: playlist,
+                            );
 
-                            final e = PlayerPageExtra(
-                              selected: selectedEpisode,
-                              info: TitleInfo(
+                            final e = ppe.PlayerPageExtra(
+                              titleInfo: ppe.TitleInfo(
                                 shikimoriId: extra.shikimoriId,
                                 animeName: extra.animeName,
                                 imageUrl: extra.imageUrl,
-                                studioId: item.team.id,
-                                studioName: item.team.name,
-                                studioType: item.translationType.name,
-                                additInfo: null,
                               ),
+                              studio: ppe.Studio(
+                                id: item.team.id,
+                                name: item.team.name,
+                                type: item.translationType.name,
+                              ),
+                              selected: selectedEpisode,
                               animeSource: AnimeSource.anilib,
                               startPosition: '',
-                              anilibHost: AnilibUtils.kVideoHosts[0],
-                              playlist: [
-                                PlaylistItem(
-                                  episodeNumber: selectedEpisode,
-                                  link: null,
-                                  libria: null,
-                                  name: studios.name,
-                                  anilibEpisode: AnilibPlayerEpisode(
-                                    subtitles: item.subtitles,
-                                    video: item.video,
-                                  ),
-                                ),
-                              ],
-                              //anilibEpisode: null,
+                              anilib: anilib,
+                              libria: null,
+                              kodik: null,
                             );
 
                             GoRouter.of(context).pushNamed('player', extra: e);

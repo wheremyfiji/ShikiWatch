@@ -23,10 +23,6 @@ class AnilibSourcePage extends ConsumerWidget {
       anilibSourceProvider(p).select((v) => v.playlistAsync),
     ); //  controller
 
-    //final playlistAsync = controller.playlistAsync;
-
-    print('AnilibSourcePage BULD');
-
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(anilibSourceProvider(p)),
@@ -66,7 +62,11 @@ class AnilibSourcePage extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final item = playlist[index];
 
+                        final isCompleted = item.number <= extra.epWatched;
+
                         return ListTile(
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(16, 0, 0, 0),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -87,6 +87,17 @@ class AnilibSourcePage extends ConsumerWidget {
                           title: Text('Серия ${item.number}'),
                           subtitle:
                               item.name.isNotEmpty ? Text(item.name) : null,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isCompleted)
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.check_circle_rounded),
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                            ],
+                          ),
                         );
                       },
                     ),

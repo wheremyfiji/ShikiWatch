@@ -14,7 +14,6 @@ import '../../../../../anilibria/enums/title_status_code.dart';
 import '../../../../../anilibria/models/title.dart';
 import '../../../../domain/enums/anime_source.dart';
 import '../../../../domain/models/anime_database.dart';
-import '../../../../domain/models/anime_player_page_extra.dart' as appe;
 import '../../../../domain/models/pages_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/extensions/buildcontext.dart';
@@ -24,6 +23,7 @@ import '../../../hooks/use_auto_scroll_controller.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/error_widget.dart';
 import '../../player/continue_dialog.dart';
+import '../../player/domain/player_page_extra.dart' as ppe;
 import '../kodik/kodik_source_page.dart';
 
 import 'anilibria_source_controller.dart';
@@ -126,33 +126,33 @@ class AnilibriaSourcePage extends HookConsumerWidget {
       return null;
     }, [episodesList, result]);
 
-    List<appe.PlaylistItem> p(List<AnilibriaEpisode> playlist, String host) {
-      List<appe.PlaylistItem> t = [];
+    // List<appe.PlaylistItem> p(List<AnilibriaEpisode> playlist, String host) {
+    //   List<appe.PlaylistItem> t = [];
 
-      for (var e in playlist) {
-        t.add(appe.PlaylistItem(
-          episodeNumber: e.episode ?? -1,
-          link: null,
-          anilibEpisode: null,
-          libria: appe.LibriaEpisode(
-            //host: 'https://static.libria.fun',
-            host: host,
-            fnd: e.hls!.fhd,
-            hd: e.hls!.hd,
-            sd: e.hls!.sd,
-            opSkip: e.skips?.opening == null
-                ? []
-                : [
-                    e.skips!.opening!.start ?? 0,
-                    e.skips!.opening!.stop!,
-                  ],
-          ),
-          name: e.name,
-        ));
-      }
+    //   for (var e in playlist) {
+    //     t.add(appe.PlaylistItem(
+    //       episodeNumber: e.episode ?? -1,
+    //       link: null,
+    //       anilibEpisode: null,
+    //       libria: appe.LibriaEpisode(
+    //         //host: 'https://static.libria.fun',
+    //         host: host,
+    //         fnd: e.hls!.fhd,
+    //         hd: e.hls!.hd,
+    //         sd: e.hls!.sd,
+    //         opSkip: e.skips?.opening == null
+    //             ? []
+    //             : [
+    //                 e.skips!.opening!.start ?? 0,
+    //                 e.skips!.opening!.stop!,
+    //               ],
+    //       ),
+    //       name: e.name,
+    //     ));
+    //   }
 
-      return t;
-    }
+    //   return t;
+    // }
 
     return Scaffold(
       body: SafeArea(
@@ -311,25 +311,50 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                               }
                             }
 
-                            final e = appe.PlayerPageExtra(
-                              selected: ep.episode!,
-                              info: appe.TitleInfo(
+                            List<ppe.LibriaPlaylistItem> t = [];
+
+                            for (AnilibriaEpisode p
+                                in title.player!.playlist!) {
+                              t.add(
+                                ppe.LibriaPlaylistItem(
+                                  number: p.episode ?? -1,
+                                  name: p.name,
+                                  fnd: p.hls!.fhd,
+                                  hd: p.hls!.hd,
+                                  sd: p.hls!.sd,
+                                  opSkip: p.skips?.opening == null
+                                      ? []
+                                      : [
+                                          p.skips!.opening!.start ?? 0,
+                                          p.skips!.opening!.stop!,
+                                        ],
+                                ),
+                              );
+                            }
+
+                            final ppe.LibriaPlaylist libriaPlaylist =
+                                ppe.LibriaPlaylist(
+                              host: 'https://static.libria.fun',
+                              playlist: t,
+                            );
+
+                            final e = ppe.PlayerPageExtra(
+                              titleInfo: ppe.TitleInfo(
                                 shikimoriId: extra.shikimoriId,
                                 animeName: extra.animeName,
                                 imageUrl: extra.imageUrl,
-                                studioId: 610,
-                                studioName: 'AniLibria.TV',
-                                studioType: 'voice',
-                                additInfo: null,
                               ),
+                              studio: const ppe.Studio(
+                                id: 610,
+                                name: 'AniLibria.TV',
+                                type: 'voice',
+                              ),
+                              selected: ep.episode!,
                               animeSource: AnimeSource.libria,
                               startPosition: startPosition,
-                              playlist: p(
-                                title.player!.playlist!,
-                                //'https://${title.player!.host!}',
-                                'https://static.libria.fun',
-                              ),
-                              anilibEpisode: null,
+                              anilib: null,
+                              libria: libriaPlaylist,
+                              kodik: null,
                             );
 
                             // ignore: use_build_context_synchronously

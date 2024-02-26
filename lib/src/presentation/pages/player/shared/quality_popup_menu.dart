@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../../../../domain/enums/stream_quality.dart';
-
-import 'shared.dart';
+import '../domain/playable_content.dart';
 
 class QualityPopUpMenu extends StatelessWidget {
-  final VideoLinks videoLinks;
-  final StreamQuality selectedQuality;
-  final void Function(StreamQuality) onSelected;
-  final void Function() onOpened;
-  final void Function() onCanceled;
-
   const QualityPopUpMenu({
     super.key,
-    required this.videoLinks,
+    required this.playableContent,
     required this.selectedQuality,
     required this.onSelected,
     required this.onOpened,
     required this.onCanceled,
   });
+
+  final PlayableContent playableContent;
+  final StreamQuality selectedQuality;
+  final void Function(StreamQuality) onSelected;
+  final void Function() onOpened;
+  final void Function() onCanceled;
 
   @override
   Widget build(BuildContext context) {
@@ -27,22 +26,27 @@ class QualityPopUpMenu extends StatelessWidget {
       initialValue: selectedQuality,
       itemBuilder: (context) {
         return [
-          if (videoLinks.fhd != null)
+          if (playableContent.fourK != null)
+            const PopupMenuItem<StreamQuality>(
+              value: StreamQuality.fhd,
+              child: Text('2160p'),
+            ),
+          if (playableContent.fhd != null)
             const PopupMenuItem<StreamQuality>(
               value: StreamQuality.fhd,
               child: Text('1080p'),
             ),
-          if (videoLinks.hd != null)
+          if (playableContent.hd != null)
             const PopupMenuItem<StreamQuality>(
               value: StreamQuality.hd,
               child: Text('720p'),
             ),
-          if (videoLinks.sd != null)
+          if (playableContent.sd != null)
             const PopupMenuItem<StreamQuality>(
               value: StreamQuality.sd,
               child: Text('480p'),
             ),
-          if (videoLinks.low != null)
+          if (playableContent.low != null)
             const PopupMenuItem<StreamQuality>(
               value: StreamQuality.low,
               child: Text('360p'),

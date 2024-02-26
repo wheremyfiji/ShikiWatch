@@ -10,11 +10,11 @@ import '../../../../utils/app_utils.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../../kodik/models/kodik_anime.dart';
 import '../../../../domain/models/anime_database.dart';
-import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../hooks/use_auto_scroll_controller.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../player/continue_dialog.dart';
+import '../../player/domain/player_page_extra.dart' as ppe;
 import '../providers.dart';
 
 import 'kodik_source_controller.dart';
@@ -54,36 +54,37 @@ class SeriesSelectPage extends HookConsumerWidget {
       context.pop();
     }
 
-    List<PlaylistItem> p() {
-      List<PlaylistItem> t = [];
+    // List<PlaylistItem> p() {
+    //   List<PlaylistItem> t = [];
 
-      for (var e in sortedSeriesList) {
-        t.add(PlaylistItem(
-          anilibEpisode: null,
-          episodeNumber: int.parse(e.number ?? ''),
-          link: e.link,
-          libria: null,
-          name: null,
-        ));
-      }
+    //   for (var e in sortedSeriesList) {
+    //     t.add(PlaylistItem(
+    //       anilibEpisode: null,
+    //       episodeNumber: int.parse(e.number ?? ''),
+    //       link: e.link,
+    //       libria: null,
+    //       name: null,
+    //     ));
+    //   }
 
-      return t;
-    }
+    //   return t;
+    // }
 
     void addEpisode(int? episode) async {
       if (episode != null) {
         ref
             .read(animeDatabaseProvider)
             .updateEpisode(
-                shikimoriId: shikimoriId,
-                animeName: animeName,
-                imageUrl: imageUrl,
-                timeStamp: 'Просмотрено полностью',
-                studioId: studioId,
-                studioName: studioName,
-                studioType: studioType,
-                episodeNumber: episode,
-                complete: true)
+              shikimoriId: shikimoriId,
+              animeName: animeName,
+              imageUrl: imageUrl,
+              timeStamp: 'Просмотрено полностью',
+              studioId: studioId,
+              studioName: studioName,
+              studioType: studioType,
+              episodeNumber: episode,
+              complete: true,
+            )
             .then((value) {
           showSnackBar(ctx: context, msg: 'Серия $episode добавлена');
           return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
@@ -254,21 +255,36 @@ class SeriesSelectPage extends HookConsumerWidget {
                           }
                         }
 
-                        final e = PlayerPageExtra(
-                          selected: seriaNum,
-                          info: TitleInfo(
+                        List<ppe.KodikPlaylistItem> kodik = [];
+
+                        for (var e in sortedSeriesList) {
+                          kodik.add(ppe.KodikPlaylistItem(
+                            number: int.parse(e.number ?? ''),
+                            link: e.link!,
+                          ));
+                        }
+
+                        final e = ppe.PlayerPageExtra(
+                          titleInfo: ppe.TitleInfo(
                             shikimoriId: shikimoriId,
                             animeName: animeName,
                             imageUrl: imageUrl,
-                            studioId: studioId,
-                            studioName: studioName,
-                            studioType: studioType,
-                            additInfo: null,
+                            // studioId: studioId,
+                            // studioName: studioName,
+                            // studioType: studioType,
+                            // additInfo: null,
                           ),
+                          studio: ppe.Studio(
+                            id: studioId,
+                            name: studioName,
+                            type: studioType,
+                          ),
+                          selected: seriaNum,
                           animeSource: AnimeSource.kodik,
                           startPosition: startPosition,
-                          playlist: p(),
-                          anilibEpisode: null,
+                          anilib: null,
+                          libria: null,
+                          kodik: kodik,
                         );
 
                         //return;
