@@ -187,16 +187,7 @@ class PlayerController extends ChangeNotifier {
         'http_persistent=0,seg_max_retry=10', //  fflags=+discardcorrupt
       );
 
-      await player.open(
-        Media(playableContent.getMaxQ()),
-        play: false,
-      );
-
-      if (playableContent.subs != null && playableContent.subs!.isNotEmpty) {
-        await player.setSubtitleTrack(
-          SubtitleTrack.data(playableContent.subs!),
-        );
-      }
+      await _openMedia();
 
       if (e.startPosition.isNotEmpty) {
         await (player.platform as NativePlayer).setProperty(
@@ -307,10 +298,12 @@ class PlayerController extends ChangeNotifier {
 
     await player.stop();
 
-    await player.open(
-      Media(playableContent.getQ(q)!),
-      play: false,
-    );
+    // await player.open(
+    //   Media(playableContent.getQ(q)!),
+    //   play: false,
+    // );
+
+    await _openMedia(streamQuality: q);
 
     await (player.platform as NativePlayer).setProperty('start', cp.toString());
 
@@ -465,14 +458,34 @@ class PlayerController extends ChangeNotifier {
         '0',
       );
 
-      await player.open(
-        Media(
-            playableContent.getQ(selectedQuality) ?? playableContent.getMaxQ()),
-        play: true,
-      );
+      // await player.open(
+      //   Media(
+      //       playableContent.getQ(selectedQuality) ?? playableContent.getMaxQ()),
+      //   play: true,
+      // );
+
+      await _openMedia(streamQuality: selectedQuality);
+
+      await player.play();
     });
 
     notifyListeners();
+  }
+
+  Future<void> _openMedia(
+      {bool play = false, StreamQuality? streamQuality}) async {
+    await player.open(
+      Media(streamQuality == null
+          ? playableContent.getMaxQ()
+          : playableContent.getQ(streamQuality)!),
+      play: play,
+    );
+
+    if (playableContent.subs != null && playableContent.subs!.isNotEmpty) {
+      await player.setSubtitleTrack(
+        SubtitleTrack.data(playableContent.subs!),
+      );
+    }
   }
 
   void _selectEpFromPlaylist(int s) {
