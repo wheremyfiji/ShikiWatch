@@ -45,7 +45,7 @@ class ShikiApp extends ConsumerWidget {
           title: kDebugMode ? 'ShikiDev' : 'ShikiWatch',
           themeMode: themeMode,
           routerConfig: router,
-          scrollBehavior: ScrollBehavior(),
+          scrollBehavior: _AppScrollBehavior(),
           builder: (context, child) {
             if (!kDebugMode) {
               ErrorWidget.builder = (FlutterErrorDetails error) {
@@ -77,7 +77,19 @@ class ShikiApp extends ConsumerWidget {
   }
 }
 
-class ScrollBehavior extends MaterialScrollBehavior {
+class _AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Widget buildScrollbar(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return switch (axisDirectionToAxis(details.direction)) {
+      Axis.horizontal => child,
+      Axis.vertical => child,
+    };
+  }
+
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices => {
