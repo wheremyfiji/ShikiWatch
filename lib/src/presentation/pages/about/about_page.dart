@@ -19,76 +19,74 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              pinned: true,
-              leading: IconButton(
-                onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back),
-              ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            pinned: true,
+            leading: IconButton(
+              onPressed: () => context.pop(),
+              icon: const Icon(Icons.arrow_back),
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                margin: const EdgeInsets.symmetric(vertical: 16.0),
-                clipBehavior: Clip.antiAlias,
-                height: 96,
-                child: Image.asset(
-                  'assets/img/app-logo.png',
-                ),
-              ).animate().slideY(begin: .1, end: 0, curve: Curves.easeOutCirc),
-            ),
-            SliverToBoxAdapter(
-              child: Center(
-                child: Text(
-                  'ShikiWatch',
-                  style: context.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w400,
+          ),
+          SliverSafeArea(
+            top: false,
+            bottom: false,
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 16.0),
+                    clipBehavior: Clip.antiAlias,
+                    height: 96,
+                    child: Image.asset(
+                      'assets/img/app-logo.png',
+                    ),
+                  )
+                      .animate()
+                      .slideY(begin: .1, end: 0, curve: Curves.easeOutCirc),
+                  Center(
+                    child: Text(
+                      'ShikiWatch',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
                   ),
-                ),
+                  Center(
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final environment = ref.watch(environmentProvider);
+
+                        final version = environment.packageInfo.version;
+                        final build = environment.packageInfo.buildNumber;
+
+                        DateTime appBuildTime =
+                            DateTime.parse(appBuildDateTime);
+                        final dateString =
+                            DateFormat.yMMMMd().format(appBuildTime);
+                        final timeString = DateFormat.Hm().format(appBuildTime);
+
+                        return Text(
+                          '$version ($build) - $kAppArch\nот $dateString ($timeString)',
+                          textAlign: TextAlign.center,
+                          style: context.theme.textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.w400),
+                        );
+                      },
+                    ),
+                  ),
+                  const UpdateCard(),
+                  const InfoLinks(),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom),
+                ],
               ),
             ),
-            SliverToBoxAdapter(
-              child: Center(
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    final environment = ref.watch(environmentProvider);
-
-                    final version = environment.packageInfo.version;
-                    final build = environment.packageInfo.buildNumber;
-
-                    DateTime appBuildTime = DateTime.parse(appBuildDateTime);
-                    final dateString = DateFormat.yMMMMd().format(appBuildTime);
-                    final timeString = DateFormat.Hm().format(appBuildTime);
-
-                    return Text(
-                      '$version ($build) - $kAppArch\nот $dateString ($timeString)',
-                      textAlign: TextAlign.center,
-                      style: context.theme.textTheme.titleSmall
-                          ?.copyWith(fontWeight: FontWeight.w400),
-                    );
-                  },
-                ),
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: UpdateCard(),
-            ),
-            const SliverToBoxAdapter(
-              child: InfoLinks(),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: MediaQuery.of(context).padding.bottom),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
