@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -39,16 +40,21 @@ class InfoLinks extends StatelessWidget {
               mode: LaunchMode.externalApplication,
             ),
           ),
-          _buildItem(
-            context,
-            title: 'Shikimori',
-            subtitle: 'Энциклопедия аниме и манги',
-            icon: Icons.local_florist_rounded,
-            //icon: FontAwesomeIcons.s,
+          ListTile(
             onTap: () => launchUrlString(
               'https://shikimori.one',
               mode: LaunchMode.externalApplication,
             ),
+            leading: SvgPicture.asset(
+              'assets/svg/shikimori.svg',
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                context.colorScheme.onSurfaceVariant,
+                BlendMode.srcIn,
+              ),
+            ),
+            title: const Text('Shikimori'),
+            subtitle: const Text('Энциклопедия аниме и манги'),
           ),
           if (AppUtils.instance.isDesktop) ...[
             _buildItem(
@@ -80,7 +86,8 @@ class InfoLinks extends StatelessWidget {
           ? null
           : Icon(
               icon,
-              color: context.colorScheme.primary,
+              size: 24,
+              color: context.colorScheme.onSurfaceVariant,
             ),
       title: Text(
         title,
