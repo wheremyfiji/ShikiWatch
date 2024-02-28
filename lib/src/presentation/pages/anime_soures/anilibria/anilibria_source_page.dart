@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../../anilibria/anilibria_api.dart';
 import '../../../../../anilibria/enums/title_status_code.dart';
 import '../../../../../anilibria/models/title.dart';
 import '../../../../domain/enums/anime_source.dart';
 import '../../../../domain/models/anime_database.dart';
-import '../../../../domain/models/anime_player_page_extra.dart' as appe;
+import '../../../../domain/models/pages_extra.dart';
 import '../../../../services/anime_database/anime_database_provider.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/date_time_ext.dart';
@@ -22,42 +22,33 @@ import '../../../../utils/app_utils.dart';
 import '../../../hooks/use_auto_scroll_controller.dart';
 import '../../../providers/anime_details_provider.dart';
 import '../../../widgets/error_widget.dart';
-
 import '../../player/continue_dialog.dart';
-import 'kodik_source_page.dart';
-import 'providers.dart';
+import '../../player/domain/player_page_extra.dart' as ppe;
+import '../kodik/kodik_source_page.dart';
+
+import 'anilibria_source_controller.dart';
 
 class AnilibriaSourcePage extends HookConsumerWidget {
-  final int shikimoriId;
-  final int epWatched;
-  final String animeName;
-  final String searchName;
-  final String imageUrl;
-  final List<String> searchList;
-
-  const AnilibriaSourcePage({
+  const AnilibriaSourcePage(
+    this.extra, {
     super.key,
-    required this.shikimoriId,
-    required this.epWatched,
-    required this.animeName,
-    required this.searchName,
-    required this.imageUrl,
-    required this.searchList,
   });
+
+  final AnimeSourcePageExtra extra;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchPhrase = useState(searchList[0]);
+    final searchPhrase = useState(extra.searchList[0]);
     final result = ref.watch(anilibriaSearchProvider(searchPhrase.value));
-    final anime = ref.watch(isAnimeInDataBaseProvider(shikimoriId));
+    final anime = ref.watch(isAnimeInDataBaseProvider(extra.shikimoriId));
 
     void addEpisode(int episode) {
       ref
           .read(animeDatabaseProvider)
           .updateEpisode(
-            shikimoriId: shikimoriId,
-            animeName: animeName,
-            imageUrl: imageUrl,
+            shikimoriId: extra.shikimoriId,
+            animeName: extra.animeName,
+            imageUrl: extra.imageUrl,
             timeStamp: 'Просмотрено полностью',
             studioId: 610,
             studioName: 'AniLibria.TV',
@@ -67,7 +58,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
           )
           .then((_) {
         showSnackBar(ctx: context, msg: 'Серия $episode добавлена');
-        return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
+        return ref.refresh(isAnimeInDataBaseProvider(extra.shikimoriId));
       });
     }
 
@@ -75,13 +66,13 @@ class AnilibriaSourcePage extends HookConsumerWidget {
       ref
           .read(animeDatabaseProvider)
           .deleteEpisode(
-            shikimoriId: shikimoriId,
+            shikimoriId: extra.shikimoriId,
             studioId: 610,
             episodeNumber: episode,
           )
           .then((value) {
         showSnackBar(ctx: context, msg: 'Серия $episode удалена');
-        return ref.refresh(isAnimeInDataBaseProvider(shikimoriId));
+        return ref.refresh(isAnimeInDataBaseProvider(extra.shikimoriId));
       });
     }
 
@@ -135,32 +126,33 @@ class AnilibriaSourcePage extends HookConsumerWidget {
       return null;
     }, [episodesList, result]);
 
-    List<appe.PlaylistItem> p(List<AnilibriaEpisode> playlist, String host) {
-      List<appe.PlaylistItem> t = [];
+    // List<appe.PlaylistItem> p(List<AnilibriaEpisode> playlist, String host) {
+    //   List<appe.PlaylistItem> t = [];
 
-      for (var e in playlist) {
-        t.add(appe.PlaylistItem(
-          episodeNumber: e.episode ?? -1,
-          link: null,
-          libria: appe.LibriaEpisode(
-            //host: 'https://static.libria.fun',
-            host: host,
-            fnd: e.hls!.fhd,
-            hd: e.hls!.hd,
-            sd: e.hls!.sd,
-            opSkip: e.skips?.opening == null
-                ? []
-                : [
-                    e.skips!.opening!.start ?? 0,
-                    e.skips!.opening!.stop!,
-                  ],
-          ),
-          name: e.name,
-        ));
-      }
+    //   for (var e in playlist) {
+    //     t.add(appe.PlaylistItem(
+    //       episodeNumber: e.episode ?? -1,
+    //       link: null,
+    //       anilibEpisode: null,
+    //       libria: appe.LibriaEpisode(
+    //         //host: 'https://static.libria.fun',
+    //         host: host,
+    //         fnd: e.hls!.fhd,
+    //         hd: e.hls!.hd,
+    //         sd: e.hls!.sd,
+    //         opSkip: e.skips?.opening == null
+    //             ? []
+    //             : [
+    //                 e.skips!.opening!.start ?? 0,
+    //                 e.skips!.opening!.stop!,
+    //               ],
+    //       ),
+    //       name: e.name,
+    //     ));
+    //   }
 
-      return t;
-    }
+    //   return t;
+    // }
 
     return Scaffold(
       body: SafeArea(
@@ -176,7 +168,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                 icon: const Icon(Icons.arrow_back),
               ),
               title: Text(
-                animeName,
+                extra.animeName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -190,10 +182,10 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                   tooltip: 'Поиск по другому названию',
                   itemBuilder: (context) {
                     return List.generate(
-                      searchList.length,
+                      extra.searchList.length,
                       (index) => PopupMenuItem(
-                        value: searchList[index],
-                        child: Text(searchList[index]),
+                        value: extra.searchList[index],
+                        child: Text(extra.searchList[index]),
                       ),
                     );
                   },
@@ -234,14 +226,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                     data.list![0].player!.playlist!.isEmpty) {
                   return [
                     SliverFillRemaining(
-                      child: NothingFound(
-                        shikimoriId: shikimoriId,
-                        epWatched: epWatched,
-                        animeName: animeName,
-                        searchName: searchName,
-                        imageUrl: imageUrl,
-                        searchList: searchList,
-                      ),
+                      child: NothingFound(extra),
                     ),
                   ];
                 }
@@ -294,7 +279,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                         savedEpisode = episodesList?[savedEpIndex!];
                       }
 
-                      final isCompleted = ep.episode! <= epWatched;
+                      final isCompleted = ep.episode! <= extra.epWatched;
 
                       return AutoScrollTag(
                         controller: autoScrollController,
@@ -305,10 +290,10 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                           savedEpisode: savedEpisode,
                           isCompleted: isCompleted,
                           host: 'https://${title.player!.host!}',
-                          shikimoriId: shikimoriId,
-                          epWatched: epWatched,
-                          animeName: animeName,
-                          imageUrl: imageUrl,
+                          shikimoriId: extra.shikimoriId,
+                          epWatched: extra.epWatched,
+                          animeName: extra.animeName,
+                          imageUrl: extra.imageUrl,
                           removeEpisode: (e) => removeEpisode(e),
                           addEpisode: (e) => addEpisode(e),
                           onTap: () async {
@@ -326,24 +311,50 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                               }
                             }
 
-                            final e = appe.PlayerPageExtra(
-                              selected: ep.episode!,
-                              info: appe.TitleInfo(
-                                shikimoriId: shikimoriId,
-                                animeName: animeName,
-                                imageUrl: imageUrl,
-                                studioId: 610,
-                                studioName: 'AniLibria.TV',
-                                studioType: 'voice',
-                                additInfo: null,
+                            List<ppe.LibriaPlaylistItem> t = [];
+
+                            for (AnilibriaEpisode p
+                                in title.player!.playlist!) {
+                              t.add(
+                                ppe.LibriaPlaylistItem(
+                                  number: p.episode ?? -1,
+                                  name: p.name,
+                                  fnd: p.hls!.fhd,
+                                  hd: p.hls!.hd,
+                                  sd: p.hls!.sd,
+                                  opSkip: p.skips?.opening == null
+                                      ? []
+                                      : [
+                                          p.skips!.opening!.start ?? 0,
+                                          p.skips!.opening!.stop!,
+                                        ],
+                                ),
+                              );
+                            }
+
+                            final ppe.LibriaPlaylist libriaPlaylist =
+                                ppe.LibriaPlaylist(
+                              host: 'https://static.libria.fun',
+                              playlist: t,
+                            );
+
+                            final e = ppe.PlayerPageExtra(
+                              titleInfo: ppe.TitleInfo(
+                                shikimoriId: extra.shikimoriId,
+                                animeName: extra.animeName,
+                                imageUrl: extra.imageUrl,
                               ),
+                              studio: const ppe.Studio(
+                                id: 610,
+                                name: 'AniLibria.TV',
+                                type: 'voice',
+                              ),
+                              selected: ep.episode!,
                               animeSource: AnimeSource.libria,
                               startPosition: startPosition,
-                              playlist: p(
-                                title.player!.playlist!,
-                                //'https://${title.player!.host!}',
-                                'https://static.libria.fun',
-                              ),
+                              anilib: null,
+                              libria: libriaPlaylist,
+                              kodik: null,
                             );
 
                             // ignore: use_build_context_synchronously
@@ -369,7 +380,8 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                 SliverFillRemaining(
                   child: CustomErrorWidget(
                     err.toString(),
-                    () => ref.refresh(anilibriaSearchProvider(searchName)),
+                    () =>
+                        ref.refresh(anilibriaSearchProvider(extra.searchName)),
                   ),
                 ),
               ],
@@ -695,8 +707,8 @@ class AnilibriaTorrentList extends StatelessWidget {
                         mode: LaunchMode.externalNonBrowserApplication,
                       );
                     } on PlatformException {
-                      // ignore: use_build_context_synchronously
                       showErrorSnackBar(
+                        // ignore: use_build_context_synchronously
                         ctx: context,
                         msg:
                             'Не удалось открыть magnet-ссылку. Отсутствует подходящее приложение',
@@ -726,22 +738,12 @@ class AnilibriaTorrentList extends StatelessWidget {
 }
 
 class NothingFound extends StatelessWidget {
-  final int shikimoriId;
-  final int epWatched;
-  final String animeName;
-  final String searchName;
-  final String imageUrl;
-  final List<String> searchList;
-
-  const NothingFound({
+  const NothingFound(
+    this.extra, {
     super.key,
-    required this.shikimoriId,
-    required this.epWatched,
-    required this.animeName,
-    required this.searchName,
-    required this.imageUrl,
-    required this.searchList,
   });
+
+  final AnimeSourcePageExtra extra;
 
   @override
   Widget build(BuildContext context) {
@@ -779,14 +781,7 @@ class NothingFound extends StatelessWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation1, animation2) =>
-                        KodikSourcePage(
-                      shikimoriId: shikimoriId,
-                      animeName: animeName,
-                      searchName: searchName,
-                      epWatched: epWatched,
-                      imageUrl: imageUrl,
-                      searchList: searchList,
-                    ),
+                        KodikSourcePage(extra),
                     transitionDuration: Duration.zero,
                     reverseTransitionDuration: Duration.zero,
                   ),

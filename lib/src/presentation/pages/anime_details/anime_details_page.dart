@@ -16,9 +16,10 @@ import '../../widgets/error_widget.dart';
 import '../../../domain/enums/anime_source.dart';
 import '../../widgets/title_description.dart';
 
-import 'anime_soures/anilibria_source_page.dart' hide TitleInfo;
-import 'anime_soures/kodik_source_page.dart';
-import 'anime_soures/source_modal_sheet.dart';
+import '../anime_soures/anilibria/anilibria_source_page.dart' hide TitleInfo;
+import '../anime_soures/anilib/anilib_source_page.dart';
+import '../anime_soures/kodik/kodik_source_page.dart';
+import '../anime_soures/source_modal_sheet.dart';
 
 import 'components/title_actions.dart';
 import 'components/title_characters.dart';
@@ -94,62 +95,49 @@ class AnimeDetailsPage extends ConsumerWidget {
 
                   searchList.add(data.russian ?? '');
 
+                  final extra = AnimeSourcePageExtra(
+                    shikimoriId: data.id!,
+                    animeName:
+                        (data.russian == '' ? data.name : data.russian) ?? '',
+                    searchName:
+                        data.name ?? data.english?[0] ?? data.russian ?? '',
+                    epWatched: titleInfo.currentProgress,
+                    imageUrl: data.image?.original ?? '',
+                    searchList: searchList,
+                  );
+
                   return switch (animeSource) {
-                    // ignore: use_build_context_synchronously
-                    AnimeSource.alwaysAsk => SourceModalSheet.show(
+                    AnimeSource.alwaysAsk => SelectSourceSheet.show(
+                        // ignore: use_build_context_synchronously
                         context,
-                        shikimoriId: data.id!,
-                        epWatched: titleInfo.currentProgress,
-                        animeName:
-                            (data.russian == '' ? data.name : data.russian) ??
-                                '',
-                        search:
-                            data.name ?? data.english?[0] ?? data.russian ?? '',
-                        imageUrl: data.image?.original ?? '',
-                        searchList: searchList,
+                        extra: extra,
                       ),
-                    // ignore: use_build_context_synchronously
                     AnimeSource.libria => Navigator.push(
+                        // ignore: use_build_context_synchronously
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation1, animation2) =>
-                              AnilibriaSourcePage(
-                            shikimoriId: data.id!,
-                            animeName: (data.russian == ''
-                                    ? data.name
-                                    : data.russian) ??
-                                '',
-                            searchName: data.name ??
-                                data.english?[0] ??
-                                data.russian ??
-                                '',
-                            epWatched: titleInfo.currentProgress,
-                            imageUrl: data.image?.original ?? '',
-                            searchList: searchList,
-                          ),
+                              AnilibriaSourcePage(extra),
                           transitionDuration: Duration.zero,
                           reverseTransitionDuration: Duration.zero,
                         ),
                       ),
-                    // ignore: use_build_context_synchronously
                     AnimeSource.kodik => Navigator.push(
+                        // ignore: use_build_context_synchronously
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation1, animation2) =>
-                              KodikSourcePage(
-                            shikimoriId: data.id!,
-                            animeName: (data.russian == ''
-                                    ? data.name
-                                    : data.russian) ??
-                                '',
-                            searchName: data.name ??
-                                data.english?[0] ??
-                                data.russian ??
-                                '',
-                            epWatched: titleInfo.currentProgress,
-                            imageUrl: data.image?.original ?? '',
-                            searchList: searchList,
-                          ),
+                              KodikSourcePage(extra),
+                          transitionDuration: Duration.zero,
+                          reverseTransitionDuration: Duration.zero,
+                        ),
+                      ),
+                    AnimeSource.anilib => Navigator.push(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              AnilibSourcePage(extra),
                           transitionDuration: Duration.zero,
                           reverseTransitionDuration: Duration.zero,
                         ),

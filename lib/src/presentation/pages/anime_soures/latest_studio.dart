@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../utils/extensions/buildcontext.dart';
-import '../../../../domain/models/anime_database.dart';
+import '../../../utils/extensions/buildcontext.dart';
+import '../../../domain/models/anime_database.dart';
 
 class LatestStudio extends StatelessWidget {
   final Studio studio;

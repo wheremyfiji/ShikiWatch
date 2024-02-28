@@ -8,68 +8,38 @@ import '../../../widgets/auto_sliver_animated_list.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/flexible_sliver_app_bar.dart';
 import '../../../../../kodik/models/kodik_anime.dart';
+import '../../../../domain/models/pages_extra.dart';
+import '../anilibria/anilibria_source_page.dart';
 import '../../../widgets/error_widget.dart';
+import '../shared/compact_info_chip.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../../kodik/kodik.dart';
+import '../shared/nothing_found.dart';
+import '../latest_studio.dart';
+import '../providers.dart';
 
 import 'kodik_series_select_page.dart';
-import 'anilibria_source_page.dart';
-import 'latest_studio.dart';
-import 'providers.dart';
-
-enum KodikStudioType {
-  all,
-  voice,
-  sub,
-}
-
-final kodikStudioTypeProvider = StateProvider<KodikStudioType>(
-  (ref) => KodikStudioType.all,
-  name: 'kodikStudioTypeProvider',
-);
-
-final sortedStudiosProvider = Provider.autoDispose
-    .family<List<KodikStudio>, List<KodikStudio>>((ref, rawList) {
-  final sortType = ref.watch(kodikStudioTypeProvider);
-
-  switch (sortType) {
-    case KodikStudioType.all:
-      return rawList;
-    case KodikStudioType.voice:
-      return rawList.where((e) => e.type == 'voice').toList();
-    case KodikStudioType.sub:
-      return rawList.where((e) => e.type == 'subtitles').toList();
-  }
-}, name: 'sortedStudiosProvider');
+import 'kodik_source_controller.dart';
 
 class KodikSourcePage extends ConsumerWidget {
-  final int shikimoriId;
-  final int epWatched;
-  final String animeName;
-  final String searchName;
-  final String imageUrl;
-  final List<String> searchList;
-
-  const KodikSourcePage({
+  const KodikSourcePage(
+    this.extra, {
     super.key,
-    required this.shikimoriId,
-    required this.epWatched,
-    required this.animeName,
-    required this.searchName,
-    required this.imageUrl,
-    required this.searchList,
   });
+
+  final AnimeSourcePageExtra extra;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<KodikAnime> studios =
-        ref.watch(kodikAnimeProvider(shikimoriId));
-    final latestStudio = ref.watch(latestStudioProvider(shikimoriId));
-    final studioType = ref.watch(kodikStudioTypeProvider);
+    final AsyncValue<KodikAnime> studiosAsync =
+        ref.watch(kodikAnimeProvider(extra.shikimoriId));
+    final latestStudio = ref.watch(latestStudioProvider(extra.shikimoriId));
+    final studioFilter = ref.watch(studioFilterProvider);
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () => ref.refresh(kodikAnimeProvider(shikimoriId).future),
+        onRefresh: () =>
+            ref.refresh(kodikAnimeProvider(extra.shikimoriId).future),
         child: SafeArea(
           top: false,
           bottom: false,
@@ -82,7 +52,7 @@ class KodikSourcePage extends ConsumerWidget {
                   icon: const Icon(Icons.arrow_back),
                 ),
                 title: Text(
-                  animeName,
+                  extra.animeName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -101,24 +71,24 @@ class KodikSourcePage extends ConsumerWidget {
                       ),
                       ChoiceChip(
                         label: const Text('Все'),
-                        selected: studioType == KodikStudioType.all,
+                        selected: studioFilter == StudioFilter.all,
                         onSelected: (value) => ref
-                            .read(kodikStudioTypeProvider.notifier)
-                            .state = KodikStudioType.all,
+                            .read(studioFilterProvider.notifier)
+                            .state = StudioFilter.all,
                       ),
                       ChoiceChip(
                         label: const Text('Озвучка'),
-                        selected: studioType == KodikStudioType.voice,
+                        selected: studioFilter == StudioFilter.voice,
                         onSelected: (value) => ref
-                            .read(kodikStudioTypeProvider.notifier)
-                            .state = KodikStudioType.voice,
+                            .read(studioFilterProvider.notifier)
+                            .state = StudioFilter.voice,
                       ),
                       ChoiceChip(
                         label: const Text('Субтитры'),
-                        selected: studioType == KodikStudioType.sub,
+                        selected: studioFilter == StudioFilter.sub,
                         onSelected: (value) => ref
-                            .read(kodikStudioTypeProvider.notifier)
-                            .state = KodikStudioType.sub,
+                            .read(studioFilterProvider.notifier)
+                            .state = StudioFilter.sub,
                       ),
                       const SizedBox(
                         width: 8.0,
@@ -146,12 +116,7 @@ class KodikSourcePage extends ConsumerWidget {
                           PageRouteBuilder(
                             pageBuilder: (context, animation1, animation2) =>
                                 AnilibriaSourcePage(
-                              shikimoriId: shikimoriId,
-                              animeName: animeName,
-                              searchName: searchName,
-                              epWatched: epWatched,
-                              imageUrl: imageUrl,
-                              searchList: searchList,
+                              extra,
                             ),
                             transitionDuration: Duration.zero,
                             reverseTransitionDuration: Duration.zero,
@@ -167,27 +132,29 @@ class KodikSourcePage extends ConsumerWidget {
                   height: 1,
                 ),
               ),
-              ...studios.when(
+              ...studiosAsync.when(
                 loading: () => [
                   const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator())),
                 ],
                 error: (err, stack) => [
                   SliverFillRemaining(
-                    child: CustomErrorWidget(err.toString(),
-                        () => ref.refresh(kodikAnimeProvider(shikimoriId))),
+                    child: CustomErrorWidget(
+                        err.toString(),
+                        () =>
+                            ref.refresh(kodikAnimeProvider(extra.shikimoriId))),
                   ),
                 ],
-                data: (data) {
-                  if (data.total == 0 || data.studio == null) {
-                    return [const KodikNothingFound()];
+                data: (studios) {
+                  if (studios.total == 0 || studios.studio == null) {
+                    return [const SourceNothingFound()];
                   }
 
                   final studioList =
-                      ref.watch(sortedStudiosProvider(data.studio!));
+                      ref.watch(filteredStudiosProvider(studios.studio!));
 
                   if (studioList.isEmpty) {
-                    return [const KodikNothingFound()];
+                    return [const SourceNothingFound()];
                   }
 
                   return [
@@ -203,7 +170,7 @@ class KodikSourcePage extends ConsumerWidget {
                         return LatestStudio(
                           studio: latestStudio,
                           onContinue: () {
-                            final element = data.studio!.firstWhereOrNull(
+                            final element = studios.studio!.firstWhereOrNull(
                                 (e) => e.studioId == latestStudio.id);
                             if (element == null) {
                               showErrorSnackBar(
@@ -222,12 +189,12 @@ class KodikSourcePage extends ConsumerWidget {
                                         SeriesSelectPage(
                                   seriesList: element.kodikSeries,
                                   studioId: element.studioId ?? 0,
-                                  shikimoriId: shikimoriId,
-                                  episodeWatched: epWatched,
-                                  animeName: animeName,
+                                  shikimoriId: extra.shikimoriId,
+                                  episodeWatched: extra.epWatched,
+                                  animeName: extra.animeName,
                                   studioName: element.name ?? '',
                                   studioType: element.type ?? '',
-                                  imageUrl: imageUrl,
+                                  imageUrl: extra.imageUrl,
                                 ),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,
@@ -281,12 +248,12 @@ class KodikSourcePage extends ConsumerWidget {
                                         SeriesSelectPage(
                                   seriesList: studio.kodikSeries,
                                   studioId: studio.studioId ?? 0,
-                                  shikimoriId: shikimoriId,
-                                  episodeWatched: epWatched,
-                                  animeName: animeName,
+                                  shikimoriId: extra.shikimoriId,
+                                  episodeWatched: extra.epWatched,
+                                  animeName: extra.animeName,
                                   studioName: studio.name ?? '',
                                   studioType: studio.type ?? '',
-                                  imageUrl: imageUrl,
+                                  imageUrl: extra.imageUrl,
                                 ),
                                 transitionDuration: Duration.zero,
                                 reverseTransitionDuration: Duration.zero,
@@ -397,10 +364,9 @@ class StudioListTile extends StatelessWidget {
               maxLines: 2,
             ),
           ),
-          //if (studio.name!.contains('.Subtitles'))
           if (type == 'subtitles')
-            const _CustomInfoChip(
-              title: 'Субтитры',
+            const CompactInfoChip(
+              'Субтитры',
             ),
         ],
       ),
@@ -423,78 +389,6 @@ class StudioListTile extends StatelessWidget {
         ),
       ),
       onTap: onTap,
-    );
-  }
-}
-
-class _CustomInfoChip extends StatelessWidget {
-  final String title;
-
-  const _CustomInfoChip({
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      //margin: const EdgeInsets.all(0.0),
-      margin: const EdgeInsets.only(left: 4, right: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      color: context.theme.colorScheme.tertiaryContainer,
-      //elevation: 0.0,
-      child: Padding(
-        //padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 2),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            color: context.theme.colorScheme.onTertiaryContainer,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class KodikNothingFound extends StatelessWidget {
-  const KodikNothingFound({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  'Σ(ಠ_ಠ)',
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textTheme.displayMedium,
-                ),
-              ),
-              const Flexible(
-                child: Text(
-                  'Ничего не найдено',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

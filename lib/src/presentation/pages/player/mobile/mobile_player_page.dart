@@ -6,7 +6,6 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../../../../domain/models/anime_player_page_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/duration.dart';
 import '../../../providers/app_theme_provider.dart';
@@ -14,13 +13,14 @@ import '../../../providers/settings_provider.dart';
 import '../../../widgets/auto_hide.dart';
 import '../../../widgets/error_widget.dart';
 import '../../settings/widgets/player_long_press_seek.dart';
+import '../domain/player_page_extra.dart';
+import '../domain/player_provider_parameters.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
+import '../player_provider.dart';
+
 import '../shared/player_speed_popup.dart';
 import '../shared/quality_popup_menu.dart';
-import '../player_provider.dart';
-import '../shared/shared.dart';
-
 import 'components/double_tap_seek_button.dart';
 import 'components/bottom_controls.dart';
 import 'components/seek_indicator.dart';
@@ -162,7 +162,13 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
   Widget build(BuildContext context) {
     final p = PlayerProviderParameters(widget.extra);
 
-    final notifier = ref.watch(playerProvider(p));
+    final videoController =
+        ref.watch(playerStateProvider.select((s) => (s.videoController)));
+
+    final playerState = ref.watch(playerStateProvider);
+
+    final notifier = ref.watch(playerPageProvider(p));
+
     final appTheme = ref.watch(appThemeDataProvider).data;
 
     final longPressSeek = ref.watch(
@@ -177,6 +183,18 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     if (viewPadding.bottom > 0) {
       safePaddingBottom.value = viewPadding.bottom;
     }
+
+    final playerWidget = Align(
+      child: RepaintBoundary(
+        child: Video(
+          key: notifier.videoStateKey,
+          controller: videoController,
+          fill: Colors.transparent,
+          fit: notifier.playerFit,
+          controls: NoVideoControls,
+        ),
+      ),
+    );
 
     return Theme(
       data: appTheme.dark,
@@ -196,75 +214,13 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
           builder: (context, constraints) {
             _widgetWidth = constraints.maxWidth;
 
-            return notifier.videoLinksAsync.when(
-              loading: () {
-                return Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: SafeArea(
-                        top: false,
-                        bottom: false,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: safePaddingTop.value),
-                          child: PlayerTopBar(
-                            title: notifier.e.info.animeName,
-                            subtitle:
-                                'Серия ${notifier.currentEpNumber} • ${notifier.e.info.studioName}',
-                            actions: const [],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Align(child: CircularProgressIndicator()),
-                  ],
-                );
-              },
-              error: (error, stackTrace) {
-                return Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: SafeArea(
-                        top: false,
-                        bottom: false,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: safePaddingTop.value),
-                          child: PlayerTopBar(
-                            title: notifier.e.info.animeName,
-                            subtitle:
-                                'Серия ${notifier.currentEpNumber} • ${notifier.e.info.studioName}',
-                            actions: const [],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      child: CustomErrorWidget(
-                        error.toString(),
-                        () {},
-                        showButton: false,
-                        stackTrace: stackTrace.toString(),
-                      ),
-                    ),
-                  ],
-                );
-              },
+            return notifier.playableContentAsync.when(
               data: (_) {
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    Align(
-                      child: RepaintBoundary(
-                        child: Video(
-                          key: notifier.videoStateKey,
-                          controller: notifier.playerController,
-                          fill: Colors.transparent,
-                          fit: notifier.playerFit,
-                          controls: NoVideoControls,
-                        ),
-                      ),
-                    ),
+                    playerWidget,
+
                     AutoHide(
                       switchDuration: switchDuration,
                       controller: notifier.hideController,
@@ -321,7 +277,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
 
                             _currentDx = 0;
                             _seekToDuration = Duration.zero;
-                            _savedPosition = notifier.position;
+                            _savedPosition = playerState.position;
                             _startDx = details.localPosition.dx;
                             _seek = true;
                           },
@@ -359,8 +315,8 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                             }
 
                             _seekToPosition(
-                              currentPosition: notifier.position,
-                              duration: notifier.duration,
+                              currentPosition: playerState.position,
+                              duration: playerState.duration,
                             );
                           },
                           onHorizontalDragEnd: (DragEndDetails details) {
@@ -378,7 +334,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                             }
 
                             notifier.player.seek(_seekToDuration.clampToRange(
-                              notifier.duration,
+                              playerState.duration,
                             ));
                           },
                           child: Container(
@@ -399,20 +355,22 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                           child: Padding(
                             padding: EdgeInsets.only(top: safePaddingTop.value),
                             child: PlayerTopBar(
-                              title: notifier.e.info.animeName,
+                              title: widget.extra.titleInfo.animeName,
                               subtitle:
-                                  'Серия ${notifier.currentEpNumber} • ${notifier.e.info.studioName}',
+                                  'Серия ${notifier.currentEpNumber} • ${widget.extra.studio.name}',
                               actions: (notifier.init && !notifier.error)
                                   ? [
                                       const SizedBox(
                                         width: 16.0,
                                       ),
                                       PlayerSpeedPopUp(
-                                        playbackSpeed: notifier.playbackSpeed,
+                                        playbackSpeed:
+                                            playerState.playbackSpeed,
                                         onSelected: notifier.setPlaybackSpeed,
                                       ),
                                       QualityPopUpMenu(
-                                        videoLinks: notifier.videoLinks,
+                                        playableContent:
+                                            notifier.playableContent,
                                         selectedQuality:
                                             notifier.selectedQuality,
                                         onSelected: (q) =>
@@ -432,10 +390,8 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                         ),
                       ),
                     ),
-                    Align(
-                      child: BufferingIndicator(
-                        buffering: notifier.buffering,
-                      ),
+                    const Align(
+                      child: BufferingIndicator(),
                     ),
                     if (_mountSeekBackwardButton || _mountSeekForwardButton)
                       Positioned.fill(
@@ -474,9 +430,9 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                                           });
 
                                           Duration result =
-                                              notifier.position - value;
+                                              playerState.position - value;
                                           result = result.clampToRange(
-                                            notifier.duration,
+                                            playerState.duration,
                                           );
                                           notifier.player.seek(result);
                                         },
@@ -513,9 +469,9 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                                             _hideSeekForwardButton = true;
                                           });
                                           Duration result =
-                                              notifier.position + value;
+                                              playerState.position + value;
                                           result = result.clampToRange(
-                                            notifier.duration,
+                                            playerState.duration,
                                           );
                                           notifier.player.seek(result);
                                         },
@@ -557,18 +513,18 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                                     ),
                                     // const SizedBox(width: 24),
                                     IgnorePointer(
-                                      ignoring: notifier.buffering,
+                                      ignoring: playerState.buffering,
                                       child: AnimatedOpacity(
                                         curve: Curves.easeInOut,
                                         opacity:
-                                            !notifier.buffering ? 1.0 : 0.0,
+                                            !playerState.buffering ? 1.0 : 0.0,
                                         duration:
                                             const Duration(milliseconds: 150),
                                         child: IconButton(
                                           color: Colors.white,
                                           iconSize: 48.0,
                                           icon: AnimatedPlayPause(
-                                            playing: notifier.playing,
+                                            playing: playerState.playing,
                                             color: Colors.white,
                                           ),
                                           onPressed:
@@ -621,6 +577,57 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                   ],
                 );
               },
+              loading: () => Stack(
+                children: [
+                  playerWidget,
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: SafeArea(
+                      top: false,
+                      bottom: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: safePaddingTop.value),
+                        child: PlayerTopBar(
+                          title: widget.extra.titleInfo.animeName,
+                          subtitle:
+                              'Серия ${notifier.currentEpNumber} • ${widget.extra.studio.name}',
+                          actions: const [],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Align(child: CircularProgressIndicator()),
+                ],
+              ),
+              error: (error, stackTrace) => Stack(
+                children: [
+                  playerWidget,
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: SafeArea(
+                      top: false,
+                      bottom: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: safePaddingTop.value),
+                        child: PlayerTopBar(
+                          title: widget.extra.titleInfo.animeName,
+                          subtitle:
+                              'Серия ${notifier.currentEpNumber} • ${widget.extra.studio.name}',
+                          actions: const [],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    child: CustomErrorWidget(
+                      error.toString(),
+                      () {},
+                      showButton: false,
+                      //stackTrace: stackTrace.toString(),
+                    ),
+                  ),
+                ],
+              ),
             );
           },
         ),

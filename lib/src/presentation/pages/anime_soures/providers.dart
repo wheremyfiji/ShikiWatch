@@ -1,18 +1,15 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../../anilibria/anilibria_api.dart';
-import '../../../../../anilibria/models/search.dart';
-import '../../../../domain/models/anime_database.dart';
-import '../../../providers/anime_details_provider.dart';
+import '../../providers/anime_details_provider.dart';
+import '../../../domain/models/anime_database.dart';
 
-final anilibriaSearchProvider = FutureProvider.autoDispose
-    .family<AnilibriaSearch, String>((ref, name) async {
-  final res = await ref
-      .read(anilibriaApiProvider(kAnilibriaApiUrl))
-      .searchTitle(name: name);
+enum EpisodeSortType {
+  newest,
+  oldest,
+}
 
-  return res;
-}, name: 'anilibriaSearchProvider');
+final episodeSortTypeProvider =
+    StateProvider<EpisodeSortType>((ref) => EpisodeSortType.oldest);
 
 final latestStudioProvider =
     FutureProvider.family.autoDispose<Studio?, int>((ref, shikimoriId) async {

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../shared/shared.dart';
+import '../../domain/player_provider_parameters.dart';
+
 import '../../player_provider.dart';
 import '../../shared/skip_fragment_button.dart';
 
@@ -20,12 +21,19 @@ class BottomControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.watch(playerProvider(p));
+    final (
+      opTimecode,
+      hideController,
+      playerFit
+    ) = ref.watch(playerPageProvider(p).select(
+        (value) => (value.opTimecode, value.hideController, value.playerFit)));
 
-    final opTimecode = notifier.opTimecode;
+    final (player, position, buffer, duration) = ref.watch(playerStateProvider
+        .select((s) => (s.player, s.position, s.buffer, s.duration)));
+
     final showSkip = opTimecode.length == 2 &&
-        (opTimecode.first) <= notifier.position.inSeconds &&
-        opTimecode.last > notifier.position.inSeconds;
+        (opTimecode.first) <= position.inSeconds &&
+        opTimecode.last > position.inSeconds;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -40,9 +48,10 @@ class BottomControls extends ConsumerWidget {
                 ignoring: !showSkip,
                 child: SkipFragmentButton(
                   title: 'Пропустить опенинг',
-                  onSkip: () =>
-                      notifier.player.seek(Duration(seconds: opTimecode.last)),
-                  onClose: () => notifier.opTimecode = [],
+                  onSkip: () => player.seek(Duration(seconds: opTimecode.last)),
+                  //onClose: () => notifier.opTimecode = [],
+                  onClose: () =>
+                      ref.read(playerPageProvider(p)).opTimecode = [],
                 ),
               ),
             ),
@@ -62,16 +71,16 @@ class BottomControls extends ConsumerWidget {
             ),
             Expanded(
               child: ProgressBar(
-                progress: seekShowUI ? seekTo : notifier.position,
-                buffered: notifier.buffer,
-                total: notifier.duration,
+                progress: seekShowUI ? seekTo : position,
+                buffered: buffer,
+                total: duration,
                 onDragUpdate: (_) {
-                  if (notifier.hideController.isVisible) {
-                    notifier.hideController.show();
+                  if (hideController.isVisible) {
+                    hideController.show();
                   }
                 },
                 onSeek: (p) {
-                  notifier.player.seek(p);
+                  player.seek(p);
                 },
                 timeLabelTextStyle: const TextStyle(color: Colors.white),
                 thumbRadius: 8,
@@ -86,8 +95,8 @@ class BottomControls extends ConsumerWidget {
             IconButton(
               color: Colors.white,
               onPressed: () {
-                notifier.player.seek(
-                  notifier.position + const Duration(seconds: 85),
+                player.seek(
+                  position + const Duration(seconds: 85),
                 );
               },
               icon: const Icon(
@@ -98,9 +107,10 @@ class BottomControls extends ConsumerWidget {
             ),
             IconButton(
               color: Colors.white,
-              onPressed: notifier.changePlayerFit,
+              onPressed: () =>
+                  ref.read(playerPageProvider(p)).changePlayerFit(),
               icon: Icon(
-                notifier.playerFit != BoxFit.contain
+                playerFit != BoxFit.contain
                     ? Icons.close_fullscreen_rounded
                     : Icons.open_in_full_rounded,
               ),
