@@ -623,7 +623,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       error.toString(),
                       () {},
                       showButton: false,
-                      stackTrace: stackTrace.toString(),
+                      //stackTrace: stackTrace.toString(),
                     ),
                   ),
                 ],
