@@ -287,11 +287,15 @@ class _PlayerInfoHeader extends ConsumerWidget {
     final currentEpNumber = ref.watch(playerPageProvider(providerParameters)
         .select((value) => value.currentEpNumber));
 
+    final studioName = extra.studio.name
+        .replaceFirst('.Subtitles', ' (Субтитры)')
+        .replaceFirst('|Субтитры', ' (Субтитры)');
+
     return PlayerInfoHeader(
       animeName: extra.titleInfo.animeName,
       animePicture: extra.titleInfo.imageUrl,
       episodeNumber: currentEpNumber,
-      studioName: extra.studio.name,
+      studioName: studioName,
       skipButton: _SkipButton(providerParameters),
     );
   }
