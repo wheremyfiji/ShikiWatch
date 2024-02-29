@@ -98,6 +98,10 @@ dev_dependencies:
   freezed: ^2.4.7
   isar_generator: *isar_version
 
+dependency_overrides:
+  material_color_utilities:
+    path: external/material-color-utilities
+
 flutter:
   uses-material-design: true
   fonts:

@@ -754,13 +754,12 @@ packages:
     source: hosted
     version: "0.12.16"
   material_color_utilities:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: material_color_utilities
-      sha256: "9528f2f296073ff54cb9fee677df673ace1218163c3bc7628093e7eed5203d41"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.0"
+      path: "external/material-color-utilities"
+      relative: true
+    source: path
+    version: "0.11.0"
   media_kit:
     dependency: "direct main"
     description:

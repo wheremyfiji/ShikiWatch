@@ -1,0 +1,12 @@
+name: material_color_utilities
+description: Algorithms and utilities that power the Material Design 3 color system, including choosing theme colors from images and creating tones of colors; all in a new color space.
+version: 0.11.0
+
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+
+dependencies:
+  collection: ^1.15.0 # used by tonal_palette.dart
+
+dev_dependencies:
+  lints: ^2.0.1
