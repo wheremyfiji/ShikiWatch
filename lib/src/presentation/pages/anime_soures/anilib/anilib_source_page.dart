@@ -19,13 +19,11 @@ class AnilibSourcePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = AnilibNotifierParameters(extra);
 
-    final playlistAsync = ref.watch(
-      anilibSourceProvider(p).select((v) => v.playlistAsync),
-    ); //  controller
+    final playlistAsync = ref.watch(anilibSourceProvider(p));
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(anilibSourceProvider(p)),
+        onRefresh: () => ref.refresh(anilibSourceProvider(p).future),
         child: SafeArea(
           top: false,
           bottom: false,
