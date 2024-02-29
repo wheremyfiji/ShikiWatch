@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../utils/extensions/buildcontext.dart';
+import '../../utils/app_utils.dart';
 
 class DonateWidget extends StatelessWidget {
   const DonateWidget({super.key});
@@ -14,9 +15,6 @@ class DonateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        // border: Border.all(
-        //   color: context.colorScheme.onSurfaceVariant,
-        // ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -58,7 +56,6 @@ class DonateWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        //'Вы можете оформить добровольное пожертвование для дальнейшего развития приложения',
                         'Понравилось приложение? Ты можешь сделать добровольное пожертвование, чем очень поможешь в разработке',
                         style: TextStyle(
                           fontSize: 14.0,
@@ -75,93 +72,6 @@ class DonateWidget extends StatelessWidget {
         ),
       ),
     );
-
-    // return Container(
-    //   //clipBehavior: Clip.hardEdge,
-    //   decoration: BoxDecoration(
-    //     // border: Border.all(
-    //     //   color: context.colorScheme.surfaceVariant,
-    //     // ),
-    //     gradient: LinearGradient(
-    //       begin: Alignment.topLeft,
-    //       end: Alignment.bottomRight,
-    //       colors: [
-    //         context.colorScheme.tertiaryContainer,
-    //         context.colorScheme.secondaryContainer,
-    //         //context.colorScheme.primaryContainer,
-    //       ],
-    //     ),
-    //     borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-    //   ),
-    //   child: Material(
-    //     clipBehavior: Clip.hardEdge,
-    //     borderRadius: const BorderRadius.all(Radius.circular(24.0)),
-    //     color: Colors.transparent,
-    //     child: InkWell(
-    //       //onTap: () => _DonateBottomSheet.show(context),
-    //       onTap: () => launchUrlString(
-    //         'https://new.donatepay.ru/@1156478',
-    //         mode: LaunchMode.externalApplication,
-    //       ),
-    //       child: Padding(
-    //         padding: const EdgeInsets.symmetric(
-    //           vertical: 12.0,
-    //           horizontal: 8.0,
-    //         ),
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Row(
-    //               children: [
-    //                 Icon(
-    //                   Icons.currency_yen_rounded, //currency_yen_rounded
-    //                   size: 32.0,
-    //                   color: context.colorScheme.onTertiaryContainer,
-    //                 ),
-    //                 const SizedBox(
-    //                   width: 6.0,
-    //                 ),
-    //                 Flexible(
-    //                   child: Text(
-    //                     'Поддержать разработчика',
-    //                     style: TextStyle(
-    //                       fontSize: 22.0,
-    //                       fontWeight: FontWeight.w600,
-    //                       color: context.colorScheme.onTertiaryContainer,
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ],
-    //             ),
-    //             Padding(
-    //               padding: const EdgeInsets.only(left: 6.0, top: 6.0),
-    //               child: Text(
-    //                 //'Вы можете оформить добровольное пожертвование для дальнейшего развития приложения',
-    //                 'Понравилось приложение? Ты можешь сделать добровольное пожертвование для дальнейшего развития ',
-    //                 style: TextStyle(
-    //                   fontSize: 14.0,
-    //                   color: context.colorScheme.onTertiaryContainer
-    //                       .withOpacity(0.8),
-    //                 ),
-    //               ),
-    //             ),
-    //             // Padding(
-    //             //   padding: const EdgeInsets.only(left: 6.0),
-    //             //   child: Text(
-    //             //     'Мне будет очень приятно, а также я смогу купить очередную баночку енергетика...',
-    //             //     style: TextStyle(
-    //             //       fontSize: 12.0,
-    //             //       color: context.colorScheme.onTertiaryContainer
-    //             //           .withOpacity(0.6),
-    //             //     ),
-    //             //   ),
-    //             // ),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }
 
@@ -196,28 +106,31 @@ class _DonateBottomSheet extends StatelessWidget {
               ),
             ),
             title: const Text('Boosty'),
-            subtitle: const Text('Открыть в браузере'),
           ),
           ListTile(
             onTap: () => Clipboard.setData(
               const ClipboardData(
                 text: 'UQBd8aIQ0TF0Oz_pXhX_yJPmh6GzzTj0hiwLk3OZbh0ZeBj7',
               ),
-            ),
+            ).then((_) => Navigator.of(context).pop()).then((_) => showSnackBar(
+                ctx: context,
+                msg: 'Адрес TON скопирован в буфер обмена',
+                dur: const Duration(seconds: 3))),
             leading: const Icon(
               Icons.diamond_rounded,
-              //color: context.colorScheme.onSurfaceVariant,
               size: 24,
             ),
             title: const Text('Toncoin (TON)'),
-            subtitle: const Text('Скопировать адрес'),
           ),
           ListTile(
             onTap: () => Clipboard.setData(
               const ClipboardData(
                 text: 'TRetqKdTt9CkkxXRPjtVT9mjFYpYUxnquE',
               ),
-            ),
+            ).then((_) => Navigator.of(context).pop()).then((_) => showSnackBar(
+                ctx: context,
+                msg: 'Адрес USDT TRC20 скопирован в буфер обмена',
+                dur: const Duration(seconds: 3))),
             leading: SvgPicture.asset(
               'assets/svg/usdt.svg',
               height: 24,
@@ -227,7 +140,6 @@ class _DonateBottomSheet extends StatelessWidget {
               ),
             ),
             title: const Text('USDT TRC20'),
-            subtitle: const Text('Скопировать адрес'),
           ),
           ListTile(
             onTap: () => launchUrlString(
@@ -239,7 +151,6 @@ class _DonateBottomSheet extends StatelessWidget {
               size: 24,
             ),
             title: const Text('Telegram'),
-            subtitle: const Text('Обсудить лично'),
           ),
         ],
       ),
