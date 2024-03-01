@@ -2,12 +2,17 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../../anilibria/anilibria_api.dart';
 import '../../../../../anilibria/models/search.dart';
+import '../../../../utils/extensions/riverpod_extensions.dart';
 
 final anilibriaSearchProvider = FutureProvider.autoDispose
     .family<AnilibriaSearch, String>((ref, name) async {
-  final res = await ref
-      .read(anilibriaApiProvider(kAnilibriaApiUrl))
-      .searchTitle(name: name);
+  final anilibriaApi = ref.read(anilibriaApiProvider(kAnilibriaApiUrl));
+  final cancelToken = ref.cancelToken();
 
-  return res;
+  final result = await anilibriaApi.searchTitle(
+    name: name,
+    cancelToken: cancelToken,
+  );
+
+  return result;
 }, name: 'anilibriaSearchProvider');

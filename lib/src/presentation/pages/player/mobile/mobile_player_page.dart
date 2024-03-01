@@ -184,6 +184,10 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
       safePaddingBottom.value = viewPadding.bottom;
     }
 
+    final studioName = widget.extra.studio.name
+        .replaceFirst('.Subtitles', ' (Субтитры)')
+        .replaceFirst('|Субтитры', ' (Субтитры)');
+
     final playerWidget = Align(
       child: RepaintBoundary(
         child: Video(
@@ -220,7 +224,6 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                   clipBehavior: Clip.none,
                   children: [
                     playerWidget,
-
                     AutoHide(
                       switchDuration: switchDuration,
                       controller: notifier.hideController,
@@ -357,7 +360,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                             child: PlayerTopBar(
                               title: widget.extra.titleInfo.animeName,
                               subtitle:
-                                  'Серия ${notifier.currentEpNumber} • ${widget.extra.studio.name}',
+                                  'Серия ${notifier.currentEpNumber} • $studioName',
                               actions: (notifier.init && !notifier.error)
                                   ? [
                                       const SizedBox(
@@ -590,7 +593,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                         child: PlayerTopBar(
                           title: widget.extra.titleInfo.animeName,
                           subtitle:
-                              'Серия ${notifier.currentEpNumber} • ${widget.extra.studio.name}',
+                              'Серия ${notifier.currentEpNumber} • $studioName',
                           actions: const [],
                         ),
                       ),
@@ -612,7 +615,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                         child: PlayerTopBar(
                           title: widget.extra.titleInfo.animeName,
                           subtitle:
-                              'Серия ${notifier.currentEpNumber} • ${widget.extra.studio.name}',
+                              'Серия ${notifier.currentEpNumber} • $studioName',
                           actions: const [],
                         ),
                       ),
