@@ -54,6 +54,7 @@ dependencies:
   intl: ^0.18.1
   isar: *isar_version
   isar_flutter_libs: *isar_version
+  material_color_utilities:
 
   # media_kit: ^1.1.8+2
   # media_kit_libs_windows_video: ^1.0.9
@@ -97,6 +98,10 @@ dev_dependencies:
   flutter_lints: ^2.0.3
   freezed: ^2.4.7
   isar_generator: *isar_version
+
+dependency_overrides:
+  material_color_utilities:
+    path: external/material-color-utilities
 
 flutter:
   uses-material-design: true

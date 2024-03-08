@@ -23,6 +23,7 @@ import 'widgets/player_discord_rpc.dart';
 import 'widgets/player_long_press_seek.dart';
 import 'widgets/player_orientation_lock.dart';
 import 'widgets/player_playback_speed.dart';
+import 'widgets/scheme_variant_option.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/user_account_group.dart';
@@ -57,6 +58,7 @@ class SettingsPage extends ConsumerWidget {
                     title: 'Внешний вид',
                     options: [
                       const CurrentThemeOption(),
+                      const SchemeVariantOption(),
                       const DynamicColorsOption(),
                       const OledModeOption(),
                       if (!AppUtils.instance.isDesktop)
