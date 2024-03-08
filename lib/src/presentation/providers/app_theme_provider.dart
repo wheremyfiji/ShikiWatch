@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dynamic_color/dynamic_color.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+
+import '../../utils/extensions/variant_extension.dart';
 
 final appThemeDataProvider = Provider<AppThemeDataNotifier>((ref) {
   return AppThemeDataNotifier();
@@ -27,33 +30,67 @@ class AppThemeDataNotifier {
   static const Color backgroundReducedSmearingColor = Colors.black;
   //Color.fromRGBO(5, 5, 5, 1.0);
 
-  AppThemeData fillWith(
-      {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {
-    _data = _createAppThemeData(light: light, dark: dark, useMonet: useMonet);
+  AppThemeData fillWith({
+    ColorScheme? light,
+    ColorScheme? dark,
+    bool? useMonet,
+    Variant? colorSchemeVariant,
+  }) {
+    _data = _createAppThemeData(
+      light: light,
+      dark: dark,
+      useMonet: useMonet,
+      colorSchemeVariant: colorSchemeVariant,
+    );
     return _data;
   }
 
-  AppThemeData _createAppThemeData(
-      {ColorScheme? light, ColorScheme? dark, bool? useMonet}) {
+  AppThemeData _createAppThemeData({
+    ColorScheme? light,
+    ColorScheme? dark,
+    bool? useMonet,
+    Variant? colorSchemeVariant,
+  }) {
     return AppThemeData(
-      light: _createThemeData(light, Brightness.light, useMonet!),
-      dark: _createThemeData(dark, Brightness.dark, useMonet),
-      oled: _createThemeDataMidnight(dark, useMonet),
+      light: _createThemeData(
+        light,
+        Brightness.light,
+        useMonet!,
+        colorSchemeVariant!,
+      ),
+      dark: _createThemeData(
+        dark,
+        Brightness.dark,
+        useMonet,
+        colorSchemeVariant,
+      ),
+      oled: _createThemeDataMidnight(
+        dark,
+        useMonet,
+        colorSchemeVariant,
+      ),
     );
   }
 
   ThemeData _createThemeData(
-      ColorScheme? scheme, Brightness brightness, bool useMonet) {
+    ColorScheme? scheme,
+    Brightness brightness,
+    bool useMonet,
+    Variant colorSchemeVariant,
+  ) {
     final isDark = brightness == Brightness.dark;
     final defScheme = isDark ? defDarkScheme : defLightScheme;
     final harmonized = useMonet ? scheme?.harmonized() ?? defScheme : defScheme;
-    final colorScheme = harmonized.copyWith(
-      outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
-    );
+    // final colorScheme = harmonized.copyWith(
+    //   outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
+    // );
 
-    // final origin = isDark
-    //     ? ThemeData.dark(useMaterial3: true)
-    //     : ThemeData.light(useMaterial3: true);
+    final colorScheme = colorSchemeVariant
+        .toColorScheme(
+          harmonized.primary,
+          brightness,
+        )
+        .harmonized();
 
     final origin = isDark
         ? ThemeData(
@@ -69,7 +106,9 @@ class AppThemeDataNotifier {
 
     return origin.copyWith(
       visualDensity: VisualDensity.standard,
-      colorScheme: colorScheme,
+      colorScheme: colorScheme.copyWith(
+        outlineVariant: colorScheme.outlineVariant.withOpacity(0.3),
+      ),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       dialogBackgroundColor: colorScheme.background,
@@ -118,8 +157,18 @@ class AppThemeDataNotifier {
     );
   }
 
-  ThemeData _createThemeDataMidnight(ColorScheme? scheme, bool useMonet) {
-    final origin = _createThemeData(scheme, Brightness.dark, useMonet);
+  ThemeData _createThemeDataMidnight(
+    ColorScheme? scheme,
+    bool useMonet,
+    Variant colorSchemeVariant,
+  ) {
+    final origin = _createThemeData(
+      scheme,
+      Brightness.dark,
+      useMonet,
+      colorSchemeVariant,
+    );
+
     return origin.copyWith(
       appBarTheme: AppBarTheme(
         backgroundColor: backgroundReducedSmearingColor,

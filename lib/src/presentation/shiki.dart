@@ -20,19 +20,20 @@ class ShikiApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
-    //final environment = ref.watch(environmentProvider);
     final dynamicColors = ref.watch(dynamicColorsProvider);
 
-    final (themeMode, useDynamicColors, oledMode) = ref.watch(
-        settingsProvider.select((s) => (s.theme, s.dynamicColors, s.oledMode)));
-
-    // if ((environment.sdkVersion ?? 0) > 28) {
-    //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    // }
+    final (
+      themeMode,
+      useDynamicColors,
+      oledMode,
+      colorSchemeVariant
+    ) = ref.watch(settingsProvider.select(
+        (s) => (s.theme, s.dynamicColors, s.oledMode, s.colorSchemeVariant)));
 
     return AppThemeBuilder(
       dynamicLight: dynamicColors?.light,
       dynamicDark: dynamicColors?.dark,
+      colorSchemeVariant: colorSchemeVariant,
       isDynamic: useDynamicColors,
       builder: (context, appTheme) => StyledOverlayRegion(
         child: MaterialApp.router(

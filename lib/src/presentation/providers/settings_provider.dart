@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../domain/enums/anime_source.dart';
+import '../../services/preferences/preferences_service.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
-import '../../services/preferences/preferences_service.dart';
+import '../../domain/enums/anime_source.dart';
 import '../state/settings_state.dart';
 
 final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(() {
@@ -33,6 +34,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       playerSpeed: _preferencesService.getPlayerSpeed(),
       playerLongPressSeek: _preferencesService.getPlayerLongPressSeek(),
       playerOrientationLock: _preferencesService.getPlayerOrientationLock(),
+      colorSchemeVariant: _preferencesService.getSchemeVariant(),
     );
   }
 
@@ -40,6 +42,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setTheme(theme);
     state = state.copyWith(
       theme: theme,
+    );
+  }
+
+  Future<void> setColorSchemeVariant(Variant variant) async {
+    await _preferencesService.setSchemeVariant(variant);
+    state = state.copyWith(
+      colorSchemeVariant: variant,
     );
   }
 

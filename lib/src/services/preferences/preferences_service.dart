@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,6 +20,7 @@ const _animeSource = 'animeSourceKey';
 const _playerSpeedKey = 'playerSpeedKey';
 const _playerLongPressSeek = 'playerLongPressSeekKey';
 const _playerOrientationLock = 'playerOrientationLockKey';
+const _colorSchemeVariantKey = 'colorSchemeVariant';
 
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
@@ -183,5 +185,21 @@ class PreferencesService {
 
   Future<void> setPlayerOrientationLock(bool v) async {
     await _preferences.setBool(_playerOrientationLock, v);
+  }
+
+  // ----------------------
+
+  Variant getSchemeVariant() {
+    final value = _preferences.getString(_colorSchemeVariantKey);
+    if (value == null) {
+      return Variant.tonalSpot;
+    }
+    return Variant.values
+            .firstWhereOrNull((variant) => variant.name == value) ??
+        Variant.tonalSpot;
+  }
+
+  Future<void> setSchemeVariant(Variant variant) async {
+    await _preferences.setString(_colorSchemeVariantKey, variant.name);
   }
 }
