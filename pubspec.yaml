@@ -54,6 +54,7 @@ dependencies:
   intl: ^0.18.1
   isar: *isar_version
   isar_flutter_libs: *isar_version
+  material_color_utilities:
 
   # media_kit: ^1.1.8+2
   # media_kit_libs_windows_video: ^1.0.9

@@ -754,7 +754,7 @@ packages:
     source: hosted
     version: "0.12.16"
   material_color_utilities:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "external/material-color-utilities"
       relative: true
