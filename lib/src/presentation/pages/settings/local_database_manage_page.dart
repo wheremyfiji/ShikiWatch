@@ -1,12 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 
+import 'package:permission_handler/permission_handler.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../services/anime_database/anime_database_provider.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../providers/environment_provider.dart';
 import '../../../utils/app_utils.dart';
 
@@ -45,10 +46,14 @@ class LocalDatabaseManage extends StatelessWidget {
               child: ImportDB(),
             ),
             const SliverToBoxAdapter(
+              child: Divider(),
+            ),
+            const SliverToBoxAdapter(
               child: ClearDB(),
             ),
-            SliverToBoxAdapter(
-                child: SizedBox(height: MediaQuery.of(context).padding.bottom)),
+            SliverPadding(
+              padding: EdgeInsets.only(bottom: context.padding.bottom),
+            ),
           ],
         ),
       ),
@@ -80,11 +85,9 @@ class _ImportDBState extends ConsumerState<ImportDB> {
           barrierDismissible: false,
           context: context,
           builder: (_) {
-            return WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: const Dialog(
+            return const PopScope(
+              canPop: false,
+              child: Dialog(
                 child: Padding(
                   padding: EdgeInsets.all(32),
                   child: Column(
@@ -176,11 +179,9 @@ class _ExportDBState extends ConsumerState<ExportDB> {
           barrierDismissible: false,
           context: context,
           builder: (_) {
-            return WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: const Dialog(
+            return const PopScope(
+              canPop: false,
+              child: Dialog(
                 child: Padding(
                   padding: EdgeInsets.all(32),
                   child: Column(
