@@ -209,6 +209,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                                 subtitle: Text(
                                   subtitle,
                                   style: TextStyle(
+                                    fontSize: 12,
                                     color: context.colorScheme.onSurfaceVariant,
                                   ),
                                 ),
@@ -371,17 +372,6 @@ class TitleShareBottomSheet extends StatelessWidget {
         ),
         ListTile(
           onTap: () {
-            Clipboard.setData(
-              ClipboardData(text: AppConfig.staticUrl + url),
-            ).then(
-              (_) => Navigator.of(context).pop(),
-            );
-          },
-          leading: const Icon(Icons.copy_rounded),
-          title: const Text('Скопировать'),
-        ),
-        ListTile(
-          onTap: () {
             launchUrlString(
               AppConfig.staticUrl + url,
               mode: LaunchMode.externalApplication,
@@ -391,6 +381,17 @@ class TitleShareBottomSheet extends StatelessWidget {
           },
           leading: const Icon(Icons.open_in_browser_rounded),
           title: const Text('Открыть в браузере'),
+        ),
+        ListTile(
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: AppConfig.staticUrl + url),
+            ).then(
+              (_) => Navigator.of(context).pop(),
+            );
+          },
+          leading: const Icon(Icons.copy_rounded),
+          title: const Text('Скопировать ссылку'),
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
