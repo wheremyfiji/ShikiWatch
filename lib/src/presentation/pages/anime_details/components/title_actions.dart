@@ -187,7 +187,7 @@ class _UserRateItem extends StatelessWidget {
     }
   }
 
-  static String _getStatus(String value) {
+  String _getStatus(String value) {
     String status;
 
     const map = {
@@ -199,9 +199,22 @@ class _UserRateItem extends StatelessWidget {
       'dropped': 'Брошено'
     };
 
+    String add;
+
+    switch (anime.userRate?.status) {
+      case 'watching' || 'rewatching' || 'on_hold':
+        add = ' • ${anime.userRate?.episodes}/${anime.episodes}';
+        break;
+      case 'completed' || 'dropped':
+        add = ' • ${anime.userRate?.score} ★';
+        break;
+      default:
+        add = '';
+    }
+
     status = map[value] ?? '';
 
-    return status;
+    return status + add;
   }
 
   static IconData _getIcon(String value) {
