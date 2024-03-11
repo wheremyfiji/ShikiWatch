@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/extensions/riverpod_extensions.dart';
@@ -61,6 +62,12 @@ class UserClubsPage extends ConsumerWidget {
                     final club = data[index];
 
                     return ListTile(
+                      onTap: () {
+                        launchUrlString(
+                          '${AppConfig.staticUrl}/clubs/${club.id}',
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
                       leading: CachedCircleImage(
                         AppConfig.staticUrl + (club.logo?.original ?? ''),
                         //radius: 24,
