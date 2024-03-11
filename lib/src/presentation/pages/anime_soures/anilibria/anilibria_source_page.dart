@@ -300,13 +300,19 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                             String startPosition = '';
 
                             if (savedEpisode?.position != null) {
-                              bool? dialogValue = await showDialog<bool>(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) => const ContinueDialog(),
-                              );
+                              final ContinueDialogResult dialogValue =
+                                  await showDialog<ContinueDialogResult>(
+                                        context: context,
+                                        builder: (context) =>
+                                            const ContinueDialog(),
+                                      ) ??
+                                      ContinueDialogResult.cancel;
 
-                              if (dialogValue ?? false) {
+                              if (dialogValue == ContinueDialogResult.cancel) {
+                                return;
+                              }
+
+                              if (dialogValue == ContinueDialogResult.saved) {
                                 startPosition = savedEpisode?.position ?? '';
                               }
                             }

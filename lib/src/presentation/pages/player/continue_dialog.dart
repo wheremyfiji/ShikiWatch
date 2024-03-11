@@ -9,14 +9,20 @@ class ContinueDialog extends StatelessWidget {
       title: const Text('Продолжить просмотр?'),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => Navigator.pop(context, ContinueDialogResult.start),
           child: const Text("Нет"),
         ),
         FilledButton(
-          onPressed: () => Navigator.pop(context, true),
+          onPressed: () => Navigator.pop(context, ContinueDialogResult.saved),
           child: const Text("Да"),
         ),
       ],
     );
   }
+}
+
+enum ContinueDialogResult {
+  cancel,
+  start,
+  saved,
 }
