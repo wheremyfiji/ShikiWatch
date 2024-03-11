@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -762,6 +763,7 @@ class _AnimeUserRateBottomSheetState
                           initial: progress,
                           maxValue: epCount,
                           onChanged: (value) {
+                            HapticFeedback.lightImpact();
                             setState(() {
                               progress = value;
                             });
@@ -875,6 +877,7 @@ class _AnimeUserRateBottomSheetState
                               divisions: 10,
                               value: currentScore!.toDouble(),
                               onChanged: (double value) {
+                                HapticFeedback.selectionClick();
                                 setState(() {
                                   currentScore = value.toInt();
                                 });
