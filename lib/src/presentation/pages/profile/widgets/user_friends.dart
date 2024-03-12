@@ -8,96 +8,110 @@ import '../../../../services/secure_storage/secure_storage_service.dart';
 import '../../../widgets/cached_image.dart';
 
 class UserFriendsWidget extends StatelessWidget {
-  final List<User> data;
-  const UserFriendsWidget({super.key, required this.data});
+  const UserFriendsWidget(
+    this.friends, {
+    super.key,
+  });
+
+  final List<User> friends;
 
   @override
   Widget build(BuildContext context) {
-    if (data.isEmpty) {
+    if (friends.isEmpty) {
       return const SizedBox.shrink();
     }
 
+    const c = 6;
+
+    final overflow = friends.length > c;
+    final listLength = overflow ? c + 1 : friends.length;
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Text(
-        //   'Друзья (${data.length})',
-        //   style: Theme.of(context)
-        //       .textTheme
-        //       .bodyLarge!
-        //       .copyWith(fontWeight: FontWeight.bold),
-        // ),
-        Row(
-          children: [
-            Text(
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+          child: Badge.count(
+            alignment: AlignmentDirectional.bottomEnd,
+            offset: const Offset(24, -4),
+            count: friends.length,
+            backgroundColor: context.colorScheme.secondary,
+            textColor: context.colorScheme.onSecondary,
+            child: Text(
               'Друзья',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Text(
-                '(${data.length})',
-                style: context.textTheme.bodySmall,
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ],
+          ),
         ),
         const SizedBox(
-          height: 8,
+          height: 8.0,
         ),
         SizedBox(
-          height: 120,
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemCount: data.length,
+          height: 84,
+          child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            separatorBuilder: (context, index) => const SizedBox(
-              width: 16,
-            ),
+            itemCount: listLength,
             itemBuilder: (context, index) {
-              final friend = data[index];
+              final friend = friends[index];
+              final isFirstItem = index == 0;
+              final isLast = index == listLength - 1;
 
-              return Material(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.transparent,
-                clipBehavior: Clip.hardEdge,
-                child: InkWell(
-                  onTap: friend.id.toString() ==
-                          SecureStorageService.instance.userId
-                      ? null
-                      : () =>
-                          context.push('/profile/${friend.id!}', extra: friend),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: CachedCircleImage(
-                          friend.image?.x160 ?? friend.avatar ?? '',
-                          radius: 42,
-                        ),
-                      ),
-                      Expanded(
-                        child: LimitedBox(
-                          maxWidth: 80,
-                          child: Text(
-                            friend.nickname ?? '',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              return Container(
+                margin: EdgeInsets.only(
+                  left: isFirstItem ? 16 : 0,
+                  right: isLast ? 16 : 8,
                 ),
+                width: 84,
+                height: 84,
+                child: isLast && overflow
+                    ? Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 42,
+                            child: Text(
+                              '+${friends.length - c}',
+                            ),
+                          ),
+                          Material(
+                            type: MaterialType.transparency,
+                            clipBehavior: Clip.hardEdge,
+                            borderRadius: BorderRadius.circular(42),
+                            child: InkWell(
+                              onTap: () {},
+                            ),
+                          ),
+                        ],
+                      )
+                    : Stack(
+                        children: [
+                          CachedCircleImage(
+                            friend.image?.x160 ?? friend.avatar ?? '',
+                            radius: 42,
+                            clipBehavior: Clip.antiAlias,
+                          ),
+                          Material(
+                            type: MaterialType.transparency,
+                            clipBehavior: Clip.hardEdge,
+                            borderRadius: BorderRadius.circular(42),
+                            child: InkWell(
+                              onTap: friend.id.toString() ==
+                                      SecureStorageService.instance.userId
+                                  ? null
+                                  : () => context.push(
+                                        '/profile/${friend.id!}',
+                                        extra: friend,
+                                      ),
+                            ),
+                          ),
+                        ],
+                      ),
               );
             },
           ),
-        ),
+        )
       ],
     );
   }
