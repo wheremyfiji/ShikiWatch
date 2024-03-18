@@ -25,6 +25,7 @@ dependencies:
   device_info_plus: ^9.1.2
   diffutil_dart: ^4.0.1
   dio: ^5.4.1
+  dio_http2_adapter: ^2.5.0
   dio_smart_retry: ^6.0.0
   dynamic_color: ^1.6.9
   equatable: ^2.0.5

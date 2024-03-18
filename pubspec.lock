@@ -306,6 +306,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.1"
+  dio_http2_adapter:
+    dependency: "direct main"
+    description:
+      name: dio_http2_adapter
+      sha256: "1d6b89212a621a7d8da7667cf25759f3762b4b54fbff3cfe3c93b32c9c617384"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
   dio_smart_retry:
     dependency: "direct main"
     description:
@@ -625,6 +633,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  http2:
+    dependency: transitive
+    description:
+      name: http2
+      sha256: "9ced024a160b77aba8fb8674e38f70875e321d319e6f303ec18e87bd5a4b0c1d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.0"
   http_multi_server:
     dependency: transitive
     description:
