@@ -14,7 +14,6 @@ import '../../../data/data_sources/user_data_src.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../data/repositories/user_repo.dart';
 import '../../../domain/models/user_history.dart';
-import '../../../domain/models/shiki_title.dart';
 import '../../../domain/models/pages_extra.dart';
 import '../../../utils/shiki_utils.dart';
 import '../../widgets/cached_image.dart';
