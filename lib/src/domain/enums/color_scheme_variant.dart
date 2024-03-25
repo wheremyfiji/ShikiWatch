@@ -9,7 +9,7 @@ enum ColorSchemeVariant {
 
   String get label {
     return switch (this) {
-      ColorSchemeVariant.system => 'Как в системе',
+      ColorSchemeVariant.system => 'По умолчанию',
       ColorSchemeVariant.vibrant => 'Яркая',
       ColorSchemeVariant.expressive => 'Выразительная',
       ColorSchemeVariant.rainbow => 'Разноцветная',
