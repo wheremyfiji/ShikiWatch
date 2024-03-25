@@ -37,6 +37,7 @@ class GridLoadingElement extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               width: constraints.maxWidth,
@@ -47,25 +48,28 @@ class GridLoadingElement extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 8,
+              height: 10,
             ),
             Expanded(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(6.0),
                 child: const CustomShimmer(),
               ),
             ),
             const SizedBox(
-              height: 4,
+              height: 6,
             ),
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: const CustomShimmer(),
+              child: SizedBox(
+                width: constraints.maxWidth * 0.666,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6.0),
+                  child: const CustomShimmer(),
+                ),
               ),
             ),
             const SizedBox(
-              height: 16,
+              height: 20,
             ),
           ],
         );

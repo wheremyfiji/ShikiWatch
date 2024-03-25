@@ -8,10 +8,12 @@ class CustomFlexibleSpace extends StatelessWidget {
     super.key,
     required this.title,
     required this.background,
+    this.style,
   });
 
   final String title;
   final Widget? background;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +61,14 @@ class CustomFlexibleSpace extends StatelessWidget {
 
     final ThemeData theme = Theme.of(context);
 
-    TextStyle titleStyle = theme.primaryTextTheme.titleLarge!;
+    TextStyle titleStyle = style ?? theme.primaryTextTheme.titleLarge!;
     titleStyle = titleStyle.copyWith(
       color: theme.colorScheme.onSurface.withOpacity(1 - opacity),
     );
 
     children.add(
       Padding(
-        padding: const EdgeInsets.only(left: 72.0, bottom: 13.0),
+        padding: const EdgeInsets.only(left: 72.0, bottom: 14.0),
         child: Align(
           alignment: Alignment.bottomLeft,
           child: Text(

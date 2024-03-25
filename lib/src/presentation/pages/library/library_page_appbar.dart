@@ -61,6 +61,8 @@ class LibraryPageAppBar extends ConsumerWidget {
         GestureDetector(
           onTap: () => showLibraryPopUp(context),
           child: CircleAvatar(
+            // minRadius: 24,
+            // maxRadius: 24,
             backgroundColor: Colors.transparent,
             foregroundImage: CachedNetworkImageProvider(
               SecureStorageService.instance.userProfileImage,

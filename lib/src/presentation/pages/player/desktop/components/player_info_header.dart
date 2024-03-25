@@ -25,11 +25,16 @@ class PlayerInfoHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4.0),
-          child: CachedImage(
-            AppConfig.staticUrl + animePicture,
-            height: 100,
+        SizedBox(
+          height: 100,
+          child: AspectRatio(
+            aspectRatio: 0.703,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4.0),
+              child: CachedImage(
+                AppConfig.staticUrl + animePicture,
+              ),
+            ),
           ),
         ),
         const SizedBox(
