@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 
 import '../../utils/extensions/variant_extension.dart';
+import '../../domain/enums/color_scheme_variant.dart';
 
 final appThemeDataProvider = Provider<AppThemeDataNotifier>((ref) {
   return AppThemeDataNotifier();
@@ -34,7 +34,7 @@ class AppThemeDataNotifier {
     ColorScheme? light,
     ColorScheme? dark,
     bool? useMonet,
-    Variant? colorSchemeVariant,
+    ColorSchemeVariant? colorSchemeVariant,
   }) {
     _data = _createAppThemeData(
       light: light,
@@ -49,7 +49,7 @@ class AppThemeDataNotifier {
     ColorScheme? light,
     ColorScheme? dark,
     bool? useMonet,
-    Variant? colorSchemeVariant,
+    ColorSchemeVariant? colorSchemeVariant,
   }) {
     return AppThemeData(
       light: _createThemeData(
@@ -76,7 +76,7 @@ class AppThemeDataNotifier {
     ColorScheme? scheme,
     Brightness brightness,
     bool useMonet,
-    Variant colorSchemeVariant,
+    ColorSchemeVariant colorSchemeVariant,
   ) {
     final isDark = brightness == Brightness.dark;
     final defScheme = isDark ? defDarkScheme : defLightScheme;
@@ -85,12 +85,18 @@ class AppThemeDataNotifier {
     //   outlineVariant: harmonized.outlineVariant.withOpacity(0.3),
     // );
 
-    final colorScheme = colorSchemeVariant
-        .toColorScheme(
-          harmonized.primary,
-          brightness,
-        )
-        .harmonized();
+    ColorScheme colorScheme;
+
+    if (colorSchemeVariant == ColorSchemeVariant.system) {
+      colorScheme = harmonized;
+    } else {
+      colorScheme = colorSchemeVariant
+          .toColorScheme(
+            harmonized.primary,
+            brightness,
+          )
+          .harmonized();
+    }
 
     final origin = isDark
         ? ThemeData(
@@ -160,7 +166,7 @@ class AppThemeDataNotifier {
   ThemeData _createThemeDataMidnight(
     ColorScheme? scheme,
     bool useMonet,
-    Variant colorSchemeVariant,
+    ColorSchemeVariant colorSchemeVariant,
   ) {
     final origin = _createThemeData(
       scheme,

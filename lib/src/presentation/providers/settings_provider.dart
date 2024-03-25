@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../services/preferences/preferences_service.dart';
+import '../../domain/enums/color_scheme_variant.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 import '../../domain/enums/anime_source.dart';
@@ -45,7 +45,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     );
   }
 
-  Future<void> setColorSchemeVariant(Variant variant) async {
+  Future<void> setColorSchemeVariant(ColorSchemeVariant variant) async {
     await _preferencesService.setSchemeVariant(variant);
     state = state.copyWith(
       colorSchemeVariant: variant,

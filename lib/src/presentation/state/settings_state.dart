@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/enums/anime_source.dart';
+import '../../domain/enums/color_scheme_variant.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
+import '../../domain/enums/anime_source.dart';
 
 part 'settings_state.freezed.dart';
 
@@ -23,6 +23,6 @@ class SettingsState with _$SettingsState {
     required double playerSpeed,
     required bool playerLongPressSeek,
     required bool playerOrientationLock,
-    required Variant colorSchemeVariant,
+    required ColorSchemeVariant colorSchemeVariant,
   }) = _SettingsState;
 }

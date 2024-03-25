@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../domain/enums/color_scheme_variant.dart';
 import '../providers/app_theme_provider.dart';
 
 class AppThemeBuilder extends ConsumerWidget {
@@ -18,7 +18,7 @@ class AppThemeBuilder extends ConsumerWidget {
   final Widget Function(BuildContext context, AppThemeData appTheme) builder;
   final ColorScheme? dynamicDark;
   final ColorScheme? dynamicLight;
-  final Variant colorSchemeVariant;
+  final ColorSchemeVariant colorSchemeVariant;
   final bool isDynamic;
 
   @override

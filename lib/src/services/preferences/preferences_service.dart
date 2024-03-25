@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:material_color_utilities/material_color_utilities.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
-import '../../domain/enums/anime_source.dart';
+import '../../domain/enums/color_scheme_variant.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
+import '../../domain/enums/anime_source.dart';
 
 const _themeModeKey = 'themeModeKey';
 const _getNavDestLabelBehaviorKey = 'getNavDestLabelBehaviorKey';
@@ -189,17 +189,17 @@ class PreferencesService {
 
   // ----------------------
 
-  Variant getSchemeVariant() {
+  ColorSchemeVariant getSchemeVariant() {
     final value = _preferences.getString(_colorSchemeVariantKey);
     if (value == null) {
-      return Variant.tonalSpot;
+      return ColorSchemeVariant.system;
     }
-    return Variant.values
+    return ColorSchemeVariant.values
             .firstWhereOrNull((variant) => variant.name == value) ??
-        Variant.tonalSpot;
+        ColorSchemeVariant.system;
   }
 
-  Future<void> setSchemeVariant(Variant variant) async {
+  Future<void> setSchemeVariant(ColorSchemeVariant variant) async {
     await _preferences.setString(_colorSchemeVariantKey, variant.name);
   }
 }

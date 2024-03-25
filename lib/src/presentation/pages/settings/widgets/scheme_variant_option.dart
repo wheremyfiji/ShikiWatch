@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../domain/enums/color_scheme_variant.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../../utils/extensions/string_ext.dart';
 import '../../../providers/settings_provider.dart';
 
 import 'setting_option.dart';
@@ -14,12 +13,12 @@ class SchemeVariantOption extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Variant colorSchemeVariant = ref.watch(
+    final ColorSchemeVariant colorSchemeVariant = ref.watch(
         settingsProvider.select((settings) => settings.colorSchemeVariant));
 
     return SettingsOption(
       title: 'Вариант цветовой гаммы',
-      subtitle: colorSchemeVariant.label.capitalize!,
+      subtitle: colorSchemeVariant.label,
       onTap: () => showModalBottomSheet(
           useRootNavigator: true,
           showDragHandle: true,
@@ -44,7 +43,7 @@ class SchemeVariantOption extends ConsumerWidget {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
-                    ...Variant.values
+                    ...ColorSchemeVariant.values
                         .map(
                           (e) => RadioListTile(
                             value: e,
@@ -64,7 +63,7 @@ class SchemeVariantOption extends ConsumerWidget {
                               }
                             },
                             title: Text(
-                              e.label.capitalize!,
+                              e.label,
                               style: TextStyle(
                                 color: context.colorScheme.onSurface,
                               ),
