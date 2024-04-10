@@ -90,7 +90,8 @@ class AnilibStudioSelectPage extends ConsumerWidget {
                           item,
                           onTap: () {
                             final anilib = ppe.AnilibPlayerList(
-                              host: AnilibUtils.kVideoHosts[0],
+                              host: studios.videoHost,
+                              //host: AnilibUtils.kVideoHosts[0],
                               playlist: playlist,
                             );
 
