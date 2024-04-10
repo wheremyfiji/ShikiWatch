@@ -167,7 +167,7 @@ class PlayerController extends ChangeNotifier {
         return;
       }
 
-      await _setMpvExtras(player.platform as NativePlayer);
+      // await _setMpvExtras(player.platform as NativePlayer);
       await _setAndroidSubFont();
 
       if (_animeSourceType == AnimeSource.anilib) {
