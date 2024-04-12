@@ -8,8 +8,6 @@ import '../../../../../anime_lib/models/models.dart';
 import '../../../../domain/models/pages_extra.dart';
 import '../../../../domain/enums/anime_source.dart';
 import '../../../../../anime_lib/enums/enums.dart';
-import '../../../../../anime_lib/anilib_api.dart';
-import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
 import '../../player/domain/player_page_extra.dart' as ppe;
 import '../shared/compact_info_chip.dart';
@@ -156,23 +154,20 @@ class StudioListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final subtitle =
-    //     '${item.translationType.name} / ${item.video[0].quality.toShort}';
-
     final teamName = item.team.name
         .replaceFirst('.Subtitles', '')
         .replaceFirst('|Субтитры', '');
 
     return ListTile(
       onTap: onTap,
-      leading: CachedCircleImage(
-        item.team.teamCover,
-        httpHeaders: const {
-          'Origin': AnilibUtils.kOrigin,
-          'Referer': AnilibUtils.kReferer,
-          'User-Agent': AnilibUtils.kUserAgent,
-        },
-      ),
+      // leading: CachedCircleImage(
+      //   item.team.teamCover,
+      //   httpHeaders: const {
+      //     'Origin': AnilibUtils.kOrigin,
+      //     'Referer': AnilibUtils.kReferer,
+      //     'User-Agent': AnilibUtils.kUserAgent,
+      //   },
+      // ),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -189,7 +184,6 @@ class StudioListItem extends StatelessWidget {
             ),
         ],
       ),
-      //subtitle: Text(subtitle),
       trailing: CompactInfoChip(item.video[0].quality.toShort),
     );
   }

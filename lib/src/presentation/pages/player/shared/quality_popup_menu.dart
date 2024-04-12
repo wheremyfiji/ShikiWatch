@@ -28,7 +28,7 @@ class QualityPopUpMenu extends StatelessWidget {
         return [
           if (playableContent.fourK != null)
             const PopupMenuItem<StreamQuality>(
-              value: StreamQuality.fhd,
+              value: StreamQuality.fourK,
               child: Text('2160p'),
             ),
           if (playableContent.fhd != null)

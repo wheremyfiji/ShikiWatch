@@ -458,12 +458,6 @@ class PlayerController extends ChangeNotifier {
         '0',
       );
 
-      // await player.open(
-      //   Media(
-      //       playableContent.getQ(selectedQuality) ?? playableContent.getMaxQ()),
-      //   play: true,
-      // );
-
       await _openMedia(streamQuality: selectedQuality);
 
       await player.play();
@@ -758,8 +752,7 @@ class PlayerController extends ChangeNotifier {
       return;
     }
 
-    if (player.state.position == Duration.zero ||
-        player.state.position < const Duration(seconds: 5)) {
+    if (player.state.position < const Duration(seconds: 5)) {
       return;
     }
 

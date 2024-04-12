@@ -36,13 +36,13 @@ class ScaffoldWithNavBar extends ConsumerWidget {
           }
           AppUpdateBottomSheet.show(context: context, release: data);
         },
-        error: (error, stackTrace) {
-          showErrorSnackBar(
-            ctx: context,
-            msg: 'Произошла ошибка при проверке обновлений приложения',
-            dur: const Duration(seconds: 5),
-          );
-        },
+        // error: (error, stackTrace) {
+        //   showErrorSnackBar(
+        //     ctx: context,
+        //     msg: 'Произошла ошибка при проверке обновлений приложения',
+        //     dur: const Duration(seconds: 5),
+        //   );
+        // },
       ),
     );
 
