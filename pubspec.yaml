@@ -11,6 +11,8 @@ environment:
 isar_version: &isar_version 3.1.0+1
 
 dependencies:
+  google_api_availability: ^5.0.0
+  native_dio_adapter: ^1.3.0
   audio_session: ^0.1.18
   audio_video_progress_bar: ^2.0.1
   #git_info: ^1.1.2

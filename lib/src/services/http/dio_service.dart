@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:network_logger/network_logger.dart';
 import 'package:sentry_dio/sentry_dio.dart';
@@ -16,6 +17,21 @@ class DioHttpService implements HttpService {
   /// Creates new instance of [DioHttpService]
   DioHttpService() {
     dio = Dio(baseOptions);
+
+    if (AppUtils.instance.hasGoogleServices) {
+      dio.httpClientAdapter = NativeAdapter(
+        createCronetEngine: () {
+          return CronetEngine.build(
+            // enableQuic: true,
+            enableHttp2: true,
+            enableBrotli: true,
+            cacheMode: CacheMode.memory,
+            cacheMaxSize: 4 * 1024 * 1024,
+            userAgent: AppUtils.instance.userAgent,
+          );
+        },
+      );
+    }
 
     dio.interceptors.add(RetryInterceptor(
       dio: dio,

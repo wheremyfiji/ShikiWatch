@@ -217,6 +217,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  cronet_http:
+    dependency: transitive
+    description:
+      name: cronet_http
+      sha256: "9b9f00ae48971bc8a8cbdd4528bd35511adce00fb79d1ebf9f9907667056640f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   cross_file:
     dependency: transitive
     description:
@@ -241,6 +249,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.17.3"
+  cupertino_http:
+    dependency: transitive
+    description:
+      name: cupertino_http
+      sha256: "0e3ed481280ad41d42d4881d4b6f89c083c17aa010205c9381ecb4c7ea7bdf1f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
   dart_discord_rpc:
     dependency: "direct main"
     description:
@@ -601,6 +617,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "11.1.4"
+  google_api_availability:
+    dependency: "direct main"
+    description:
+      name: google_api_availability
+      sha256: "3e9548cfd991d983d11425a2436d5bd957d048c279cc9e145ffe3f36fd847385"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0"
+  google_api_availability_android:
+    dependency: transitive
+    description:
+      name: google_api_availability_android
+      sha256: d95429ae78083585c312de2c6578085e7d53d100a94656d691bce0bb0ce435be
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  google_api_availability_platform_interface:
+    dependency: transitive
+    description:
+      name: google_api_availability_platform_interface
+      sha256: "65b7da62fe5b582bb3d508628ad827d36d890710ea274766a992a56fa5420da6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   graphs:
     dependency: transitive
     description:
@@ -713,6 +753,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0+1"
+  jni:
+    dependency: transitive
+    description:
+      name: jni
+      sha256: "499558e919997adfc45809a66caf0b95b91393e23289dd2826b152f8f04e6611"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.3"
   js:
     dependency: transitive
     description:
@@ -864,6 +912,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  native_dio_adapter:
+    dependency: "direct main"
+    description:
+      name: native_dio_adapter
+      sha256: "4c925ba15a44478be0eb6e97b62a1c1d07e56b28e566283dbcb15e58418bdaae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.0"
   network_logger:
     dependency: "direct main"
     description:
