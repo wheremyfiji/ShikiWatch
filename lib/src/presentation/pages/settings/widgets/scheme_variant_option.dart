@@ -17,7 +17,7 @@ class SchemeVariantOption extends ConsumerWidget {
         settingsProvider.select((settings) => settings.colorSchemeVariant));
 
     return SettingsOption(
-      title: 'Вариант цветовой гаммы',
+      title: 'Палитра цветов',
       subtitle: colorSchemeVariant.label,
       onTap: () => showModalBottomSheet(
           useRootNavigator: true,
@@ -39,7 +39,7 @@ class SchemeVariantOption extends ConsumerWidget {
                   children: [
                     ListTile(
                       title: Text(
-                        'Выбор варианта цветовой гаммы',
+                        'Выбор палитры цветов',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
