@@ -128,6 +128,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: TextField(
+                      autofocus: false,
+                      canRequestFocus: false,
                       style: effectiveTextStyle,
                       decoration: InputDecoration(
                         border: InputBorder.none,

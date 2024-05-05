@@ -40,7 +40,7 @@ class PlayerInfoHeader extends StatelessWidget {
         const SizedBox(
           width: 12,
         ),
-        Flexible(
+        Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../../domain/models/pages_extra.dart';
 import '../../../services/preferences/preferences_service.dart';
@@ -17,6 +14,7 @@ import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 import '../../../domain/enums/anime_source.dart';
+import '../../widgets/share_bottom_sheet.dart';
 import '../../widgets/title_description.dart';
 
 import '../anime_soures/anilibria/anilibria_source_page.dart' hide TitleInfo;
@@ -184,7 +182,7 @@ class AnimeDetailsPage extends ConsumerWidget {
                             final subtitle =
                                 '${getKind(title.kind ?? '')} • ${getStatus(title.status ?? '')}';
 
-                            TitleShareBottomSheet.show(
+                            ShareBottomSheet.show(
                               context,
                               header: ListTile(
                                 leading: SizedBox(
@@ -330,97 +328,6 @@ class AnimeDetailsPage extends ConsumerWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class TitleShareBottomSheet extends StatelessWidget {
-  const TitleShareBottomSheet({
-    super.key,
-    required this.header,
-    required this.url,
-  });
-
-  final Widget header;
-  final String url;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Card(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: header,
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Divider(),
-        ),
-        ListTile(
-          onTap: () {
-            launchUrlString(
-              AppConfig.staticUrl + url,
-              mode: LaunchMode.externalApplication,
-            ).then(
-              (_) => Navigator.of(context).pop(),
-            );
-          },
-          leading: const Icon(Icons.open_in_browser_rounded),
-          title: const Text('Открыть в браузере'),
-        ),
-        ListTile(
-          onTap: () {
-            Clipboard.setData(
-              ClipboardData(text: AppConfig.staticUrl + url),
-            ).then(
-              (_) => Navigator.of(context).pop(),
-            );
-          },
-          leading: const Icon(Icons.copy_rounded),
-          title: const Text('Скопировать ссылку'),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Divider(),
-        ),
-        ListTile(
-          onTap: () {
-            Share.share(AppConfig.staticUrl + url).then(
-              (_) => Navigator.of(context).pop(),
-            );
-          },
-          leading: const Icon(Icons.more_horiz_rounded),
-          title: const Text('Ещё'),
-        ),
-        const SizedBox(
-          height: 8.0,
-        ),
-      ],
-    );
-  }
-
-  static void show(
-    BuildContext context, {
-    required Widget header,
-    required String url,
-  }) {
-    showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true,
-      showDragHandle: true,
-      useSafeArea: true,
-      isScrollControlled: true,
-      constraints: BoxConstraints(
-        maxWidth: context.mediaQuery.size.width >= 700 ? 700 : double.infinity,
-      ),
-      builder: (_) => SafeArea(
-        child: TitleShareBottomSheet(
-          header: header,
-          url: url,
         ),
       ),
     );
