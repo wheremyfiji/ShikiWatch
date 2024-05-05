@@ -33,17 +33,44 @@ import 'src/utils/player/player_utils.dart';
 
 Future<void> main() async {
   if (kReleaseMode) {
-    await SentryFlutter.init(
-      (options) {
-        options.dsn = sentryDsn;
-        options.tracesSampleRate = 1.0;
-        options.captureFailedRequests = true;
-      },
-      appRunner: () => initApp(),
-    );
+    FlutterError.onError = (FlutterErrorDetails details) {
+      Sentry.captureException(details.exception, stackTrace: details.stack);
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      Sentry.captureException(error, stackTrace: stack);
+      return true;
+    };
+
+    await runZonedGuarded(() async {
+      await SentryFlutter.init(
+        (options) {
+          options.dsn = sentryDsn;
+          options.tracesSampleRate = 1.0;
+          options.captureFailedRequests = true;
+        },
+      );
+
+      initApp();
+    }, (error, stack) {
+      Sentry.captureException(error, stackTrace: stack);
+    });
   } else {
     initApp();
   }
+
+  // if (kReleaseMode) {
+  //   await SentryFlutter.init(
+  //     (options) {
+  //       options.dsn = sentryDsn;
+  //       options.tracesSampleRate = 1.0;
+  //       options.captureFailedRequests = true;
+  //     },
+  //     appRunner: () => initApp(),
+  //   );
+  // } else {
+  //   initApp();
+  // }
 }
 
 void initApp() async {
