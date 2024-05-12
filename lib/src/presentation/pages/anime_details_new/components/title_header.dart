@@ -92,6 +92,10 @@ class TitleHeader extends StatelessWidget {
     required int total,
     required AnimeStatus titleStatus,
   }) {
+    if (aired == 0 && total == 0) {
+      return '? эп.';
+    }
+
     if (titleStatus == AnimeStatus.released) {
       return '$total эп.';
     }
@@ -100,7 +104,7 @@ class TitleHeader extends StatelessWidget {
       return '$total эп.';
     }
 
-    return '$aired из $total эп.';
+    return '$aired из ${total == 0 ? '?' : total} эп.';
   }
 }
 

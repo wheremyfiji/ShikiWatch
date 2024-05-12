@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
@@ -18,7 +17,7 @@ class TitleCharacters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverList(
-      delegate: SliverChildListDelegate(
+      delegate: SliverChildListDelegate.fixed(
         [
           // ListTile(
           //   onTap: () {},
@@ -76,7 +75,7 @@ class TitleCharacters extends StatelessWidget {
               },
             ),
           ),
-        ].animate().fade(),
+        ],
       ),
     );
   }

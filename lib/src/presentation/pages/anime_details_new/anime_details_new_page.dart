@@ -224,7 +224,7 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                       studios: title.studios,
                     ),
                     SliverList(
-                      delegate: SliverChildListDelegate(
+                      delegate: SliverChildListDelegate.fixed(
                         [
                           ListTile(
                             onTap: () => Navigator.push(

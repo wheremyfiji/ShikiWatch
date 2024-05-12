@@ -12,18 +12,21 @@ class CachedImageExtension extends ImageExtension {
     super.handleAssetImages = false,
     super.handleDataImages = false,
     super.handleNetworkImages = true,
+    super.networkSchemas = const {'http', 'https'},
   });
 
   @override
   InlineSpan build(ExtensionContext context) {
     final imageElement = context.styledElement as ie.ImageElement;
 
+    final src = imageElement.src.replaceFirst('http://', 'https://');
+
     return WidgetSpan(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4.0),
         clipBehavior: Clip.hardEdge,
         child: CachedNetworkImage(
-          imageUrl: imageElement.src,
+          imageUrl: src,
           cacheManager: cacheManager,
           fit: BoxFit.fill,
           placeholder: (context, url) => const SizedBox.shrink(),
