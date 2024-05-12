@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/player_provider_parameters.dart';
+import '../shared/next_ep_countdown.dart';
 import '../shared/skip_fragment_button.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/quality_popup_menu.dart';
@@ -58,9 +59,55 @@ class DesktopPlayerControls extends ConsumerWidget {
                 ],
               ),
             ),
+            Align(
+              child: _AutoplayNextEp(p),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _AutoplayNextEp extends ConsumerWidget {
+  const _AutoplayNextEp(this.providerParameters);
+
+  final PlayerProviderParameters providerParameters;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasNextEp = ref.watch(playerPageProvider(providerParameters)
+        .select((value) => value.hasNextEp));
+    final completed = ref.watch(playerPageProvider(providerParameters)
+        .select((value) => value.completed));
+
+    final currentNumber = ref.watch(playerPageProvider(providerParameters)
+        .select((value) => value.currentEpNumber));
+
+    if (!(hasNextEp && completed)) {
+      return const SizedBox.shrink();
+    }
+
+    return NextEpisodeCountdown(
+      number: currentNumber + 1,
+      onCancel: () {
+        ref
+            .read(playerPageProvider(providerParameters))
+            .onPlayerCompleted(false);
+        ref
+            .read(playerPageProvider(providerParameters))
+            .hideController
+            .toggle();
+      },
+      onPlay: () {
+        ref
+            .read(playerPageProvider(providerParameters))
+            .changeEpisode(currentNumber + 1);
+        ref
+            .read(playerPageProvider(providerParameters))
+            .hideController
+            .toggle();
+      },
     );
   }
 }
@@ -397,17 +444,28 @@ class _UiGestures extends ConsumerWidget {
     final player = ref.watch(playerStateProvider.select((s) => s.player));
     final hideController = ref.watch(playerPageProvider(providerParameters)
         .select((value) => value.hideController));
+    final completed = ref.watch(playerPageProvider(providerParameters)
+        .select((value) => value.completed));
 
     return GestureDetector(
       onTap: player.playOrPause,
       child: MouseRegion(
         onHover: (_) {
+          if (completed) {
+            return;
+          }
           hideController.show();
         },
         onEnter: (_) {
+          if (completed) {
+            return;
+          }
           hideController.show();
         },
         onExit: (_) {
+          if (completed) {
+            return;
+          }
           hideController.hide();
         },
         child: AutoHide(

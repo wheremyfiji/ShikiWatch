@@ -20,6 +20,7 @@ import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
 import '../player_provider.dart';
 
+import '../shared/next_ep_countdown.dart';
 import '../shared/player_speed_popup.dart';
 import '../shared/quality_popup_menu.dart';
 import 'components/double_tap_seek_button.dart';
@@ -174,20 +175,30 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       Expanded(
                         //flex: 2,
                         child: GestureDetector(
-                          onTap: notifier.hideController.toggle,
-                          onDoubleTap: _onDoubleTapSeekBackward,
+                          onTap: notifier.completed
+                              ? null
+                              : notifier.hideController.toggle,
+                          onDoubleTap: notifier.completed
+                              ? null
+                              : _onDoubleTapSeekBackward,
                         ),
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: notifier.hideController.toggle,
+                          onTap: notifier.completed
+                              ? null
+                              : notifier.hideController.toggle,
                         ),
                       ),
                       Expanded(
                         //flex: 2,
                         child: GestureDetector(
-                          onTap: notifier.hideController.toggle,
-                          onDoubleTap: _onDoubleTapSeekForward,
+                          onTap: notifier.completed
+                              ? null
+                              : notifier.hideController.toggle,
+                          onDoubleTap: notifier.completed
+                              ? null
+                              : _onDoubleTapSeekForward,
                         ),
                       ),
                     ],
@@ -214,7 +225,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                             notifier.longPressSeek(false);
                           },
                     onHorizontalDragStart: (DragStartDetails details) {
-                      if (!notifier.init) {
+                      if (!notifier.init || notifier.completed) {
                         return;
                       }
 
@@ -225,7 +236,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       _seek = true;
                     },
                     onHorizontalDragUpdate: (DragUpdateDetails details) {
-                      if (!notifier.init) {
+                      if (!notifier.init || notifier.completed) {
                         _seek = false;
                         _seekShowUI = false;
                         return;
@@ -263,7 +274,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                       _seek = false;
                       _seekShowUI = false;
 
-                      if (!notifier.init) {
+                      if (!notifier.init || notifier.completed) {
                         return;
                       }
 
@@ -309,10 +320,18 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                                     onSelected: (q) =>
                                         notifier.changeQuality(q),
                                     onOpened: () {
+                                      if (notifier.completed) {
+                                        return;
+                                      }
+
                                       notifier.hideController.cancel();
                                       notifier.hideController.permShow();
                                     },
                                     onCanceled: () {
+                                      if (notifier.completed) {
+                                        return;
+                                      }
+
                                       notifier.hideController.toggle();
                                     },
                                   ),
@@ -412,68 +431,88 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                     ),
                   ),
                 //Center controls
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 150),
-                  child: _seekShowUI
-                      ? Align(
-                          child: SeekIndicator(
-                            position: _positionText,
-                            diff: _diffText,
-                          ),
-                        )
-                      : AutoHide(
-                          switchDuration: switchDuration,
-                          controller: notifier.hideController,
-                          child: Align(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const SizedBox.shrink(),
-                                IconButton(
-                                  tooltip: 'Предыдущая серия',
-                                  onPressed: notifier.hasPrevEp
-                                      ? () => notifier.changeEpisode(
-                                          notifier.currentEpNumber - 1)
-                                      : null,
-                                  color: Colors.white,
-                                  iconSize: 32.0,
-                                  icon: const Icon(Icons.skip_previous),
+                ((notifier.hasNextEp && notifier.completed))
+                    ? Align(
+                        child: NextEpisodeCountdown(
+                          number: notifier.currentEpNumber,
+                          onCancel: () {
+                            notifier.onPlayerCompleted(false);
+                            notifier.hideController.toggle();
+                          },
+                          onPlay: () {
+                            notifier
+                                .changeEpisode(notifier.currentEpNumber + 1);
+                            notifier.hideController.toggle();
+                          },
+                        ),
+                      )
+                    : AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 150),
+                        child: _seekShowUI
+                            ? Align(
+                                child: SeekIndicator(
+                                  position: _positionText,
+                                  diff: _diffText,
                                 ),
-                                // const SizedBox(width: 24),
-                                IgnorePointer(
-                                  ignoring: playerState.buffering,
-                                  child: AnimatedOpacity(
-                                    curve: Curves.easeInOut,
-                                    opacity: !playerState.buffering ? 1.0 : 0.0,
-                                    duration: const Duration(milliseconds: 150),
-                                    child: IconButton(
-                                      color: Colors.white,
-                                      iconSize: 48.0,
-                                      icon: AnimatedPlayPause(
-                                        playing: playerState.playing,
+                              )
+                            : AutoHide(
+                                switchDuration: switchDuration,
+                                controller: notifier.hideController,
+                                child: Align(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      const SizedBox.shrink(),
+                                      IconButton(
+                                        tooltip: 'Предыдущая серия',
+                                        onPressed: notifier.hasPrevEp
+                                            ? () => notifier.changeEpisode(
+                                                notifier.currentEpNumber - 1)
+                                            : null,
                                         color: Colors.white,
+                                        iconSize: 32.0,
+                                        icon: const Icon(Icons.skip_previous),
                                       ),
-                                      onPressed: notifier.player.playOrPause,
-                                    ),
+                                      // const SizedBox(width: 24),
+                                      IgnorePointer(
+                                        ignoring: playerState.buffering,
+                                        child: AnimatedOpacity(
+                                          curve: Curves.easeInOut,
+                                          opacity: !playerState.buffering
+                                              ? 1.0
+                                              : 0.0,
+                                          duration:
+                                              const Duration(milliseconds: 150),
+                                          child: IconButton(
+                                            color: Colors.white,
+                                            iconSize: 48.0,
+                                            icon: AnimatedPlayPause(
+                                              playing: playerState.playing,
+                                              color: Colors.white,
+                                            ),
+                                            onPressed:
+                                                notifier.player.playOrPause,
+                                          ),
+                                        ),
+                                      ),
+                                      // const SizedBox(width: 24),
+                                      IconButton(
+                                        tooltip: 'Следующая серия',
+                                        onPressed: notifier.hasNextEp
+                                            ? () => notifier.changeEpisode(
+                                                notifier.currentEpNumber + 1)
+                                            : null,
+                                        color: Colors.white,
+                                        iconSize: 32.0,
+                                        icon: const Icon(Icons.skip_next),
+                                      ),
+                                      const SizedBox.shrink(),
+                                    ],
                                   ),
                                 ),
-                                // const SizedBox(width: 24),
-                                IconButton(
-                                  tooltip: 'Следующая серия',
-                                  onPressed: notifier.hasNextEp
-                                      ? () => notifier.changeEpisode(
-                                          notifier.currentEpNumber + 1)
-                                      : null,
-                                  color: Colors.white,
-                                  iconSize: 32.0,
-                                  icon: const Icon(Icons.skip_next),
-                                ),
-                                const SizedBox.shrink(),
-                              ],
-                            ),
-                          ),
-                        ),
-                ),
+                              ),
+                      ),
                 //Bottom controls
                 AutoHide(
                   switchDuration: switchDuration,

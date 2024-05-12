@@ -224,6 +224,13 @@ class PlayerController extends ChangeNotifier {
 
       _playerSubs.addAll(
         [
+          player.stream.completed.listen((event) {
+            if (_disposed) {
+              return;
+            }
+
+            onPlayerCompleted(event);
+          }),
           player.stream.error.listen((event) {
             if (_disposed) {
               return;
@@ -238,6 +245,20 @@ class PlayerController extends ChangeNotifier {
 
       _init = true;
     });
+
+    notifyListeners();
+  }
+
+  bool _videoCompleted = false;
+  bool get completed => _videoCompleted;
+
+  void onPlayerCompleted(bool v) {
+    _videoCompleted = v;
+
+    if (v) {
+      hideController.cancel();
+      hideController.permShow();
+    }
 
     notifyListeners();
   }
