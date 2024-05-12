@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_html/flutter_html.dart';
 
 import '../../utils/extensions/buildcontext.dart';
-import '../../utils/shiki_utils.dart';
 
 import 'expanded_section.dart';
+import 'html/shiki_html.dart';
 
 class TitleDescription extends StatelessWidget {
   final String description;
@@ -62,31 +61,14 @@ class TitleDescriptionFromHtml extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final expand = useState(false);
-    // final shouldExpand = useMemoized(() => descriptionHtml.length > 800);
+
+    final child = ShikiHtml(
+      data: descriptionHtml,
+      enableLinkTap: !shouldExpand || expand.value,
+    );
 
     if (!shouldExpand) {
-      return Html(
-        data: descriptionHtml,
-        style: {
-          'body': Style(
-            margin: Margins.all(0),
-          ),
-          'a': Style(
-            textDecoration: TextDecoration.none,
-            color: context.colorScheme.primary,
-          ),
-        },
-        onLinkTap: (url, attributes, element) {
-          if (url == null || url.isEmpty) {
-            return;
-          }
-          ShikiUtils.instance.handleShikiHtmlLinkTap(
-            context,
-            url: url,
-            attributes: attributes,
-          );
-        },
-      );
+      return child;
     }
 
     return Column(
@@ -98,39 +80,7 @@ class TitleDescriptionFromHtml extends HookWidget {
           },
           child: ExpandedSection(
             expand: expand.value,
-            child: Html(
-              data: descriptionHtml,
-              style: {
-                'body': Style(
-                  margin: Margins.all(0),
-                ),
-                'a': Style(
-                  textDecoration: TextDecoration.none,
-                  // color: expand.value
-                  //     ? context.colorScheme.primary
-                  //     : context.colorScheme.onBackground,
-                  color: context.colorScheme.primary,
-                ),
-              },
-              // doNotRenderTheseTags: const {
-              //   'a',
-              // },
-              onLinkTap: (url, attributes, element) {
-                if (!expand.value) {
-                  return;
-                }
-
-                if (url == null || url.isEmpty) {
-                  return;
-                }
-
-                ShikiUtils.instance.handleShikiHtmlLinkTap(
-                  context,
-                  url: url,
-                  attributes: attributes,
-                );
-              },
-            ),
+            child: child,
           ),
         ),
         _ExpandButton(
