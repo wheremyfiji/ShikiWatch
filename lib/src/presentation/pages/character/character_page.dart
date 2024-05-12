@@ -10,6 +10,7 @@ import '../../../domain/models/animes.dart';
 import '../../../domain/models/manga_short.dart';
 import '../../../domain/models/shiki_character.dart';
 import '../../../services/http/http_service_provider.dart';
+import '../../../utils/app_utils.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../utils/extensions/riverpod_extensions.dart';
 
@@ -105,13 +106,18 @@ class CharacterPage extends ConsumerWidget {
                         .slideY(begin: .05, end: 0, curve: Curves.easeOutCirc),
                   ),
                 ),
-                if (data.description != null && data.description!.isNotEmpty)
+                if (data.description != null &&
+                    data.description!.isNotEmpty &&
+                    data.descriptionHtml != null &&
+                    data.descriptionHtml != '')
                   SliverPadding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     sliver: SliverToBoxAdapter(
-                      child: TitleDescription(data.description ?? '')
-                          .animate()
-                          .fade(),
+                      child: TitleDescriptionFromHtml(
+                        data.descriptionHtml ?? '',
+                        shouldExpand: !AppUtils.instance.isDesktop &&
+                            data.descriptionHtml!.length > 500,
+                      ).animate().fade(),
                     ),
                   ),
                 if (data.seyu != null && data.seyu!.isNotEmpty)

@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../domain/models/pages_extra.dart';
 import '../domain/models/user.dart';
 import '../presentation/pages/about/about_page.dart';
-import '../presentation/pages/anime_details/anime_details_page.dart';
+import '../presentation/pages/anime_details_new/anime_details_new_page.dart';
 import '../presentation/pages/calendar/calendar_page.dart';
 import '../presentation/pages/character/character_page.dart';
 import '../presentation/pages/explore/explore_page.dart';
@@ -210,19 +210,10 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
 
                         return SharedAxisTransition(
                           key: state.pageKey,
-                          child: AnimeDetailsPage(
+                          child: AnimeDetailsNewPage(
+                            extra,
                             key: state.pageKey,
-                            extra: extra,
                           ),
-                          // child: TargetP.instance.isDesktop
-                          //     ? AnimeDetailsDesktopPage(
-                          //         key: state.pageKey,
-                          //         animeData: data,
-                          //       )
-                          //     : AnimeDetailsPage(
-                          //         key: state.pageKey,
-                          //         animeData: data,
-                          //       ),
                         );
                       },
                     ),
@@ -230,8 +221,6 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                       name: 'library_manga',
                       path: 'manga/:id',
                       pageBuilder: (context, state) {
-                        //MangaShort data = state.extra as MangaShort;
-
                         final extra = state.extra as TitleDetailsPageExtra;
 
                         return SharedAxisTransition(
@@ -317,34 +306,11 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
 
                         return SharedAxisTransition(
                           key: state.pageKey,
-                          child: AnimeDetailsPage(
+                          child: AnimeDetailsNewPage(
+                            extra,
                             key: state.pageKey,
-                            extra: extra,
                           ),
-                          // child: TargetP.instance.isDesktop
-                          //     ? AnimeDetailsDesktopPage(
-                          //         key: state.pageKey,
-                          //         animeData: data,
-                          //       )
-                          //     : AnimeDetailsPage(
-                          //         key: state.pageKey,
-                          //         animeData: data,
-                          //       ),
                         );
-
-                        //Animes data = state.extra as Animes;
-                        // return FadeTransitionPage(
-                        //   key: state.pageKey,
-                        //   child: TargetP.instance.isDesktop
-                        //       ? AnimeDetailsDesktopPage(
-                        //           key: state.pageKey,
-                        //           animeData: data,
-                        //         )
-                        //       : AnimeDetailsPage(
-                        //           key: state.pageKey,
-                        //           animeData: data,
-                        //         ),
-                        // );
                       },
                     ),
                     GoRoute(

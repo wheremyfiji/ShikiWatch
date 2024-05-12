@@ -4,22 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../constants/config.dart';
-import '../../../../utils/app_utils.dart';
-import '../../../../data/data_sources/anime_data_src.dart';
-import '../../../../data/data_sources/user_data_src.dart';
-import '../../../../data/repositories/anime_repo.dart';
-import '../../../../domain/models/anime.dart';
-import '../../../../domain/models/animes.dart';
-import '../../../../services/secure_storage/secure_storage_service.dart';
-import '../../../../utils/extensions/buildcontext.dart';
-import '../../../providers/anime_details_provider.dart';
-import '../../../providers/library_tab_page_provider.dart';
-import '../../../widgets/cached_image.dart';
-import '../../../widgets/delete_dialog.dart';
-import '../../../widgets/material_you_chip.dart';
-import '../../../widgets/number_field.dart';
-import '../../../widgets/shadowed_overflow_decorator.dart';
+import '../../../services/secure_storage/secure_storage_service.dart';
+import '../../widgets/shadowed_overflow_decorator.dart';
+import '../../providers/library_tab_page_provider.dart';
+import '../../../data/data_sources/anime_data_src.dart';
+import '../../../data/data_sources/user_data_src.dart';
+import '../../../utils/extensions/buildcontext.dart';
+import '../../../data/repositories/anime_repo.dart';
+import '../anime_details_new/graphql_anime.dart';
+import '../../widgets/material_you_chip.dart';
+import '../../../domain/models/animes.dart';
+import '../../../domain/models/anime.dart';
+import '../../widgets/delete_dialog.dart';
+import '../../widgets/cached_image.dart';
+import '../../widgets/number_field.dart';
+import '../../../constants/config.dart';
+import '../../../utils/app_utils.dart';
 
 final updateAnimeRateButtonProvider = StateNotifierProvider.autoDispose<
     UpdateAnimeRateNotifier, AsyncValue<void>>((ref) {
@@ -74,6 +74,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
       switch (rate.status) {
         case 'watching':
           {
+            if (!ref.exists(watchingTabPageProvider)) {
+              break;
+            }
+
             ref.read(watchingTabPageProvider).addAnime(
                   animeId: anime.id!,
                   anime: animeShort,
@@ -89,6 +93,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           break;
         case 'planned':
           {
+            if (!ref.exists(plannedTabPageProvider)) {
+              break;
+            }
+
             ref.read(plannedTabPageProvider).addAnime(
                   animeId: anime.id!,
                   anime: animeShort,
@@ -104,6 +112,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           }
         case 'completed':
           {
+            if (!ref.exists(completedTabPageProvider)) {
+              break;
+            }
+
             ref.read(completedTabPageProvider).addAnime(
                   animeId: anime.id!,
                   anime: animeShort,
@@ -119,6 +131,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           break;
         case 'rewatching':
           {
+            if (!ref.exists(rewatchingTabPageProvider)) {
+              break;
+            }
+
             ref.read(rewatchingTabPageProvider).addAnime(
                   animeId: anime.id!,
                   anime: animeShort,
@@ -134,6 +150,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           break;
         case 'on_hold':
           {
+            if (!ref.exists(onHoldTabPageProvider)) {
+              break;
+            }
+
             ref.read(onHoldTabPageProvider).addAnime(
                   animeId: anime.id!,
                   anime: animeShort,
@@ -149,6 +169,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           break;
         case 'dropped':
           {
+            if (!ref.exists(droppedTabPageProvider)) {
+              break;
+            }
+
             ref.read(droppedTabPageProvider).addAnime(
                   animeId: anime.id!,
                   anime: animeShort,
@@ -165,19 +189,33 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
         default:
       }
 
-      if (needUpdate) {
-        ref.read(titleInfoPageProvider(anime.id!)).addRate(
-              rateId: rate.id!,
-              updatedAt: rate.updatedAt!,
+      if (ref.exists(animeDetailsProvider(anime.id!))) {
+        ref.read(animeDetailsProvider(anime.id!).notifier).addRate(
+              id: rate.id!,
               status: rate.status!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-              text: rate.text,
-              textHtml: rate.textHtml,
-              createdAt: rate.createdAt,
+              score: rate.score ?? 0,
+              episodes: rate.episodes ?? 0,
+              rewatches: rate.rewatches ?? 0,
+              text: rate.text ?? '',
+              textHtml: rate.textHtml ?? '',
+              createdAt: rate.createdAt!,
+              updatedAt: rate.updatedAt!,
             );
       }
+
+      // if (needUpdate) {
+      //   ref.read(titleInfoPageProvider(anime.id!)).addRate(
+      //         rateId: rate.id!,
+      //         updatedAt: rate.updatedAt!,
+      //         status: rate.status!,
+      //         score: rate.score,
+      //         episodes: rate.episodes,
+      //         rewatches: rate.rewatches,
+      //         text: rate.text,
+      //         textHtml: rate.textHtml,
+      //         createdAt: rate.createdAt,
+      //       );
+      // }
 
       onFinally();
     } catch (e, s) {
@@ -234,31 +272,52 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
         switch (initStatus) {
           case 'watching':
             {
+              if (!ref.exists(watchingTabPageProvider)) {
+                break;
+              }
+
               ref.read(watchingTabPageProvider).deleteAnime(animeId);
             }
             break;
           case 'planned':
             {
+              if (!ref.exists(plannedTabPageProvider)) {
+                break;
+              }
+
               ref.read(plannedTabPageProvider).deleteAnime(animeId);
               break;
             }
           case 'completed':
             {
+              if (!ref.exists(completedTabPageProvider)) {
+                break;
+              }
+
               ref.read(completedTabPageProvider).deleteAnime(animeId);
             }
             break;
           case 'rewatching':
             {
+              if (!ref.exists(rewatchingTabPageProvider)) {
+                break;
+              }
               ref.read(rewatchingTabPageProvider).deleteAnime(animeId);
             }
             break;
           case 'on_hold':
             {
+              if (!ref.exists(onHoldTabPageProvider)) {
+                break;
+              }
               ref.read(onHoldTabPageProvider).deleteAnime(animeId);
             }
             break;
           case 'dropped':
             {
+              if (!ref.exists(droppedTabPageProvider)) {
+                break;
+              }
               ref.read(droppedTabPageProvider).deleteAnime(animeId);
             }
             break;
@@ -267,6 +326,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
         switch (rate.status) {
           case 'watching':
             {
+              if (!ref.exists(watchingTabPageProvider)) {
+                break;
+              }
+
               ref.read(watchingTabPageProvider).addAnime(
                     animeId: animeId,
                     anime: animeShort,
@@ -282,6 +345,9 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             break;
           case 'planned':
             {
+              if (!ref.exists(plannedTabPageProvider)) {
+                break;
+              }
               ref.read(plannedTabPageProvider).addAnime(
                     animeId: animeId,
                     anime: animeShort,
@@ -297,6 +363,9 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             }
           case 'completed':
             {
+              if (!ref.exists(completedTabPageProvider)) {
+                break;
+              }
               ref.read(completedTabPageProvider).addAnime(
                     animeId: animeId,
                     anime: animeShort,
@@ -312,6 +381,9 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             break;
           case 'rewatching':
             {
+              if (!ref.exists(rewatchingTabPageProvider)) {
+                break;
+              }
               ref.read(rewatchingTabPageProvider).addAnime(
                     animeId: animeId,
                     anime: animeShort,
@@ -327,6 +399,9 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             break;
           case 'on_hold':
             {
+              if (!ref.exists(onHoldTabPageProvider)) {
+                break;
+              }
               ref.read(onHoldTabPageProvider).addAnime(
                     animeId: animeId,
                     anime: animeShort,
@@ -342,6 +417,9 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             break;
           case 'dropped':
             {
+              if (!ref.exists(droppedTabPageProvider)) {
+                break;
+              }
               ref.read(droppedTabPageProvider).addAnime(
                     animeId: animeId,
                     anime: animeShort,
@@ -357,19 +435,32 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
             break;
           default:
         }
-        if (needUpdate) {
-          ref.read(titleInfoPageProvider(animeId)).updateRate(
-                rateId: rate.id!,
-                updatedAt: rate.updatedAt!,
+
+        if (ref.exists(animeDetailsProvider(animeId))) {
+          ref.read(animeDetailsProvider(animeId).notifier).updateRate(
                 status: rate.status!,
-                score: rate.score,
-                episodes: rate.episodes,
-                rewatches: rate.rewatches,
-                text: rate.text,
-                textHtml: rate.textHtml,
-                createdAt: rate.createdAt,
+                score: rate.score ?? 0,
+                episodes: rate.episodes ?? 0,
+                rewatches: rate.rewatches ?? 0,
+                text: rate.text ?? '',
+                textHtml: rate.textHtml ?? '',
+                updatedAt: rate.updatedAt!,
               );
         }
+
+        // if (needUpdate) {
+        //   ref.read(titleInfoPageProvider(animeId)).updateRate(
+        //         rateId: rate.id!,
+        //         updatedAt: rate.updatedAt!,
+        //         status: rate.status!,
+        //         score: rate.score,
+        //         episodes: rate.episodes,
+        //         rewatches: rate.rewatches,
+        //         text: rate.text,
+        //         textHtml: rate.textHtml,
+        //         createdAt: rate.createdAt,
+        //       );
+        // }
 
         onFinally();
 
@@ -378,6 +469,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
       //switch (selectedStatus ?? initStatus) {
       switch (rate.status) {
         case 'watching':
+          if (!ref.exists(watchingTabPageProvider)) {
+            break;
+          }
+
           ref.read(watchingTabPageProvider).updateAnime(
                 animeId: animeId,
                 updatedAt: rate.updatedAt!,
@@ -387,6 +482,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
               );
           break;
         case 'planned':
+          if (!ref.exists(plannedTabPageProvider)) {
+            break;
+          }
+
           ref.read(plannedTabPageProvider).updateAnime(
                 animeId: animeId,
                 updatedAt: rate.updatedAt!,
@@ -396,6 +495,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
               );
           break;
         case 'completed':
+          if (!ref.exists(completedTabPageProvider)) {
+            break;
+          }
+
           ref.read(completedTabPageProvider).updateAnime(
                 animeId: animeId,
                 updatedAt: rate.updatedAt!,
@@ -405,6 +508,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
               );
           break;
         case 'rewatching':
+          if (!ref.exists(rewatchingTabPageProvider)) {
+            break;
+          }
+
           ref.read(rewatchingTabPageProvider).updateAnime(
                 animeId: animeId,
                 updatedAt: rate.updatedAt!,
@@ -414,6 +521,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
               );
           break;
         case 'on_hold':
+          if (!ref.exists(onHoldTabPageProvider)) {
+            break;
+          }
+
           ref.read(onHoldTabPageProvider).updateAnime(
                 animeId: animeId,
                 updatedAt: rate.updatedAt!,
@@ -423,6 +534,10 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
               );
           break;
         case 'dropped':
+          if (!ref.exists(droppedTabPageProvider)) {
+            break;
+          }
+
           ref.read(droppedTabPageProvider).updateAnime(
                 animeId: animeId,
                 updatedAt: rate.updatedAt!,
@@ -433,19 +548,32 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
           break;
         default:
       }
-      if (needUpdate) {
-        ref.read(titleInfoPageProvider(animeId)).updateRate(
-              rateId: rate.id!,
-              updatedAt: rate.updatedAt!,
+
+      if (ref.exists(animeDetailsProvider(animeId))) {
+        ref.read(animeDetailsProvider(animeId).notifier).updateRate(
               status: rate.status!,
-              score: rate.score,
-              episodes: rate.episodes,
-              rewatches: rate.rewatches,
-              text: rate.text,
-              textHtml: rate.textHtml,
-              createdAt: rate.createdAt,
+              score: rate.score ?? 0,
+              episodes: rate.episodes ?? 0,
+              rewatches: rate.rewatches ?? 0,
+              text: rate.text ?? '',
+              textHtml: rate.textHtml ?? '',
+              updatedAt: rate.updatedAt!,
             );
       }
+
+      // if (needUpdate) {
+      //   ref.read(titleInfoPageProvider(animeId)).updateRate(
+      //         rateId: rate.id!,
+      //         updatedAt: rate.updatedAt!,
+      //         status: rate.status!,
+      //         score: rate.score,
+      //         episodes: rate.episodes,
+      //         rewatches: rate.rewatches,
+      //         text: rate.text,
+      //         textHtml: rate.textHtml,
+      //         createdAt: rate.createdAt,
+      //       );
+      // }
       onFinally();
     } catch (e, s) {
       state = AsyncValue.error('Ошибка при обновлении', s);
@@ -472,27 +600,55 @@ class UpdateAnimeRateNotifier extends StateNotifier<AsyncValue<void>> {
 
       switch (status) {
         case 'watching':
+          if (!ref.exists(watchingTabPageProvider)) {
+            break;
+          }
+
           ref.read(watchingTabPageProvider).deleteAnime(animeId);
           break;
         case 'planned':
+          if (!ref.exists(plannedTabPageProvider)) {
+            break;
+          }
+
           ref.read(plannedTabPageProvider).deleteAnime(animeId);
           break;
         case 'completed':
+          if (!ref.exists(completedTabPageProvider)) {
+            break;
+          }
+
           ref.read(completedTabPageProvider).deleteAnime(animeId);
           break;
         case 'rewatching':
+          if (!ref.exists(rewatchingTabPageProvider)) {
+            break;
+          }
+
           ref.read(rewatchingTabPageProvider).deleteAnime(animeId);
           break;
         case 'on_hold':
+          if (!ref.exists(onHoldTabPageProvider)) {
+            break;
+          }
+
           ref.read(onHoldTabPageProvider).deleteAnime(animeId);
           break;
         case 'dropped':
+          if (!ref.exists(droppedTabPageProvider)) {
+            break;
+          }
+
           ref.read(droppedTabPageProvider).deleteAnime(animeId);
           break;
         default:
       }
 
-      if (needUpdate) ref.read(titleInfoPageProvider(animeId)).deleteRate();
+      if (ref.exists(animeDetailsProvider(animeId))) {
+        ref.read(animeDetailsProvider(animeId).notifier).deleteRate();
+      }
+
+      //if (needUpdate) ref.read(detailsProvider(animeId).notifier).deleteRate();
 
       onFinally();
     } catch (e, s) {

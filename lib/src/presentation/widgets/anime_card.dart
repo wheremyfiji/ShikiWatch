@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../pages/anime_details/widgets/user_anime_rate.dart';
+import '../pages/anime_details/anime_user_rate_bottom_sheet.dart';
 import '../../domain/models/user_anime_rates.dart';
 import '../../utils/extensions/buildcontext.dart';
 import '../../domain/models/pages_extra.dart';

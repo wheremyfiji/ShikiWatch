@@ -21,37 +21,15 @@ class SelectSourceSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-          child: Text(
-            'Выбор источника для поиска серий',
-            style: context.textTheme.titleLarge,
-          ),
-        ),
-        Card(
-          color: context.colorScheme.secondaryContainer,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: Icon(
-                    Icons.info_rounded,
-                    color: context.colorScheme.onSecondaryContainer,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    'Задать приоритетный вариант можно в настройках приложения',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: context.colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
-              ],
+        const Card(
+          margin: EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: ListTile(
+            leading: Icon(Icons.search_rounded),
+            title: Text(
+              'Выбор источника для поиска серий',
+            ),
+            subtitle: Text(
+              'Установить вариант по умолчанию можно в настройках приложения',
             ),
           ),
         ),
@@ -79,13 +57,13 @@ class SelectSourceSheet extends StatelessWidget {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    AnilibSourcePage(extra),
+                    AnilibriaSourcePage(extra),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ),
             );
           },
-          title: const Text('AniLib'),
+          title: const Text('AniLibria'),
         ),
         ListTile(
           onTap: () {
@@ -95,13 +73,14 @@ class SelectSourceSheet extends StatelessWidget {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    AnilibriaSourcePage(extra),
+                    AnilibSourcePage(extra),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ),
             );
           },
-          title: const Text('AniLibria'),
+          title: const Text('AniLib'),
+          subtitle: const Text('Прогресс просмотра не сохраняется'),
         ),
       ],
     );
