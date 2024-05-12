@@ -9,11 +9,13 @@ class CustomFlexibleSpace extends StatelessWidget {
     required this.title,
     required this.background,
     this.style,
+    this.act = false,
   });
 
   final String title;
   final Widget? background;
   final TextStyle? style;
+  final bool act;
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +70,14 @@ class CustomFlexibleSpace extends StatelessWidget {
 
     children.add(
       Padding(
-        padding: const EdgeInsets.only(left: 72.0, bottom: 14.0),
+        padding:
+            EdgeInsets.only(left: 72.0, bottom: 14.0, right: act ? 42.0 : 0.0),
         child: Align(
           alignment: Alignment.bottomLeft,
           child: Text(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: titleStyle,
           ),
         ),

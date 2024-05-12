@@ -112,9 +112,10 @@ class AppThemeDataNotifier {
 
     return origin.copyWith(
       visualDensity: VisualDensity.standard,
-      colorScheme: colorScheme.copyWith(
-        outlineVariant: colorScheme.outlineVariant.withOpacity(0.3),
-      ),
+      colorScheme: colorScheme,
+      // colorScheme: colorScheme.copyWith(
+      //   outlineVariant: colorScheme.outlineVariant.withOpacity(0.3),
+      // ),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       dialogBackgroundColor: colorScheme.background,

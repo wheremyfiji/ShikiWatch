@@ -24,12 +24,12 @@ import 'src/services/secure_storage/secure_storage_service.dart';
 import 'src/presentation/providers/environment_provider.dart';
 import 'src/services/preferences/preferences_service.dart';
 import 'src/data/data_sources/environment_data_src.dart';
+import 'src/utils/player/player_utils.dart';
 import 'src/utils/dynamic_colors.dart';
 import 'src/presentation/shiki.dart';
 import 'src/utils/app_utils.dart';
 
 import 'secret.dart';
-import 'src/utils/player/player_utils.dart';
 
 Future<void> main() async {
   if (kReleaseMode) {

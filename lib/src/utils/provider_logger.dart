@@ -7,6 +7,21 @@ class ProviderLogger extends ProviderObserver {
   const ProviderLogger();
 
   @override
+  void providerDidFail(
+    ProviderBase<Object?> provider,
+    Object error,
+    StackTrace stackTrace,
+    ProviderContainer container,
+  ) {
+    log(
+      'fail: ${provider.name ?? provider.runtimeType}, '
+      'error: $error '
+      'stackTrace: $stackTrace',
+      name: 'Riverpod',
+    );
+  }
+
+  @override
   void didAddProvider(
     final ProviderBase provider,
     final Object? value,

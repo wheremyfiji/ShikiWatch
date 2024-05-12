@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../utils/extensions/buildcontext.dart';
-import '../../constants/config.dart';
 
 class ShareBottomSheet extends StatelessWidget {
   const ShareBottomSheet({
@@ -36,7 +35,7 @@ class ShareBottomSheet extends StatelessWidget {
         ListTile(
           onTap: () {
             launchUrlString(
-              AppConfig.staticUrl + url,
+              url,
               mode: LaunchMode.externalApplication,
             ).then(
               (_) => Navigator.of(context).pop(),
@@ -48,7 +47,9 @@ class ShareBottomSheet extends StatelessWidget {
         ListTile(
           onTap: () {
             Clipboard.setData(
-              ClipboardData(text: AppConfig.staticUrl + url),
+              ClipboardData(
+                text: url,
+              ),
             ).then(
               (_) => Navigator.of(context).pop(),
             );
@@ -62,7 +63,7 @@ class ShareBottomSheet extends StatelessWidget {
         ),
         ListTile(
           onTap: () {
-            Share.share(AppConfig.staticUrl + url).then(
+            Share.share(url).then(
               (_) => Navigator.of(context).pop(),
             );
           },

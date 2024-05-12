@@ -21,6 +21,7 @@ class CachedCircleImage extends StatelessWidget {
   final double? radius;
   final Clip? clipBehavior;
   final Map<String, String>? httpHeaders;
+  final int? memCacheHeight;
 
   const CachedCircleImage(
     this.url, {
@@ -28,6 +29,7 @@ class CachedCircleImage extends StatelessWidget {
     this.radius,
     this.clipBehavior,
     this.httpHeaders,
+    this.memCacheHeight,
   });
 
   static const double _defaultRadius = 20.0;
@@ -71,6 +73,7 @@ class CachedCircleImage extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: url,
           fit: BoxFit.cover,
+          memCacheHeight: memCacheHeight,
           httpHeaders: httpHeaders,
           cacheManager: cacheManager,
           placeholder: (context, url) => const CustomShimmer(),
@@ -83,6 +86,7 @@ class CachedCircleImage extends StatelessWidget {
               ),
             );
           },
+          errorListener: (_) {},
         ),
       ),
     );
