@@ -557,26 +557,14 @@ class PlayerController extends ChangeNotifier {
 
           if (player.translationType == TranslationType.sub &&
               player.subtitles.isNotEmpty) {
-            final httpClient = http.Client();
-
-            final subsUrl =
-                player.subtitles.firstOrNull ?? player.subtitles.last;
-
             try {
-              final response = await httpClient.get(
-                Uri.parse(subsUrl.src),
-              );
+              final subsUrl =
+                  player.subtitles.firstOrNull ?? player.subtitles.last;
 
-              if (response.statusCode != 200) {
-                throw 'Не удалось загрузить субтитры';
-              }
-
-              subs = utf8.decode(response.body.codeUnits);
+              subs =
+                  await ref.read(anilibApiProvider).getSubtitles(subsUrl.src);
             } catch (e) {
-              //subs = '';
               throw 'Не удалось загрузить субтитры';
-            } finally {
-              httpClient.close();
             }
           }
 
