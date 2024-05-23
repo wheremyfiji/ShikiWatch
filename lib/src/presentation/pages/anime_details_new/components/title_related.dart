@@ -77,7 +77,10 @@ class TitleRelated extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    onPressed: () {},
+                    onPressed: () => TitleRelatedBottomSheet.show(
+                      context,
+                      related: related,
+                    ),
                     icon: const Icon(
                       Icons.chevron_right_rounded,
                     ),
@@ -156,6 +159,131 @@ class TitleRelated extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class TitleRelatedBottomSheet extends StatelessWidget {
+  final List<GraphqlRelated> related;
+
+  const TitleRelatedBottomSheet(this.related, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      snap: true,
+      minChildSize: 0.5,
+      initialChildSize: 0.75,
+      snapSizes: const [0.75, 1.0],
+      builder: (context, scrollController) {
+        return SafeArea(
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, bottom: 8),
+                  child: Text(
+                    'Связанное',
+                    style: context.textTheme.titleLarge,
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: Divider(height: 1),
+              ),
+              SliverList.builder(
+                itemCount: related.length,
+                itemBuilder: (context, index) {
+                  final item = related[index];
+                  final title = item.title;
+
+                  if (title == null) {
+                    return null;
+                  }
+
+                  return ListTile(
+                    onTap: () {
+                      final extra = TitleDetailsPageExtra(
+                        id: title.id,
+                        label: (title.russian == ''
+                                ? title.name
+                                : title.russian) ??
+                            '',
+                      );
+
+                      if (item.type == RelatedType.manga) {
+                        context.pushNamed(
+                          'library_manga',
+                          pathParameters: <String, String>{
+                            'id': (title.id).toString(),
+                          },
+                          extra: extra,
+                        );
+                      } else {
+                        context.pushNamed(
+                          'library_anime',
+                          pathParameters: <String, String>{
+                            'id': (title.id).toString(),
+                          },
+                          extra: extra,
+                        );
+                      }
+                    },
+                    //minVerticalPadding: 0,
+                    visualDensity: VisualDensity.compact,
+                    leading: SizedBox(
+                      width: 48,
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: CachedImage(
+                            title.poster,
+                            memCacheWidth: 144,
+                          ),
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      title.russian ?? title.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${title.kind.rusName} • ${item.relationRu}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static void show(BuildContext context,
+      {required List<GraphqlRelated> related}) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      useRootNavigator: false,
+      showDragHandle: true,
+      backgroundColor: context.colorScheme.background,
+      elevation: 0,
+      builder: (_) => SafeArea(child: TitleRelatedBottomSheet(related)),
     );
   }
 }
