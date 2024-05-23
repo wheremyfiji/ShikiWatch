@@ -60,58 +60,61 @@ class UserFriendsWidget extends StatelessWidget {
               final isFirstItem = index == 0;
               final isLast = index == listLength - 1;
 
-              return Container(
-                margin: EdgeInsets.only(
-                  left: isFirstItem ? 16 : 0,
-                  right: isLast ? 16 : 8,
-                ),
-                width: 84,
-                height: 84,
-                child: isLast && overflow
-                    ? Stack(
-                        children: [
-                          CircleAvatar(
-                            radius: 42,
-                            child: Text(
-                              '+${friends.length - c}',
-                            ),
-                          ),
-                          Material(
-                            type: MaterialType.transparency,
-                            clipBehavior: Clip.hardEdge,
-                            borderRadius: BorderRadius.circular(42),
-                            child: InkWell(
-                              onTap: () => UserFriendsBottomSheet.show(
-                                context,
-                                friends: friends,
+              return Tooltip(
+                message: friend.nickname,
+                child: Container(
+                  margin: EdgeInsets.only(
+                    left: isFirstItem ? 16 : 0,
+                    right: isLast ? 16 : 8,
+                  ),
+                  width: 84,
+                  height: 84,
+                  child: isLast && overflow
+                      ? Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 42,
+                              child: Text(
+                                '+${friends.length - c}',
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Stack(
-                        children: [
-                          CachedCircleImage(
-                            friend.image?.x160 ?? friend.avatar ?? '',
-                            radius: 42,
-                            clipBehavior: Clip.antiAlias,
-                          ),
-                          Material(
-                            type: MaterialType.transparency,
-                            clipBehavior: Clip.hardEdge,
-                            borderRadius: BorderRadius.circular(42),
-                            child: InkWell(
-                              onTap: friend.id.toString() ==
-                                      SecureStorageService.instance.userId
-                                  ? null
-                                  : () => context.push(
-                                        '/profile/${friend.id!}',
-                                        extra: friend,
-                                      ),
+                            Material(
+                              type: MaterialType.transparency,
+                              clipBehavior: Clip.hardEdge,
+                              borderRadius: BorderRadius.circular(42),
+                              child: InkWell(
+                                onTap: () => UserFriendsBottomSheet.show(
+                                  context,
+                                  friends: friends,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            CachedCircleImage(
+                              friend.image?.x160 ?? friend.avatar ?? '',
+                              radius: 42,
+                              clipBehavior: Clip.antiAlias,
+                            ),
+                            Material(
+                              type: MaterialType.transparency,
+                              clipBehavior: Clip.hardEdge,
+                              borderRadius: BorderRadius.circular(42),
+                              child: InkWell(
+                                onTap: friend.id.toString() ==
+                                        SecureStorageService.instance.userId
+                                    ? null
+                                    : () => context.push(
+                                          '/profile/${friend.id!}',
+                                          extra: friend,
+                                        ),
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
               );
             },
           ),
