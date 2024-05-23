@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/models/user.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
+import '../../../../utils/extensions/date_time_ext.dart';
 import '../../../widgets/cached_image.dart';
 
 class UserFriendsWidget extends StatelessWidget {
@@ -21,7 +22,7 @@ class UserFriendsWidget extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    const c = 6;
+    const c = 10;
 
     final overflow = friends.length > c;
     final listLength = overflow ? c + 1 : friends.length;
@@ -80,7 +81,10 @@ class UserFriendsWidget extends StatelessWidget {
                             clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(42),
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () => UserFriendsBottomSheet.show(
+                                context,
+                                friends: friends,
+                              ),
                             ),
                           ),
                         ],
@@ -113,6 +117,92 @@ class UserFriendsWidget extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class UserFriendsBottomSheet extends StatelessWidget {
+  const UserFriendsBottomSheet(this.friends, {super.key});
+
+  final List<User> friends;
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      expand: false,
+      snap: true,
+      minChildSize: 0.5,
+      initialChildSize: 0.75,
+      snapSizes: const [0.75, 1.0],
+      builder: (context, scrollController) {
+        return SafeArea(
+          child: CustomScrollView(
+            controller: scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, bottom: 8),
+                  child: Text(
+                    'Друзья',
+                    style: context.textTheme.titleLarge,
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Divider(),
+                ),
+              ),
+              SliverList.builder(
+                itemCount: friends.length,
+                itemBuilder: (context, index) {
+                  final friend = friends[index];
+
+                  final userLastOnline =
+                      DateTime.tryParse(friend.lastOnlineAt ?? '')?.toLocal();
+
+                  return ListTile(
+                    onTap: friend.id.toString() ==
+                            SecureStorageService.instance.userId
+                        ? null
+                        : () => context.push(
+                              '/profile/${friend.id!}',
+                              extra: friend,
+                            ),
+                    leading: CachedCircleImage(
+                      friend.image?.x160 ?? friend.avatar ?? '',
+                      //radius: 42,
+                      clipBehavior: Clip.antiAlias,
+                    ),
+                    title: Text(friend.nickname!),
+                    subtitle: userLastOnline == null
+                        ? null
+                        : Text(
+                            'онлайн ${userLastOnline.convertToDaysAgo()}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static void show(BuildContext context, {required List<User> friends}) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      useRootNavigator: false,
+      showDragHandle: true,
+      backgroundColor: context.colorScheme.background,
+      elevation: 0,
+      builder: (_) => SafeArea(child: UserFriendsBottomSheet(friends)),
     );
   }
 }

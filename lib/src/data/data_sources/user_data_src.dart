@@ -61,10 +61,16 @@ class UserDataSource implements UserRepository {
   @override
   Future<Iterable<User>> getUserFriends({
     required String? id,
+    int page = 1,
+    int limit = 100,
     CancelToken? cancelToken,
   }) async {
     final response = await dio.get(
       'users/$id/friends',
+      queryParameters: {
+        'page': page.toString(),
+        'limit': limit.toString(),
+      },
       cancelToken: cancelToken,
     );
 
