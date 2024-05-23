@@ -6,8 +6,8 @@ import '../../../../domain/enums/library_layout_mode.dart';
 import '../../../providers/library_tab_page_provider.dart';
 import '../../../providers/settings_provider.dart';
 import '../../../widgets/error_widget.dart';
-import '../../../widgets/loading_grid.dart';
 import '../widgets/anime_tab_content.dart';
+import '../widgets/loading_item.dart';
 import '../widgets/empty_list.dart';
 
 class DroppedTab extends ConsumerWidget {
@@ -38,11 +38,7 @@ class DroppedTab extends ConsumerWidget {
           pageStorageKey: const PageStorageKey<String>('DroppedTab'),
         );
       },
-      loading: () => currentLayout == LibraryLayoutMode.grid
-          ? const LoadingGrid()
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
+      loading: () => LibraryLoadingItem(currentLayout),
       error: (err, stack) => CustomErrorWidget(
         err.toString(),
         () => ref.refresh(droppedTabPageProvider),
