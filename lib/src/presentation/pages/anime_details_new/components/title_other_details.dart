@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/services.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../utils/app_utils.dart';
 import '../graphql_anime.dart';
 
 class TitleOtherDetails extends StatelessWidget {
@@ -81,105 +83,37 @@ class TitleOtherDetails extends StatelessWidget {
             _Item(
               label: 'Ромадзи',
               title: name,
+              copy: true,
             ),
+            if (russian != null)
+              _Item(
+                label: 'По-русски',
+                title: russian!,
+                copy: true,
+              ),
             if (english != null)
               _Item(
                 label: 'По-английски',
-                title: english ?? '',
+                title: english!,
+                copy: true,
               ),
             if (japanese != null)
               _Item(
                 label: 'По-японски',
-                title: japanese ?? '',
+                title: japanese!,
+                copy: true,
               ),
             if (synonyms.isNotEmpty)
               _Item(
                 label: 'Другие названия',
                 title: synonyms.join('\n'),
+                copy: true,
               ),
             const Divider(),
           ],
         ),
       ),
     );
-
-    // return Padding(
-    //   padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0.0),
-    //   child: Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       Text(
-    //         'Детали',
-    //         style: context.textTheme.bodyLarge!.copyWith(
-    //           fontWeight: FontWeight.bold,
-    //         ),
-    //       ),
-    //       if (studios.isNotEmpty) _Studios(studios),
-    //       if (duration != 0)
-    //         _Item(
-    //           label: 'Длительность эпизода',
-    //           title: '$duration мин.',
-    //         ),
-    //       if (nextEpisodeAt != null)
-    //         _Item(
-    //           label: 'Следующий эпизод',
-    //           title: DateFormat.MMMMEEEEd().format(nextEpisodeAt!),
-    //         ),
-    //       if (showAiredOn)
-    //         _Item(
-    //           label: 'Начало показа',
-    //           title: DateFormat.yMMMMd().format(DateTime.parse(airedOn!)),
-    //         ),
-    //       if (showReleasedOn)
-    //         _Item(
-    //           label: 'Конец показа',
-    //           title: DateFormat.yMMMMd().format(DateTime.parse(releasedOn!)),
-    //         ),
-    //       if (studios.isNotEmpty ||
-    //           duration != 0 ||
-    //           nextEpisodeAt != null ||
-    //           showAiredOn ||
-    //           showReleasedOn)
-    //         const Divider(),
-    //       _Item(
-    //         label: 'Ромадзи',
-    //         title: name,
-    //       ),
-    //       if (english != null)
-    //         _Item(
-    //           label: 'По-английски',
-    //           title: english ?? '',
-    //         ),
-    //       if (japanese != null)
-    //         _Item(
-    //           label: 'По-японски',
-    //           title: japanese ?? '',
-    //         ),
-    //       if (synonyms.isNotEmpty)
-    //         _Item(
-    //           label: 'Другие названия',
-    //           title: synonyms.join('\n'),
-    //         ),
-    //       // if (airedOn != null && airedOn!.isNotEmpty) ...[
-    //       //   const Divider(),
-    //       //   _Title(
-    //       //     label: 'Начало показа',
-    //       //     title: DateFormat.yMMMMd().format(DateTime.parse(airedOn!)),
-    //       //   ),
-    //       // ],
-    //       // if (releasedOn != null && airedOn!.isNotEmpty)
-    //       //   _Title(
-    //       //     label: 'Конец показа',
-    //       //     title: DateFormat.yMMMMd().format(DateTime.parse(releasedOn!)),
-    //       //   ),
-    //       // const SizedBox(
-    //       //   height: 8.0,
-    //       // ),
-
-    //       const Divider(),
-    //     ],
-    //   ),
-    // );
   }
 }
 
@@ -257,10 +191,13 @@ class _Item extends StatelessWidget {
   const _Item({
     required this.label,
     required this.title,
+    // ignore: unused_element
+    this.copy = false,
   });
 
   final String label;
   final String title;
+  final bool copy;
 
   @override
   Widget build(BuildContext context) {
@@ -280,12 +217,29 @@ class _Item extends StatelessWidget {
             ),
           ),
           Flexible(
-            child: Text(
-              title,
-              maxLines: null,
-              textAlign: TextAlign.right,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: context.colorScheme.onSurface,
+            child: InkWell(
+              onTap: copy
+                  ? () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: title),
+                      );
+
+                      if (context.mounted) {
+                        showSnackBar(
+                          ctx: context,
+                          msg: 'Содержимое "$label" скопировано в буфер обмена',
+                          dur: const Duration(milliseconds: 2500),
+                        );
+                      }
+                    }
+                  : null,
+              child: Text(
+                title,
+                maxLines: null,
+                textAlign: TextAlign.right,
+                style: context.textTheme.bodyMedium?.copyWith(
+                  color: context.colorScheme.onSurface,
+                ),
               ),
             ),
           ),
