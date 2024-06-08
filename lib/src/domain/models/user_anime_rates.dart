@@ -68,7 +68,7 @@ extension UserAnimeRatesExtension on UserAnimeRates {
         airedOn: anime!.airedOn,
         releasedOn: anime!.releasedOn,
         episodes: anime!.episodes,
-        episodesAired: anime!.episodes,
+        episodesAired: anime!.episodesAired,
         userRate: UserRate(
           id: id,
           score: score,
