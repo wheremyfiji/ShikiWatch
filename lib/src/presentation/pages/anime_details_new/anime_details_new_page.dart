@@ -288,17 +288,19 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                         ],
                       ),
                     ),
-                    const SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Divider(),
+                    if (title.topic != null) ...[
+                      const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Divider(),
+                        ),
                       ),
-                    ),
-                    TitleComments(
-                      id: title.topic.id,
-                      count: title.topic.commentsCount,
-                      name: title.russian ?? title.name,
-                    ),
+                      TitleComments(
+                        id: title.topic!.id,
+                        count: title.topic!.commentsCount,
+                        name: title.russian ?? title.name,
+                      ),
+                    ],
                   ];
                 },
                 loading: () => [

@@ -2,14 +2,16 @@ import 'dart:developer';
 import 'dart:convert' as c;
 import 'dart:io' as io;
 
+import 'package:flutter/foundation.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart' as path_prov;
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:path/path.dart' as p;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../constants/config.dart';
 import '../../data/repositories/anime_database_repo.dart';
@@ -27,6 +29,7 @@ class LocalAnimeDatabaseImpl implements LocalAnimeDatabaseRepo {
         [AnimeDatabaseSchema],
         name: "animeDatabase",
         directory: appDocDir.path,
+        inspector: kDebugMode,
         //compactOnLaunch: const CompactCondition(minRatio: 2.0),
       ),
     );

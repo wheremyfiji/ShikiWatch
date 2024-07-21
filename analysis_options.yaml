@@ -5,9 +5,21 @@
 # IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
 # invoked from the command line by running `flutter analyze`.
 
+# https://dart.dev/tools/analysis#enabling-linter-rules
+
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+ exclude:
+   - '.dart_tool/**'
+   - 'build/**'
+   - '**.g.dart'
+   - '**/*.g.dart'
+   - '**/*.config.dart'
+   - '**/*.gen.dart'
+   - '**/*.freezed.dart'
 
 linter:
   # The lint rules applied to this project can be customized in the

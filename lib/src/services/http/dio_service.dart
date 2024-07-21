@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:network_logger/network_logger.dart';
@@ -22,14 +23,19 @@ class DioHttpService implements HttpService {
       dio.httpClientAdapter = NativeAdapter(
         createCronetEngine: () {
           return CronetEngine.build(
-            // enableQuic: true,
             enableHttp2: true,
             enableBrotli: true,
             cacheMode: CacheMode.memory,
-            cacheMaxSize: 4 * 1024 * 1024,
+            cacheMaxSize: 5 * 1024 * 1024,
             userAgent: AppUtils.instance.userAgent,
           );
         },
+      );
+    } else {
+      dio.httpClientAdapter = Http2Adapter(
+        ConnectionManager(
+          idleTimeout: const Duration(seconds: 10),
+        ),
       );
     }
 

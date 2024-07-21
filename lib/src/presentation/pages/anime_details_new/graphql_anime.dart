@@ -260,7 +260,7 @@ class GraphqlAnime {
   final String name;
   final String url;
   final Poster poster;
-  final GraphqlTopic topic;
+  final GraphqlTopic? topic;
   final String? russian;
   final String? english;
   final String? japanese;
@@ -331,7 +331,8 @@ class GraphqlAnime {
         name: json["name"],
         url: json["url"],
         poster: Poster.fromJson(json["poster"]),
-        topic: GraphqlTopic.fromJson(json["topic"]),
+        topic:
+            json["topic"] == null ? null : GraphqlTopic.fromJson(json["topic"]),
         russian: json["russian"],
         english: json["english"],
         japanese: json["japanese"],
