@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class ProviderLogger extends ProviderObserver {
   /// Logs all riverpod provider changes
@@ -56,6 +57,24 @@ class ProviderLogger extends ProviderObserver {
     log(
       'dispose: ${provider.name ?? provider.runtimeType}',
       name: 'Riverpod',
+    );
+  }
+}
+
+class SentryProviderObserver extends ProviderObserver {
+  const SentryProviderObserver();
+
+  @override
+  void providerDidFail(
+    ProviderBase<Object?> provider,
+    Object error,
+    StackTrace stackTrace,
+    ProviderContainer container,
+  ) {
+    Sentry.captureException(
+      'Rittersport fail: ${provider.name ?? provider.runtimeType}, '
+      'error: $error ',
+      stackTrace: stackTrace,
     );
   }
 }

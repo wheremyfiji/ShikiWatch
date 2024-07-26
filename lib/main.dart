@@ -25,6 +25,7 @@ import 'src/presentation/providers/environment_provider.dart';
 import 'src/services/preferences/preferences_service.dart';
 import 'src/data/data_sources/environment_data_src.dart';
 import 'src/utils/player/player_utils.dart';
+// import 'src/utils/provider_logger.dart';
 import 'src/utils/dynamic_colors.dart';
 import 'src/presentation/shiki.dart';
 import 'src/utils/app_utils.dart';
@@ -46,7 +47,7 @@ Future<void> main() async {
       await SentryFlutter.init(
         (options) {
           options.dsn = sentryDsn;
-          options.tracesSampleRate = 1.0;
+          options.tracesSampleRate = 0.8;
           options.captureFailedRequests = true;
         },
       );
@@ -79,7 +80,7 @@ void initApp() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (Platform.isWindows) {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
 
     WindowOptions windowOptions = const WindowOptions(
@@ -108,10 +109,14 @@ void initApp() async {
 
   bool hasGoogleServices = false;
 
-  if (Platform.isAndroid) {
-    hasGoogleServices = await GoogleApiAvailability.instance
-            .checkGooglePlayServicesAvailability() ==
-        GooglePlayServicesAvailability.success;
+  try {
+    if (Platform.isAndroid) {
+      hasGoogleServices = await GoogleApiAvailability.instance
+              .checkGooglePlayServicesAvailability() ==
+          GooglePlayServicesAvailability.success;
+    }
+  } catch (e) {
+    debugPrint('hasGoogleServices: $e');
   }
 
   debugPrint('hasGoogleServices: $hasGoogleServices');
@@ -124,6 +129,10 @@ void initApp() async {
 
   await SecureStorageService.initialize();
 
+  if (Platform.isWindows || Platform.isLinux) {
+    DiscordRPC.initialize();
+  }
+
   final animeDatabase = await LocalAnimeDatabaseImpl.initialization();
   final preferencesService = await PreferencesService.initialize();
   final packageInfo = await PackageInfo.fromPlatform();
@@ -134,7 +143,6 @@ void initApp() async {
 
   if (Platform.isWindows) {
     windowsInfo = await DeviceInfoPlugin().windowsInfo;
-    DiscordRPC.initialize();
   }
 
   if (Platform.isAndroid) {
@@ -150,7 +158,7 @@ void initApp() async {
   runApp(
     ProviderScope(
       // observers: const [
-      //   if (kDebugMode) ProviderLogger(),
+      //   kDebugMode ? ProviderLogger() : SentryProviderObserver(),
       // ],
       overrides: [
         environmentProvider.overrideWithValue(

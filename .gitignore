@@ -19,6 +19,7 @@ migrate_working_dir/
 .idea/
 
 lib/secret.dart
+secrets.json
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -39,7 +40,6 @@ lib/secret.dart
 /lib/kodik/
 /lib/anilibria/
 /lib/anime_lib/
-/lib/interactiveviewer_gallery/
 
 # Symbolication related
 app.*.symbols

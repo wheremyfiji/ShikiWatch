@@ -78,8 +78,18 @@ class LibraryPageAppBar extends ConsumerWidget {
       bottom: TabBar(
         controller: tabController,
         isScrollable: true,
-        indicatorWeight: 1.5,
         splashBorderRadius: BorderRadius.circular(12.0),
+        indicatorWeight: 1.5,
+        // indicatorSize: TabBarIndicatorSize.tab,
+        // indicatorPadding: const EdgeInsets.symmetric(
+        //   vertical: 8.0,
+        //   horizontal: 4.0,
+        // ),
+        // indicator: BoxDecoration(
+        //   color: context.colorScheme.primaryContainer,
+        //   borderRadius: BorderRadius.circular(12),
+        // ),
+        // labelColor: context.colorScheme.onPrimaryContainer,
         tabs: state == LibraryFragmentMode.manga
             ? const [
                 Tab(

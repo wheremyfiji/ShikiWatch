@@ -9,6 +9,8 @@
             "args": [
                 "--flavor",
                 "dev",
+                "--dart-define-from-file",
+                "secrets.json"
             ]
         }
     ],
