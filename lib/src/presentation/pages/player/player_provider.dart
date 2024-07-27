@@ -6,9 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
 
-import 'package:http/http.dart' as http;
-import 'dart:convert' show utf8;
-
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -58,7 +56,7 @@ final playerPageProvider = ChangeNotifierProvider.autoDispose
   return c;
 }, name: 'playerPageProvider');
 
-class PlayerController extends ChangeNotifier {
+class PlayerController extends SafeChangeNotifier {
   final Ref ref;
   final PlayerPageExtra e;
   final AutoHideController hideController;

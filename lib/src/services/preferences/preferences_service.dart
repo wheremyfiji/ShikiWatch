@@ -22,6 +22,9 @@ const _playerLongPressSeek = 'playerLongPressSeekKey';
 const _playerOrientationLock = 'playerOrientationLockKey';
 const _colorSchemeVariantKey = 'colorSchemeVariant';
 
+// appLaunchCount
+const _appLaunchCountKey = 'app_launch_count_key';
+
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
 }, name: 'preferencesProvider');
@@ -32,10 +35,34 @@ class PreferencesService {
   PreferencesService(this._preferences);
 
   static Future<PreferencesService> initialize() async {
-    return PreferencesService(await SharedPreferences.getInstance());
+    final sp = await SharedPreferences.getInstance();
+
+    // try {
+    //   final value = sp.getInt(_appLaunchCountKey);
+    //   await sp.setInt(_appLaunchCountKey, (value ?? 0) + 1);
+    // } catch (e) {
+    //   // ignore
+    // }
+
+    return PreferencesService(sp);
+    //return PreferencesService(await SharedPreferences.getInstance());
   }
 
   SharedPreferences get sharedPreferences => _preferences;
+
+  Future<void> resetAppLaunchCount() async {
+    await _preferences.setInt(_appLaunchCountKey, 1);
+  }
+
+  int getAppLaunchCount() {
+    final value = _preferences.getInt(_appLaunchCountKey);
+
+    if (value == null) {
+      return 0;
+    }
+
+    return value;
+  }
 
   ThemeMode getTheme() {
     final value = _preferences.getString(_themeModeKey);

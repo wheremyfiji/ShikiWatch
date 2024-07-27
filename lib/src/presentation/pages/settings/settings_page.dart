@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../utils/app_utils.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../utils/router.dart';
 
 import 'widgets/anime_source_option.dart';
@@ -28,12 +29,80 @@ import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/user_account_group.dart';
 
+class SettingTile extends StatelessWidget {
+  const SettingTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: ListTile(
+        onTap: () {},
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(subtitle),
+      ),
+    );
+  }
+}
+
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userLogin = ref.watch(routerNotifierProvider.notifier).userLogin;
+
+    // return Scaffold(
+    //   body: SafeArea(
+    //     top: false,
+    //     bottom: false,
+    //     child: CustomScrollView(
+    //       slivers: [
+    //         SliverAppBar.large(
+    //           automaticallyImplyLeading: false,
+    //           leading: IconButton(
+    //             onPressed: () => context.pop(),
+    //             icon: const Icon(Icons.arrow_back),
+    //           ),
+    //           title: const Text('Настройки'),
+    //         ),
+    //         const UserAccountTile(),
+    //         const SettingTile(
+    //           icon: Icons.palette_outlined,
+    //           title: 'Внешний вид',
+    //           subtitle: 'Внешний вид приложения',
+    //         ),
+    //         const SettingTile(
+    //           icon: Icons.play_arrow_outlined,
+    //           title: 'Плеер',
+    //           subtitle: 'Кастомизация встроенного плеера',
+    //         ),
+    //         const SettingTile(
+    //           icon: Icons.book_outlined,
+    //           title: 'Библиотека',
+    //           subtitle: 'Настройка поведения библиотеки',
+    //         ),
+    //         const SettingTile(
+    //           icon: Icons.folder_open_outlined,
+    //           title: 'Локальные данные',
+    //           subtitle: 'Кэш и бекапы',
+    //         ),
+    //         SliverToBoxAdapter(
+    //           child: SizedBox(height: MediaQuery.of(context).padding.bottom),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
 
     return Scaffold(
       body: SafeArea(
@@ -76,7 +145,7 @@ class SettingsPage extends ConsumerWidget {
                       ],
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
-                      if (AppUtils.instance.isDesktop)
+                      if (Platform.isWindows || Platform.isLinux)
                         const PlayerDiscordRpcOption(),
                     ],
                   ),
@@ -104,7 +173,7 @@ class SettingsPage extends ConsumerWidget {
                         SettingsOption(
                           title: 'Резервное копирование',
                           subtitle:
-                              'Импорт/экспорт/удаление локальных отметок просмотра аниме',
+                              'Импорт/экспорт/удаление ЛОКАЛЬНЫХ отметок просмотра аниме',
                           onTap: () => context.pushNamed('backup'),
                         ),
                       // if (TargetP.instance.isDesktop)
@@ -117,7 +186,7 @@ class SettingsPage extends ConsumerWidget {
                       //     },
                       //   ),
 
-                      if (AppUtils.instance.isDesktop)
+                      if (Platform.isWindows)
                         SettingsOption(
                           title: 'распаковать pedals',
                           onTap: () async {

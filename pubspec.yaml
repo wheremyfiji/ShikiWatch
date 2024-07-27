@@ -73,6 +73,7 @@ dependencies:
   permission_handler: ^10.4.5
   pretty_dio_logger: ^1.4.0
   primer_progress_bar: ^0.4.1
+  safe_change_notifier: ^0.3.2
   scroll_to_index: ^3.0.1
   sentry_dio: ^8.4.0
   #copy_with_extension: ^5.0.2
