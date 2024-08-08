@@ -142,7 +142,7 @@ class PlayerController extends SafeChangeNotifier {
       await _configureAudioSession();
     }
 
-    if (AppUtils.instance.isDesktop) {
+    if (Platform.isWindows || Platform.isLinux) {
       _useDiscordRPC = ref.read(
           settingsProvider.select((settings) => settings.playerDiscordRpc));
 
@@ -184,6 +184,9 @@ class PlayerController extends SafeChangeNotifier {
         'demuxer-lavf-o',
         'http_persistent=0,seg_max_retry=10', //  fflags=+discardcorrupt
       );
+
+      await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
+      await (player.platform as NativePlayer).setProperty('insecure', 'yes');
 
       await _openMedia();
 
@@ -266,7 +269,7 @@ class PlayerController extends SafeChangeNotifier {
 
     hideController.dispose();
 
-    if (AppUtils.instance.isDesktop) {
+    if (Platform.isWindows || Platform.isLinux) {
       _discordRPC.clearPresence();
     }
 
@@ -795,7 +798,7 @@ class PlayerController extends SafeChangeNotifier {
       return;
     }
 
-    if (!AppUtils.instance.isDesktop) {
+    if (!(Platform.isWindows || Platform.isLinux)) {
       return;
     }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
@@ -185,7 +187,7 @@ class _OtherControls extends ConsumerWidget {
               );
             },
           ),
-          _ShadersButton(providerParameters),
+          if (Platform.isWindows) _ShadersButton(providerParameters),
         ],
         IconButton(
           tooltip: 'Полноэкранный режим',
