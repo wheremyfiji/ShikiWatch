@@ -381,7 +381,7 @@ class _SkipButton extends ConsumerWidget {
               ),
             )
           : IconButton(
-              tooltip: 'Перемотать 125 секунд',
+              tooltip: 'Перемотать 85 секунд',
               iconSize: 32,
               color: Colors.white,
               onPressed: () => player.seek(

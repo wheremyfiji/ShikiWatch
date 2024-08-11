@@ -103,7 +103,7 @@ class BottomControls extends ConsumerWidget {
                 Icons.double_arrow_rounded,
               ),
               iconSize: 21,
-              tooltip: 'Перемотать 125 секунд',
+              tooltip: 'Перемотать 85 секунд',
             ),
             IconButton(
               color: Colors.white,
