@@ -91,9 +91,9 @@ class AnimeCompactListTile extends StatelessWidget {
             ),
           ),
           Text(
-            data.anime?.episodes == 0
-                ? getKind(data.anime?.kind ?? '')
-                : '${getKind(data.anime?.kind ?? '')} • ${data.anime?.episodes} эп.',
+            data.anime?.status == 'released'
+                ? '${getKind(data.anime?.kind ?? '')} • ${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.'
+                : '${getKind(data.anime?.kind ?? '')} • ${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -122,13 +122,13 @@ class AnimeCompactListTile extends StatelessWidget {
           ],
         ],
       ),
-      trailing: (data.episodes == null || data.episodes == 0)
-          ? null
-          : Badge.count(
-              count: data.episodes!,
-              backgroundColor: context.colorScheme.primary,
-              textColor: context.colorScheme.onPrimary,
-            ),
+      // trailing: (data.episodes == null || data.episodes == 0)
+      //     ? null
+      //     : Badge.count(
+      //         count: data.episodes!,
+      //         backgroundColor: context.colorScheme.primary,
+      //         textColor: context.colorScheme.onPrimary,
+      //       ),
       // CustomInfoChip(
       //     title: data.episodes.toString(),
       //   ),
@@ -160,7 +160,9 @@ class AnimeListTile extends StatelessWidget {
     //     ? data.anime?.episodes
     //     : data.anime?.episodesAired;
 
-    final epCount = data.anime?.episodes ?? data.anime?.episodesAired;
+    final epCount = (data.anime?.episodes ?? 0) == 0
+        ? data.anime?.episodesAired
+        : data.anime?.episodes;
 
     final releasedOnDateTime =
         DateTime.parse(data.anime!.releasedOn ?? '1917-10-25').toLocal();
@@ -257,9 +259,7 @@ class AnimeListTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        data.anime?.episodes == 0
-                            ? getKind(data.anime?.kind ?? '')
-                            : '${getKind(data.anime?.kind ?? '')} • ${data.anime?.episodes} эп.',
+                        '${getKind(data.anime?.kind ?? '')} • ${(data.anime?.episodes ?? 0) == 0 ? '?' : data.anime?.episodes} эп.',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -406,25 +406,17 @@ class AnimeCard extends StatelessWidget {
                   const SizedBox(
                     height: 4,
                   ),
-                  data.anime?.status == 'released'
-                      ? Text(
-                          '${data.episodes.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).textTheme.bodySmall!.color,
-                          ),
-                        )
-                      : Text(
-                          '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).textTheme.bodySmall!.color,
-                          ),
-                        ),
+                  Text(
+                    data.anime?.status == 'released'
+                        ? '${data.episodes.toString()} из ${(data.anime?.episodes ?? 0) == 0 ? '?' : '${data.anime?.episodes}'} эп.'
+                        : '${data.episodes.toString()} / ${data.anime?.episodesAired.toString()} из ${data.anime?.episodes! == 0 ? '?' : '${data.anime?.episodes!}'} эп.',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Theme.of(context).textTheme.bodySmall!.color,
+                    ),
+                  ),
                 ],
               ),
             ),
