@@ -7,18 +7,19 @@ import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/models/user_profile.dart';
 import '../../../widgets/custom_flexible_space.dart';
 import '../../../widgets/cached_image.dart';
+import '../../../widgets/share_bottom_sheet.dart';
 
 class UserProfileAppBar extends StatelessWidget {
   const UserProfileAppBar(
     this.userInfo, {
     super.key,
     required this.title,
-    this.actions,
+    //this.actions,
   });
 
   final UserProfile userInfo;
   final String title;
-  final List<Widget>? actions;
+  //final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +31,53 @@ class UserProfileAppBar extends StatelessWidget {
         onPressed: () => context.pop(),
         icon: const Icon(Icons.arrow_back),
       ),
-      actions: actions,
+      //actions: actions,
+      actions: [
+        IconButton(
+          onPressed: () {
+            ShareBottomSheet.show(
+              context,
+              header: ListTile(
+                leading: CachedCircleImage(
+                  userInfo.image?.x160 ?? userInfo.avatar ?? '',
+                  clipBehavior: Clip.antiAlias,
+                ),
+                // SizedBox(
+                //   width: 48,
+                //   child:
+                //   AspectRatio(
+                //     aspectRatio: 1,
+                //     child: ClipRRect(
+                //       borderRadius: BorderRadius.circular(8.0),
+                //       child: CachedImage(
+                //         '${AppConfig.staticUrl}/system/animes/original/${title.id}.jpg',
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                title: Text(
+                  userInfo.nickname ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Text(
+                  userInfo.lastOnline ?? userInfo.lastOnlineAt ?? '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              url: userInfo.url ?? '',
+            );
+          },
+          icon: const Icon(Icons.share_rounded),
+          iconSize: 22,
+        )
+      ],
       flexibleSpace: CustomFlexibleSpace(
         title: title,
+        act: true,
         background: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
