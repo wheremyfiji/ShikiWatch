@@ -4,36 +4,37 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../constants/config.dart';
-import '../../../domain/enums/anime_source.dart';
 import '../../../services/preferences/preferences_service.dart';
 import '../../../utils/extensions/buildcontext.dart';
+import '../../widgets/custom_flexible_space.dart';
+import '../../../domain/enums/anime_source.dart';
 import '../../../domain/models/pages_extra.dart';
 import '../../providers/settings_provider.dart';
-import '../../widgets/cached_image.dart';
-import '../../widgets/custom_flexible_space.dart';
 import '../../widgets/share_bottom_sheet.dart';
-import '../../widgets/square_button.dart';
 import '../../widgets/title_description.dart';
+import '../../widgets/square_button.dart';
 import '../../widgets/error_widget.dart';
+import '../../widgets/cached_image.dart';
+import '../../../constants/config.dart';
 import '../../../utils/app_utils.dart';
 
 import '../anime_soures/anilibria/anilibria_source_page.dart';
-import '../anime_details/external_links.dart';
-import '../anime_details/rating_dialog.dart';
-import '../anime_details/similar_animes.dart';
-import '../anime_details/videos_page.dart';
+import '../anime_soures/anime365/anime365_source_page.dart';
 import '../anime_details/anime_user_rate_bottom_sheet.dart';
 import '../anime_soures/anilib/anilib_source_page.dart';
 import '../anime_soures/kodik/kodik_source_page.dart';
 import '../anime_soures/source_modal_sheet.dart';
+import '../anime_details/similar_animes.dart';
+import '../anime_details/external_links.dart';
+import '../anime_details/rating_dialog.dart';
+import '../anime_details/videos_page.dart';
 
 import 'components/title_other_details.dart';
 import 'components/title_screenshots.dart';
 import 'components/title_characters.dart';
 import 'components/title_comments.dart';
-import 'components/title_header.dart';
 import 'components/title_related.dart';
+import 'components/title_header.dart';
 import 'components/title_genres.dart';
 
 import 'graphql_anime.dart';
@@ -466,6 +467,16 @@ class PlayButton extends ConsumerWidget {
                 PageRouteBuilder(
                   pageBuilder: (context, animation1, animation2) =>
                       AnilibSourcePage(extra),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
+              ),
+            // ignore: use_build_context_synchronously
+            AnimeSource.anime365 => Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) =>
+                      Anime365SourcePage(extra),
                   transitionDuration: Duration.zero,
                   reverseTransitionDuration: Duration.zero,
                 ),

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
+import 'package:intl/intl.dart';
 
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,6 +20,7 @@ import 'package:media_kit/media_kit.dart';
 
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../../anime_lib/enums/translation_type.dart';
+import '../anime_soures/anime365/anime365_provider.dart';
 import '../../../../anime_lib/enums/video_quality.dart';
 import '../../providers/anime_details_provider.dart';
 import '../../providers/environment_provider.dart';
@@ -27,6 +29,8 @@ import '../../../domain/enums/anime_source.dart';
 import '../../../utils/player/player_utils.dart';
 import '../../providers/settings_provider.dart';
 import '../../../../anime_lib/anilib_api.dart';
+import '../../../../anime365/enums/enums.dart';
+import '../../../../anime365/anime365.dart';
 import '../../../constants/config.dart';
 import '../../../utils/app_utils.dart';
 import '../../../../kodik/kodik.dart';
@@ -34,9 +38,9 @@ import '../../widgets/auto_hide.dart';
 import '../../../utils/shaders.dart';
 import '../../../../secret.dart';
 
-import 'domain/playable_content.dart';
-import 'domain/player_page_extra.dart';
 import 'domain/player_provider_parameters.dart';
+import 'domain/player_page_extra.dart';
+import 'domain/playable_content.dart';
 import 'domain/playlist_item.dart';
 
 final playerPageProvider = ChangeNotifierProvider.autoDispose
@@ -63,6 +67,7 @@ class PlayerController extends SafeChangeNotifier {
 
   final Player player;
   final VideoController videoController;
+  final PlayerLogger _playerLogger;
 
   PlayerController(
     this.ref, {
@@ -70,6 +75,7 @@ class PlayerController extends SafeChangeNotifier {
     required this.player,
     required this.videoController,
   })  : _currentEpNumber = e.selected,
+        _playerLogger = PlayerLogger(),
         playableContentAsync = const AsyncValue.loading(),
         hideController = AutoHideController(
           duration: const Duration(seconds: 3),
@@ -122,6 +128,9 @@ class PlayerController extends SafeChangeNotifier {
   double _savedPlaybackSpeed = 1.0;
   late final w.GlobalKey<VideoState> videoStateKey = w.GlobalKey<VideoState>();
   w.BoxFit playerFit = w.BoxFit.contain;
+
+  bool _videoCompleted = false;
+  bool get completed => _videoCompleted;
 
   void initState() async {
     if (!AppUtils.instance.isDesktop) {
@@ -180,13 +189,25 @@ class PlayerController extends SafeChangeNotifier {
         );
       }
 
+      if (_animeSourceType == AnimeSource.anime365) {
+        await (player.platform as NativePlayer).setProperty(
+          'User-Agent',
+          ref.read(anime365Provider).userAgent,
+        );
+
+        await (player.platform as NativePlayer).setProperty(
+          'http-header-fields',
+          'Referer: ${Anime365Endpoints.base}/',
+        );
+      }
+
       await (player.platform as NativePlayer).setProperty(
         'demuxer-lavf-o',
-        'http_persistent=0,seg_max_retry=10', //  fflags=+discardcorrupt
+        'http_persistent=0,seg_max_retry=10,insecure=yes', //  fflags=+discardcorrupt
       );
 
       await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
-      await (player.platform as NativePlayer).setProperty('insecure', 'yes');
+      //await (player.platform as NativePlayer).setProperty('insecure', 'yes');
 
       await _openMedia();
 
@@ -250,9 +271,6 @@ class PlayerController extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  bool _videoCompleted = false;
-  bool get completed => _videoCompleted;
-
   void onPlayerCompleted(bool v) {
     _videoCompleted = v;
 
@@ -266,6 +284,10 @@ class PlayerController extends SafeChangeNotifier {
 
   void disposeState() async {
     _disposed = true;
+
+    if (e.animeSource == AnimeSource.anime365) {
+      ref.invalidate(anime365UserProvider);
+    }
 
     hideController.dispose();
 
@@ -535,10 +557,24 @@ class PlayerController extends SafeChangeNotifier {
 
       _hasPrevEp = list.firstWhereOrNull((i) => i.number == s - 1) != null;
       _hasNextEp = list.firstWhereOrNull((i) => i.number == s + 1) != null;
+    } else if (_animeSourceType == AnimeSource.anime365 && e.anime365 != null) {
+      final ts = e.anime365!.ts;
+
+      _playlistItem = PlaylistItem(
+        episodeNumber: s,
+        anime365PlaylistItem: ts,
+      );
+
+      _hasPrevEp = false;
+      _hasNextEp = false;
     }
   }
 
   Future<void> _parseEpisode() async {
+    _playerLogger.addLog(
+      '[parse episode] [Shiki id: ${e.titleInfo.shikimoriId}] [source: ${_animeSourceType.name}] [ep: ${e.selected}] [studio: ${e.studio.name}]',
+    );
+
     if (_animeSourceType == AnimeSource.anilib) {
       playableContentAsync = await AsyncValue.guard(
         () async {
@@ -627,12 +663,62 @@ class PlayerController extends SafeChangeNotifier {
           );
         },
       );
+    } else if (_animeSourceType == AnimeSource.anime365) {
+      playableContentAsync = await AsyncValue.guard(
+        () async {
+          final ts = _playlistItem.anime365PlaylistItem!;
+
+          final player = await ref.read(anime365Provider).getPlayer(ts.embedId);
+
+          if (player == null) {
+            throw 'Серии от выбранной студии не найдено';
+          }
+
+          String? subs;
+
+          if (ts.kind == TranslationKindType.sub && player.ass.isNotEmpty) {
+            try {
+              subs = await ref.read(anime365Provider).getSubtitles(
+                    url: player.ass,
+                    ref: ts.embedUrl,
+                  );
+            } catch (e) {
+              throw 'Не удалось загрузить субтитры';
+            }
+          }
+
+          final fourK = player.videos
+              .firstWhereOrNull((e) => e.quality == VideoQuality.fourK)
+              ?.href;
+          final fullHd = player.videos
+              .firstWhereOrNull((e) => e.quality == VideoQuality.fullHd)
+              ?.href;
+          final hd = player.videos
+              .firstWhereOrNull((e) => e.quality == VideoQuality.hd)
+              ?.href;
+          final sd = player.videos
+              .firstWhereOrNull((e) => e.quality == VideoQuality.sd)
+              ?.href;
+
+          return PlayableContent(
+            fourK: fourK,
+            fhd: fullHd,
+            hd: hd,
+            low: sd,
+            subs: subs,
+          );
+        },
+      );
     }
 
-    playableContentAsync.whenOrNull(error: (e, s) {
+    playableContentAsync.whenOrNull(error: (error, s) {
       //TODO
-      debugPrint(e.toString());
+      debugPrint(error.toString());
       debugPrint(s.toString());
+
+      _playerLogger.addLog(
+        '[parse episode] [error] $error',
+      );
 
       notifyListeners();
     });
@@ -754,7 +840,8 @@ class PlayerController extends SafeChangeNotifier {
 
   Future<void> _updateDb() async {
     // TODO
-    if (e.animeSource == AnimeSource.anilib) {
+    if (e.animeSource == AnimeSource.anilib ||
+        e.animeSource == AnimeSource.anime365) {
       return;
     }
 
@@ -958,7 +1045,8 @@ final playerStateProvider =
       title: 'ShikiWatch',
       libass: true,
       bufferSize: 32 * 1024 * 1024,
-      logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
+      logLevel: MPVLogLevel.info,
+      //logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
     ),
   );
 
@@ -983,6 +1071,7 @@ class VideoPlayerNotifier extends AutoDisposeNotifier<VideoPlayerState> {
 
   final Player player;
   final VideoController videoController;
+  late PlayerLogger _playerLogger;
 
   final List<StreamSubscription> _subscriptions = [];
 
@@ -997,6 +1086,8 @@ class VideoPlayerNotifier extends AutoDisposeNotifier<VideoPlayerState> {
         await player.dispose();
       });
     });
+
+    _playerLogger = PlayerLogger();
 
     _subscribe();
 
@@ -1043,15 +1134,24 @@ class VideoPlayerNotifier extends AutoDisposeNotifier<VideoPlayerState> {
             .listen((event) {
           state = state.copyWith(buffer: event);
         }),
-        if (kDebugMode)
-          player.stream.log.listen(
-            (event) {
+        //if (kDebugMode)
+        player.stream.log.listen(
+          (event) {
+            if (event.text.contains('HTTP error 403')) {
+              return;
+            }
+            _playerLogger.addLog(
+              '[${event.prefix}] [${event.level}] ${event.text}',
+              level: event.level,
+            );
+            if (kDebugMode) {
               log(
                 '${event.prefix}: ${event.level}: ${event.text}',
                 name: 'mpv player',
               );
-            },
-          ),
+            }
+          },
+        ),
       ],
     );
   }
@@ -1102,5 +1202,51 @@ class VideoPlayerState {
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       volume: volume ?? this.volume,
     );
+  }
+}
+
+final _dateFormat = DateFormat.Hms();
+
+class LogEntry {
+  final String log;
+  final String level;
+  final DateTime timestamp;
+
+  const LogEntry({
+    required this.log,
+    required this.level,
+    required this.timestamp,
+  });
+
+  @override
+  String toString() {
+    return '[${_dateFormat.format(timestamp)}] $log';
+  }
+}
+
+class PlayerLogger {
+  static PlayerLogger? _instance;
+
+  PlayerLogger._internal() {
+    _instance = this;
+  }
+
+  factory PlayerLogger() => _instance ?? PlayerLogger._internal();
+
+  List<LogEntry> logs = [];
+
+  void addLog(String log, {String? level}) {
+    logs = [
+      ...logs,
+      LogEntry(
+        timestamp: DateTime.now(),
+        log: log,
+        level: level ?? '',
+      ),
+    ].take(500).toList();
+  }
+
+  void clear() {
+    logs = [];
   }
 }

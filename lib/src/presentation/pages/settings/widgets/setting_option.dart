@@ -20,22 +20,28 @@ class SettingsOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = onTap == null
+        ? context.colorScheme.onBackground.withOpacity(0.6)
+        : context.colorScheme.onBackground;
+
     return ListTile(
       leading: icon == null
           ? null
           : Icon(
               icon,
-              color: context.colorScheme.onBackground,
+              color: color,
             ),
       title: Text(
         title,
         style: TextStyle(
-          color: context.colorScheme.onBackground,
+          color: color,
         ),
       ),
       subtitle: subtitle != null
           ? Text(
               subtitle!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: context.colorScheme.onBackground.withOpacity(0.8),
               ),

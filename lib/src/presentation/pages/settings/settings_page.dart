@@ -12,6 +12,8 @@ import '../../../utils/app_utils.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../utils/router.dart';
 
+import 'player_debug_page.dart';
+import 'widgets/anime_365_option.dart';
 import 'widgets/anime_source_option.dart';
 import 'widgets/cache_option.dart';
 import 'widgets/current_theme.dart';
@@ -28,6 +30,12 @@ import 'widgets/scheme_variant_option.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
 import 'widgets/user_account_group.dart';
+
+// final _anime365Test = [
+//   '384889',
+//   '1161605',
+//   '606442', // artim2
+// ];
 
 class SettingTile extends StatelessWidget {
   const SettingTile({
@@ -137,6 +145,7 @@ class SettingsPage extends ConsumerWidget {
                   SettingsGroup(
                     title: 'Плеер',
                     options: [
+                      const Anime365Option(),
                       const AnimeSourceOption(),
                       const PlayerPlaybackSpeedOption(),
                       if (!AppUtils.instance.isDesktop) ...[
@@ -147,6 +156,17 @@ class SettingsPage extends ConsumerWidget {
                       //   const PlayerSwipeSeekOption(),
                       if (Platform.isWindows || Platform.isLinux)
                         const PlayerDiscordRpcOption(),
+                      SettingsOption(
+                        title: 'Player logs',
+                        onTap: () async {
+                          context.navigator.push(PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                const PlayerDebugPage(),
+                            transitionDuration: Duration.zero,
+                            reverseTransitionDuration: Duration.zero,
+                          ));
+                        },
+                      ),
                     ],
                   ),
                   const SettingsGroup(

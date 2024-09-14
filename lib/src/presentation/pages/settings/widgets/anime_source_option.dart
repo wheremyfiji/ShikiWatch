@@ -51,6 +51,11 @@ class AnimeSourceOption extends ConsumerWidget {
                             return;
                           }
 
+                          if (value == AnimeSource.anime365) {
+                            Navigator.pop(context);
+                            return;
+                          }
+
                           await ref
                               .read(settingsProvider.notifier)
                               .setAnimeSource(value);

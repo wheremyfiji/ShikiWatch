@@ -18,6 +18,7 @@ dependencies:
   cached_network_image: ^3.3.1
   collection: ^1.17.1
   connectivity_plus: ^5.0.2
+  cookie_jar: ^4.0.8
   dart_discord_rpc:
     git:
       url: https://github.com/alexmercerind/dart_discord_rpc.git
@@ -25,6 +26,7 @@ dependencies:
   device_info_plus: ^9.1.2
   diffutil_dart: ^4.0.1
   dio: ^5.5.0+1
+  dio_cookie_manager: ^3.1.1
   dio_http2_adapter: ^2.5.3
   dio_smart_retry: ^6.0.0
   dynamic_color: ^1.6.9

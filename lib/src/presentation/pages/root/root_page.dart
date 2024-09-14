@@ -9,6 +9,7 @@ import '../../../utils/extensions/buildcontext.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
 import '../../providers/settings_provider.dart';
 import '../../../utils/app_utils.dart';
+import '../anime_soures/anime365/anime365_provider.dart';
 
 class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -26,6 +27,8 @@ class ScaffoldWithNavBar extends ConsumerWidget {
 
     const breakpoint = 600.0;
     const expandedBreakpoint = 1200.0;
+
+    ref.watch(anime365UserProvider);
 
     ref.listen(
       appReleaseProvider,

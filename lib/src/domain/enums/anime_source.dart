@@ -2,7 +2,8 @@ enum AnimeSource {
   alwaysAsk,
   kodik,
   anilib,
-  libria;
+  libria,
+  anime365;
 
   String get name {
     return switch (this) {
@@ -10,6 +11,7 @@ enum AnimeSource {
       AnimeSource.kodik => 'Kodik',
       AnimeSource.anilib => 'AniLib',
       AnimeSource.libria => 'AniLibria',
+      AnimeSource.anime365 => 'Anime365',
     };
   }
 }

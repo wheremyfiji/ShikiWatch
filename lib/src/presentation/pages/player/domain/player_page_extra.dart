@@ -1,3 +1,4 @@
+import '../../../../../anime365/models/translations.dart';
 import '../../../../../anime_lib/models/anilib_playlist.dart';
 import '../../../../domain/enums/anime_source.dart';
 
@@ -11,6 +12,7 @@ class PlayerPageExtra {
     required this.anilib,
     required this.kodik,
     required this.libria,
+    this.anime365,
   });
 
   final TitleInfo titleInfo;
@@ -22,6 +24,7 @@ class PlayerPageExtra {
   final AnilibPlayerList? anilib;
   final List<KodikPlaylistItem>? kodik;
   final LibriaPlaylist? libria;
+  final Anime365Playlist? anime365;
 }
 
 class TitleInfo {
@@ -94,4 +97,12 @@ class LibriaPlaylistItem {
   final String? sd;
   final String? name;
   final List<int>? opSkip;
+}
+
+class Anime365Playlist {
+  const Anime365Playlist(
+    this.ts,
+  );
+
+  final Anime365Translation ts;
 }

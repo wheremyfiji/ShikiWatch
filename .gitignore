@@ -40,6 +40,7 @@ secrets.json
 /lib/kodik/
 /lib/anilibria/
 /lib/anime_lib/
+/lib/anime365/
 
 # Symbolication related
 app.*.symbols
