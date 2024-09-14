@@ -12,6 +12,7 @@ isar_version: &isar_version 3.1.0+1
 
 dependencies:
   audio_session: ^0.1.19
+  flutter_displaymode: ^0.6.0
   audio_video_progress_bar: ^2.0.3
   #git_info: ^1.1.2
   #bottom_sheet: ^3.1.2

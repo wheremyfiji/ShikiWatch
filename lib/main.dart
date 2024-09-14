@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'package:google_api_availability/google_api_availability.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dart_discord_rpc/dart_discord_rpc.dart';
@@ -147,6 +148,12 @@ void initApp() async {
 
   if (Platform.isAndroid) {
     androidInfo = await DeviceInfoPlugin().androidInfo;
+
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+    } catch (e) {
+      debugPrint('FlutterDisplayMode: $e');
+    }
 
     if (androidInfo.version.sdkInt > 28) {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
