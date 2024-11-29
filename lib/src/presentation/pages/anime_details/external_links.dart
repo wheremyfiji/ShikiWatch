@@ -33,11 +33,20 @@ class ExternalLinksWidget extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final link = data.toList()[index];
                     final enable = link.url != null;
+
+                    final url = _parseUrl(link.url);
+                    final cleanUrl = _cleanUrl(url);
+
                     return ListTile(
                       enabled: enable,
                       title: Text(
                         link.kind?.replaceAll('_', ' ').capitalizeFirst ?? '',
                       ),
+                      subtitle: url == null
+                          ? null
+                          : Text(
+                              cleanUrl ?? '',
+                            ),
                       onTap: () {
                         launchUrlString(
                           link.url!,
@@ -72,4 +81,24 @@ class ExternalLinksWidget extends ConsumerWidget {
       ),
     );
   }
+}
+
+String? _cleanUrl(String? url) {
+  if (url == null) {
+    return null;
+  }
+
+  return url.replaceFirst('https://', '').replaceFirst('www.', '');
+}
+
+String? _parseUrl(String? url) {
+  if (url == null) {
+    return null;
+  }
+
+  if (url.startsWith('http://')) {
+    return url.replaceFirst('http://', 'https://');
+  }
+
+  return url;
 }
