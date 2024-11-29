@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher_string.dart' as url_launcher;
 import 'package:go_router/go_router.dart';
 
+import '../constants/config.dart';
 import '../domain/models/pages_extra.dart';
 
 import 'app_utils.dart';
@@ -127,7 +128,15 @@ class ShikiUtils {
       url_launcher.canLaunchUrlString(urlString).then(
         (v) {
           if (v) {
-            url_launcher.launchUrlString(urlString);
+            final mode = urlString.startsWith(AppConfig.staticUrl)
+                ? url_launcher.LaunchMode.inAppBrowserView
+                : url_launcher.LaunchMode.externalApplication;
+
+            url_launcher.launchUrlString(
+              urlString,
+              mode: mode,
+            );
+
             return true;
           } else {
             return false;
