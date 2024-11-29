@@ -13,10 +13,8 @@ class AppUtils {
   late bool isDesktop;
   late String userAgent;
   late String appCachePath;
-  late bool hasGoogleServices;
 
-  static init(Directory appCacheDir, bool gs) {
-    _instance.hasGoogleServices = gs;
+  static init(Directory appCacheDir) {
     _instance.appCachePath = appCacheDir.path;
 
     _instance.isDesktop =
