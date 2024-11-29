@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio_http2_adapter/dio_http2_adapter.dart';
-import 'package:native_dio_adapter/native_dio_adapter.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:network_logger/network_logger.dart';
 import 'package:sentry_dio/sentry_dio.dart';
@@ -19,25 +18,31 @@ class DioHttpService implements HttpService {
   DioHttpService() {
     dio = Dio(baseOptions);
 
-    if (AppUtils.instance.hasGoogleServices) {
-      dio.httpClientAdapter = NativeAdapter(
-        createCronetEngine: () {
-          return CronetEngine.build(
-            enableHttp2: true,
-            enableBrotli: true,
-            cacheMode: CacheMode.memory,
-            cacheMaxSize: 5 * 1024 * 1024,
-            userAgent: AppUtils.instance.userAgent,
-          );
-        },
-      );
-    } else {
-      dio.httpClientAdapter = Http2Adapter(
-        ConnectionManager(
-          idleTimeout: const Duration(seconds: 10),
-        ),
-      );
-    }
+    // if (AppUtils.instance.hasGoogleServices) {
+    //   dio.httpClientAdapter = NativeAdapter(
+    //     createCronetEngine: () {
+    //       return CronetEngine.build(
+    //         enableHttp2: true,
+    //         enableBrotli: true,
+    //         cacheMode: CacheMode.memory,
+    //         cacheMaxSize: 5 * 1024 * 1024,
+    //         userAgent: AppUtils.instance.userAgent,
+    //       );
+    //     },
+    //   );
+    // } else {
+    //   dio.httpClientAdapter = Http2Adapter(
+    //     ConnectionManager(
+    //       idleTimeout: const Duration(seconds: 10),
+    //     ),
+    //   );
+    // }
+
+    dio.httpClientAdapter = Http2Adapter(
+      ConnectionManager(
+        idleTimeout: const Duration(seconds: 10),
+      ),
+    );
 
     dio.interceptors.add(RetryInterceptor(
       dio: dio,
