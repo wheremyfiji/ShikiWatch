@@ -35,6 +35,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
       playerLongPressSeek: _preferencesService.getPlayerLongPressSeek(),
       playerOrientationLock: _preferencesService.getPlayerOrientationLock(),
       colorSchemeVariant: _preferencesService.getSchemeVariant(),
+      playerObserveAudioSession:
+          _preferencesService.getPlayerObserveAudioSession(),
     );
   }
 
@@ -120,6 +122,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setPlayerOrientationLock(newValue);
     state = state.copyWith(
       playerOrientationLock: newValue,
+    );
+  }
+
+  Future<void> setPlayerObserveAudioSession(bool newValue) async {
+    await _preferencesService.setPlayerObserveAudioSession(newValue);
+    state = state.copyWith(
+      playerObserveAudioSession: newValue,
     );
   }
 }

@@ -86,6 +86,7 @@ class PlayerController extends SafeChangeNotifier {
   late SharedPreferences prefs;
 
   bool _playerOrientationLock = false;
+  bool _playerObserveAudioSession = false;
 
   bool _disposed = false;
   bool _init = false;
@@ -139,6 +140,9 @@ class PlayerController extends SafeChangeNotifier {
       _playerOrientationLock = ref.read(settingsProvider
           .select((settings) => settings.playerOrientationLock));
 
+      _playerObserveAudioSession = ref.read(settingsProvider
+          .select((settings) => settings.playerObserveAudioSession));
+
       if (_playerOrientationLock) {
         await SystemChrome.setPreferredOrientations(
           [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight],
@@ -147,8 +151,10 @@ class PlayerController extends SafeChangeNotifier {
 
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-      _audioSession = await AudioSession.instance;
-      await _configureAudioSession();
+      if (_playerObserveAudioSession) {
+        _audioSession = await AudioSession.instance;
+        await _configureAudioSession();
+      }
     }
 
     if (Platform.isWindows || Platform.isLinux) {
@@ -990,52 +996,52 @@ class PlayerController extends SafeChangeNotifier {
     );
   }
 
-  Future<void> _setMpvExtras(NativePlayer player) async {
-    await player.setProperty(
-      'deband',
-      'yes',
-    );
+  // Future<void> _setMpvExtras(NativePlayer player) async {
+  //   await player.setProperty(
+  //     'deband',
+  //     'yes',
+  //   );
 
-    await player.setProperty(
-      'deband-iterations',
-      '2',
-    );
+  //   await player.setProperty(
+  //     'deband-iterations',
+  //     '2',
+  //   );
 
-    await player.setProperty(
-      'deband-threshold',
-      '35',
-    );
+  //   await player.setProperty(
+  //     'deband-threshold',
+  //     '35',
+  //   );
 
-    await player.setProperty(
-      'deband-range',
-      '20',
-    );
+  //   await player.setProperty(
+  //     'deband-range',
+  //     '20',
+  //   );
 
-    await player.setProperty(
-      'deband-grain',
-      '5',
-    );
+  //   await player.setProperty(
+  //     'deband-grain',
+  //     '5',
+  //   );
 
-    await player.setProperty(
-      'dither-depth',
-      'auto',
-    );
+  //   await player.setProperty(
+  //     'dither-depth',
+  //     'auto',
+  //   );
 
-    await player.setProperty(
-      'interpolation',
-      'yes',
-    );
+  //   await player.setProperty(
+  //     'interpolation',
+  //     'yes',
+  //   );
 
-    await player.setProperty(
-      'tscale',
-      'bicubic',
-    );
+  //   await player.setProperty(
+  //     'tscale',
+  //     'bicubic',
+  //   );
 
-    await player.setProperty(
-      'video-sync',
-      'display-resample',
-    );
-  }
+  //   await player.setProperty(
+  //     'video-sync',
+  //     'display-resample',
+  //   );
+  // }
 }
 
 final playerStateProvider =

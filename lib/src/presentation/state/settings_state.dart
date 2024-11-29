@@ -24,5 +24,6 @@ class SettingsState with _$SettingsState {
     required bool playerLongPressSeek,
     required bool playerOrientationLock,
     required ColorSchemeVariant colorSchemeVariant,
+    required bool playerObserveAudioSession,
   }) = _SettingsState;
 }

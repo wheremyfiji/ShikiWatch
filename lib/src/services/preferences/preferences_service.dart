@@ -21,6 +21,7 @@ const _playerSpeedKey = 'playerSpeedKey';
 const _playerLongPressSeek = 'playerLongPressSeekKey';
 const _playerOrientationLock = 'playerOrientationLockKey';
 const _colorSchemeVariantKey = 'colorSchemeVariant';
+const _playerObserveAudioSession = 'playerObserveAudioSession';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
@@ -228,5 +229,15 @@ class PreferencesService {
 
   Future<void> setSchemeVariant(ColorSchemeVariant variant) async {
     await _preferences.setString(_colorSchemeVariantKey, variant.name);
+  }
+
+  bool getPlayerObserveAudioSession() {
+    final value = _preferences.getBool(_playerObserveAudioSession);
+
+    return value ?? true;
+  }
+
+  Future<void> setPlayerObserveAudioSession(bool v) async {
+    await _preferences.setBool(_playerObserveAudioSession, v);
   }
 }

@@ -24,6 +24,7 @@ import 'widgets/nav_dest_label_behavior_option.dart';
 import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/player_long_press_seek.dart';
+import 'widgets/player_observe_audiosession.dart';
 import 'widgets/player_orientation_lock.dart';
 import 'widgets/player_playback_speed.dart';
 import 'widgets/scheme_variant_option.dart';
@@ -151,6 +152,7 @@ class SettingsPage extends ConsumerWidget {
                       if (!AppUtils.instance.isDesktop) ...[
                         const PlayerLongPressSeekOption(),
                         const PlayerOrientationLockOption(),
+                        const PlayerObserveAudioSessionOption(),
                       ],
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
