@@ -5,6 +5,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+// import '../../../../utils/app_utils.dart';
 import '../../../providers/app_theme_provider.dart';
 import '../../../widgets/error_widget.dart';
 import '../domain/player_page_extra.dart';
@@ -31,6 +32,9 @@ class DesktopPlayerPage extends ConsumerWidget {
 
     final playableContentAsync = ref.watch(
         playerPageProvider(p).select((value) => value.playableContentAsync));
+
+    // final shadersExists =
+    //     ref.watch(playerPageProvider(p).select((value) => value.shadersExists));
 
     final playerWidget = Align(
       child: RepaintBoundary(
@@ -78,14 +82,20 @@ class DesktopPlayerPage extends ConsumerWidget {
                             const Duration(seconds: 2));
                       },
                       const SingleActivator(LogicalKeyboardKey.arrowUp): () {
-                        player.setVolume(
-                            (ref.read(playerStateProvider).volume + 5.0)
-                                .clamp(0.0, 100.0));
+                        final vol = (ref.read(playerStateProvider).volume + 5.0)
+                            .clamp(0.0, 100.0);
+
+                        ref.read(playerPageProvider(p)).saveVolume(vol);
+
+                        player.setVolume(vol);
                       },
                       const SingleActivator(LogicalKeyboardKey.arrowDown): () {
-                        player.setVolume(
-                            (ref.read(playerStateProvider).volume - 5.0)
-                                .clamp(0.0, 100.0));
+                        final vol = (ref.read(playerStateProvider).volume - 5.0)
+                            .clamp(0.0, 100.0);
+
+                        ref.read(playerPageProvider(p)).saveVolume(vol);
+
+                        player.setVolume(vol);
                       },
                       const SingleActivator(LogicalKeyboardKey.keyF): () =>
                           ref.read(playerPageProvider(p)).toggleDFullscreen(),
@@ -93,6 +103,25 @@ class DesktopPlayerPage extends ConsumerWidget {
                           ref
                               .read(playerPageProvider(p))
                               .toggleDFullscreen(p: true),
+                      // TODO: quit without save to db
+                      const SingleActivator(LogicalKeyboardKey.keyQ,
+                              control: true):
+                          () => ref
+                              .read(playerPageProvider(p))
+                              .toggleDFullscreen(p: true)
+                              .then((value) => GoRouter.of(context).pop()),
+                      // const SingleActivator(LogicalKeyboardKey.keyS): () =>
+                      //     ref.read(playerPageProvider(p)).toggleShaders().then(
+                      //       (_) {
+                      //         if (!shadersExists) {
+                      //           showErrorSnackBar(
+                      //             ctx: context,
+                      //             msg:
+                      //                 'Шейдеры не найдены, инструкция в тг канале',
+                      //           );
+                      //         }
+                      //       },
+                      //     ),
                     },
                     child: DesktopPlayerControls(p),
                   ),
