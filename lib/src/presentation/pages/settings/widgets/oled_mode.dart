@@ -21,7 +21,7 @@ class OledModeOption extends ConsumerWidget {
         ),
       ),
       subtitle: Text(
-        'Полносью чёрная тема',
+        'Полностью чёрная тема',
         style: TextStyle(
           color: context.colorScheme.onBackground.withOpacity(0.8),
         ),
