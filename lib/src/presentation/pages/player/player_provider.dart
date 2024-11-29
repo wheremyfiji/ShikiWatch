@@ -87,6 +87,7 @@ class PlayerController extends SafeChangeNotifier {
 
   bool _playerOrientationLock = false;
   bool _playerObserveAudioSession = false;
+  bool _playerAndroidNewAudioBackend = false;
 
   bool _disposed = false;
   bool _init = false;
@@ -142,6 +143,9 @@ class PlayerController extends SafeChangeNotifier {
 
       _playerObserveAudioSession = ref.read(settingsProvider
           .select((settings) => settings.playerObserveAudioSession));
+
+      _playerAndroidNewAudioBackend = ref.read(settingsProvider
+          .select((settings) => settings.playerAndroidNewAudioBackend));
 
       if (_playerOrientationLock) {
         await SystemChrome.setPreferredOrientations(
@@ -214,6 +218,10 @@ class PlayerController extends SafeChangeNotifier {
 
       await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
       //await (player.platform as NativePlayer).setProperty('insecure', 'yes');
+
+      if (_playerAndroidNewAudioBackend && Platform.isAndroid) {
+        await (player.platform as NativePlayer).setProperty('ao', 'audiotrack');
+      }
 
       await _openMedia();
 
@@ -1051,8 +1059,8 @@ final playerStateProvider =
       title: 'ShikiWatch',
       libass: true,
       bufferSize: 32 * 1024 * 1024,
-      logLevel: MPVLogLevel.info,
-      //logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
+      //logLevel: MPVLogLevel.info,
+      logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
     ),
   );
 

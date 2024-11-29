@@ -24,6 +24,7 @@ import 'widgets/nav_dest_label_behavior_option.dart';
 import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/player_long_press_seek.dart';
+import 'widgets/player_new_audio_backend.dart';
 import 'widgets/player_observe_audiosession.dart';
 import 'widgets/player_orientation_lock.dart';
 import 'widgets/player_playback_speed.dart';
@@ -150,10 +151,11 @@ class SettingsPage extends ConsumerWidget {
                       const Anime365Option(),
                       const AnimeSourceOption(),
                       const PlayerPlaybackSpeedOption(),
-                      if (!AppUtils.instance.isDesktop) ...[
-                        const PlayerLongPressSeekOption(),
-                        const PlayerOrientationLockOption(),
-                        const PlayerObserveAudioSessionOption(),
+                      if (!AppUtils.instance.isDesktop) ...const [
+                        PlayerLongPressSeekOption(),
+                        PlayerOrientationLockOption(),
+                        PlayerObserveAudioSessionOption(),
+                        PlayerAndroidNewAudioBackendOption(),
                       ],
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),

@@ -38,6 +38,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
       playerObserveAudioSession:
           _preferencesService.getPlayerObserveAudioSession(),
       shikiAllowExpContent: _preferencesService.getShikiAllowExpContent(),
+      playerAndroidNewAudioBackend:
+          _preferencesService.getPlayerAndroidNewAudioBackend(),
     );
   }
 
@@ -137,6 +139,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setShikiAllowExpContent(newValue);
     state = state.copyWith(
       shikiAllowExpContent: newValue,
+    );
+  }
+
+  Future<void> setPlayerAndroidNewAudioBackend(bool newValue) async {
+    await _preferencesService.setPlayerAndroidNewAudioBackend(newValue);
+    state = state.copyWith(
+      playerAndroidNewAudioBackend: newValue,
     );
   }
 }

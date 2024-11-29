@@ -26,5 +26,6 @@ class SettingsState with _$SettingsState {
     required ColorSchemeVariant colorSchemeVariant,
     required bool playerObserveAudioSession,
     required bool shikiAllowExpContent,
+    required bool playerAndroidNewAudioBackend,
   }) = _SettingsState;
 }

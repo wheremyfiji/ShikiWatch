@@ -23,6 +23,7 @@ const _playerOrientationLock = 'playerOrientationLockKey';
 const _colorSchemeVariantKey = 'colorSchemeVariant';
 const _playerObserveAudioSession = 'playerObserveAudioSession';
 const _shikiAllowExpContent = 'shikiAllowExpContent';
+const _playerAndroidNewAudioBackend = 'playerAndroidNewAudioBackend';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
@@ -250,5 +251,15 @@ class PreferencesService {
 
   Future<void> setShikiAllowExpContent(bool v) async {
     await _preferences.setBool(_shikiAllowExpContent, v);
+  }
+
+  bool getPlayerAndroidNewAudioBackend() {
+    final value = _preferences.getBool(_playerAndroidNewAudioBackend);
+
+    return value ?? false;
+  }
+
+  Future<void> setPlayerAndroidNewAudioBackend(bool v) async {
+    await _preferences.setBool(_playerAndroidNewAudioBackend, v);
   }
 }
