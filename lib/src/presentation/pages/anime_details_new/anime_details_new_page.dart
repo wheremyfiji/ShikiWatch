@@ -386,11 +386,8 @@ class PlayButton extends ConsumerWidget {
           if ([AnimeRating.r, AnimeRating.rPlus, AnimeRating.rx]
                   .contains(title.rating) ||
               title.isCensored) {
-            final allowExp = ref
-                    .read(preferencesProvider)
-                    .sharedPreferences
-                    .getBool('allowExpContent') ??
-                false;
+            final allowExp =
+                ref.read(preferencesProvider).getShikiAllowExpContent();
 
             if (!allowExp) {
               bool? dialogValue = await showDialog<bool>(
@@ -403,9 +400,8 @@ class PlayButton extends ConsumerWidget {
                 return;
               } else {
                 await ref
-                    .read(preferencesProvider)
-                    .sharedPreferences
-                    .setBool('allowExpContent', true);
+                    .read(settingsProvider.notifier)
+                    .setShikiAllowExpContent(true);
               }
             }
           }

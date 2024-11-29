@@ -37,6 +37,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       colorSchemeVariant: _preferencesService.getSchemeVariant(),
       playerObserveAudioSession:
           _preferencesService.getPlayerObserveAudioSession(),
+      shikiAllowExpContent: _preferencesService.getShikiAllowExpContent(),
     );
   }
 
@@ -129,6 +130,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setPlayerObserveAudioSession(newValue);
     state = state.copyWith(
       playerObserveAudioSession: newValue,
+    );
+  }
+
+  Future<void> setShikiAllowExpContent(bool newValue) async {
+    await _preferencesService.setShikiAllowExpContent(newValue);
+    state = state.copyWith(
+      shikiAllowExpContent: newValue,
     );
   }
 }

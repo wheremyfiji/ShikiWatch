@@ -22,6 +22,7 @@ const _playerLongPressSeek = 'playerLongPressSeekKey';
 const _playerOrientationLock = 'playerOrientationLockKey';
 const _colorSchemeVariantKey = 'colorSchemeVariant';
 const _playerObserveAudioSession = 'playerObserveAudioSession';
+const _shikiAllowExpContent = 'shikiAllowExpContent';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
@@ -239,5 +240,15 @@ class PreferencesService {
 
   Future<void> setPlayerObserveAudioSession(bool v) async {
     await _preferences.setBool(_playerObserveAudioSession, v);
+  }
+
+  bool getShikiAllowExpContent() {
+    final value = _preferences.getBool(_shikiAllowExpContent);
+
+    return value ?? false;
+  }
+
+  Future<void> setShikiAllowExpContent(bool v) async {
+    await _preferences.setBool(_shikiAllowExpContent, v);
   }
 }

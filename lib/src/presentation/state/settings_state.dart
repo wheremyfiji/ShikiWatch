@@ -25,5 +25,6 @@ class SettingsState with _$SettingsState {
     required bool playerOrientationLock,
     required ColorSchemeVariant colorSchemeVariant,
     required bool playerObserveAudioSession,
+    required bool shikiAllowExpContent,
   }) = _SettingsState;
 }

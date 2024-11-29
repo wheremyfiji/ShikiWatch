@@ -30,6 +30,7 @@ import 'widgets/player_playback_speed.dart';
 import 'widgets/scheme_variant_option.dart';
 import 'widgets/setting_option.dart';
 import 'widgets/settings_group.dart';
+import 'widgets/shiki_allow_exp_cont_option.dart';
 import 'widgets/user_account_group.dart';
 
 // final _anime365Test = [
@@ -176,13 +177,7 @@ class SettingsPage extends ConsumerWidget {
                     options: [
                       LibraryStartFragmentOption(),
                       LibraryLayoutOption(),
-
-                      // SwitchListTile(
-                      //   value: false,
-                      //   onChanged: (value) {},
-                      //   title: const Text('NSFW-контент'),
-                      //   subtitle: const Text('Искать и показывать NSFW-контент'),
-                      // ),
+                      ShikiAllowExpContentOption(),
                     ],
                   ),
                   SettingsGroup(

@@ -26,6 +26,7 @@ import '../pages/search/anime_genres.dart';
 //import '../../domain/models/animes.dart';
 import '../../domain/models/genre.dart';
 import '../../utils/debouncer.dart';
+import 'settings_provider.dart';
 
 const String animeSearchHistoryKey = 'anime_search_history';
 
@@ -76,14 +77,15 @@ final animeSearchProvider = ChangeNotifierProvider.autoDispose
 }, name: 'animeSearchProvider');
 
 class AnimeSearchController extends flutter.ChangeNotifier {
-  AnimeSearchController(this._ref,
-      {required this.animeRepository,
-      required this.mangaRepository,
-      required this.ranobeRepository,
-      required this.cancelToken,
-      required this.initGenre,
-      required this.initStudio})
-      : textEditingController = flutter.TextEditingController(),
+  AnimeSearchController(
+    this._ref, {
+    required this.animeRepository,
+    required this.mangaRepository,
+    required this.ranobeRepository,
+    required this.cancelToken,
+    required this.initGenre,
+    required this.initStudio,
+  })  : textEditingController = flutter.TextEditingController(),
         debouncer = Debouncer(delay: const Duration(milliseconds: 800));
 
   final Ref _ref;
@@ -435,6 +437,9 @@ class AnimeSearchController extends flutter.ChangeNotifier {
 
     log(searchType.name, name: 'searchType');
 
+    final censored =
+        _ref.read(settingsProvider.select((v) => v.shikiAllowExpContent));
+
     try {
       // боже чел, что это
       List<ShikiTitle> titles = [];
@@ -453,7 +458,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
             genre: g?.join(','),
             studio: initStudio != 0 ? '$initStudio' : null,
             mylist: selectedMyList,
-            censored: 'true',
+            censored: censored ? 'false' : 'true',
             search: textEditingController.text != ''
                 ? textEditingController.text
                 : null,
@@ -473,7 +478,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
             //kind: selectedKind,
             status: selectedStatus,
             mylist: selectedMyList,
-            censored: 'true',
+            censored: censored ? 'true' : 'false',
             search: textEditingController.text != ''
                 ? textEditingController.text
                 : null,
@@ -493,7 +498,7 @@ class AnimeSearchController extends flutter.ChangeNotifier {
             //kind: selectedKind,
             status: selectedStatus,
             mylist: selectedMyList,
-            censored: 'true',
+            censored: censored ? 'true' : 'false',
             search: textEditingController.text != ''
                 ? textEditingController.text
                 : null,
