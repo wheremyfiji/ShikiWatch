@@ -252,7 +252,7 @@ class _Anime365LoginPageState extends ConsumerState<Anime365LoginPage> {
                       IconButton.filledTonal(
                         onPressed: () {
                           launchUrlString(
-                            'https://smotret-anime.net/help',
+                            'https://smotret-anime.org/help',
                             mode: LaunchMode.externalApplication,
                           );
                         },
