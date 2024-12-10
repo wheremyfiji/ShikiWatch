@@ -340,7 +340,8 @@ class AnilibriaSourcePage extends HookConsumerWidget {
 
                             final ppe.LibriaPlaylist libriaPlaylist =
                                 ppe.LibriaPlaylist(
-                              host: 'https://static.libria.fun',
+                              //host: 'https://static.libria.fun',
+                              host: 'https://${title.player!.host!}',
                               playlist: t,
                             );
 
