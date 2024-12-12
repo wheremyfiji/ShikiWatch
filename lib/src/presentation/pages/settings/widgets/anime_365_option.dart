@@ -25,12 +25,12 @@ class Anime365Option extends ConsumerWidget {
         if (!isLogined) {
           return SettingsOption(
             title: 'Войти в аккаунт Anime365',
-            subtitle: 'Требуется оплаченная подписка',
+            subtitle: 'Требуется действующая подписка',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
               context.navigator.push(PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    const Anime365LoginPage(),
+                    const _Anime365LoginPage(),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ));
@@ -72,7 +72,7 @@ class Anime365Option extends ConsumerWidget {
       ),
       loading: () => const SettingsOption(
         title: 'Войти в аккаунт Anime365',
-        subtitle: 'Требуется оплаченная подписка',
+        subtitle: 'Требуется действующая подписка',
         trailing: SizedBox.square(
           dimension: 20,
           child: CircularProgressIndicator(
@@ -106,21 +106,21 @@ class _LogoutDialog extends StatelessWidget {
   }
 }
 
-class Anime365LoginPage extends ConsumerStatefulWidget {
-  const Anime365LoginPage({super.key});
+class _Anime365LoginPage extends ConsumerStatefulWidget {
+  const _Anime365LoginPage();
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _Anime365LoginPageState();
 }
 
-class _Anime365LoginPageState extends ConsumerState<Anime365LoginPage> {
+class _Anime365LoginPageState extends ConsumerState<_Anime365LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailRegExp = RegExp(
       //r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+.[a-zA-Z]+"
       r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
 
-  final model = LoginFormModel(
+  final model = _LoginFormModel(
     email: '',
     password: '',
   );
@@ -128,7 +128,7 @@ class _Anime365LoginPageState extends ConsumerState<Anime365LoginPage> {
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<void>>(
-      loginButtonControllerProvider,
+      _loginButtonControllerProvider,
       (_, state) => state.whenOrNull(
         error: (error, stackTrace) {
           showErrorSnackBar(
@@ -139,7 +139,7 @@ class _Anime365LoginPageState extends ConsumerState<Anime365LoginPage> {
       ),
     );
 
-    final loginState = ref.watch(loginButtonControllerProvider);
+    final loginState = ref.watch(_loginButtonControllerProvider);
     final isLoading = loginState is AsyncLoading<void>;
 
     return Scaffold(
@@ -236,7 +236,7 @@ class _Anime365LoginPageState extends ConsumerState<Anime365LoginPage> {
                               _formKey.currentState!.save();
 
                               await ref
-                                  .read(loginButtonControllerProvider.notifier)
+                                  .read(_loginButtonControllerProvider.notifier)
                                   .login(
                                     email: model.email,
                                     password: model.password,
@@ -309,15 +309,15 @@ class _LoginButton extends StatelessWidget {
   }
 }
 
-final loginButtonControllerProvider =
-    StateNotifierProvider.autoDispose<LoginButtonController, AsyncValue<void>>(
+final _loginButtonControllerProvider =
+    StateNotifierProvider.autoDispose<_LoginButtonController, AsyncValue<void>>(
         (ref) {
   final api = ref.watch(anime365Provider);
-  return LoginButtonController(api: api);
+  return _LoginButtonController(api: api);
 });
 
-class LoginButtonController extends StateNotifier<AsyncValue<void>> {
-  LoginButtonController({required this.api})
+class _LoginButtonController extends StateNotifier<AsyncValue<void>> {
+  _LoginButtonController({required this.api})
       : super(const AsyncValue.data(null));
   final Anime365Api api;
 
@@ -347,11 +347,11 @@ class LoginButtonController extends StateNotifier<AsyncValue<void>> {
       'Произошла ошибка, возможно неверный E-mail или пароль';
 }
 
-class LoginFormModel {
+class _LoginFormModel {
   String email;
   String password;
 
-  LoginFormModel({
+  _LoginFormModel({
     required this.email,
     required this.password,
   });
