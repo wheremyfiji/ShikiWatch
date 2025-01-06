@@ -301,16 +301,16 @@ class DeleteFromHistoryBottomSheet extends StatelessWidget {
         ),
         Card(
           color: context.colorScheme.secondaryContainer,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 6),
+                  padding: const EdgeInsets.only(right: 8),
                   child: Icon(
                     Icons.info_rounded,
                     color: context.colorScheme.onSecondaryContainer,

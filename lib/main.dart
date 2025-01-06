@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:google_api_availability/google_api_availability.dart';
 import 'package:path_provider/path_provider.dart' as path_prov;
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -32,6 +31,23 @@ import 'src/presentation/shiki.dart';
 import 'src/utils/app_utils.dart';
 
 import 'secret.dart';
+import 'src/utils/provider_logger.dart';
+
+FutureOr<SentryEvent?> sentryBeforeSend(SentryEvent event, Hint? hint) {
+  if (canSendEvent(event.throwable)) return event;
+  return null;
+}
+
+bool canSendEvent(dynamic throwable) {
+  return switch (throwable) {
+    //DioException _ => false,
+    SocketException _ => false,
+    HttpException _ => false,
+    HandshakeException _ => false,
+    AssertionError _ => false,
+    _ => true,
+  };
+}
 
 Future<void> main() async {
   if (kReleaseMode) {
@@ -50,6 +66,7 @@ Future<void> main() async {
           options.dsn = sentryDsn;
           options.tracesSampleRate = 0.8;
           options.captureFailedRequests = true;
+          options.beforeSend = sentryBeforeSend;
         },
       );
 
@@ -108,21 +125,7 @@ void initApp() async {
 
   final appCacheDir = await path_prov.getTemporaryDirectory();
 
-  bool hasGoogleServices = false;
-
-  try {
-    if (Platform.isAndroid) {
-      hasGoogleServices = await GoogleApiAvailability.instance
-              .checkGooglePlayServicesAvailability() ==
-          GooglePlayServicesAvailability.success;
-    }
-  } catch (e) {
-    debugPrint('hasGoogleServices: $e');
-  }
-
-  debugPrint('hasGoogleServices: $hasGoogleServices');
-
-  AppUtils.init(appCacheDir, hasGoogleServices);
+  AppUtils.init(appCacheDir);
 
   final appDocumentsPath =
       await path_prov.getApplicationSupportDirectory().then((d) => d.path);
@@ -164,9 +167,9 @@ void initApp() async {
 
   runApp(
     ProviderScope(
-      // observers: const [
-      //   kDebugMode ? ProviderLogger() : SentryProviderObserver(),
-      // ],
+      observers: const [
+        kDebugMode ? ProviderLogger() : SentryProviderObserver(),
+      ],
       overrides: [
         environmentProvider.overrideWithValue(
           EnvironmentDataSource(

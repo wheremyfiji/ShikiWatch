@@ -19,12 +19,12 @@ extension DateTimeExt on DateTime {
     }
 
     Duration diff = now.difference(this);
-    final time = DateFormat('HH:mm').format(this);
+    final time = DateFormat('HH:mm').format(toLocal());
 
     if (diff.inDays < 1) {
       return timeago.format(this, locale: 'ru');
     } else {
-      return '${DateFormat.MMMd().format(this)}, $time';
+      return '${DateFormat.MMMd().format(toLocal())}, $time';
     }
   }
 }
