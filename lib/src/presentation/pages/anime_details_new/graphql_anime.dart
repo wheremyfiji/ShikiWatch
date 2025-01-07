@@ -216,7 +216,7 @@ query($title_id: String) {
     }
 
     related {
-      relationRu
+      relationText
       anime {
         id
         name
@@ -581,7 +581,7 @@ class GraphqlRelated {
     }
 
     return GraphqlRelated(
-      relationRu: json["relationRu"],
+      relationRu: json["relationText"],
       type: type,
       title: title,
     );
