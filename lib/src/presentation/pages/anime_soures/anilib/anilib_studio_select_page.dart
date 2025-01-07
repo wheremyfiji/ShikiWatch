@@ -5,12 +5,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../../anime_lib/models/models.dart';
+import '../../player/domain/player_page_extra.dart' as ppe;
 import '../../../../domain/models/pages_extra.dart';
 import '../../../../domain/enums/anime_source.dart';
 import '../../../../../anime_lib/enums/enums.dart';
+import '../../../../../anime_lib/anilib_api.dart';
+import '../../../widgets/cached_image.dart';
 import '../../../widgets/error_widget.dart';
-import '../../player/domain/player_page_extra.dart' as ppe;
 import '../shared/compact_info_chip.dart';
+import '../shared/studio_leading.dart';
 import '../shared/nothing_found.dart';
 
 import 'anilib_source_controller.dart';
@@ -158,16 +161,33 @@ class StudioListItem extends StatelessWidget {
         .replaceFirst('.Subtitles', '')
         .replaceFirst('|Субтитры', '');
 
+    // print('$teamName / ${item.views} / ${item.team.cover}');
+
+    final cover = item.team.cover;
+
+    final leadingWidget = cover == null
+        ? StudioLeading(item.team.name)
+        : CachedCircleImage(
+            cover,
+            clipBehavior: Clip.antiAlias,
+            httpHeaders: const {
+              'Origin': AnilibUtils.kOrigin,
+              'Referer': AnilibUtils.kReferer,
+              'User-Agent': AnilibUtils.kUserAgent,
+            },
+          );
+
     return ListTile(
       onTap: onTap,
-      // leading: CachedCircleImage(
-      //   item.team.teamCover,
-      //   httpHeaders: const {
-      //     'Origin': AnilibUtils.kOrigin,
-      //     'Referer': AnilibUtils.kReferer,
-      //     'User-Agent': AnilibUtils.kUserAgent,
-      //   },
-      // ),
+      leading: Badge.count(
+        isLabelVisible: item.views > 0,
+        count: item.views,
+        backgroundColor: context.colorScheme.secondaryContainer,
+        textColor: context.colorScheme.onSecondaryContainer,
+        child: leadingWidget,
+      ),
+      // leading: leadingWidget,
+      // subtitle: Text('${item.createdAt}'),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -185,6 +205,8 @@ class StudioListItem extends StatelessWidget {
         ],
       ),
       trailing: CompactInfoChip(item.video[0].quality.toShort),
+      // trailing:
+      //     CompactInfoChip('${item.video[0].quality.toShort} | ${item.views}'),
     );
   }
 }

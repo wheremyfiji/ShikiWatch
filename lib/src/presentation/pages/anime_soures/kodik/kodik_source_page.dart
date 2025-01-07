@@ -14,6 +14,7 @@ import '../../../widgets/error_widget.dart';
 import '../shared/compact_info_chip.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../../kodik/kodik.dart';
+import '../shared/studio_leading.dart';
 import '../shared/nothing_found.dart';
 import '../latest_studio.dart';
 import '../providers.dart';
@@ -350,6 +351,7 @@ class StudioListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      leading: StudioLeading(name),
       // leading: studio.studioId == 610
       //     ? const Icon(Icons.push_pin_rounded)
       //     : null,
