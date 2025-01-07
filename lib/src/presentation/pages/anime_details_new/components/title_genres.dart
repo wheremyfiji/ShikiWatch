@@ -21,7 +21,7 @@ class TitleGenres extends StatelessWidget {
           ...List.generate(
             genres.length,
             (index) => _GenreChip(
-              title: genres[index].russian,
+              genre: genres[index],
               onTap: () {},
             ),
           ),
@@ -34,40 +34,56 @@ class TitleGenres extends StatelessWidget {
   }
 }
 
+typedef GenreKindColor = List<Color>;
+
 class _GenreChip extends StatelessWidget {
   const _GenreChip({
-    required this.title,
+    required this.genre,
     required this.onTap,
   });
 
-  final String title;
+  final GraphqlGenre genre;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      //elevation: 4,
-      margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8.0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-          child: Text(
-            title,
-            style: context.textTheme.bodySmall?.copyWith(
-              fontSize: 14,
-              color: context.colorScheme.onSurfaceVariant,
+    final colors = kindToColor(context, genre.kind);
+
+    return Tooltip(
+      message: genre.kind.rusName,
+      waitDuration: const Duration(milliseconds: 250),
+      child: Card(
+        elevation: 0,
+        color: colors[0],
+        margin: const EdgeInsets.all(0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8.0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+            child: Text(
+              genre.russian,
+              style: context.textTheme.bodySmall?.copyWith(
+                fontSize: 14,
+                color: colors[1],
+              ),
             ),
-            // style: TextStyle(
-            //   color: context.colorScheme.onSurfaceVariant,
-            // ),
           ),
         ),
       ),
     );
+  }
+
+  static GenreKindColor kindToColor(BuildContext ctx, GenreKind kind) {
+    final cs = ctx.colorScheme;
+    return switch (kind) {
+      //GenreKind.demographic => [cs.primaryContainer, cs.onPrimaryContainer],
+      //GenreKind.genre => [cs.secondaryContainer, cs.onSecondaryContainer],
+      GenreKind.theme => [cs.tertiaryContainer, cs.onTertiaryContainer],
+      _ => [cs.secondaryContainer, cs.onSecondaryContainer],
+    };
   }
 }

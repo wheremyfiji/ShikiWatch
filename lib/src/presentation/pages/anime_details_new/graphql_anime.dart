@@ -169,8 +169,10 @@ query($title_id: String) {
     duration
     season
 
-    nextEpisodeAt,
+    nextEpisodeAt
     isCensored
+
+    licensors
 
     airedOn { date }
     releasedOn { date }
@@ -280,6 +282,8 @@ class GraphqlAnime {
 
   final bool isCensored;
 
+  final List<String> licensors;
+
   final DateTime? nextEpisodeAt;
 
   final String description;
@@ -314,6 +318,7 @@ class GraphqlAnime {
     required this.duration,
     required this.season,
     required this.isCensored,
+    required this.licensors,
     required this.nextEpisodeAt,
     required this.description,
     required this.descriptionLength,
@@ -350,6 +355,9 @@ class GraphqlAnime {
         duration: json["duration"] ?? 0,
         season: json["season"] ?? '?',
         isCensored: json["isCensored"] ?? false,
+        licensors: json["licensors"] == null
+            ? []
+            : List<String>.from(json["licensors"].map((x) => x)),
         nextEpisodeAt: json["nextEpisodeAt"] == null
             ? null
             : DateTime.tryParse(json["nextEpisodeAt"]),
@@ -405,6 +413,7 @@ class GraphqlAnime {
     int? duration,
     String? season,
     bool? isCensored,
+    List<String>? licensors,
     DateTime? nextEpisodeAt,
     String? description,
     int? descriptionLength,
@@ -438,6 +447,7 @@ class GraphqlAnime {
       duration: duration ?? this.duration,
       season: season ?? this.season,
       isCensored: isCensored ?? this.isCensored,
+      licensors: licensors ?? this.licensors,
       nextEpisodeAt: nextEpisodeAt ?? this.nextEpisodeAt,
       description: description ?? this.description,
       descriptionLength: descriptionLength ?? this.descriptionLength,
@@ -475,6 +485,7 @@ class GraphqlAnime {
         other.duration == duration &&
         other.season == season &&
         other.isCensored == isCensored &&
+        listEquals(other.licensors, licensors) &&
         other.nextEpisodeAt == nextEpisodeAt &&
         other.description == description &&
         other.descriptionLength == descriptionLength &&
@@ -509,6 +520,7 @@ class GraphqlAnime {
         duration.hashCode ^
         season.hashCode ^
         isCensored.hashCode ^
+        licensors.hashCode ^
         nextEpisodeAt.hashCode ^
         description.hashCode ^
         descriptionLength.hashCode ^
@@ -650,18 +662,18 @@ class GraphqlStudio {
 
 class GraphqlGenre {
   final int id;
-  //final String kind;
+  final GenreKind kind;
   final String russian;
 
   GraphqlGenre({
     required this.id,
-    //required this.kind,
+    required this.kind,
     required this.russian,
   });
 
   factory GraphqlGenre.fromJson(Map<String, dynamic> json) => GraphqlGenre(
         id: int.parse(json["id"]),
-        //kind: json["kind"],
+        kind: GenreKind.fromValue(json["kind"]),
         russian: json["russian"],
       );
 }
@@ -895,6 +907,28 @@ enum RateStatus {
       RateStatus.completed => 'Просмотрено',
       RateStatus.onHold => 'Отложено',
       RateStatus.dropped => 'Брошено',
+    };
+  }
+}
+
+enum GenreKind {
+  demographic('demographic'),
+  genre('genre'),
+  theme('theme');
+
+  final String value;
+
+  const GenreKind(this.value);
+
+  static GenreKind fromValue(String value) =>
+      GenreKind.values.singleWhere((e) => value == e.value);
+
+  String get rusName {
+    return switch (this) {
+      // GenreKind.demographic => 'В планах',
+      // GenreKind.genre => 'Жанр',
+      GenreKind.theme => 'Тема',
+      _ => 'Жанр',
     };
   }
 }

@@ -218,6 +218,7 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                       english: title.english,
                       japanese: title.japanese,
                       synonyms: title.synonyms,
+                      licensors: title.licensors,
                       airedOn: title.airedOn,
                       releasedOn: title.releasedOn,
                       duration: title.duration,

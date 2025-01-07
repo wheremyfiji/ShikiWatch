@@ -16,6 +16,7 @@ class TitleOtherDetails extends StatelessWidget {
     required this.english,
     required this.japanese,
     required this.synonyms,
+    required this.licensors,
     required this.airedOn,
     required this.releasedOn,
     required this.duration,
@@ -28,6 +29,7 @@ class TitleOtherDetails extends StatelessWidget {
   final String? english;
   final String? japanese;
   final List<String> synonyms;
+  final List<String> licensors;
 
   final String? airedOn;
   final String? releasedOn;
@@ -59,6 +61,11 @@ class TitleOtherDetails extends StatelessWidget {
                 label: 'Длительность эпизода',
                 title: '$duration мин.',
               ),
+            if (licensors.isNotEmpty)
+              _Item(
+                label: 'Лицензировано',
+                title: licensors.join('\n'),
+              ),
             if (nextEpisodeAt != null)
               _Item(
                 label: 'Следующий эпизод',
@@ -78,7 +85,8 @@ class TitleOtherDetails extends StatelessWidget {
                 duration != 0 ||
                 nextEpisodeAt != null ||
                 showAiredOn ||
-                showReleasedOn)
+                showReleasedOn ||
+                licensors.isNotEmpty)
               const Divider(),
             _Item(
               label: 'Ромадзи',
@@ -191,7 +199,6 @@ class _Item extends StatelessWidget {
   const _Item({
     required this.label,
     required this.title,
-    // ignore: unused_element
     this.copy = false,
   });
 
