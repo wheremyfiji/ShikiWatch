@@ -31,7 +31,8 @@ class BottomControls extends ConsumerWidget {
     final (player, position, buffer, duration) = ref.watch(playerStateProvider
         .select((s) => (s.player, s.position, s.buffer, s.duration)));
 
-    final showSkip = opTimecode.length == 2 &&
+    final showSkip = duration.inSeconds > 0 &&
+        opTimecode.length == 2 &&
         (opTimecode.first) <= position.inSeconds &&
         opTimecode.last > position.inSeconds;
 

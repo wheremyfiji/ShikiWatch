@@ -360,10 +360,11 @@ class _SkipButton extends ConsumerWidget {
     final opTimecode = ref.watch(playerPageProvider(providerParameters)
         .select((value) => value.opTimecode));
 
-    final (player, position) =
-        ref.watch(playerStateProvider.select((s) => (s.player, s.position)));
+    final (player, position, duration) = ref.watch(
+        playerStateProvider.select((s) => (s.player, s.position, s.duration)));
 
-    final showSkip = opTimecode.length == 2 &&
+    final showSkip = duration.inSeconds > 0 &&
+        opTimecode.length == 2 &&
         (opTimecode.first) <= position.inSeconds &&
         opTimecode.last > position.inSeconds;
 
