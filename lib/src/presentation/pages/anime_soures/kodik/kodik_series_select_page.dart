@@ -244,13 +244,15 @@ class SeriesSelectPage extends HookConsumerWidget {
                         String startPosition = '';
 
                         if (episode?.position != null && seria.type == null) {
-                          final ContinueDialogResult dialogValue =
-                              await showDialog<ContinueDialogResult>(
-                                    context: context,
-                                    builder: (context) =>
-                                        const ContinueDialog(),
-                                  ) ??
-                                  ContinueDialogResult.cancel;
+                          final dialogValue = await ContinueDialogNew.show(
+                                context,
+                                titleName: animeName,
+                                selectedEp: seriaNum,
+                                savedPosition: episode?.position ?? '',
+                                imageUrl: imageUrl,
+                                studioName: studioName,
+                              ) ??
+                              ContinueDialogResult.cancel;
 
                           if (dialogValue == ContinueDialogResult.cancel) {
                             return;

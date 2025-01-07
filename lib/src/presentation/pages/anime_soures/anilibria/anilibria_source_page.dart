@@ -300,20 +300,22 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                             String startPosition = '';
 
                             if (savedEpisode?.position != null) {
-                              final ContinueDialogResult dialogValue =
-                                  await showDialog<ContinueDialogResult>(
-                                        context: context,
-                                        builder: (context) =>
-                                            const ContinueDialog(),
-                                      ) ??
-                                      ContinueDialogResult.cancel;
+                              final dialogValue = await ContinueDialogNew.show(
+                                    context,
+                                    titleName: extra.animeName,
+                                    selectedEp: ep.episode ?? 0,
+                                    savedPosition: savedEpisode!.position!,
+                                    imageUrl: extra.imageUrl,
+                                    studioName: 'AniLibria.TV',
+                                  ) ??
+                                  ContinueDialogResult.cancel;
 
                               if (dialogValue == ContinueDialogResult.cancel) {
                                 return;
                               }
 
                               if (dialogValue == ContinueDialogResult.saved) {
-                                startPosition = savedEpisode?.position ?? '';
+                                startPosition = savedEpisode.position ?? '';
                               }
                             }
 
@@ -342,6 +344,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                                 ppe.LibriaPlaylist(
                               //host: 'https://static.libria.fun',
                               host: 'https://${title.player!.host!}',
+                              // host: 'https://cache-rfn.libria.fun',
                               playlist: t,
                             );
 
