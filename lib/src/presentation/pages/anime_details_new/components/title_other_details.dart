@@ -22,6 +22,7 @@ class TitleOtherDetails extends StatelessWidget {
     required this.duration,
     required this.nextEpisodeAt,
     required this.studios,
+    required this.origin,
   });
 
   final String name;
@@ -38,6 +39,7 @@ class TitleOtherDetails extends StatelessWidget {
   final DateTime? nextEpisodeAt;
 
   final List<GraphqlStudio> studios;
+  final String origin;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,10 @@ class TitleOtherDetails extends StatelessWidget {
               ),
             ),
             if (studios.isNotEmpty) _Studios(studios),
+            _Item(
+              label: 'Первоисточник',
+              title: origin,
+            ),
             if (duration != 0)
               _Item(
                 label: 'Длительность эпизода',
@@ -81,13 +87,13 @@ class TitleOtherDetails extends StatelessWidget {
                 label: 'Конец показа',
                 title: DateFormat.yMMMMd().format(DateTime.parse(releasedOn!)),
               ),
-            if (studios.isNotEmpty ||
-                duration != 0 ||
-                nextEpisodeAt != null ||
-                showAiredOn ||
-                showReleasedOn ||
-                licensors.isNotEmpty)
-              const Divider(),
+            // if (studios.isNotEmpty ||
+            //     duration != 0 ||
+            //     nextEpisodeAt != null ||
+            //     showAiredOn ||
+            //     showReleasedOn ||
+            //     licensors.isNotEmpty)
+            const Divider(),
             _Item(
               label: 'Ромадзи',
               title: name,

@@ -168,6 +168,7 @@ query($title_id: String) {
     episodesAired
     duration
     season
+    origin
 
     nextEpisodeAt
     isCensored
@@ -279,6 +280,7 @@ class GraphqlAnime {
   final int episodesAired;
   final int duration;
   final String season;
+  final AnimeOrigin origin;
 
   final bool isCensored;
 
@@ -317,6 +319,7 @@ class GraphqlAnime {
     required this.episodesAired,
     required this.duration,
     required this.season,
+    required this.origin,
     required this.isCensored,
     required this.licensors,
     required this.nextEpisodeAt,
@@ -354,6 +357,7 @@ class GraphqlAnime {
         episodesAired: json["episodesAired"] ?? 0,
         duration: json["duration"] ?? 0,
         season: json["season"] ?? '?',
+        origin: AnimeOrigin.fromValue(json["origin"] ?? 'unknown'),
         isCensored: json["isCensored"] ?? false,
         licensors: json["licensors"] == null
             ? []
@@ -412,6 +416,7 @@ class GraphqlAnime {
     int? episodesAired,
     int? duration,
     String? season,
+    AnimeOrigin? origin,
     bool? isCensored,
     List<String>? licensors,
     DateTime? nextEpisodeAt,
@@ -446,6 +451,7 @@ class GraphqlAnime {
       episodesAired: episodesAired ?? this.episodesAired,
       duration: duration ?? this.duration,
       season: season ?? this.season,
+      origin: origin ?? this.origin,
       isCensored: isCensored ?? this.isCensored,
       licensors: licensors ?? this.licensors,
       nextEpisodeAt: nextEpisodeAt ?? this.nextEpisodeAt,
@@ -484,6 +490,7 @@ class GraphqlAnime {
         other.episodesAired == episodesAired &&
         other.duration == duration &&
         other.season == season &&
+        other.origin == origin &&
         other.isCensored == isCensored &&
         listEquals(other.licensors, licensors) &&
         other.nextEpisodeAt == nextEpisodeAt &&
@@ -519,6 +526,7 @@ class GraphqlAnime {
         episodesAired.hashCode ^
         duration.hashCode ^
         season.hashCode ^
+        origin.hashCode ^
         isCensored.hashCode ^
         licensors.hashCode ^
         nextEpisodeAt.hashCode ^
@@ -929,6 +937,55 @@ enum GenreKind {
       // GenreKind.genre => 'Жанр',
       GenreKind.theme => 'Тема',
       _ => 'Жанр',
+    };
+  }
+}
+
+enum AnimeOrigin {
+  original('original'),
+  manga('manga'),
+  webManga('web_manga'),
+  fourKomaManga('four_koma_manga'),
+  novel('novel'),
+  webNovel('web_novel'),
+  visualNovel('visual_novel'),
+  lightNovel('light_novel'),
+  game('game'),
+  cardGame('card_game'),
+  music('music'),
+  radio('radio'),
+  book('book'),
+  pictureBook('picture_book'),
+  mixedMedia('mixed_media'),
+  other('other'),
+  unknown('unknown');
+
+  final String value;
+
+  const AnimeOrigin(this.value);
+
+  static AnimeOrigin fromValue(String value) =>
+      AnimeOrigin.values.singleWhere((e) => value == e.value);
+
+  String get rusName {
+    return switch (this) {
+      AnimeOrigin.original => 'Оригинал',
+      AnimeOrigin.manga => 'Манга',
+      AnimeOrigin.webManga => 'Веб-манга',
+      AnimeOrigin.fourKomaManga => 'Енкома',
+      AnimeOrigin.novel => 'Новелла',
+      AnimeOrigin.webNovel => 'Веб-новелла',
+      AnimeOrigin.visualNovel => 'Визуальная новелла',
+      AnimeOrigin.lightNovel => 'Ранобэ',
+      AnimeOrigin.game => 'Игра',
+      AnimeOrigin.cardGame => 'Карточная игра',
+      AnimeOrigin.music => 'Музыка',
+      AnimeOrigin.radio => 'Радио',
+      AnimeOrigin.book => 'Книга',
+      AnimeOrigin.pictureBook => 'Книга с картинками',
+      AnimeOrigin.mixedMedia => 'Несколько',
+      AnimeOrigin.other => 'Прочее',
+      AnimeOrigin.unknown => 'Неизвестен',
     };
   }
 }

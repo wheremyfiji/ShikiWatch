@@ -224,6 +224,7 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                       duration: title.duration,
                       nextEpisodeAt: title.nextEpisodeAt,
                       studios: title.studios,
+                      origin: title.origin.rusName,
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate.fixed(

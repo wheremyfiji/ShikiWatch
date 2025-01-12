@@ -179,14 +179,14 @@ class StudioListItem extends StatelessWidget {
 
     return ListTile(
       onTap: onTap,
-      leading: Badge.count(
-        isLabelVisible: item.views > 0,
-        count: item.views,
-        backgroundColor: context.colorScheme.secondaryContainer,
-        textColor: context.colorScheme.onSecondaryContainer,
-        child: leadingWidget,
-      ),
-      // leading: leadingWidget,
+      // leading: Badge.count(
+      //   isLabelVisible: item.views > 0,
+      //   count: item.views,
+      //   backgroundColor: context.colorScheme.secondaryContainer,
+      //   textColor: context.colorScheme.onSecondaryContainer,
+      //   child: leadingWidget,
+      // ),
+      leading: leadingWidget,
       // subtitle: Text('${item.createdAt}'),
       title: Row(
         mainAxisSize: MainAxisSize.min,
