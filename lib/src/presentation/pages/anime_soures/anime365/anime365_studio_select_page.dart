@@ -11,6 +11,7 @@ import '../../../../domain/enums/anime_source.dart';
 import '../../../../domain/models/pages_extra.dart';
 import '../../player/domain/player_page_extra.dart' as ppe;
 import '../../../widgets/error_widget.dart';
+import '../shared/studio_leading.dart';
 import '../shared/nothing_found.dart';
 
 import 'anime365_provider.dart';
@@ -209,6 +210,7 @@ class StudioListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
+      leading: StudioLeading(studio.authorsSummary),
       title: Text(
         studio.authorsSummary,
         overflow: TextOverflow.ellipsis,
