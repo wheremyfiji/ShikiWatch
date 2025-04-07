@@ -7,12 +7,14 @@ class SquareButton extends StatelessWidget {
     super.key,
     required this.icon,
     required this.onTap,
+    this.onLongPress,
     this.size = 48.0,
     this.iconSize,
   });
 
   final IconData icon;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final double size;
   final double? iconSize;
 
@@ -29,6 +31,7 @@ class SquareButton extends StatelessWidget {
         ),
         child: InkWell(
           onTap: onTap,
+          onLongPress: onLongPress,
           borderRadius: BorderRadius.circular(rarius),
           child: Icon(
             icon,

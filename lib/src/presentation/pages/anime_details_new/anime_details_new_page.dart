@@ -384,105 +384,118 @@ class PlayButton extends ConsumerWidget {
       padding: const EdgeInsets.only(left: 8.0),
       child: SquareButton(
         icon: Icons.play_arrow_rounded,
-        onTap: () async {
-          if ([AnimeRating.r, AnimeRating.rPlus, AnimeRating.rx]
-                  .contains(title.rating) ||
-              title.isCensored) {
-            final allowExp =
-                ref.read(preferencesProvider).getShikiAllowExpContent();
-
-            if (!allowExp) {
-              bool? dialogValue = await showDialog<bool>(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) => const RatingDialog(),
-              );
-
-              if (dialogValue == null || !dialogValue) {
-                return;
-              } else {
-                await ref
-                    .read(settingsProvider.notifier)
-                    .setShikiAllowExpContent(true);
-              }
-            }
-          }
-
-          final animeSource = ref.read(
-              settingsProvider.select((settings) => settings.animeSource));
-
-          List<String> searchList = [title.name];
-
-          if (title.english != null) {
-            searchList.add(title.english!);
-          }
-
-          for (var e in title.synonyms) {
-            searchList.add(e);
-          }
-
-          searchList.add(title.russian ?? '');
-
-          final extra = AnimeSourcePageExtra(
-            shikimoriId: title.id,
-            animeName: (title.russian == '' ? title.name : title.russian) ?? '',
-            searchName: title.name,
-            epWatched: title.userRate?.episodes ?? 0,
-            imageUrl: '/system/animes/original/${title.id}.jpg',
-            searchList: searchList,
-          );
-
-          return switch (animeSource) {
-            AnimeSource.alwaysAsk =>
-              // ignore: use_build_context_synchronously
-              SelectSourceSheet.show(
-                context,
-                extra: extra,
-              ),
-            // ignore: use_build_context_synchronously
-            AnimeSource.libria => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      AnilibriaSourcePage(extra),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              ),
-            // ignore: use_build_context_synchronously
-            AnimeSource.kodik => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      KodikSourcePage(extra),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              ),
-            // ignore: use_build_context_synchronously
-            AnimeSource.anilib => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      AnilibSourcePage(extra),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              ),
-            // ignore: use_build_context_synchronously
-            AnimeSource.anime365 => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation1, animation2) =>
-                      Anime365SourcePage(extra),
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                ),
-              ),
-          };
-        },
+        onTap: () => _onTap(ctx: context, ref: ref),
+        onLongPress: () => _onTap(ctx: context, ref: ref, forceAlwaysAsk: true),
       ),
     );
+  }
+
+  void _onTap(
+      {required BuildContext ctx,
+      required WidgetRef ref,
+      bool forceAlwaysAsk = false}) async {
+    if ([AnimeRating.r, AnimeRating.rPlus, AnimeRating.rx]
+            .contains(title.rating) ||
+        title.isCensored) {
+      final allowExp = ref.read(preferencesProvider).getShikiAllowExpContent();
+
+      if (!allowExp) {
+        bool? dialogValue = await showDialog<bool>(
+          barrierDismissible: false,
+          context: ctx,
+          builder: (context) => const RatingDialog(),
+        );
+
+        if (dialogValue == null || !dialogValue) {
+          return;
+        } else {
+          await ref
+              .read(settingsProvider.notifier)
+              .setShikiAllowExpContent(true);
+        }
+      }
+    }
+
+    final animeSource =
+        ref.read(settingsProvider.select((settings) => settings.animeSource));
+
+    List<String> searchList = [title.name];
+
+    if (title.english != null) {
+      searchList.add(title.english!);
+    }
+
+    for (var e in title.synonyms) {
+      searchList.add(e);
+    }
+
+    searchList.add(title.russian ?? '');
+
+    final extra = AnimeSourcePageExtra(
+      shikimoriId: title.id,
+      animeName: (title.russian == '' ? title.name : title.russian) ?? '',
+      searchName: title.name,
+      epWatched: title.userRate?.episodes ?? 0,
+      imageUrl: '/system/animes/original/${title.id}.jpg',
+      searchList: searchList,
+    );
+
+    if (forceAlwaysAsk) {
+      // ignore: use_build_context_synchronously
+      return SelectSourceSheet.show(
+        ctx,
+        extra: extra,
+      );
+    }
+
+    return switch (animeSource) {
+      AnimeSource.alwaysAsk =>
+        // ignore: use_build_context_synchronously
+        SelectSourceSheet.show(
+          ctx,
+          extra: extra,
+        ),
+      // ignore: use_build_context_synchronously
+      AnimeSource.libria => Navigator.push(
+          ctx,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                AnilibriaSourcePage(extra),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        ),
+      // ignore: use_build_context_synchronously
+      AnimeSource.kodik => Navigator.push(
+          ctx,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                KodikSourcePage(extra),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        ),
+      // ignore: use_build_context_synchronously
+      AnimeSource.anilib => Navigator.push(
+          ctx,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                AnilibSourcePage(extra),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        ),
+      // ignore: use_build_context_synchronously
+      AnimeSource.anime365 => Navigator.push(
+          ctx,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                Anime365SourcePage(extra),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        ),
+    };
   }
 }
 
