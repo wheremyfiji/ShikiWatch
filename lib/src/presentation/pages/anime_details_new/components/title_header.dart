@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../domain/enums/shiki_gql.dart';
 import '../../../widgets/cached_image.dart';
 
 import '../graphql_anime.dart';

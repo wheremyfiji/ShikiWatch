@@ -1,6 +1,8 @@
-import '../../../domain/models/anime.dart';
 import '../../../domain/models/shiki_image.dart';
 import '../../../domain/models/user_rate.dart';
+import '../../../domain/enums/shiki_gql.dart';
+import '../../../domain/models/anime.dart';
+
 import 'graphql_anime.dart';
 
 extension GraphqlAnimeX on GraphqlAnime {

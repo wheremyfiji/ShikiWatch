@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter/widgets.dart';
+import 'package:dio/dio.dart';
 
-import '../../../../services/http/http_service_provider.dart';
 import '../../../../services/secure_storage/secure_storage_service.dart';
+import '../../../../services/http/http_service_provider.dart';
+import '../../../../domain/enums/shiki_gql.dart';
 import '../../../../utils/debouncer.dart';
 
 final libraryAnimeSearchProvider = ChangeNotifierProvider.autoDispose((ref) {
@@ -167,33 +168,6 @@ enum LibrarySearchType {
       LibrarySearchType.completed => 'Просмотрено',
       LibrarySearchType.onHold => 'Отложено',
       LibrarySearchType.dropped => 'Брошено',
-    };
-  }
-}
-
-enum RateStatus {
-  planned('planned'),
-  watching('watching'),
-  rewatching('rewatching'),
-  completed('completed'),
-  onHold('on_hold'),
-  dropped('dropped');
-
-  final String value;
-
-  const RateStatus(this.value);
-
-  static RateStatus fromValue(String value) =>
-      RateStatus.values.singleWhere((e) => value == e.value);
-
-  String get rusName {
-    return switch (this) {
-      RateStatus.planned => 'В планах',
-      RateStatus.watching => 'Смотрю',
-      RateStatus.rewatching => 'Пересматриваю',
-      RateStatus.completed => 'Просмотрено',
-      RateStatus.onHold => 'Отложено',
-      RateStatus.dropped => 'Брошено',
     };
   }
 }

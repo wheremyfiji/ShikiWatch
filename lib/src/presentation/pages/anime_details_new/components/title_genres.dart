@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
+import '../../../../domain/enums/shiki_gql.dart';
 import '../graphql_anime.dart';
 
 class TitleGenres extends StatelessWidget {

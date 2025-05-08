@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../domain/models/pages_extra.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/cached_image.dart';
+import '../../../../domain/models/pages_extra.dart';
+import '../../../../domain/enums/shiki_gql.dart';
 import '../../../widgets/nothing_found.dart';
+import '../../../widgets/cached_image.dart';
 
 import 'library_anime_search_controller.dart';
 

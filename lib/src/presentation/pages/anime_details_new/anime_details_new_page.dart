@@ -12,6 +12,7 @@ import '../../../domain/models/pages_extra.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/share_bottom_sheet.dart';
 import '../../widgets/title_description.dart';
+import '../../../domain/enums/shiki_gql.dart';
 import '../../widgets/square_button.dart';
 import '../../widgets/error_widget.dart';
 import '../../widgets/cached_image.dart';

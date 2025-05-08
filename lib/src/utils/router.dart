@@ -10,7 +10,7 @@ import '../presentation/pages/about/about_page.dart';
 import '../presentation/pages/anime_details_new/anime_details_new_page.dart';
 import '../presentation/pages/calendar/calendar_page.dart';
 import '../presentation/pages/character/character_page.dart';
-import '../presentation/pages/explore/explore_page.dart';
+import '../presentation/pages/explore/explore_page_new.dart';
 import '../presentation/pages/explore/next_season_anime_page.dart';
 import '../presentation/pages/explore/top_anime_page.dart';
 import '../presentation/pages/explore/top_manga_page.dart';
@@ -262,7 +262,7 @@ class RouterNotifier extends AutoDisposeAsyncNotifier<void>
                   name: 'explore',
                   path: '/explore',
                   builder: (BuildContext context, GoRouterState state) =>
-                      ExplorePage(
+                      ExplorePageNew(
                     key: state.pageKey,
                   ),
                   routes: [
