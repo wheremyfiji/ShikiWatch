@@ -138,6 +138,8 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
                       addRepaintBoundaries: false,
                       pagingController: _pagingController,
                       separatorBuilder: (context, index) => const SafeArea(
+                        top: false,
+                        bottom: false,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
@@ -163,6 +165,8 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
                         },
                         itemBuilder: (context, item, _) {
                           return SafeArea(
+                            top: false,
+                            bottom: false,
                             child: AnimeExpListItem(item),
                           );
                         },
