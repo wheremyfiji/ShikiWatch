@@ -100,21 +100,6 @@ void initApp() async {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
-
-    WindowOptions windowOptions = const WindowOptions(
-      size: Size(1200, 800),
-      minimumSize: Size(900, 900 / (16 / 9)),
-      center: true,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
-      title: 'ShikiWatch',
-    );
-
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
   }
 
   MediaKit.ensureInitialized();
@@ -164,6 +149,27 @@ void initApp() async {
   }
 
   //debugRepaintRainbowEnabled = true;
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    WindowOptions windowOptions = WindowOptions(
+      size: Platform.isLinux ? null : const Size(1200, 800),
+      minimumSize: Platform.isLinux ? null : const Size(900, 900 / (16 / 9)),
+      center: true,
+      backgroundColor: Platform.isLinux ? Colors.black : Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.normal,
+      title: 'ShikiWatch',
+    );
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      // if (Platform.isLinux || Platform.isMacOS) {
+      //   await windowManager.setAsFrameless();
+      // }
+
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
 
   runApp(
     ProviderScope(
