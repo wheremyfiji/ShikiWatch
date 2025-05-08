@@ -2,10 +2,11 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-import '../../../utils/app_utils.dart';
 import '../../oauth/oauth_service.dart';
+import '../../../utils/app_utils.dart';
+import '../../../utils/router.dart';
 
-class RefreshTokenInterceptor extends Interceptor {
+class RefreshTokenInterceptor extends QueuedInterceptor {
   final Dio dio;
 
   RefreshTokenInterceptor(this.dio);
@@ -15,41 +16,45 @@ class RefreshTokenInterceptor extends Interceptor {
     if (err.response == null) {
       return handler.next(err);
     }
+
     if (err.response!.statusCode == 401) {
-      //log('RefreshTokenInterceptor:: statusCode == 401');
-      var res = await refreshToken();
-      if (res != null) {
-        await _retry(err.requestOptions, res);
-        return handler.resolve(await _retry(err.requestOptions, res));
+      final newToken = await OAuthService.instance.refreshToken();
+
+      if (newToken != null) {
+        // showSnackBar(
+        //   ctx: routerRootCtx!,
+        //   msg: 'Токен авторизации успешно обновлен',
+        //   dur: const Duration(seconds: 10),
+        // );
+        final res = await _retry(err.requestOptions, newToken);
+        return handler.resolve(res);
       } else {
+        showErrorSnackBar(
+          ctx: routerRootCtx!,
+          msg: 'Ошибка при обновлении токена авторизации',
+        );
+
         // TODO fix this
         log('RefreshTokenInterceptor:: refreshToken() == null');
         //final ctx = router.routerDelegate.navigatorKey.currentContext;
         //GoRouter.of(ctx!).go('/login');
       }
     }
+
     return handler.next(err);
-  }
-
-  Future<String?> refreshToken() async {
-    //log('RefreshTokenInterceptor:: refreshToken');
-
-    final token = await OAuthService.instance.refreshToken();
-
-    return token;
   }
 
   Future<Response<dynamic>> _retry(
       RequestOptions requestOptions, String newToken) async {
-    log('RefreshTokenInterceptor:: _retry');
+    requestOptions.headers.addAll({
+      'Authorization': 'Bearer $newToken',
+    });
 
     final options = Options(
       method: requestOptions.method,
+      contentType: requestOptions.contentType,
       responseType: requestOptions.responseType,
-      headers: {
-        'User-Agent': AppUtils.instance.userAgent,
-        'Authorization': 'Bearer $newToken',
-      },
+      headers: requestOptions.headers,
     );
 
     return dio.request<dynamic>(
