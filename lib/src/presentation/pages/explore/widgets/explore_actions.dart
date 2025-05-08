@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../toggles.dart';
+import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/custom_card_button.dart';
 
 class ExploreActions extends StatelessWidget {
@@ -13,73 +15,109 @@ class ExploreActions extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: CustomCardButton(
+              child: ExploreActionButton(
                 label: 'Топ аниме',
-                onTap: () {
-                  context.pushNamed('top_anime');
-                },
                 icon: Icons.movie_rounded,
+                onTap: () => context.pushNamed('top_anime'),
               ),
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 8),
             Expanded(
-              child: CustomCardButton(
+              child: ExploreActionButton(
+                primary: false,
                 label: 'Топ манги',
-                onTap: () {
-                  context.pushNamed('top_manga');
-                },
                 icon: Icons.menu_book_rounded,
+                onTap: () => context.pushNamed('top_manga'),
               ),
             ),
           ],
         ),
-        // const SizedBox(
-        //   height: 8,
-        // ),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       child: CustomCardButton(
-        //         label: 'Случайное', //   Выйдет в след. сезоне
-        //         onTap: () {
-        //           showSnackBar(ctx: context, msg: 'Пока нельзя');
-        //         },
-        //         icon: Icons.shuffle_rounded,
-        //       ),
-        //     ),
-        //     const SizedBox(
-        //       width: 8,
-        //     ),
-        //     Expanded(
-        //       child: CustomCardButton(
-        //         label: 'Календарь',
-        //         onTap: () {
-        //           context.pushNamed('calendar');
-        //         },
-        //         icon: Icons.calendar_month_rounded,
-        //       ),
-        //     ),
-        //   ],
-        // ),
-        const SizedBox(
-          height: 12,
-        ),
-        CustomCardButton(
-          label: 'Календарь онгоингов',
-          icon: Icons.calendar_month_rounded, //schedule
-          onTap: () => context.pushNamed('calendar'),
-        ),
-        // const SizedBox(
-        //   height: 8,
-        // ),
-        // CustomCardButton(
-        //   label: 'Выйдет в ближайшее время', // Выйдет в след. сезоне
-        //   icon: Icons.interests_rounded,
-        //   onTap: () => context.pushNamed('next_season_anime'),
-        // ),
+        if (Toggles.showCalendarButton) ...[
+          const SizedBox(
+            height: 12,
+          ),
+          CustomCardButton(
+            label: 'Календарь онгоингов',
+            icon: Icons.calendar_month_rounded, //schedule
+            onTap: () => context.pushNamed('calendar'),
+          ),
+        ],
       ],
+    );
+  }
+}
+
+class ExploreActionButton extends StatelessWidget {
+  const ExploreActionButton({
+    super.key,
+    this.primary = true,
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final bool primary;
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor = primary
+        ? context.colorScheme.primaryContainer
+        : context.colorScheme.tertiaryContainer;
+
+    final contentColor = primary
+        ? context.colorScheme.onPrimaryContainer
+        : context.colorScheme.onTertiaryContainer;
+
+    const borderRadius = 52.0;
+
+    return Container(
+      height: 64.0,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 6.0,
+                ),
+                Icon(
+                  icon,
+                  size: 24.0,
+                  color: contentColor,
+                ),
+                const SizedBox(
+                  width: 12.0,
+                ),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: contentColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
