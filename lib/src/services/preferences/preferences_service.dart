@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
 import '../../domain/enums/color_scheme_variant.dart';
+import '../../domain/enums/explore_ongoing_now.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 import '../../domain/enums/anime_source.dart';
@@ -24,6 +25,8 @@ const _colorSchemeVariantKey = 'colorSchemeVariant';
 const _playerObserveAudioSession = 'playerObserveAudioSession';
 const _shikiAllowExpContent = 'shikiAllowExpContent';
 const _playerAndroidNewAudioBackend = 'playerAndroidNewAudioBackend';
+const _explorePageLayout = 'explorePageLayout';
+const _explorePageSort = 'explorePageSort';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
@@ -261,5 +264,31 @@ class PreferencesService {
 
   Future<void> setPlayerAndroidNewAudioBackend(bool v) async {
     await _preferences.setBool(_playerAndroidNewAudioBackend, v);
+  }
+
+  ExplorePageLayout getExplorePageLayout() {
+    final value = _preferences.getString(_explorePageLayout);
+    if (value == null) {
+      return ExplorePageLayout.auto;
+    }
+    return ExplorePageLayout.values.firstWhereOrNull((v) => v.name == value) ??
+        ExplorePageLayout.auto;
+  }
+
+  Future<void> setExplorePageLayout(ExplorePageLayout v) async {
+    await _preferences.setString(_explorePageLayout, v.name);
+  }
+
+  ExplorePageSort getExplorePageSort() {
+    final value = _preferences.getString(_explorePageSort);
+    if (value == null) {
+      return ExplorePageSort.airedOn;
+    }
+    return ExplorePageSort.values.firstWhereOrNull((v) => v.name == value) ??
+        ExplorePageSort.airedOn;
+  }
+
+  Future<void> setExplorePageSort(ExplorePageSort v) async {
+    await _preferences.setString(_explorePageSort, v.name);
   }
 }

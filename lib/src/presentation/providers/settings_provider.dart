@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../services/preferences/preferences_service.dart';
 import '../../domain/enums/color_scheme_variant.dart';
+import '../../domain/enums/explore_ongoing_now.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 import '../../domain/enums/anime_source.dart';
@@ -40,6 +41,8 @@ class SettingsNotifier extends Notifier<SettingsState> {
       shikiAllowExpContent: _preferencesService.getShikiAllowExpContent(),
       playerAndroidNewAudioBackend:
           _preferencesService.getPlayerAndroidNewAudioBackend(),
+      explorePageLayout: _preferencesService.getExplorePageLayout(),
+      explorePageSort: _preferencesService.getExplorePageSort(),
     );
   }
 
@@ -146,6 +149,20 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setPlayerAndroidNewAudioBackend(newValue);
     state = state.copyWith(
       playerAndroidNewAudioBackend: newValue,
+    );
+  }
+
+  Future<void> setExplorePageLayout(ExplorePageLayout newValue) async {
+    await _preferencesService.setExplorePageLayout(newValue);
+    state = state.copyWith(
+      explorePageLayout: newValue,
+    );
+  }
+
+  Future<void> setExplorePageSort(ExplorePageSort newValue) async {
+    await _preferencesService.setExplorePageSort(newValue);
+    state = state.copyWith(
+      explorePageSort: newValue,
     );
   }
 }

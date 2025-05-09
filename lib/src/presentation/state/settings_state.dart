@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/enums/color_scheme_variant.dart';
+import '../../domain/enums/explore_ongoing_now.dart';
 import '../../domain/enums/library_layout_mode.dart';
 import '../../domain/enums/library_state.dart';
 import '../../domain/enums/anime_source.dart';
@@ -27,5 +28,7 @@ class SettingsState with _$SettingsState {
     required bool playerObserveAudioSession,
     required bool shikiAllowExpContent,
     required bool playerAndroidNewAudioBackend,
+    required ExplorePageLayout explorePageLayout,
+    required ExplorePageSort explorePageSort,
   }) = _SettingsState;
 }

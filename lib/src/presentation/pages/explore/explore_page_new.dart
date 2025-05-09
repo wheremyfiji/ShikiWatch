@@ -10,14 +10,18 @@ import 'package:dio/dio.dart';
 
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../services/http/http_service_provider.dart';
+import '../../../domain/enums/explore_ongoing_now.dart';
 import '../../../domain/models/graphql_user_rate.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../../domain/models/pages_extra.dart';
 import '../../../domain/enums/shiki_gql.dart';
+import '../../providers/settings_provider.dart';
 import '../../widgets/cached_image.dart';
 import '../../widgets/error_widget.dart';
 
 import 'widgets/explore_actions.dart';
+
+enum UserRateStatusIndicatorType { text, dot }
 
 class ExplorePageNew extends ConsumerStatefulWidget {
   const ExplorePageNew({super.key});
@@ -57,128 +61,150 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        top: false,
-        bottom: false,
-        child: CustomScrollView(
-          clipBehavior: Clip.none,
-          key: const PageStorageKey<String>('ExplorePageNew'),
-          slivers: [
-            SliverAppBar.large(
-              automaticallyImplyLeading: false,
-              pinned: true,
-              title: const Text('ShikiWatch'),
-              actions: [
-                IconButton(
-                  onPressed: () => context.push('/explore/search'),
-                  icon: const Icon(Icons.search),
-                ),
+    ref.listen(settingsProvider.select((settings) => settings.explorePageSort),
+        (previous, next) {
+      _pagingController.refresh();
+    });
+
+    final layout = ref.watch(settingsProvider.select(
+      (settings) => settings.explorePageLayout,
+    ));
+
+    final grid = SliverPadding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      sliver: PagedSliverGrid<int, AnimeExpGql>(
+        key: const PageStorageKey<String>('ExplorePageNewPagedSliverCard'),
+        addSemanticIndexes: false,
+        addRepaintBoundaries: false,
+        showNewPageErrorIndicatorAsGridChild: false,
+        pagingController: _pagingController,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 140, //150
+          childAspectRatio: 0.55,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        builderDelegate: PagedChildBuilderDelegate<AnimeExpGql>(
+          firstPageErrorIndicatorBuilder: (context) {
+            return CustomErrorWidget(
+              _pagingController.error.toString(),
+              () => _pagingController.refresh(),
+            );
+          },
+          newPageErrorIndicatorBuilder: (context) {
+            return CustomErrorWidget(
+              _pagingController.error.toString(),
+              () => _pagingController.retryLastFailedRequest(),
+            );
+          },
+          itemBuilder: (context, item, index) {
+            return AnimeExpCardItem(item);
+          },
+        ),
+      ),
+    );
+
+    final list = SliverPadding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      sliver: PagedSliverList.separated(
+        key: const PageStorageKey<String>('ExplorePageNewPagedSliverList'),
+        addSemanticIndexes: false,
+        addRepaintBoundaries: false,
+        pagingController: _pagingController,
+        separatorBuilder: (context, index) => const SafeArea(
+          top: false,
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                SizedBox(width: 100),
+                Expanded(child: Divider()),
               ],
             ),
-            const SliverPadding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-              sliver: SliverToBoxAdapter(
-                child: ExploreActions(),
+          ),
+        ),
+        builderDelegate: PagedChildBuilderDelegate<AnimeExpGql>(
+          firstPageErrorIndicatorBuilder: (context) {
+            return CustomErrorWidget(
+              _pagingController.error.toString(),
+              () => _pagingController.refresh(),
+            );
+          },
+          newPageErrorIndicatorBuilder: (context) {
+            return CustomErrorWidget(
+              _pagingController.error.toString(),
+              () => _pagingController.retryLastFailedRequest(),
+            );
+          },
+          itemBuilder: (context, item, _) {
+            return SafeArea(
+              top: false,
+              bottom: false,
+              child: AnimeExpListItem(item),
+            );
+          },
+        ),
+      ),
+    );
+
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () => Future.sync(
+          () => _pagingController.refresh(),
+        ),
+        child: SafeArea(
+          top: false,
+          bottom: false,
+          child: CustomScrollView(
+            clipBehavior: Clip.none,
+            key: const PageStorageKey<String>('ExplorePageNew'),
+            slivers: [
+              SliverAppBar.large(
+                automaticallyImplyLeading: false,
+                pinned: true,
+                title: const Text('ShikiWatch'),
+                actions: [
+                  IconButton(
+                    onPressed: () => context.push('/explore/search'),
+                    icon: const Icon(Icons.search),
+                  ),
+                ],
               ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  'Сейчас выходит',
-                  style: context.textTheme.titleLarge?.copyWith(
-                    color: context.colorScheme.onSurface,
+              const SliverPadding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                sliver: SliverToBoxAdapter(
+                  child: ExploreActions(),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                sliver: SliverToBoxAdapter(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12.0),
+                    onTap: () =>
+                        EditOngoingNowBottomSheet.show(context: context),
+                    child: Text(
+                      'Сейчас выходит',
+                      style: context.textTheme.titleLarge?.copyWith(
+                        color: context.colorScheme.onSurface,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            _screenWidth >= _widthBreakpoint
-                ? SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    sliver: PagedSliverGrid<int, AnimeExpGql>(
-                      key: const PageStorageKey<String>(
-                          'ExplorePageNewPagedSliverCard'),
-                      addSemanticIndexes: false,
-                      addRepaintBoundaries: false,
-                      showNewPageErrorIndicatorAsGridChild: false,
-                      pagingController: _pagingController,
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 140, //150
-                        childAspectRatio: 0.55,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
-                      builderDelegate: PagedChildBuilderDelegate<AnimeExpGql>(
-                        firstPageErrorIndicatorBuilder: (context) {
-                          return CustomErrorWidget(
-                            _pagingController.error.toString(),
-                            () => _pagingController.refresh(),
-                          );
-                        },
-                        newPageErrorIndicatorBuilder: (context) {
-                          return CustomErrorWidget(
-                            _pagingController.error.toString(),
-                            () => _pagingController.retryLastFailedRequest(),
-                          );
-                        },
-                        itemBuilder: (context, item, index) {
-                          return AnimeExpCardItem(item);
-                        },
-                      ),
-                    ),
-                  )
-                : SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    sliver: PagedSliverList.separated(
-                      key: const PageStorageKey<String>(
-                          'ExplorePageNewPagedSliverList'),
-                      addSemanticIndexes: false,
-                      addRepaintBoundaries: false,
-                      pagingController: _pagingController,
-                      separatorBuilder: (context, index) => const SafeArea(
-                        top: false,
-                        bottom: false,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 100),
-                              Expanded(child: Divider()),
-                            ],
-                          ),
-                        ),
-                      ),
-                      builderDelegate: PagedChildBuilderDelegate<AnimeExpGql>(
-                        firstPageErrorIndicatorBuilder: (context) {
-                          return CustomErrorWidget(
-                            _pagingController.error.toString(),
-                            () => _pagingController.refresh(),
-                          );
-                        },
-                        newPageErrorIndicatorBuilder: (context) {
-                          return CustomErrorWidget(
-                            _pagingController.error.toString(),
-                            () => _pagingController.retryLastFailedRequest(),
-                          );
-                        },
-                        itemBuilder: (context, item, _) {
-                          return SafeArea(
-                            top: false,
-                            bottom: false,
-                            child: AnimeExpListItem(item),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-            SliverPadding(
-              padding: EdgeInsets.only(
-                bottom: context.padding.bottom,
+              switch (layout) {
+                ExplorePageLayout.grid => grid,
+                ExplorePageLayout.list => list,
+                _ => _screenWidth >= _widthBreakpoint ? grid : list,
+              },
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  bottom: context.padding.bottom,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -194,6 +220,7 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
                     'query': _query,
                     'variables': {
                       'page': pageKey,
+                      'order': ref.read(settingsProvider).explorePageSort.value,
                     },
                   },
                 ),
@@ -230,6 +257,92 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
     } catch (error) {
       _pagingController.error = error;
     }
+  }
+}
+
+class EditOngoingNowBottomSheet extends StatelessWidget {
+  const EditOngoingNowBottomSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              'Размещение и сортировка',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+          ),
+          Consumer(builder: (context, ref, _) {
+            final layout = ref.watch(settingsProvider
+                .select((settings) => settings.explorePageLayout));
+
+            return SegmentedButton<ExplorePageLayout>(
+              segments: ExplorePageLayout.values
+                  .map((e) => ButtonSegment<ExplorePageLayout>(
+                        value: e,
+                        label: Text(e.label),
+                        icon: Icon(e.icon),
+                      ))
+                  .toList(),
+              selected: {layout},
+              onSelectionChanged: (v) => ref
+                  .read(settingsProvider.notifier)
+                  .setExplorePageLayout(v.first),
+            );
+          }),
+          Consumer(
+            builder: (context, ref, _) {
+              final sort = ref.watch(settingsProvider
+                  .select((settings) => settings.explorePageSort));
+
+              return Card(
+                clipBehavior: Clip.hardEdge,
+                margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                child: Column(
+                  children: [
+                    ...ExplorePageSort.values.map(
+                      (e) => RadioListTile(
+                        value: e,
+                        groupValue: sort,
+                        title: Text(
+                          e.label,
+                          style: TextStyle(
+                            color: context.colorScheme.onSurface,
+                          ),
+                        ),
+                        onChanged: (v) => ref
+                            .read(settingsProvider.notifier)
+                            .setExplorePageSort(v ?? sort)
+                            .then((_) => context.pop()),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  static void show({required BuildContext context}) {
+    showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      showDragHandle: true,
+      constraints: BoxConstraints(
+        maxWidth:
+            MediaQuery.of(context).size.width >= 700 ? 700 : double.infinity,
+      ),
+      builder: (_) => const SafeArea(child: EditOngoingNowBottomSheet()),
+    );
   }
 }
 
@@ -460,13 +573,18 @@ class AnimeExpListItem extends StatelessWidget {
 }
 
 class UserRateStatusIndicator extends StatelessWidget {
-  const UserRateStatusIndicator(this.status, {super.key});
+  const UserRateStatusIndicator(
+    this.status, {
+    super.key,
+    this.type = UserRateStatusIndicatorType.text,
+  });
 
   final RateStatus status;
+  final UserRateStatusIndicatorType type;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final text = Container(
       margin: const EdgeInsets.all(4),
       padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
       decoration: BoxDecoration(
@@ -484,6 +602,8 @@ class UserRateStatusIndicator extends StatelessWidget {
       ),
       child: Text(
         status.rusName,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: context.textTheme.bodySmall?.copyWith(
           fontSize: 10,
           fontWeight: FontWeight.w500,
@@ -491,26 +611,30 @@ class UserRateStatusIndicator extends StatelessWidget {
         ),
       ),
     );
-    // return Container(
-    //   width: 12,
-    //   height: 12,
-    //   margin: const EdgeInsets.all(6),
-    //   decoration: BoxDecoration(
-    //     boxShadow: const [
-    //       BoxShadow(
-    //         color: Colors.black38,
-    //         spreadRadius: 6,
-    //         blurRadius: 12,
-    //         blurStyle: BlurStyle.normal,
-    //         // offset: Offset(2, 4),
-    //       ),
-    //     ],
-    //     shape: BoxShape.circle,
-    //     color:
-    //         status.color(context.colorScheme),
-    //     // borderRadius: BorderRadius.circular(52),
-    //   ),
-    // );
+
+    final dot = Container(
+      width: 12,
+      height: 12,
+      margin: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black38,
+            spreadRadius: 6,
+            blurRadius: 12,
+            blurStyle: BlurStyle.normal,
+            // offset: Offset(2, 4),
+          ),
+        ],
+        shape: BoxShape.circle,
+        color: status.color(context.colorScheme),
+      ),
+    );
+
+    return switch (type) {
+      UserRateStatusIndicatorType.text => text,
+      UserRateStatusIndicatorType.dot => dot,
+    };
   }
 }
 
@@ -596,9 +720,10 @@ class AnimeExpGql {
       );
 }
 
+// ranked popularity aired_on
 const _query = r'''
-query($page: PositiveInt) {
-  animes(limit: 30, page: $page, status: "ongoing", order: ranked, score: 1) {
+query($page: PositiveInt, $order: OrderEnum) {
+  animes(limit: 30, page: $page, status: "ongoing", order: $order, score: 1) {
     id
     name
     russian
