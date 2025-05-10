@@ -172,24 +172,31 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
                 ],
               ),
               const SliverPadding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
                 sliver: SliverToBoxAdapter(
                   child: ExploreActions(),
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 sliver: SliverToBoxAdapter(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12.0),
-                    onTap: () =>
-                        EditOngoingNowBottomSheet.show(context: context),
-                    child: Text(
-                      'Сейчас выходит',
-                      style: context.textTheme.titleLarge?.copyWith(
-                        color: context.colorScheme.onSurface,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Сейчас выходит',
+                          style: context.textTheme.titleLarge?.copyWith(
+                            color: context.colorScheme.onSurface,
+                          ),
+                        ),
                       ),
-                    ),
+                      TextButton(
+                        onPressed: () =>
+                            EditOngoingNowBottomSheet.show(context: context),
+                        child: const Text('Настроить'),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -301,13 +308,14 @@ class EditOngoingNowBottomSheet extends StatelessWidget {
 
               return Card(
                 clipBehavior: Clip.hardEdge,
-                margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                margin: const EdgeInsets.fromLTRB(16, 24, 16, 16),
                 child: Column(
                   children: [
                     ...ExplorePageSort.values.map(
                       (e) => RadioListTile(
                         value: e,
                         groupValue: sort,
+                        contentPadding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
                         title: Text(
                           e.label,
                           style: TextStyle(
