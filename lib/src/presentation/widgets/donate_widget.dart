@@ -48,7 +48,7 @@ class DonateWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Поддержать разработчика',
+                        'Поддержать разработку',
                         style: TextStyle(
                           fontSize: 22.0,
                           fontWeight: FontWeight.w600,
@@ -56,7 +56,7 @@ class DonateWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Понравилось приложение? Ты можешь сделать добровольное пожертвование, чем очень поможешь в разработке',
+                        'Понравилось приложение?\nТы можешь сделать добровольное пожертвование, чем очень поможешь в разработке',
                         style: TextStyle(
                           fontSize: 14.0,
                           color: context.colorScheme.onTertiaryContainer
@@ -83,74 +83,95 @@ class _DonateBottomSheet extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
-              'Поддержать разработчика',
+              'Поддержать разработку',
               style: context.textTheme.headlineMedium,
             ),
           ),
-          ListTile(
-            onTap: () => launchUrlString(
-              'https://boosty.to/wheremyfiji/donate',
-              mode: LaunchMode.externalApplication,
+          Card(
+            clipBehavior: Clip.hardEdge,
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                ListTile(
+                  onTap: () => launchUrlString(
+                    'https://boosty.to/wheremyfiji/donate',
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  leading: SvgPicture.asset(
+                    'assets/svg/boosty.svg',
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      context.colorScheme.onSurfaceVariant,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  title: const Text('Boosty'),
+                ),
+                ListTile(
+                  onTap: () => launchUrlString(
+                    'https://pay.cloudtips.ru/p/f63a121a',
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  leading: const Icon(
+                    Icons.payment_rounded,
+                    size: 24,
+                  ),
+                  title: const Text('CloudTips'),
+                ),
+                ListTile(
+                  onTap: () => Clipboard.setData(
+                    const ClipboardData(
+                      text: 'UQBd8aIQ0TF0Oz_pXhX_yJPmh6GzzTj0hiwLk3OZbh0ZeBj7',
+                    ),
+                  ).then((_) => Navigator.of(context).pop()).then((_) =>
+                      showSnackBar(
+                          ctx: context,
+                          msg: 'Адрес TON скопирован в буфер обмена',
+                          dur: const Duration(seconds: 3))),
+                  leading: const Icon(
+                    Icons.diamond_rounded,
+                    size: 24,
+                  ),
+                  title: const Text('Toncoin (TON)'),
+                ),
+                ListTile(
+                  onTap: () => Clipboard.setData(
+                    const ClipboardData(
+                      text: 'TRetqKdTt9CkkxXRPjtVT9mjFYpYUxnquE',
+                    ),
+                  ).then((_) => Navigator.of(context).pop()).then((_) =>
+                      showSnackBar(
+                          ctx: context,
+                          msg: 'Адрес USDT TRC20 скопирован в буфер обмена',
+                          dur: const Duration(seconds: 3))),
+                  leading: SvgPicture.asset(
+                    'assets/svg/usdt.svg',
+                    height: 24,
+                    colorFilter: ColorFilter.mode(
+                      context.colorScheme.onSurfaceVariant,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  title: const Text('USDT TRC20'),
+                ),
+                ListTile(
+                  onTap: () => launchUrlString(
+                    'https://t.me/wheremyfiji',
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  leading: const Icon(
+                    FontAwesomeIcons.telegram,
+                    size: 24,
+                  ),
+                  title: const Text('Telegram'),
+                ),
+              ],
             ),
-            leading: SvgPicture.asset(
-              'assets/svg/boosty.svg',
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                context.colorScheme.onSurfaceVariant,
-                BlendMode.srcIn,
-              ),
-            ),
-            title: const Text('Boosty'),
-          ),
-          ListTile(
-            onTap: () => Clipboard.setData(
-              const ClipboardData(
-                text: 'UQBd8aIQ0TF0Oz_pXhX_yJPmh6GzzTj0hiwLk3OZbh0ZeBj7',
-              ),
-            ).then((_) => Navigator.of(context).pop()).then((_) => showSnackBar(
-                ctx: context,
-                msg: 'Адрес TON скопирован в буфер обмена',
-                dur: const Duration(seconds: 3))),
-            leading: const Icon(
-              Icons.diamond_rounded,
-              size: 24,
-            ),
-            title: const Text('Toncoin (TON)'),
-          ),
-          ListTile(
-            onTap: () => Clipboard.setData(
-              const ClipboardData(
-                text: 'TRetqKdTt9CkkxXRPjtVT9mjFYpYUxnquE',
-              ),
-            ).then((_) => Navigator.of(context).pop()).then((_) => showSnackBar(
-                ctx: context,
-                msg: 'Адрес USDT TRC20 скопирован в буфер обмена',
-                dur: const Duration(seconds: 3))),
-            leading: SvgPicture.asset(
-              'assets/svg/usdt.svg',
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                context.colorScheme.onSurfaceVariant,
-                BlendMode.srcIn,
-              ),
-            ),
-            title: const Text('USDT TRC20'),
-          ),
-          ListTile(
-            onTap: () => launchUrlString(
-              'https://t.me/wheremyfiji',
-              mode: LaunchMode.externalApplication,
-            ),
-            leading: const Icon(
-              FontAwesomeIcons.telegram,
-              size: 24,
-            ),
-            title: const Text('Telegram'),
           ),
         ],
       ),
