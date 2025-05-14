@@ -143,26 +143,32 @@ class CachedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: imageUrl,
-      fit: fit,
-      width: width,
-      height: height,
-      cacheManager: cacheManager,
-      memCacheWidth: memCacheWidth,
-      memCacheHeight: memCacheHeight,
-      placeholder: placeholder ?? (context, url) => const CustomShimmer(),
-      fadeOutDuration: fadeOutDuration,
-      errorWidget: (context, url, error) {
-        return Container(
-          color: context.colorScheme.secondaryContainer,
-          child: Icon(
-            Icons.broken_image_rounded,
-            color: context.colorScheme.onSecondaryContainer,
-          ),
-        );
-      },
-      errorListener: (_) {},
+    final fallBack = Container(
+      color: context.colorScheme.secondaryContainer,
+      child: Icon(
+        Icons.broken_image_rounded,
+        color: context.colorScheme.onSecondaryContainer,
+      ),
     );
+
+    try {
+      return CachedNetworkImage(
+        imageUrl: imageUrl,
+        fit: fit,
+        width: width,
+        height: height,
+        cacheManager: cacheManager,
+        memCacheWidth: memCacheWidth,
+        memCacheHeight: memCacheHeight,
+        placeholder: placeholder ?? (context, url) => const CustomShimmer(),
+        fadeOutDuration: fadeOutDuration,
+        errorWidget: (context, url, error) {
+          return fallBack;
+        },
+        errorListener: (_) {},
+      );
+    } on Exception {
+      return fallBack;
+    }
   }
 }
