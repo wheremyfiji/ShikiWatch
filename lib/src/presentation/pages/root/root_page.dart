@@ -4,12 +4,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:go_router/go_router.dart';
 
+import '../anime_soures/anime365/anime365_provider.dart';
 import '../../../services/updater/update_service.dart';
+import '../../widgets/mouse_back_button_wrapper.dart';
 import '../../../utils/extensions/buildcontext.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
 import '../../providers/settings_provider.dart';
 import '../../../utils/app_utils.dart';
-import '../anime_soures/anime365/anime365_provider.dart';
 
 class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -53,65 +54,67 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         settingsProvider.select((settings) => settings.navDestLabelBehavior));
 
     if (screenWidth >= breakpoint) {
-      return Scaffold(
-        body: SafeArea(
-          top: false,
-          bottom: false,
-          child: Row(
-            children: [
-              SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: MediaQuery.of(context).size.height,
-                  ),
-                  child: IntrinsicHeight(
-                    child: Theme(
-                      data: context.theme.copyWith(
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                      ),
-                      child: NavigationRail(
-                        extended: AppUtils.instance.isDesktop
-                            ? screenWidth > 1600
-                            : screenWidth > expandedBreakpoint,
-                        groupAlignment: -1.0,
-                        selectedIndex: navigationShell.currentIndex,
-                        onDestinationSelected: _onDestinationSelected,
-                        destinations: const [
-                          NavigationRailDestination(
-                            icon: Icon(Icons.book_outlined),
-                            selectedIcon: Icon(Icons.book),
-                            label: Text('Библиотека'),
-                          ),
-                          NavigationRailDestination(
-                            icon: Icon(Icons.explore_outlined),
-                            selectedIcon: Icon(Icons.explore_rounded),
-                            label: Text('Обзор'),
-                          ),
-                          // NavigationRailDestination(
-                          //   icon: Icon(Icons.forum_outlined),
-                          //   selectedIcon: Icon(Icons.forum_rounded),
-                          //   label: Text('Топики'),
-                          // ),
-                          NavigationRailDestination(
-                            icon: Icon(Icons.more_horiz),
-                            selectedIcon: Icon(Icons.more_horiz),
-                            label: Text('Ещё'),
-                          ),
-                        ],
+      return MouseBackButtonWrapper(
+        child: Scaffold(
+          body: SafeArea(
+            top: false,
+            bottom: false,
+            child: Row(
+              children: [
+                SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Theme(
+                        data: context.theme.copyWith(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        ),
+                        child: NavigationRail(
+                          extended: AppUtils.instance.isDesktop
+                              ? screenWidth > 1600
+                              : screenWidth > expandedBreakpoint,
+                          groupAlignment: -1.0,
+                          selectedIndex: navigationShell.currentIndex,
+                          onDestinationSelected: _onDestinationSelected,
+                          destinations: const [
+                            NavigationRailDestination(
+                              icon: Icon(Icons.book_outlined),
+                              selectedIcon: Icon(Icons.book),
+                              label: Text('Библиотека'),
+                            ),
+                            NavigationRailDestination(
+                              icon: Icon(Icons.explore_outlined),
+                              selectedIcon: Icon(Icons.explore_rounded),
+                              label: Text('Обзор'),
+                            ),
+                            // NavigationRailDestination(
+                            //   icon: Icon(Icons.forum_outlined),
+                            //   selectedIcon: Icon(Icons.forum_rounded),
+                            //   label: Text('Топики'),
+                            // ),
+                            NavigationRailDestination(
+                              icon: Icon(Icons.more_horiz),
+                              selectedIcon: Icon(Icons.more_horiz),
+                              label: Text('Ещё'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const VerticalDivider(thickness: 1, width: 1),
-              Expanded(
-                child: AnimatedBranchContainer(
-                  currentIndex: navigationShell.currentIndex,
-                  children: children,
+                const VerticalDivider(thickness: 1, width: 1),
+                Expanded(
+                  child: AnimatedBranchContainer(
+                    currentIndex: navigationShell.currentIndex,
+                    children: children,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
