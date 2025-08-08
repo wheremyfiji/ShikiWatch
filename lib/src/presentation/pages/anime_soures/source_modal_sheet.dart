@@ -84,6 +84,7 @@ class SelectSourceSheet extends StatelessWidget {
           },
           title: const Text('AniLib'),
           subtitle: const Text('Прогресс просмотра не сохраняется'),
+          enabled: false,
         ),
         Consumer(
           builder: (context, ref, child) {

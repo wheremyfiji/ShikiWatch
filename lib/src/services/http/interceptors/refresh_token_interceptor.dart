@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
+import '../../secure_storage/secure_storage_service.dart';
 import '../../oauth/oauth_service.dart';
 import '../../../utils/app_utils.dart';
 import '../../../utils/router.dart';
@@ -17,28 +18,38 @@ class RefreshTokenInterceptor extends QueuedInterceptor {
       return handler.next(err);
     }
 
-    if (err.response!.statusCode == 401) {
-      final newToken = await OAuthService.instance.refreshToken();
+    final statusCode = err.response?.statusCode;
 
-      if (newToken != null) {
-        // showSnackBar(
-        //   ctx: routerRootCtx!,
-        //   msg: 'Токен авторизации успешно обновлен',
-        //   dur: const Duration(seconds: 10),
-        // );
-        final res = await _retry(err.requestOptions, newToken);
-        return handler.resolve(res);
-      } else {
-        showErrorSnackBar(
-          ctx: routerRootCtx!,
-          msg: 'Ошибка при обновлении токена авторизации',
-        );
+    if (statusCode != 401) {
+      return handler.resolve(err.response!);
+    }
 
-        // TODO fix this
-        log('RefreshTokenInterceptor:: refreshToken() == null');
-        //final ctx = router.routerDelegate.navigatorKey.currentContext;
-        //GoRouter.of(ctx!).go('/login');
-      }
+    final requestedAccessToken =
+        (err.requestOptions.headers['Authorization'] as String).split(' ').last;
+
+    if (requestedAccessToken != SecureStorageService.instance.token) {
+      return handler.next(err);
+    }
+
+    final newToken = await OAuthService.instance.refreshToken();
+
+    if (newToken != null) {
+      // showSnackBar(
+      //   ctx: routerRootCtx!,
+      //   msg: 'Токен авторизации успешно обновлен',
+      //   dur: const Duration(seconds: 10),
+      // );
+      final res = await _retry(err.requestOptions, newToken);
+      return handler.resolve(res);
+    } else {
+      showErrorSnackBar(
+        ctx: routerRootCtx!,
+        msg: 'Ошибка при обновлении токена авторизации',
+      );
+
+      log('RefreshTokenInterceptor:: refreshToken() == null');
+      //final ctx = router.routerDelegate.navigatorKey.currentContext;
+      //GoRouter.of(ctx!).go('/login');
     }
 
     return handler.next(err);

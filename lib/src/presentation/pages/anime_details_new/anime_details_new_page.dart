@@ -182,18 +182,19 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                         ).animate().fade(),
                       ),
                     ),
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                      sliver: SliverToBoxAdapter(
-                        child: TitleDescriptionFromHtml(
-                          title.descriptionLength > 0
-                              ? title.description
-                              : 'Описание отсутствует',
-                          shouldExpand: !AppUtils.instance.isDesktop &&
-                              title.descriptionLength > 500,
-                        ).animate().fade(),
+                    if (title.descriptionLength > 0)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: TitleDescriptionFromHtml(
+                            title.descriptionLength > 0
+                                ? title.description
+                                : 'Описание отсутствует',
+                            shouldExpand: !AppUtils.instance.isDesktop &&
+                                title.descriptionLength > 500,
+                          ).animate().fade(),
+                        ),
                       ),
-                    ),
                     if (title.genres.isNotEmpty)
                       SliverPadding(
                         padding: const EdgeInsets.fromLTRB(0, 14, 0, 10),
@@ -477,15 +478,19 @@ class PlayButton extends ConsumerWidget {
           ),
         ),
       // ignore: use_build_context_synchronously
-      AnimeSource.anilib => Navigator.push(
+      AnimeSource.anilib => SelectSourceSheet.show(
           ctx,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) =>
-                AnilibSourcePage(extra),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
+          extra: extra,
         ),
+      // Navigator.push(
+      //     ctx,
+      //     PageRouteBuilder(
+      //       pageBuilder: (context, animation1, animation2) =>
+      //           AnilibSourcePage(extra),
+      //       transitionDuration: Duration.zero,
+      //       reverseTransitionDuration: Duration.zero,
+      //     ),
+      //   ),
       // ignore: use_build_context_synchronously
       AnimeSource.anime365 => Navigator.push(
           ctx,

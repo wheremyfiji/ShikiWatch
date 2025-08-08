@@ -4,6 +4,7 @@ import '../../../../../domain/models/shiki_topic.dart';
 import '../../../../../utils/extensions/buildcontext.dart';
 import '../../../../../utils/extensions/date_time_ext.dart';
 
+import '../../../../widgets/html/shiki_html.dart';
 import 'content_card_footer.dart';
 
 class TopicContentCard extends StatelessWidget {
@@ -73,13 +74,19 @@ class TopicContentCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      body, // content.body
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.bodySmall,
+                    child: ShikiHtml(
+                      data: content.htmlBody,
                     ),
                   ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //   child: Text(
+                  //     body, // content.body
+                  //     maxLines: 3,
+                  //     overflow: TextOverflow.ellipsis,
+                  //     style: context.textTheme.bodySmall,
+                  //   ),
+                  // ),
                 ],
 
                 const SizedBox(

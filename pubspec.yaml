@@ -88,6 +88,12 @@ dev_dependencies:
   isar_generator: *isar_version
 
 dependency_overrides:
+  flutter_secure_storage_linux:
+    git:
+      url: https://github.com/m-berto/flutter_secure_storage.git
+      ref: patch-2
+      path: flutter_secure_storage_linux
+  flutter_secure_storage_platform_interface: 1.1.2
   material_color_utilities:
     path: external/material-color-utilities
   # media_kit:
