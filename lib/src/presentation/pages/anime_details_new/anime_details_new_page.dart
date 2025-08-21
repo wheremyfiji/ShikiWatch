@@ -458,15 +458,19 @@ class PlayButton extends ConsumerWidget {
           extra: extra,
         ),
       // ignore: use_build_context_synchronously
-      AnimeSource.libria => Navigator.push(
+      AnimeSource.libria => SelectSourceSheet.show(
           ctx,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) =>
-                AnilibriaSourcePage(extra),
-            transitionDuration: Duration.zero,
-            reverseTransitionDuration: Duration.zero,
-          ),
+          extra: extra,
         ),
+      // AnimeSource.libria => Navigator.push(
+      //     ctx,
+      //     PageRouteBuilder(
+      //       pageBuilder: (context, animation1, animation2) =>
+      //           AnilibriaSourcePage(extra),
+      //       transitionDuration: Duration.zero,
+      //       reverseTransitionDuration: Duration.zero,
+      //     ),
+      //   ),
       // ignore: use_build_context_synchronously
       AnimeSource.kodik => Navigator.push(
           ctx,

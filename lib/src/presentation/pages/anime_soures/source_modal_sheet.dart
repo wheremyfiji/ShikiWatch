@@ -67,6 +67,7 @@ class SelectSourceSheet extends StatelessWidget {
             );
           },
           title: const Text('AniLibria'),
+          enabled: false,
         ),
         ListTile(
           onTap: () {
