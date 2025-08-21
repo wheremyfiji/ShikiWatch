@@ -112,17 +112,17 @@ class _DonateBottomSheet extends StatelessWidget {
                   ),
                   title: const Text('Boosty'),
                 ),
-                ListTile(
-                  onTap: () => launchUrlString(
-                    'https://pay.cloudtips.ru/p/f63a121a',
-                    mode: LaunchMode.externalApplication,
-                  ),
-                  leading: const Icon(
-                    Icons.payment_rounded,
-                    size: 24,
-                  ),
-                  title: const Text('CloudTips'),
-                ),
+                // ListTile(
+                //   onTap: () => launchUrlString(
+                //     'https://pay.cloudtips.ru/p/f63a121a',
+                //     mode: LaunchMode.externalApplication,
+                //   ),
+                //   leading: const Icon(
+                //     Icons.payment_rounded,
+                //     size: 24,
+                //   ),
+                //   title: const Text('CloudTips'),
+                // ),
                 ListTile(
                   onTap: () => Clipboard.setData(
                     const ClipboardData(
