@@ -38,7 +38,6 @@ dependencies:
   flutter_displaymode: ^0.6.0
   flutter_hooks: ^0.20.5
   flutter_html: ^3.0.0-beta.2
-  flutter_inappwebview: ^6.0.0
   flutter_markdown: ^0.6.18+3
   flutter_rating_bar: ^4.0.1
   flutter_secure_storage: ^9.2.2
