@@ -177,6 +177,7 @@ class HistoryItem extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(12),
                       child: CachedImage(
                         AppConfig.staticUrl + image,
+                        titleId: shikimoriId,
                       ),
                     ),
                   ),

@@ -188,6 +188,7 @@ class _SearchAnimeItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   child: CachedImage(
                     anime.poster?.mainAltUrl ?? '',
+                    titleId: anime.id,
                   ),
                 ),
               ),

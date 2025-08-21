@@ -128,6 +128,7 @@ class CachedImage extends StatelessWidget {
   final int? memCacheHeight;
   final PlaceholderWidgetBuilder? placeholder;
   final Duration? fadeOutDuration;
+  final int? titleId;
 
   const CachedImage(
     this.imageUrl, {
@@ -139,6 +140,7 @@ class CachedImage extends StatelessWidget {
     this.memCacheHeight,
     this.fadeOutDuration,
     this.placeholder,
+    this.titleId,
   });
 
   @override
@@ -151,9 +153,15 @@ class CachedImage extends StatelessWidget {
       ),
     );
 
+    String url = imageUrl;
+
+    if (url.contains('missing') && titleId != null) {
+      url = 'https://smarthard.net/static/animes/$titleId-placeholder.jpeg';
+    }
+
     try {
       return CachedNetworkImage(
-        imageUrl: imageUrl,
+        imageUrl: url,
         fit: fit,
         width: width,
         height: height,

@@ -9,6 +9,7 @@ class PlayerInfoHeader extends StatelessWidget {
   final int episodeNumber;
   final String studioName;
   final Widget skipButton;
+  final int titleId;
 
   const PlayerInfoHeader({
     super.key,
@@ -17,6 +18,7 @@ class PlayerInfoHeader extends StatelessWidget {
     required this.episodeNumber,
     required this.studioName,
     required this.skipButton,
+    required this.titleId,
   });
 
   @override
@@ -33,6 +35,7 @@ class PlayerInfoHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(4.0),
               child: CachedImage(
                 AppConfig.staticUrl + animePicture,
+                titleId: titleId,
               ),
             ),
           ),

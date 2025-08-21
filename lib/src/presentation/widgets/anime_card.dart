@@ -63,6 +63,7 @@ class AnimeCompactListTile extends StatelessWidget {
             child: CachedImage(
               AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
               memCacheWidth: 144,
+              titleId: data.anime!.id!,
             ),
           ),
         ),
@@ -222,6 +223,7 @@ class AnimeListTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   child: CachedImage(
                     AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+                    titleId: data.anime!.id!,
                   ),
                 ),
               ),
@@ -377,6 +379,7 @@ class AnimeCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0),
                 child: CachedImage(
                   AppConfig.staticUrl + (data.anime?.image?.original ?? ''),
+                  titleId: data.anime!.id!,
                 ),
               ),
             ),
@@ -463,6 +466,7 @@ class AnimeTileExp extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   child: CachedImage(
                     AppConfig.staticUrl + (data.image?.original ?? ''),
+                    titleId: data.id,
                   ),
                 ),
               ),

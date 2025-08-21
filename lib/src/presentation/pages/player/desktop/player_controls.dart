@@ -346,6 +346,7 @@ class _PlayerInfoHeader extends ConsumerWidget {
       episodeNumber: currentEpNumber,
       studioName: studioName,
       skipButton: _SkipButton(providerParameters),
+      titleId: extra.titleInfo.shikimoriId,
     );
   }
 }
