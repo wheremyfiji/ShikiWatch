@@ -138,6 +138,7 @@ flutter:
     - assets/svg/boosty.svg
     - assets/svg/usdt.svg
     - assets/svg/shikimori.svg
+    - assets/shaders/
     #- assets/json/shiki-studios-filtered-sorted.json
     #- .git/
     #- .git/refs/heads/

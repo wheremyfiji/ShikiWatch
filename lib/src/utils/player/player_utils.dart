@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
+import '../assets_helper.dart';
 import '../app_utils.dart';
 
+import 'player_shaders.dart';
 import 'font_base64.dart';
 
 class PlayerUtils {
@@ -17,10 +19,24 @@ class PlayerUtils {
   late String appDocumentsPath;
   late String fontsDirPath;
 
+  late String shadersDir;
+
   static Future<void> init(String appDocumentsPath) async {
     _instance.appDocumentsPath = appDocumentsPath;
 
     await _instance._prepareFont();
+    await _instance._prepareShaders();
+
+    _instance.shadersDir = '${path.join(appDocumentsPath, 'shaders')}/';
+  }
+
+  Future<void> _prepareShaders() async {
+    for (var e in PlayerShaders.values) {
+      await AssetsHelper.copyAssetToAppDir(
+        path.join('assets', 'shaders', e.nameAndExt),
+        targetDir: 'shaders',
+      );
+    }
   }
 
   Future<void> _prepareFont() async {
