@@ -1,20 +1,121 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/enums/shiki_gql.dart';
 import '../../../widgets/cached_image.dart';
-
 import '../graphql_anime.dart';
 
 class TitleHeader extends StatelessWidget {
-  const TitleHeader(this.title, {super.key});
+  const TitleHeader(
+    this.title, {
+    super.key,
+    required this.useRowLayout,
+  });
 
   final GraphqlAnime title;
+  final bool useRowLayout;
 
   @override
   Widget build(BuildContext context) {
+    if (useRowLayout) {
+      return Stack(
+        clipBehavior: Clip.hardEdge,
+        children: [
+          Positioned.fill(
+            child: CachedNetworkImage(
+              imageUrl: title.poster.originalUrl ?? '',
+              fit: BoxFit.cover,
+              cacheManager: cacheManager,
+            ),
+          ),
+          Positioned.fill(
+            top: -1,
+            bottom: -1,
+            left: -1,
+            right: -1,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    context.colorScheme.background,
+                    context.colorScheme.background.withOpacity(0.9),
+                    context.colorScheme.background,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [
+                    0.0,
+                    0.4,
+                    1.0,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, context.padding.top + 56, 16, 0),
+            child: Row(
+              children: [
+                // flex 5
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16.0),
+                  clipBehavior: Clip.antiAlias,
+                  child: AspectRatio(
+                    aspectRatio: 0.703,
+                    child: CachedImage(
+                      title.poster.originalUrl ?? '',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (title.score != 0) ...[
+                        _Score(
+                          title.score,
+                          padding: false,
+                        ),
+                      ],
+                      Text(
+                        title.russian ?? title.name,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textTheme.headlineSmall?.copyWith(
+                          height: 1.2,
+                          fontWeight: FontWeight.normal,
+                          color: context.colorScheme.onBackground,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _Info(
+                        kind: title.kind.rusName,
+                        status: title.status.rusName,
+                        season: _parseSeason(title.season),
+                        eps: _eps(
+                          aired: title.episodesAired,
+                          total: title.episodes,
+                          titleStatus: title.status,
+                        ),
+                        rating: title.rating.name,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ).animate().fade(),
+        ],
+      );
+    }
+
     return Stack(
       children: [
         Positioned.fill(
@@ -45,24 +146,23 @@ class TitleHeader extends StatelessWidget {
                   style: context.textTheme.headlineSmall?.copyWith(
                     height: 1.2,
                     fontWeight: FontWeight.normal,
-                    //color: imagePalette.value.onBackground,
                     color: context.colorScheme.onBackground,
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 4.0,
-              ),
-              _Info(
-                kind: title.kind.rusName,
-                status: title.status.rusName,
-                season: _parseSeason(title.season),
-                eps: _eps(
-                  aired: title.episodesAired,
-                  total: title.episodes,
-                  titleStatus: title.status,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 0, 0),
+                child: _Info(
+                  kind: title.kind.rusName,
+                  status: title.status.rusName,
+                  season: _parseSeason(title.season),
+                  eps: _eps(
+                    aired: title.episodesAired,
+                    total: title.episodes,
+                    titleStatus: title.status,
+                  ),
+                  rating: title.rating.name,
                 ),
-                rating: title.rating.name,
               ),
             ],
           ).animate().fade(),
@@ -175,16 +275,20 @@ class _BottomShadow extends StatelessWidget {
 }
 
 class _Score extends StatelessWidget {
-  const _Score(this.score);
+  const _Score(
+    this.score, {
+    this.padding = true,
+  });
 
   final double score;
+  final bool padding;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 14),
+          padding: padding ? const EdgeInsets.only(left: 14) : EdgeInsets.zero,
           child: RatingBarIndicator(
             rating: (score) / 2,
             itemSize: 16,
@@ -233,9 +337,6 @@ class _Info extends StatelessWidget {
       child: Wrap(
         spacing: 12,
         children: [
-          const SizedBox(
-            width: 4,
-          ),
           _InfoItem(
             title: 'Тип',
             content: '$kind • $status',

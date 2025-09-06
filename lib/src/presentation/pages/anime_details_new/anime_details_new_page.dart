@@ -38,8 +38,10 @@ import 'components/title_related.dart';
 import 'components/title_header.dart';
 import 'components/title_genres.dart';
 
-import 'graphql_anime.dart';
 import 'graphql_anime_ext.dart';
+import 'graphql_anime.dart';
+
+const kLayoutWidth = 800; //600
 
 class AnimeDetailsNewPage extends ConsumerStatefulWidget {
   const AnimeDetailsNewPage(this.extra, {super.key});
@@ -53,10 +55,14 @@ class AnimeDetailsNewPage extends ConsumerStatefulWidget {
 
 class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
   late double flexibleHeight;
+  late bool useRowLayout;
 
   @override
   void didChangeDependencies() {
-    flexibleHeight = MediaQuery.sizeOf(context).height / 2;
+    useRowLayout = MediaQuery.sizeOf(context).width >= kLayoutWidth;
+
+    flexibleHeight =
+        (MediaQuery.sizeOf(context).height / 2) / (useRowLayout ? 1.25 : 1);
 
     super.didChangeDependencies();
   }
@@ -132,7 +138,10 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                           color: context.theme.colorScheme.onBackground,
                         ),
                         act: true,
-                        background: TitleHeader(title),
+                        background: TitleHeader(
+                          title,
+                          useRowLayout: useRowLayout,
+                        ),
                       ),
                     ),
                     SliverPadding(
