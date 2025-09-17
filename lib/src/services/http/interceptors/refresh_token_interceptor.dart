@@ -28,7 +28,12 @@ class RefreshTokenInterceptor extends QueuedInterceptor {
         (err.requestOptions.headers['Authorization'] as String).split(' ').last;
 
     if (requestedAccessToken != SecureStorageService.instance.token) {
-      return handler.next(err);
+      final res = await _retry(
+        err.requestOptions,
+        SecureStorageService.instance.token,
+      );
+
+      return handler.resolve(res);
     }
 
     final newToken = await OAuthService.instance.refreshToken();
