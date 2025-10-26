@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../../utils/app_utils.dart';
 
 class InfoLinks extends StatelessWidget {
   const InfoLinks({super.key});
@@ -53,22 +52,30 @@ class InfoLinks extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
-            title: const Text('Shikimori'),
-            subtitle: const Text('Энциклопедия аниме и манги'),
-          ),
-          if (AppUtils.instance.isDesktop) ...[
-            _buildItem(
-              context,
-              title: 'Anime4K',
-              subtitle:
-                  'Набор высококачественных алгоритмов масштабирования и шумоподавления для аниме в реальном времени с открытым исходным кодом',
-              icon: Icons.four_k,
-              onTap: () => launchUrlString(
-                'https://bloc97.github.io/Anime4K/',
-                mode: LaunchMode.externalApplication,
+            title: Text(
+              'Shikimori',
+              style: TextStyle(
+                color: context.colorScheme.onBackground,
               ),
             ),
-          ],
+            subtitle: Text(
+              'Энциклопедия аниме и манги',
+              style: TextStyle(
+                color: context.colorScheme.onBackground.withOpacity(0.8),
+              ),
+            ),
+          ),
+          _buildItem(
+            context,
+            title: 'Anime4K',
+            subtitle:
+                'Набор высококачественных алгоритмов масштабирования и шумоподавления для аниме в реальном времени с открытым исходным кодом',
+            icon: Icons.four_k,
+            onTap: () => launchUrlString(
+              'https://bloc97.github.io/Anime4K/',
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
         ],
       ),
     );
