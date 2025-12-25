@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,12 +11,23 @@ import 'package:go_router/go_router.dart';
 import '../../../services/oauth/oauth_service.dart';
 import '../../../../secret.dart';
 
+import '../../../utils/app_utils.dart';
+import '../../../utils/extensions/buildcontext.dart';
 import '../../../utils/router.dart';
 import 'disclaimer_dialog.dart';
+import 'feature_tile.dart';
+
+const _authUrl =
+    'https://shikimori.one/oauth/authorize?client_id=$kShikiClientIdDesktop&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=user_rates';
 
 Future<void> _launchUrl() async {
-  if (!await launchUrl(Uri.parse(
-      'https://shikimori.one/oauth/authorize?client_id=$kShikiClientIdDesktop&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&response_type=code&scope=user_rates'))) {
+  if (Platform.isLinux) {
+    // final c = canLaunchUrl(Uri.parse(_authUrl));
+    openUrlLinux(_authUrl);
+
+    return;
+  }
+  if (!await launchUrl(Uri.parse(_authUrl))) {
     // throw Exception('Could not launch $_url');
     throw Exception('Could not launch login url');
   }
@@ -167,126 +181,303 @@ class _LoginDesktopPageState extends ConsumerState<LoginDesktopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(30),
-            child: Center(
-              child: SizedBox(
-                width: 400,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text(
-                      'Привет!',
-                      style: TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Для использования приложения\nнеобходимо войти в аккаунт Shikimori',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-
-                    const SizedBox(height: 8), //48
-
-                    if (isLoading) ...[
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                        ),
-                        child: const Column(
-                          children: [
-                            Center(child: CircularProgressIndicator()),
-                            SizedBox(height: 16),
-                            Center(child: Text('Получение токена')),
-                          ],
-                        ),
-                      ),
-                    ],
-                    if (!isLoading && !showInput) ...[
-                      FilledButton(
-                        onPressed: () async {
-                          bool? dialogValue = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => const DisclaimerDialog(),
-                          );
-                          if (dialogValue ?? false) {
-                            await _launchUrl();
-                            setState(() {
-                              showInput = true;
-                            });
-                            //return;
-                          }
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.login_outlined,
-                                //size: 32,
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text('Войти с помощью браузера'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      FilledButton.tonal(
-                        onPressed: () {
-                          context.push('/login/settings');
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.settings_outlined,
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text('Настройки'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-
-                    if (!isLoading && showInput) ...[
-                      TextField(
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          hintText: 'Код авторизации',
-                        ),
-                        obscureText: true,
-                        autocorrect: false,
-                        controller: _controller,
-                        onSubmitted: (value) {
-                          if (value.isEmpty) {
-                            return;
-                          }
-
-                          auth(value);
-                        },
-                      ),
-                    ],
-                  ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'ShikiWatch',
+              style: context.textTheme.displayLarge,
+            ),
+            Text(
+              'Неофициальное приложение для Шикимори',
+              textAlign: TextAlign.center,
+              style: context.textTheme.titleMedium?.copyWith(
+                color: context.colorScheme.onBackground.withOpacity(
+                  0.8,
                 ),
               ),
             ),
-          ),
+            if (!isLoading) ...[
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: FilledButton.tonal(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              bool? dialogValue = showInput
+                                  ? true
+                                  : await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) =>
+                                          const DisclaimerDialog(),
+                                    );
+                              if (dialogValue ?? false) {
+                                Clipboard.setData(
+                                  const ClipboardData(
+                                    text: _authUrl,
+                                  ),
+                                ).then((_) => showSnackBar(
+                                      ctx: context,
+                                      msg: 'Ссылка скопирована в буфер обмена',
+                                    ));
+                                setState(() {
+                                  showInput = true;
+                                });
+                              }
+                            },
+                      child: const Text('Скопировать ссылку для входа'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Flexible(
+                    child: FilledButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              bool? dialogValue = showInput
+                                  ? true
+                                  : await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) =>
+                                          const DisclaimerDialog(),
+                                    );
+                              if (dialogValue ?? false) {
+                                await _launchUrl();
+                                setState(() {
+                                  showInput = true;
+                                });
+                              }
+                            },
+                      child: const Text('Войти с помощью браузера'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (isLoading) ...[
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 24,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                ),
+                child: const Column(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Получение токена'),
+                  ],
+                ),
+              ),
+            ],
+            if (!isLoading && showInput) ...[
+              Row(
+                children: [
+                  const Spacer(),
+                  Flexible(
+                    flex: 4,
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        border: UnderlineInputBorder(),
+                        hintText: 'Код авторизации',
+                      ),
+                      // obscureText: true,
+                      autocorrect: false,
+                      controller: _controller,
+                      onSubmitted: (value) {
+                        if (value.isEmpty) {
+                          return;
+                        }
+
+                        auth(value);
+                      },
+                    ),
+                  ),
+                  const Spacer(),
+                ],
+              ),
+            ],
+          ],
         ),
       ),
     );
+
+    // return Scaffold(
+    //   body: Center(
+    //     child: SingleChildScrollView(
+    //       child: Padding(
+    //         padding: const EdgeInsets.all(30),
+    //         child: Center(
+    //           child: SizedBox(
+    //             width: 400,
+    //             child: Column(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               crossAxisAlignment: CrossAxisAlignment.stretch,
+    //               children: [
+    //                 const Text(
+    //                   'Привет!',
+    //                   style: TextStyle(
+    //                     fontSize: 48,
+    //                     fontWeight: FontWeight.bold,
+    //                   ),
+    //                 ),
+    //                 const SizedBox(height: 2),
+    //                 Text(
+    //                   'Для использования приложения\nнеобходимо войти в аккаунт Shikimori',
+    //                   style: Theme.of(context).textTheme.bodyMedium,
+    //                 ),
+
+    //                 const SizedBox(height: 8), //48
+
+    //                 if (isLoading) ...[
+    //                   Container(
+    //                     padding: const EdgeInsets.all(16),
+    //                     decoration: BoxDecoration(
+    //                       color: Theme.of(context).colorScheme.onPrimary,
+    //                       borderRadius:
+    //                           const BorderRadius.all(Radius.circular(20)),
+    //                     ),
+    //                     child: const Column(
+    //                       children: [
+    //                         Center(child: CircularProgressIndicator()),
+    //                         SizedBox(height: 16),
+    //                         Center(child: Text('Получение токена')),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 ],
+    //                 if (!isLoading && !showInput) ...[
+    //                   FilledButton(
+    //                     onPressed: () async {
+    //                       bool? dialogValue = await showDialog<bool>(
+    //                         context: context,
+    //                         builder: (context) => const DisclaimerDialog(),
+    //                       );
+    //                       if (dialogValue ?? false) {
+    //                         await _launchUrl();
+    //                         setState(() {
+    //                           showInput = true;
+    //                         });
+    //                         //return;
+    //                       }
+    //                     },
+    //                     child: const Padding(
+    //                       padding: EdgeInsets.all(8.0),
+    //                       child: Row(
+    //                         children: [
+    //                           Icon(
+    //                             Icons.login_outlined,
+    //                             //size: 32,
+    //                           ),
+    //                           SizedBox(
+    //                             width: 12,
+    //                           ),
+    //                           Text('Войти с помощью браузера'),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   ),
+    //                   const SizedBox(height: 8),
+    //                   FilledButton.tonal(
+    //                     onPressed: () {
+    //                       context.push('/login/settings');
+    //                     },
+    //                     child: const Padding(
+    //                       padding: EdgeInsets.all(8.0),
+    //                       child: Row(
+    //                         children: [
+    //                           Icon(
+    //                             Icons.settings_outlined,
+    //                           ),
+    //                           SizedBox(
+    //                             width: 12,
+    //                           ),
+    //                           Text('Настройки'),
+    //                         ],
+    //                       ),
+    //                     ),
+    //                   ),
+    //                 ],
+
+    //                 if (!isLoading && showInput) ...[
+    //                   TextField(
+    //                     decoration: const InputDecoration(
+    //                       border: UnderlineInputBorder(),
+    //                       hintText: 'Код авторизации',
+    //                     ),
+    //                     obscureText: true,
+    //                     autocorrect: false,
+    //                     controller: _controller,
+    //                     onSubmitted: (value) {
+    //                       if (value.isEmpty) {
+    //                         return;
+    //                       }
+
+    //                       auth(value);
+    //                     },
+    //                   ),
+    //                 ],
+    //               ],
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
+
+// class _FeatureTile extends StatelessWidget {
+//   final IconData icon;
+//   final String title;
+//   final String subtitle;
+//   final bool zeroPadding;
+
+//   const _FeatureTile({
+//     required this.icon,
+//     required this.title,
+//     required this.subtitle,
+//     this.zeroPadding = false,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+//       child: Row(
+//         children: [
+//           Icon(
+//             icon,
+//             color: context.colorScheme.secondary,
+//           ),
+//           const SizedBox(width: 16),
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Text(
+//                 title,
+//                 style: context.textTheme.bodyLarge,
+//               ),
+//               // const SizedBox(height: 2),
+//               Text(
+//                 subtitle,
+//                 style: context.textTheme.bodySmall?.copyWith(
+//                   fontSize: 14.0,
+//                   color: context.colorScheme.onBackground.withOpacity(0.8),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

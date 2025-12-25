@@ -78,3 +78,27 @@ void showErrorSnackBar({
   sm.clearSnackBars();
   sm.showSnackBar(snackBar);
 }
+
+Future<bool> openUrlLinux(String url) async {
+  if (!Platform.isLinux) {
+    throw UnsupportedError('This method is only supported on Linux.');
+  }
+
+  try {
+    ProcessResult result = await Process.run('xdg-open', [url]);
+
+    if (result.exitCode != 0) {
+      result = await Process.run('/usr/bin/xdg-open', [url]);
+    }
+
+    if (result.exitCode != 0) {
+      return false;
+      // throw Exception('Could not launch URL: ${result.stderr}');
+    }
+
+    return true;
+  } catch (e) {
+    debugPrint('Error launching URL: $e');
+    return false;
+  }
+}
