@@ -156,7 +156,8 @@ class CachedImage extends StatelessWidget {
     String url = imageUrl;
 
     if (url.contains('missing') && titleId != null) {
-      url = 'https://smarthard.net/static/animes/$titleId-placeholder.jpeg';
+      // url = 'https://smarthard.net/static/animes/$titleId-placeholder.jpeg';
+      url = 'https://smarthard.net/static/animes/$titleId.jpeg';
     }
 
     try {
