@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../domain/enums/shiki_gql.dart';
+import '../../../widgets/shadowed_overflow_decorator.dart';
 import '../graphql_anime.dart';
 
 class TitleGenres extends StatelessWidget {
@@ -11,25 +12,27 @@ class TitleGenres extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Wrap(
-        spacing: 8.0,
-        children: [
-          const SizedBox(
-            width: 8.0,
-          ),
-          ...List.generate(
-            genres.length,
-            (index) => _GenreChip(
-              genre: genres[index],
-              onTap: () {},
+    return ShadowedOverflowDecorator(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Wrap(
+          spacing: 8.0,
+          children: [
+            const SizedBox(
+              width: 8.0,
             ),
-          ),
-          const SizedBox(
-            width: 8.0,
-          ),
-        ],
+            ...List.generate(
+              genres.length,
+              (index) => _GenreChip(
+                genre: genres[index],
+                onTap: () {},
+              ),
+            ),
+            const SizedBox(
+              width: 8.0,
+            ),
+          ],
+        ),
       ),
     );
   }

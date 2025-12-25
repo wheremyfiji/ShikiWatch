@@ -33,7 +33,7 @@ import '../anime_details/videos_page.dart';
 import 'components/title_other_details.dart';
 import 'components/title_screenshots.dart';
 import 'components/title_characters.dart';
-import 'components/title_comments.dart';
+import '../comments/comments_page.dart';
 import 'components/title_related.dart';
 import 'components/title_header.dart';
 import 'components/title_genres.dart';
@@ -196,11 +196,9 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         sliver: SliverToBoxAdapter(
                           child: TitleDescriptionFromHtml(
-                            title.descriptionLength > 0
-                                ? title.description
-                                : 'Описание отсутствует',
+                            title.description,
                             shouldExpand: !AppUtils.instance.isDesktop &&
-                                title.descriptionLength > 500,
+                                title.descriptionLength > 600,
                           ).animate().fade(),
                         ),
                       ),
@@ -237,9 +235,30 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                       studios: title.studios,
                       origin: title.origin.rusName,
                     ),
-                    SliverList(
+                    SliverPrototypeExtentList(
+                      prototypeItem: const ListTile(),
                       delegate: SliverChildListDelegate.fixed(
                         [
+                          if (title.topic != null) ...[
+                            ListTile(
+                              onTap: () => Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  pageBuilder:
+                                      (context, animation1, animation2) =>
+                                          CommentsPage(
+                                    topicId: title.topic!.id,
+                                    name: title.russian ?? title.name,
+                                  ),
+                                  transitionDuration: Duration.zero,
+                                  reverseTransitionDuration: Duration.zero,
+                                ),
+                              ),
+                              leading: const Icon(Icons.comment_rounded),
+                              title: const Text('Обсуждение'),
+                              trailing: const Icon(Icons.chevron_right_rounded),
+                            ),
+                          ],
                           ListTile(
                             onTap: () => Navigator.push(
                               context,
@@ -302,19 +321,20 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                         ],
                       ),
                     ),
-                    if (title.topic != null) ...[
-                      const SliverToBoxAdapter(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Divider(),
-                        ),
-                      ),
-                      TitleComments(
-                        id: title.topic!.id,
-                        count: title.topic!.commentsCount,
-                        name: title.russian ?? title.name,
-                      ),
-                    ],
+
+                    // if (title.topic != null) ...[
+                    //   const SliverToBoxAdapter(
+                    //     child: Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    //       child: Divider(),
+                    //     ),
+                    //   ),
+                    //   TitleComments(
+                    //     id: title.topic!.id,
+                    //     count: title.topic!.commentsCount,
+                    //     name: title.russian ?? title.name,
+                    //   ),
+                    // ],
                   ];
                 },
                 loading: () => [

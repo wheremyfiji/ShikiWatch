@@ -726,7 +726,7 @@ class _AnimeUserRateBottomSheetState
     final createdDate = DateFormat.yMMMd().format(created); //yMMMMd
     final createdTime = DateFormat.Hm().format(created);
 
-    createdAt = '$createdDate ($createdTime)';
+    createdAt = '$createdDate, $createdTime';
 
     final updated =
         DateTime.tryParse(widget.data.userRate?.updatedAt ?? '')?.toLocal() ??
@@ -734,7 +734,7 @@ class _AnimeUserRateBottomSheetState
     final updatedDate = DateFormat.yMMMd().format(updated);
     final updatedTime = DateFormat.Hm().format(updated);
 
-    updatedAt = '$updatedDate ($updatedTime)';
+    updatedAt = '$updatedDate, $updatedTime';
   }
 
   @override
@@ -858,11 +858,48 @@ class _AnimeUserRateBottomSheetState
                         ],
                       ),
                     ),
-                    IconButton(
-                      onPressed:
-                          isLoading ? null : () => context.navigator.pop(),
-                      icon: const Icon(Icons.close_rounded),
-                    ),
+                    // IconButton(
+                    //   onPressed:
+                    //       isLoading ? null : () => context.navigator.pop(),
+                    //   icon: const Icon(Icons.close_rounded),
+                    // ),
+                    if (canDelete)
+                      IconButton(
+                        tooltip: 'Удалить из списка',
+                        onPressed: () async {
+                          bool value = await showDialog<bool>(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const DeleteDialog(),
+                              ) ??
+                              false;
+
+                          if (!value) {
+                            return;
+                          }
+
+                          ref
+                              .read(updateAnimeRateButtonProvider.notifier)
+                              .deleteRate(
+                                needUpdate: widget.needUpdate,
+                                rateId: widget.data.userRate!.id!,
+                                animeId: widget.data.id!,
+                                status: initStatus ?? '',
+                                onFinally: () {
+                                  Navigator.of(context).pop();
+
+                                  showSnackBar(
+                                    ctx: context,
+                                    msg:
+                                        'Удалено из списка "${_getChipLabel(selectedStatus ?? 0)}"',
+                                    dur: const Duration(seconds: 3),
+                                  );
+                                },
+                              );
+                        },
+                        icon: const Icon(Icons.delete_rounded),
+                        color: context.colorScheme.error,
+                      ),
                     const SizedBox(
                       width: 8.0,
                     ),
@@ -929,6 +966,19 @@ class _AnimeUserRateBottomSheetState
                       const SizedBox(
                         width: 16.0,
                       ),
+                      // Expanded(
+                      //   flex: 2,
+                      //   child: UserRateNumberField(
+                      //     label: 'Повторения',
+                      //     initial: rewatches,
+                      //     onChanged: (value) {
+                      //       HapticFeedback.lightImpact();
+                      //       setState(() {
+                      //         rewatches = value;
+                      //       });
+                      //     },
+                      //   ),
+                      // ),
                       Expanded(
                         flex: 2,
                         child: Card(
@@ -1066,9 +1116,12 @@ class _AnimeUserRateBottomSheetState
                   color: context.colorScheme.surface,
                   surfaceTintColor: context.colorScheme.surfaceTint,
                   shadowColor: Colors.transparent,
-                  //borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(12.0),
+                    topLeft: Radius.circular(12.0),
+                  ),
                   type: MaterialType.card,
-                  clipBehavior: Clip.hardEdge,
+                  clipBehavior: Clip.antiAlias,
                   elevation: 4,
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(
@@ -1114,43 +1167,43 @@ class _AnimeUserRateBottomSheetState
                             ],
                           ),
                         const Spacer(),
-                        if (canDelete)
-                          IconButton(
-                            tooltip: 'Удалить из списка',
-                            onPressed: () async {
-                              bool value = await showDialog<bool>(
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        const DeleteDialog(),
-                                  ) ??
-                                  false;
+                        // if (canDelete)
+                        //   IconButton(
+                        //     tooltip: 'Удалить из списка',
+                        //     onPressed: () async {
+                        //       bool value = await showDialog<bool>(
+                        //             context: context,
+                        //             builder: (BuildContext context) =>
+                        //                 const DeleteDialog(),
+                        //           ) ??
+                        //           false;
 
-                              if (!value) {
-                                return;
-                              }
+                        //       if (!value) {
+                        //         return;
+                        //       }
 
-                              ref
-                                  .read(updateAnimeRateButtonProvider.notifier)
-                                  .deleteRate(
-                                    needUpdate: widget.needUpdate,
-                                    rateId: widget.data.userRate!.id!,
-                                    animeId: widget.data.id!,
-                                    status: initStatus ?? '',
-                                    onFinally: () {
-                                      Navigator.of(context).pop();
+                        //       ref
+                        //           .read(updateAnimeRateButtonProvider.notifier)
+                        //           .deleteRate(
+                        //             needUpdate: widget.needUpdate,
+                        //             rateId: widget.data.userRate!.id!,
+                        //             animeId: widget.data.id!,
+                        //             status: initStatus ?? '',
+                        //             onFinally: () {
+                        //               Navigator.of(context).pop();
 
-                                      showSnackBar(
-                                        ctx: context,
-                                        msg:
-                                            'Удалено из списка "${_getChipLabel(selectedStatus ?? 0)}"',
-                                        dur: const Duration(seconds: 3),
-                                      );
-                                    },
-                                  );
-                            },
-                            icon: const Icon(Icons.delete_rounded),
-                            color: context.colorScheme.error,
-                          ),
+                        //               showSnackBar(
+                        //                 ctx: context,
+                        //                 msg:
+                        //                     'Удалено из списка "${_getChipLabel(selectedStatus ?? 0)}"',
+                        //                 dur: const Duration(seconds: 3),
+                        //               );
+                        //             },
+                        //           );
+                        //     },
+                        //     icon: const Icon(Icons.delete_rounded),
+                        //     color: context.colorScheme.error,
+                        //   ),
                         FloatingActionButton(
                           onPressed: isLoading
                               ? null

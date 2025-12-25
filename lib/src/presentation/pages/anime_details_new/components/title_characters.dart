@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../widgets/cached_image.dart';
+import '../../../widgets/custom_radius_animator.dart';
 import '../graphql_character.dart';
 
 const String shikiMissingImage =
@@ -19,11 +21,6 @@ class TitleCharacters extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate.fixed(
         [
-          // ListTile(
-          //   onTap: () {},
-          //   title: const Text('Персонажи'),
-          //   trailing: const Icon(Icons.chevron_right_rounded),
-          // ),
           Padding(
             padding: const EdgeInsets.only(bottom: 4.0),
             child: Row(
@@ -54,8 +51,14 @@ class TitleCharacters extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 120, //210
+            height: 164, //120
             child: ListView.builder(
+              itemExtentBuilder: (index, dimensions) {
+                final isFirstItem = index == 0;
+                final isLast = index == characterRoles.length - 1;
+
+                return 100 + (isFirstItem ? 16 : 0) + (isLast ? 16 : 8);
+              },
               scrollDirection: Axis.horizontal,
               itemCount: characterRoles.length,
               itemBuilder: (context, index) {
@@ -68,9 +71,7 @@ class TitleCharacters extends StatelessWidget {
                     left: isFirstItem ? 16 : 0,
                     right: isLast ? 16 : 8,
                   ),
-                  height: 120,
                   child: _CharacterCard(item.character),
-                  //child: CharacterCard(item.character!),
                 );
               },
             ),
@@ -81,46 +82,118 @@ class TitleCharacters extends StatelessWidget {
   }
 }
 
-class _CharacterCard extends StatelessWidget {
+class _CharacterCard extends HookWidget {
   const _CharacterCard(this.character);
 
   final Character character;
 
+  static const _defaultRadius = 64.0;
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      borderRadius: BorderRadius.circular(12.0),
-      color: Colors.transparent,
-      clipBehavior: Clip.hardEdge,
-      child: InkWell(
-        onTap: () => context.pushNamed(
-          'character',
-          pathParameters: <String, String>{
-            'id': (character.id).toString(),
-          },
+    final targetRadius = useState(_defaultRadius);
+
+    return Column(
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: CustomRadiusAnimator(
+              targetRadius: targetRadius.value,
+              builder: (context, r) {
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(r),
+                  child: Stack(
+                    children: [
+                      CachedImage(
+                        character.poster ?? shikiMissingImage,
+                        width: 100,
+                      ),
+                      Align(
+                        child: SizedBox(
+                          width: 100,
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: GestureDetector(
+                              onLongPressStart: (_) {
+                                targetRadius.value = 24.0;
+                              },
+                              onLongPressEnd: (_) {
+                                targetRadius.value = _defaultRadius;
+                              },
+                              child: InkWell(
+                                onHover: (isHovering) {
+                                  targetRadius.value =
+                                      isHovering ? 24.0 : _defaultRadius;
+                                },
+                                onTap: () => context.pushNamed(
+                                  'character',
+                                  pathParameters: <String, String>{
+                                    'id': (character.id).toString(),
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
         ),
-        child: Column(
-          children: [
-            CachedCircleImage(
-              character.poster ?? shikiMissingImage,
-              radius: 48,
-              clipBehavior: Clip.antiAlias,
-              memCacheHeight: 200,
-            ),
-            LimitedBox(
-              maxWidth: 100,
-              child: Text(
-                character.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+        LimitedBox(
+          maxWidth: 100,
+          child: Text(
+            character.russian ?? character.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-      ),
+      ],
     );
   }
 }
+
+// class _CharacterCard extends StatelessWidget {
+//   const _CharacterCard(this.character);
+
+//   final Character character;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Material(
+//       borderRadius: BorderRadius.circular(12.0),
+//       color: Colors.transparent,
+//       clipBehavior: Clip.hardEdge,
+//       child: InkWell(
+//         onTap: () => context.pushNamed(
+//           'character',
+//           pathParameters: <String, String>{
+//             'id': (character.id).toString(),
+//           },
+//         ),
+//         child: Column(
+//           children: [
+//             CachedCircleImage(
+//               character.poster ?? shikiMissingImage,
+//               radius: 48,
+//               clipBehavior: Clip.antiAlias,
+//               memCacheHeight: 200,
+//             ),
+//             LimitedBox(
+//               maxWidth: 100,
+//               child: Text(
+//                 character.name,
+//                 maxLines: 1,
+//                 overflow: TextOverflow.ellipsis,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class AllCharactersBottomSheet extends StatelessWidget {
   final List<CharacterRole> characters;
