@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import '../../domain/enums/color_scheme_variant.dart';
 import '../../domain/enums/explore_ongoing_now.dart';
 import '../../domain/enums/library_layout_mode.dart';
+import '../../utils/player/player_shaders.dart';
 import '../../domain/enums/library_state.dart';
 import '../../domain/enums/anime_source.dart';
 
@@ -31,6 +32,7 @@ const _playerNextEpisode = 'playerNextEpisode';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
+const _playerShadersVersion = 'playerShadersVersion';
 
 final preferencesProvider = Provider<PreferencesService>((ref) {
   throw Exception('preferencesProvider not initialized');
@@ -56,6 +58,20 @@ class PreferencesService {
   }
 
   SharedPreferences get sharedPreferences => _preferences;
+
+  int getPlayerShadersVersion() {
+    final value = _preferences.getInt(_playerShadersVersion);
+
+    if (value == null) {
+      return 0;
+    }
+
+    return value;
+  }
+
+  Future<void> setPlayerShadersVersion() async {
+    await _preferences.setInt(_playerShadersVersion, kPlayerShadersVersion);
+  }
 
   Future<void> resetAppLaunchCount() async {
     await _preferences.setInt(_appLaunchCountKey, 1);

@@ -29,6 +29,10 @@ class ShaderSelectorWidget extends ConsumerWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: Card(
+                  // elevation: 0,
+                  // color: context.colorScheme.primaryContainer,
+                  // shadowColor: Colors.transparent,
+                  // surfaceTintColor: Colors.transparent,
                   margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                   child: ListTile(
                     title: Text(
@@ -37,11 +41,16 @@ class ShaderSelectorWidget extends ConsumerWidget {
                       //     :
                       'Шейдеры',
                       style: context.textTheme.titleLarge,
+                      // style: context.textTheme.titleLarge?.copyWith(
+                      //   color: context.colorScheme.onPrimaryContainer,
+                      // ),
                     ),
                     subtitle: Text(
-                      'Порядок выбора определяет порядок наложения',
+                      'При использовании возможны проблемы с воспроизведением.\nНекоторые шейдеры можно наслаивать друг на друга.',
                       style: context.textTheme.bodySmall?.copyWith(
                         color: context.colorScheme.onSurfaceVariant,
+                        // color: context.colorScheme.onPrimaryContainer
+                        //     .withOpacity(0.8),
                       ),
                     ),
                     trailing: activeShaders.isNotEmpty
@@ -69,7 +78,7 @@ class ShaderSelectorWidget extends ConsumerWidget {
               //                   style:
               //                       Theme.of(context).textTheme.headlineSmall),
               //               Text(
-              //                 'Порядок выбора определяет порядок наложения',
+              //                 'При использовании возможны проблемы с воспроизведением.\nНекоторые шейдеры можно наслаивать друг на друга.',
               //                 style: TextStyle(
               //                   fontSize: 12,
               //                   color: context.colorScheme.onSurfaceVariant,

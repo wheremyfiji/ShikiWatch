@@ -1,3 +1,5 @@
+const int kPlayerShadersVersion = 1;
+
 const List<PlayerShader> kPlayerShaders = [
   PlayerShader(
     id: 'grain',
@@ -11,6 +13,19 @@ const List<PlayerShader> kPlayerShaders = [
     name: 'B/W',
     description: 'Классический черно-белый фильтр.',
     filePath: 'grayscale.glsl',
+  ),
+  // 4k Experimental-Effects
+  PlayerShader(
+    id: '4k-t-hq',
+    name: 'Anime4K Thin',
+    description: 'Делает линии на изображении тоньше.',
+    filePath: 'Anime4K_Thin_HQ.glsl',
+  ),
+  PlayerShader(
+    id: '4k-d-hq',
+    name: 'Anime4K Darken',
+    description: 'Затемняет линии на изображении.',
+    filePath: 'Anime4K_Darken_HQ.glsl',
   ),
   // 4k mode a
   PlayerShader(

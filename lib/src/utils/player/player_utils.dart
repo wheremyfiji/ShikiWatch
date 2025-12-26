@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
+import '../../services/preferences/preferences_service.dart';
 import '../assets_helper.dart';
 import '../app_utils.dart';
 
@@ -21,13 +22,24 @@ class PlayerUtils {
 
   late String shadersDir;
 
-  static Future<void> init(String appDocumentsPath) async {
+  static Future<void> init(
+    String appDocumentsPath, {
+    required PreferencesService preferencesService,
+  }) async {
     _instance.appDocumentsPath = appDocumentsPath;
+    _instance.shadersDir = '${path.join(appDocumentsPath, 'shaders')}/';
+
+    if (kPlayerShadersVersion > preferencesService.getPlayerShadersVersion()) {
+      bool exists = await Directory(_instance.shadersDir).exists();
+      if (exists) {
+        await Directory(_instance.shadersDir).delete(recursive: true);
+      }
+    }
 
     await _instance._prepareFont();
     await _instance._prepareShaders();
 
-    _instance.shadersDir = '${path.join(appDocumentsPath, 'shaders')}/';
+    await preferencesService.setPlayerShadersVersion();
   }
 
   Future<void> _prepareShaders() async {

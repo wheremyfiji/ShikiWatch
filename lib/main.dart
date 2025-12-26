@@ -112,10 +112,6 @@ void initApp() async {
 
   AppUtils.init(appCacheDir);
 
-  final appDocumentsPath =
-      await path_prov.getApplicationSupportDirectory().then((d) => d.path);
-  PlayerUtils.init(appDocumentsPath);
-
   await SecureStorageService.initialize();
 
   if (Platform.isWindows || Platform.isLinux) {
@@ -126,6 +122,13 @@ void initApp() async {
   final preferencesService = await PreferencesService.initialize();
   final packageInfo = await PackageInfo.fromPlatform();
   final dynamicColors = await getDynamicColors();
+
+  final appDocumentsPath =
+      await path_prov.getApplicationSupportDirectory().then((d) => d.path);
+  await PlayerUtils.init(
+    appDocumentsPath,
+    preferencesService: preferencesService,
+  );
 
   AndroidDeviceInfo? androidInfo;
   WindowsDeviceInfo? windowsInfo;

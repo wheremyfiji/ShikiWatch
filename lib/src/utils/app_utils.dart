@@ -14,7 +14,7 @@ class AppUtils {
   late String userAgent;
   late String appCachePath;
 
-  static init(Directory appCacheDir) {
+  static void init(Directory appCacheDir) {
     _instance.appCachePath = appCacheDir.path;
 
     _instance.isDesktop =
