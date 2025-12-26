@@ -1,28 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:intl/intl.dart';
 
+import '../../settings/widgets/player_long_press_seek.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/duration.dart';
 import '../../../providers/app_theme_provider.dart';
 import '../../../providers/settings_provider.dart';
-import '../../../widgets/auto_hide.dart';
-import '../../../widgets/error_widget.dart';
-import '../../settings/widgets/player_long_press_seek.dart';
-import '../domain/player_page_extra.dart';
 import '../domain/player_provider_parameters.dart';
+import '../../../widgets/error_widget.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
-import '../player_provider.dart';
-
-import '../shared/next_ep_countdown.dart';
 import '../shared/player_speed_popup.dart';
 import '../shared/quality_popup_menu.dart';
+import '../domain/player_page_extra.dart';
+import '../shared/next_ep_countdown.dart';
+import '../../../widgets/auto_hide.dart';
+import '../shaders_provider.dart';
+import '../player_provider.dart';
+
 import 'components/double_tap_seek_button.dart';
 import 'components/bottom_controls.dart';
 import 'components/seek_indicator.dart';
@@ -114,6 +115,9 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     final longPressSeek = ref.watch(
         settingsProvider.select((settings) => settings.playerLongPressSeek));
 
+    final playerNextEpisode = ref.watch(
+        settingsProvider.select((settings) => settings.playerNextEpisode));
+
     final viewPadding = context.viewPadding;
     final safePaddingTop = useState(viewPadding.top);
     final safePaddingBottom = useState(viewPadding.bottom);
@@ -123,6 +127,8 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     if (viewPadding.bottom > 0) {
       safePaddingBottom.value = viewPadding.bottom;
     }
+
+    ref.watch(shaderApplicatorProvider);
 
     final studioName = widget.extra.studio.name
         .replaceFirst('.Subtitles', ' (Субтитры)')
@@ -431,7 +437,8 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
                     ),
                   ),
                 //Center controls
-                ((notifier.hasNextEp && notifier.completed))
+                ((notifier.hasNextEp && notifier.completed) &&
+                        playerNextEpisode)
                     ? Align(
                         child: NextEpisodeCountdown(
                           number: notifier.currentEpNumber,

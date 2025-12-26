@@ -5,13 +5,14 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-// import '../../../../utils/app_utils.dart';
 import '../../../providers/app_theme_provider.dart';
-import '../../../widgets/error_widget.dart';
-import '../domain/player_page_extra.dart';
 import '../domain/player_provider_parameters.dart';
-import '../player_provider.dart';
+import '../../../widgets/error_widget.dart';
 import '../shared/buffering_indicator.dart';
+import '../domain/player_page_extra.dart';
+import '../shaders_provider.dart';
+import '../player_provider.dart';
+
 import 'player_controls.dart';
 
 class DesktopPlayerPage extends ConsumerWidget {
@@ -33,8 +34,7 @@ class DesktopPlayerPage extends ConsumerWidget {
     final playableContentAsync = ref.watch(
         playerPageProvider(p).select((value) => value.playableContentAsync));
 
-    // final shadersExists =
-    //     ref.watch(playerPageProvider(p).select((value) => value.shadersExists));
+    ref.watch(shaderApplicatorProvider);
 
     final playerWidget = Align(
       child: RepaintBoundary(

@@ -31,9 +31,9 @@ class PlayerUtils {
   }
 
   Future<void> _prepareShaders() async {
-    for (var e in PlayerShaders.values) {
+    for (final s in kPlayerShaders) {
       await AssetsHelper.copyAssetToAppDir(
-        path.join('assets', 'shaders', e.nameAndExt),
+        'assets/shaders/${s.filePath}',
         targetDir: 'shaders',
       );
     }

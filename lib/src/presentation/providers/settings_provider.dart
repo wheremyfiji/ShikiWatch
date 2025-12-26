@@ -43,6 +43,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
           _preferencesService.getPlayerAndroidNewAudioBackend(),
       explorePageLayout: _preferencesService.getExplorePageLayout(),
       explorePageSort: _preferencesService.getExplorePageSort(),
+      playerNextEpisode: _preferencesService.getPlayerNextEpisode(),
     );
   }
 
@@ -163,6 +164,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setExplorePageSort(newValue);
     state = state.copyWith(
       explorePageSort: newValue,
+    );
+  }
+
+  Future<void> setPlayerNextEpisode(bool newValue) async {
+    await _preferencesService.setPlayerNextEpisode(newValue);
+    state = state.copyWith(
+      playerNextEpisode: newValue,
     );
   }
 }

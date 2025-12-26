@@ -27,6 +27,7 @@ const _shikiAllowExpContent = 'shikiAllowExpContent';
 const _playerAndroidNewAudioBackend = 'playerAndroidNewAudioBackend';
 const _explorePageLayout = 'explorePageLayout';
 const _explorePageSort = 'explorePageSort';
+const _playerNextEpisode = 'playerNextEpisode';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
@@ -290,5 +291,15 @@ class PreferencesService {
 
   Future<void> setExplorePageSort(ExplorePageSort v) async {
     await _preferences.setString(_explorePageSort, v.name);
+  }
+
+  bool getPlayerNextEpisode() {
+    final value = _preferences.getBool(_playerNextEpisode);
+
+    return value ?? true;
+  }
+
+  Future<void> setPlayerNextEpisode(bool v) async {
+    await _preferences.setBool(_playerNextEpisode, v);
   }
 }

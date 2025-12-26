@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../domain/player_provider_parameters.dart';
-
-import '../../player_provider.dart';
+import '../../shared/audio_video_progress_bar.dart';
 import '../../shared/skip_fragment_button.dart';
+import '../../shared/player_settings.dart';
+import '../../shaders_provider.dart';
+import '../../player_provider.dart';
 
 class BottomControls extends ConsumerWidget {
   final PlayerProviderParameters p;
@@ -35,6 +36,8 @@ class BottomControls extends ConsumerWidget {
         opTimecode.length == 2 &&
         (opTimecode.first) <= position.inSeconds &&
         opTimecode.last > position.inSeconds;
+
+    final activeShaders = ref.watch(activeShadersProvider);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -88,6 +91,14 @@ class BottomControls extends ConsumerWidget {
                 timeLabelPadding: 4,
                 timeLabelLocation: TimeLabelLocation.below,
                 timeLabelType: TimeLabelType.totalTime,
+                timecodeRanges: opTimecode.length == 2
+                    ? [
+                        (
+                          start: Duration(seconds: opTimecode.first),
+                          end: Duration(seconds: opTimecode.last)
+                        ),
+                      ]
+                    : null,
               ),
             ),
             const SizedBox(
@@ -107,16 +118,25 @@ class BottomControls extends ConsumerWidget {
               tooltip: 'Перемотать 85 секунд',
             ),
             IconButton(
+              tooltip: 'Anime4K шейдеры',
               color: Colors.white,
-              onPressed: () =>
-                  ref.read(playerPageProvider(p)).changePlayerFit(),
-              icon: Icon(
-                playerFit != BoxFit.contain
-                    ? Icons.close_fullscreen_rounded
-                    : Icons.open_in_full_rounded,
-              ),
+              onPressed: () => ShaderSelectorWidget.show(context),
+              icon: Icon(activeShaders.isNotEmpty
+                  ? Icons.four_k
+                  : Icons.four_k_outlined),
               iconSize: 21,
             ),
+            // IconButton(
+            //   color: Colors.white,
+            //   onPressed: () =>
+            //       ref.read(playerPageProvider(p)).changePlayerFit(),
+            //   icon: Icon(
+            //     playerFit != BoxFit.contain
+            //         ? Icons.close_fullscreen_rounded
+            //         : Icons.open_in_full_rounded,
+            //   ),
+            //   iconSize: 21,
+            // ),
             // IconButton(
             //   onPressed: () =>
             //       MobilePlayerSettings.show(context),

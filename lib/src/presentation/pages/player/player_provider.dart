@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as w;
-import 'package:intl/intl.dart';
 
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,9 +13,9 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:intl/intl.dart';
 
 import '../../../services/anime_database/anime_database_provider.dart';
 import '../../../../anime_lib/enums/translation_type.dart';
@@ -28,19 +27,18 @@ import '../../../domain/enums/stream_quality.dart';
 import '../../../domain/enums/anime_source.dart';
 import '../../../utils/player/player_utils.dart';
 import '../../providers/settings_provider.dart';
-import '../../../../anime_lib/anilib_api.dart';
 import '../../../../anime365/enums/enums.dart';
+import '../../../../anime_lib/anilib_api.dart';
 import '../../../../anime365/anime365.dart';
 import '../../../constants/config.dart';
 import '../../../utils/app_utils.dart';
-import '../../../../kodik/kodik.dart';
 import '../../widgets/auto_hide.dart';
-import '../../../utils/shaders.dart';
+import '../../../../kodik/kodik.dart';
 import '../../../../secret.dart';
 
-import 'domain/player_provider_parameters.dart';
-import 'domain/player_page_extra.dart';
 import 'domain/playable_content.dart';
+import 'domain/player_page_extra.dart';
+import 'domain/player_provider_parameters.dart';
 import 'domain/playlist_item.dart';
 
 final playerPageProvider = ChangeNotifierProvider.autoDispose
@@ -95,7 +93,7 @@ class PlayerController extends SafeChangeNotifier {
 
   late DiscordRPC _discordRPC;
   bool _useDiscordRPC = false;
-  Directory? _appDir;
+  // Directory? _appDir;
   int? _sdkVersion;
   int _videoW = 0;
   int _videoH = 0;
@@ -179,12 +177,14 @@ class PlayerController extends SafeChangeNotifier {
 
     await _parseEpisode();
 
+    _safeHls();
+
     playableContentAsync.whenData((_) async {
       if (!_parseQuality()) {
         return;
       }
 
-      // await _setMpvExtras(player.platform as NativePlayer);
+      // await _safeMpvSetPropertyExtras(player.platform as NativePlayer);
       await _setAndroidSubFont();
 
       if (_animeSourceType == AnimeSource.anilib) {
@@ -211,13 +211,12 @@ class PlayerController extends SafeChangeNotifier {
         );
       }
 
-      await (player.platform as NativePlayer).setProperty(
-        'demuxer-lavf-o',
-        'http_persistent=0,seg_max_retry=10,insecure=yes', //  fflags=+discardcorrupt
-      );
-
-      await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
-      //await (player.platform as NativePlayer).setProperty('insecure', 'yes');
+      // await (player.platform as NativePlayer).setProperty(
+      //   'demuxer-lavf-o',
+      //   'http_persistent=0,seg_max_retry=10,insecure=yes', //  fflags=+discardcorrupt
+      // );
+      // await (player.platform as NativePlayer).setProperty('tls-verify', 'no');
+      // //await (player.platform as NativePlayer).setProperty('insecure', 'yes');
 
       if (_playerAndroidNewAudioBackend && Platform.isAndroid) {
         await (player.platform as NativePlayer).setProperty('ao', 'audiotrack');
@@ -240,7 +239,7 @@ class PlayerController extends SafeChangeNotifier {
 
       if (AppUtils.instance.isDesktop) {
         prefs = await SharedPreferences.getInstance();
-        _appDir = await getApplicationSupportDirectory();
+        // _appDir = await getApplicationSupportDirectory();
         await player.setVolume(prefs.getDouble('player_volume') ?? 40.0);
 
         _updateDiscordRpc();
@@ -383,33 +382,33 @@ class PlayerController extends SafeChangeNotifier {
   }
 
   Future<void> toggleShaders() async {
-    if (shaders) {
-      await (player.platform as NativePlayer).setProperty('glsl-shaders', '');
-      await _resizeVideoTexture(true);
-      shaders = false;
+    // if (shaders) {
+    //   await (player.platform as NativePlayer).setProperty('glsl-shaders', '');
+    //   await _resizeVideoTexture(true);
+    //   shaders = false;
 
-      notifyListeners();
-    } else {
-      bool exists = await Directory(getShadersDir(_appDir!.path)).exists();
-      shadersExists = exists;
-      if (!exists) {
-        notifyListeners();
-        return;
-      }
+    //   notifyListeners();
+    // } else {
+    //   bool exists = await Directory(getShadersDir(_appDir!.path)).exists();
+    //   shadersExists = exists;
+    //   if (!exists) {
+    //     notifyListeners();
+    //     return;
+    //   }
 
-      final resize = await _resizeVideoTexture(false);
-      if (!resize) {
-        return;
-      }
+    //   final resize = await _resizeVideoTexture(false);
+    //   if (!resize) {
+    //     return;
+    //   }
 
-      await (player.platform as NativePlayer).setProperty(
-        'glsl-shaders',
-        anime4kModeAFast(_appDir!.path),
-      ); //  anime4kModeDoubleA  || anime4kModeAFast || anime4kModeGan
+    //   await (player.platform as NativePlayer).setProperty(
+    //     'glsl-shaders',
+    //     anime4kModeAFast(_appDir!.path),
+    //   ); //  anime4kModeDoubleA  || anime4kModeAFast || anime4kModeGan
 
-      shaders = true;
-      notifyListeners();
-    }
+    //   shaders = true;
+    //   notifyListeners();
+    // }
   }
 
   Future<bool> _resizeVideoTexture(bool revert) async {
@@ -419,7 +418,8 @@ class PlayerController extends SafeChangeNotifier {
     // }
 
     if (selectedQuality == StreamQuality.fhd ||
-        selectedQuality == StreamQuality.fourK) {
+        selectedQuality == StreamQuality.fourK ||
+        Platform.isAndroid) {
       return true;
     }
 
@@ -1004,7 +1004,68 @@ class PlayerController extends SafeChangeNotifier {
     );
   }
 
-  // Future<void> _setMpvExtras(NativePlayer player) async {
+  // https://github.com/emp0ry/AnimeShin/blob/main/lib/feature/player/player_page.dart#L508
+  Future<void> _safeHls() async {
+    unawaited(_safeMpvSetProperty('cache', 'yes'));
+    unawaited(_safeMpvSetProperty('cache-secs', '120'));
+    unawaited(_safeMpvSetProperty(
+        'demuxer-seekable-cache', 'yes')); // allow seeks from cache
+    unawaited(_safeMpvSetProperty(
+        'demuxer-readahead-secs', '15')); // read ahead more data
+    unawaited(_safeMpvSetProperty(
+        'demuxer-max-back-bytes', '${64 * 1024 * 1024}')); // 64MB back buffer
+
+    // --- Avoid aggressive frame dropping on micro stalls ---
+    unawaited(_safeMpvSetProperty(
+        'hr-seek-framedrop', 'no')); // keep frames on precise seeks
+    unawaited(
+        _safeMpvSetProperty('framedrop', 'no')); // prefer not dropping frames
+
+    // --- Make A/V sync follow the display clock (VLC-like smoothness) ---
+    unawaited(_safeMpvSetProperty(
+        'video-sync', 'display-resample')); // reduce "chase" & teleports
+
+    // --- Hardware decoding: safer choice across devices ---
+    unawaited(
+        _safeMpvSetProperty('hwdec', 'auto-safe')); // avoid brittle decoders
+
+    // --- Stabilize timestamp probing for HLS/TS (helps missing PTS) ---
+    unawaited(
+        _safeMpvSetProperty('demuxer-lavf-analyzeduration', '10')); // seconds
+    unawaited(
+        _safeMpvSetProperty('demuxer-lavf-probesize', '${50 * 1024 * 1024}'));
+    // Generate missing PTS if upstream is wobbly.
+    unawaited(_safeMpvSetProperty('demuxer-lavf-o', 'fflags=+genpts'));
+
+    // --- HTTP/HLS transport safety (you already set some; keep them consolidated) ---
+    unawaited(_safeMpvSetProperty(
+      'stream-lavf-o',
+      // 'demuxer-lavf-o',
+      [
+        // Keep persistent connections to reduce mid-segment stalls
+        'http_persistent=1',
+        'reconnect=1',
+        'reconnect_streamed=1',
+        'reconnect_on_http_error=4xx,5xx',
+        // Some CDNs play nicer when we avoid multi-range; mpv handles ranges anyway
+        // 'multiple_requests=0', // optional; only if you see glide-skips
+      ].join(':'),
+    ));
+  }
+
+  Future<void> _safeMpvSetProperty(String property, String value) async {
+    final platform = player.platform;
+    if (platform is NativePlayer) {
+      try {
+        await platform.setProperty(property, value);
+        _playerLogger.addLog('setProperty "$property"');
+      } catch (e) {
+        _playerLogger.addLog('setProperty("$property","$value") failed: $e');
+      }
+    }
+  }
+
+  // Future<void> _safeMpvSetPropertyExtras(NativePlayer player) async {
   //   await player.setProperty(
   //     'deband',
   //     'yes',
@@ -1058,8 +1119,9 @@ final playerStateProvider =
     configuration: const PlayerConfiguration(
       title: 'ShikiWatch',
       libass: true,
+      // osc: true,
       bufferSize: 32 * 1024 * 1024,
-      //logLevel: MPVLogLevel.info,
+      // logLevel: MPVLogLevel.v,
       logLevel: kDebugMode ? MPVLogLevel.v : MPVLogLevel.error,
     ),
   );
@@ -1067,6 +1129,8 @@ final playerStateProvider =
   final VideoController videoController = VideoController(
     player,
     configuration: const VideoControllerConfiguration(
+      // vo: Platform.isAndroid ? 'gpu' : 'gpu-next',
+      // vo: 'gpu-next',
       androidAttachSurfaceAfterVideoParameters: false,
     ),
   );

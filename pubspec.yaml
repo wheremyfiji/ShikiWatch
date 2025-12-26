@@ -12,7 +12,6 @@ isar_version: &isar_version 3.1.0+1
 
 dependencies:
   audio_session: ^0.1.19
-  audio_video_progress_bar: ^2.0.3
   cached_network_image: ^3.3.1
   collection: ^1.17.1
   connectivity_plus: ^5.0.2

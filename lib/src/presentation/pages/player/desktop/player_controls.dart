@@ -1,19 +1,19 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../domain/player_provider_parameters.dart';
-import '../shared/next_ep_countdown.dart';
+import '../../../providers/settings_provider.dart';
+import '../shared/audio_video_progress_bar.dart';
 import '../shared/skip_fragment_button.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/quality_popup_menu.dart';
 import '../shared/player_speed_popup.dart';
-import '../../../../utils/app_utils.dart';
+import '../shared/next_ep_countdown.dart';
 import '../../../widgets/auto_hide.dart';
+import '../shared/player_settings.dart';
+import '../shaders_provider.dart';
 import '../player_provider.dart';
 
 import 'components/player_info_header.dart';
@@ -85,6 +85,13 @@ class _AutoplayNextEp extends ConsumerWidget {
 
     final currentNumber = ref.watch(playerPageProvider(providerParameters)
         .select((value) => value.currentEpNumber));
+
+    final bool playerNextEpisode = ref.watch(
+        settingsProvider.select((settings) => settings.playerNextEpisode));
+
+    if (!playerNextEpisode) {
+      return const SizedBox.shrink();
+    }
 
     if (!(hasNextEp && completed)) {
       return const SizedBox.shrink();
@@ -187,7 +194,8 @@ class _OtherControls extends ConsumerWidget {
               );
             },
           ),
-          if (Platform.isWindows) _ShadersButton(providerParameters),
+          // if (Platform.isWindows) _ShadersButton(providerParameters),
+          _ShadersButton(providerParameters),
         ],
         IconButton(
           tooltip: 'Полноэкранный режим',
@@ -210,25 +218,15 @@ class _ShadersButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final n = ref.watch(playerPageProvider(providerParameters));
+    final activeShaders = ref.watch(activeShadersProvider);
 
     return IconButton(
       tooltip: 'Anime4K шейдеры',
-      icon: Icon(n.shaders ? Icons.four_k : Icons.four_k_outlined),
+      icon:
+          Icon(activeShaders.isNotEmpty ? Icons.four_k : Icons.four_k_outlined),
       iconSize: 24.0,
       color: Colors.white,
-      onPressed: () {
-        n.toggleShaders().then(
-          (_) {
-            if (!n.shadersExists) {
-              showErrorSnackBar(
-                ctx: context,
-                msg: 'Шейдеры не найдены, инструкция в тг канале',
-              );
-            }
-          },
-        );
-      },
+      onPressed: () => ShaderSelectorWidget.show(context),
     );
   }
 }
@@ -407,6 +405,9 @@ class _ProgressBar extends ConsumerWidget {
     final hideController = ref.watch(playerPageProvider(providerParameters)
         .select((value) => value.hideController));
 
+    final opTimecode = ref.watch(playerPageProvider(providerParameters)
+        .select((value) => value.opTimecode));
+
     return ProgressBar(
       progress: position,
       total: duration,
@@ -430,6 +431,14 @@ class _ProgressBar extends ConsumerWidget {
       onDragEnd: () {
         hideController.hide();
       },
+      timecodeRanges: opTimecode.length == 2
+          ? [
+              (
+                start: Duration(seconds: opTimecode.first),
+                end: Duration(seconds: opTimecode.last)
+              ),
+            ]
+          : null,
     );
   }
 }

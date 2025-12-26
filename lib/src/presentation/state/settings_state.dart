@@ -30,5 +30,6 @@ class SettingsState with _$SettingsState {
     required bool playerAndroidNewAudioBackend,
     required ExplorePageLayout explorePageLayout,
     required ExplorePageSort explorePageSort,
+    required bool playerNextEpisode,
   }) = _SettingsState;
 }

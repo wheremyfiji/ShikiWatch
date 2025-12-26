@@ -25,6 +25,7 @@ import 'widgets/oled_mode.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/player_long_press_seek.dart';
 import 'widgets/player_new_audio_backend.dart';
+import 'widgets/player_next_episode.dart';
 import 'widgets/player_observe_audiosession.dart';
 import 'widgets/player_orientation_lock.dart';
 import 'widgets/player_playback_speed.dart';
@@ -157,6 +158,7 @@ class SettingsPage extends ConsumerWidget {
                         PlayerObserveAudioSessionOption(),
                         PlayerAndroidNewAudioBackendOption(),
                       ],
+                      const PlayerNextEpisodeOption(),
                       // if (!TargetP.instance.isDesktop)
                       //   const PlayerSwipeSeekOption(),
                       if (Platform.isWindows || Platform.isLinux)
