@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../utils/extensions/buildcontext.dart';
 import '../domain/player_provider_parameters.dart';
 import '../../../providers/settings_provider.dart';
 import '../shared/audio_video_progress_bar.dart';
@@ -431,6 +432,7 @@ class _ProgressBar extends ConsumerWidget {
       onDragEnd: () {
         hideController.hide();
       },
+      timecodeMarkerColor: context.colorScheme.error,
       timecodeRanges: opTimecode.length == 2
           ? [
               (

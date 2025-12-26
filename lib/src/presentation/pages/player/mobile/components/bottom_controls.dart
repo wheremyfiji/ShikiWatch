@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../../utils/extensions/buildcontext.dart';
 import '../../domain/player_provider_parameters.dart';
 import '../../shared/audio_video_progress_bar.dart';
 import '../../shared/skip_fragment_button.dart';
@@ -91,6 +92,7 @@ class BottomControls extends ConsumerWidget {
                 timeLabelPadding: 4,
                 timeLabelLocation: TimeLabelLocation.below,
                 timeLabelType: TimeLabelType.totalTime,
+                timecodeMarkerColor: context.colorScheme.error,
                 timecodeRanges: opTimecode.length == 2
                     ? [
                         (
