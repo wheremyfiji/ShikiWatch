@@ -1047,8 +1047,8 @@ class _RenderProgressBar extends RenderBox {
     canvas.translate(offset.dx, offset.dy);
     _drawBaseBar(canvas, localSize);
     _drawBufferedBar(canvas, localSize);
-    _drawTimecodeRanges(canvas, localSize);
     _drawCurrentProgressBar(canvas, localSize);
+    _drawTimecodeRanges(canvas, localSize);
     _drawThumb(canvas, localSize);
     canvas.restore();
   }
