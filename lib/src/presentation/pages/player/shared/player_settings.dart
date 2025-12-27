@@ -13,8 +13,10 @@ class ShaderSelectorWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeShaders = ref.watch(activeShadersProvider);
     final notifier = ref.read(activeShadersProvider.notifier);
-
     final availableShaders = ref.watch(availableShadersProvider);
+
+    final exclusive = availableShaders.where((e) => e.isExclusive).toList();
+    final nonExclusive = availableShaders.where((e) => !e.isExclusive).toList();
 
     return DraggableScrollableSheet(
       expand: false,
@@ -46,7 +48,7 @@ class ShaderSelectorWidget extends ConsumerWidget {
                       // ),
                     ),
                     subtitle: Text(
-                      'При использовании возможны проблемы с воспроизведением.\nНекоторые шейдеры можно наслаивать друг на друга.',
+                      'При использовании возможны проблемы с воспроизведением.\nОбычные шейдеры можно наслаивать друг на друга в порядке выбора.',
                       style: context.textTheme.bodySmall?.copyWith(
                         color: context.colorScheme.onSurfaceVariant,
                         // color: context.colorScheme.onPrimaryContainer
@@ -103,10 +105,103 @@ class ShaderSelectorWidget extends ConsumerWidget {
               //     child: Divider(),
               //   ),
               // ),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Row(
+                    children: [
+                      Text('Обычные шейдеры'),
+                      SizedBox(width: 12.0),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
+                ),
+              ),
               SliverList.builder(
-                itemCount: availableShaders.length,
+                itemCount: nonExclusive.length,
                 itemBuilder: (context, index) {
-                  final shader = availableShaders[index];
+                  final shader = nonExclusive[index];
+                  final isActive = activeShaders.contains(shader);
+                  final orderIndex = activeShaders.indexOf(shader) + 1;
+
+                  final leading = isActive
+                      ? (shader.isExclusive
+                          ? const SizedBox.square(
+                              dimension: 24.0,
+                              child: Center(
+                                child: Icon(
+                                  Icons.lock_rounded,
+                                  size: 20.0,
+                                ),
+                              ),
+                            )
+                          : SizedBox.square(
+                              dimension: 24.0,
+                              child: Center(
+                                child: CircleAvatar(
+                                  backgroundColor:
+                                      context.colorScheme.primaryContainer,
+                                  child: Text(
+                                    '$orderIndex',
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      color: context
+                                          .colorScheme.onPrimaryContainer,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ))
+                      : const SizedBox.square(
+                          dimension: 24.0,
+                          child: Center(
+                            child: Icon(
+                              Icons.circle_outlined,
+                              size: 20.0,
+                            ),
+                          ),
+                        );
+
+                  return ListTile(
+                    leading: leading,
+                    title: Text(
+                      shader.name,
+                      style: TextStyle(
+                        color: isActive
+                            ? context.colorScheme.primary
+                            : context.colorScheme.onSurface,
+                        fontWeight:
+                            isActive ? FontWeight.w500 : FontWeight.normal,
+                      ),
+                    ),
+                    subtitle: shader.description == null
+                        ? null
+                        : Text(
+                            shader.description!,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: context.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                    onTap: () => notifier.toggle(shader),
+                  );
+                },
+              ),
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      Text('Одиночные шейдеры'),
+                      SizedBox(width: 12.0),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
+                ),
+              ),
+              SliverList.builder(
+                itemCount: exclusive.length,
+                itemBuilder: (context, index) {
+                  final shader = exclusive[index];
                   final isActive = activeShaders.contains(shader);
                   final orderIndex = activeShaders.indexOf(shader) + 1;
 
