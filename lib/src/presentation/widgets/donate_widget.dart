@@ -126,7 +126,7 @@ class _DonateBottomSheet extends StatelessWidget {
                 ListTile(
                   onTap: () => Clipboard.setData(
                     const ClipboardData(
-                      text: 'UQBd8aIQ0TF0Oz_pXhX_yJPmh6GzzTj0hiwLk3OZbh0ZeBj7',
+                      text: 'UQBVpx70dPMLfITCwrSB_OdulvjkF5cAZGl63lg_0anH-iSa',
                     ),
                   ).then((_) => Navigator.of(context).pop()).then((_) =>
                       showSnackBar(
@@ -142,7 +142,7 @@ class _DonateBottomSheet extends StatelessWidget {
                 ListTile(
                   onTap: () => Clipboard.setData(
                     const ClipboardData(
-                      text: 'TRetqKdTt9CkkxXRPjtVT9mjFYpYUxnquE',
+                      text: 'TAGb4sjk4YE6MgPLxFiNuEUwJyD1nyoEgr',
                     ),
                   ).then((_) => Navigator.of(context).pop()).then((_) =>
                       showSnackBar(

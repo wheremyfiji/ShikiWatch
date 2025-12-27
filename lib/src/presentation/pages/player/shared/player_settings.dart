@@ -42,17 +42,18 @@ class ShaderSelectorWidget extends ConsumerWidget {
                       //     ? 'Шейдеры (${activeShaders.length})'
                       //     :
                       'Шейдеры',
-                      style: context.textTheme.titleLarge,
-                      // style: context.textTheme.titleLarge?.copyWith(
-                      //   color: context.colorScheme.onPrimaryContainer,
-                      // ),
+                      // style: context.textTheme.titleLarge,
+                      style: context.textTheme.titleLarge?.copyWith(
+                        color: context.colorScheme.onPrimaryContainer,
+                      ),
                     ),
                     subtitle: Text(
-                      'При использовании возможны проблемы с воспроизведением.\nОбычные шейдеры можно наслаивать друг на друга в порядке выбора.',
+                      // 'При использовании возможны проблемы с воспроизведением.\nОбычные шейдеры можно наслаивать друг на друга в порядке выбора.',
+                      'При использовании возможны проблемы с воспроизведением',
                       style: context.textTheme.bodySmall?.copyWith(
-                        color: context.colorScheme.onSurfaceVariant,
-                        // color: context.colorScheme.onPrimaryContainer
-                        //     .withOpacity(0.8),
+                        // color: context.colorScheme.onSurfaceVariant,
+                        color: context.colorScheme.onPrimaryContainer
+                            .withOpacity(0.8),
                       ),
                     ),
                     trailing: activeShaders.isNotEmpty

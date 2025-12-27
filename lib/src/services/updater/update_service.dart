@@ -58,10 +58,6 @@ class AppReleaseNotifier extends AsyncNotifier<AppRelease?> {
       return null;
     }
 
-    if (AppUtils.instance.isDesktop) {
-      return null;
-    }
-
     final latest = await _getReleases()
         .then((release) => release.first)
         .onError((error, stackTrace) => throw Exception(error));
@@ -81,18 +77,19 @@ class AppReleaseNotifier extends AsyncNotifier<AppRelease?> {
     final GithubAsset? asset = latest.assets
         .firstWhereOrNull((element) => element.name.contains(kAppArch));
 
-    if (asset == null) {
-      debugPrint('[UpdateService] asset == null');
-      return null;
-    }
+    // if (asset == null) {
+    //   debugPrint('[UpdateService] asset == null');
+    //   return null;
+    // }
 
-    if (asset.state != 'uploaded') {
-      return null;
-    }
+    // if (asset.state != 'uploaded') {
+    //   return null;
+    // }
 
     final appRelease = AppRelease(
       name: latest.name,
       tag: latest.tagName,
+      url: latest.htmlUrl,
       description: latest.body,
       asset: asset,
     );
@@ -112,14 +109,17 @@ class AppReleaseNotifier extends AsyncNotifier<AppRelease?> {
 class AppRelease {
   final String name;
   final String tag;
+  final String url;
   final String description;
-  final GithubAsset asset;
+  final GithubAsset? asset;
 
-  AppRelease(
-      {required this.name,
-      required this.tag,
-      required this.description,
-      required this.asset});
+  AppRelease({
+    required this.name,
+    required this.tag,
+    required this.url,
+    required this.description,
+    required this.asset,
+  });
 }
 
 class GithubRelease {

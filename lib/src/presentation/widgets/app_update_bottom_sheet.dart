@@ -31,9 +31,10 @@ class AppUpdateBottomSheet extends ConsumerWidget {
           ),
           Text('Текущая версия: $currentVersion'),
           Text('Новая версия: ${release.tag.replaceAll('v', '')}'),
-          Text(
-            'Размер: ${(release.asset.size / (1024 * 1024)).toStringAsFixed(2)} MB',
-          ),
+          if (release.asset != null)
+            Text(
+              'Размер: ${(release.asset!.size / (1024 * 1024)).toStringAsFixed(2)} MB',
+            ),
           const SizedBox(
             height: 8,
           ),
@@ -60,17 +61,29 @@ class AppUpdateBottomSheet extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 16),
             child: SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                ),
-                onPressed: () => launchUrlString(
-                  release.asset.browserDownloadUrl,
-                  mode: LaunchMode.externalApplication,
-                ),
-                icon: const Icon(Icons.download),
-                label: const Text('Загрузить'),
-              ),
+              child: release.asset == null
+                  ? FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                      onPressed: () => launchUrlString(
+                        release.url,
+                        mode: LaunchMode.externalApplication,
+                      ),
+                      icon: const Icon(Icons.download),
+                      label: const Text('Перейти к загрузке'),
+                    )
+                  : FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                      onPressed: () => launchUrlString(
+                        release.asset!.browserDownloadUrl,
+                        mode: LaunchMode.externalApplication,
+                      ),
+                      icon: const Icon(Icons.download),
+                      label: const Text('Загрузить'),
+                    ),
             ),
           ),
         ],

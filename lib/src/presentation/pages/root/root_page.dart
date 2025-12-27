@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../kodik/kodik.dart';
 import '../anime_soures/anime365/anime365_provider.dart';
 import '../../../services/updater/update_service.dart';
 import '../../widgets/mouse_back_button_wrapper.dart';
@@ -30,6 +31,8 @@ class ScaffoldWithNavBar extends ConsumerWidget {
     const expandedBreakpoint = 1200.0;
 
     ref.watch(anime365UserProvider);
+
+    ref.listen(kodikWorkaroundProvider, (_, __) {});
 
     ref.listen(
       appReleaseProvider,

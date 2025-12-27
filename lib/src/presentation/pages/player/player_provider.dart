@@ -1008,47 +1008,34 @@ class PlayerController extends SafeChangeNotifier {
   Future<void> _safeHls() async {
     unawaited(_safeMpvSetProperty('cache', 'yes'));
     unawaited(_safeMpvSetProperty('cache-secs', '120'));
-    unawaited(_safeMpvSetProperty(
-        'demuxer-seekable-cache', 'yes')); // allow seeks from cache
-    unawaited(_safeMpvSetProperty(
-        'demuxer-readahead-secs', '15')); // read ahead more data
-    unawaited(_safeMpvSetProperty(
-        'demuxer-max-back-bytes', '${64 * 1024 * 1024}')); // 64MB back buffer
-
-    // --- Avoid aggressive frame dropping on micro stalls ---
-    unawaited(_safeMpvSetProperty(
-        'hr-seek-framedrop', 'no')); // keep frames on precise seeks
+    unawaited(_safeMpvSetProperty('demuxer-seekable-cache', 'yes'));
+    unawaited(_safeMpvSetProperty('demuxer-readahead-secs', '15'));
     unawaited(
-        _safeMpvSetProperty('framedrop', 'no')); // prefer not dropping frames
+        _safeMpvSetProperty('demuxer-max-back-bytes', '${32 * 1024 * 1024}'));
 
-    // --- Make A/V sync follow the display clock (VLC-like smoothness) ---
-    unawaited(_safeMpvSetProperty(
-        'video-sync', 'display-resample')); // reduce "chase" & teleports
+    unawaited(_safeMpvSetProperty('hr-seek-framedrop', 'no'));
+    unawaited(_safeMpvSetProperty('framedrop', 'no'));
 
-    // --- Hardware decoding: safer choice across devices ---
-    unawaited(
-        _safeMpvSetProperty('hwdec', 'auto-safe')); // avoid brittle decoders
+    unawaited(_safeMpvSetProperty('video-sync', 'display-resample'));
 
-    // --- Stabilize timestamp probing for HLS/TS (helps missing PTS) ---
-    unawaited(
-        _safeMpvSetProperty('demuxer-lavf-analyzeduration', '10')); // seconds
+    // unawaited(_safeMpvSetProperty('hwdec', 'auto-safe'));
+
+    unawaited(_safeMpvSetProperty('demuxer-lavf-analyzeduration', '10'));
     unawaited(
         _safeMpvSetProperty('demuxer-lavf-probesize', '${50 * 1024 * 1024}'));
-    // Generate missing PTS if upstream is wobbly.
+
+    // unawaited(_safeMpvSetProperty('demuxer-lavf-probe-info', 'yes'));
+
     unawaited(_safeMpvSetProperty('demuxer-lavf-o', 'fflags=+genpts'));
 
-    // --- HTTP/HLS transport safety (you already set some; keep them consolidated) ---
     unawaited(_safeMpvSetProperty(
       'stream-lavf-o',
       // 'demuxer-lavf-o',
       [
-        // Keep persistent connections to reduce mid-segment stalls
         'http_persistent=1',
         'reconnect=1',
         'reconnect_streamed=1',
         'reconnect_on_http_error=4xx,5xx',
-        // Some CDNs play nicer when we avoid multi-range; mpv handles ranges anyway
-        // 'multiple_requests=0', // optional; only if you see glide-skips
       ].join(':'),
     ));
   }
