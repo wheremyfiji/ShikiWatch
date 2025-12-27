@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
 
 import 'package:media_kit_video/media_kit_video.dart';
@@ -7,6 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../utils/app_utils.dart';
 import '../../settings/widgets/player_long_press_seek.dart';
 import '../../../../utils/extensions/buildcontext.dart';
 import '../../../../utils/extensions/duration.dart';
@@ -14,6 +17,7 @@ import '../../../providers/app_theme_provider.dart';
 import '../../../providers/settings_provider.dart';
 import '../domain/player_provider_parameters.dart';
 import '../../../widgets/error_widget.dart';
+import '../pip_provider.dart';
 import '../shared/animated_play_pause.dart';
 import '../shared/buffering_indicator.dart';
 import '../shared/player_speed_popup.dart';
@@ -99,6 +103,67 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     super.dispose();
   }
 
+  Future<void> _enablePip(BuildContext context) async {
+    try {
+      final player = ref.read(playerStateProvider.select((s) => (s.player)));
+      final w = player.state.width ?? 16;
+      final h = player.state.height ?? 9;
+
+      Rational rational = Rational(w, h);
+
+      if (!rational.fitsInAndroidRequirements) {
+        rational = const Rational.landscape();
+      }
+
+      if (!context.mounted) return;
+
+      final mediaQuery = MediaQuery.of(context);
+      final screenSize = mediaQuery.size * mediaQuery.devicePixelRatio;
+      final height = screenSize.width ~/ rational.aspectRatio;
+
+      // final arguments = autoEnable
+      //     ? OnLeavePiP(
+      //         aspectRatio: rational,
+      //         sourceRectHint: Rectangle<int>(
+      //           0,
+      //           (screenSize.height ~/ 2) - (height ~/ 2),
+      //           screenSize.width.toInt(),
+      //           height,
+      //         ),
+      //       )
+      //     : ImmediatePiP(
+      //         aspectRatio: rational,
+      //         sourceRectHint: Rectangle<int>(
+      //           0,
+      //           (screenSize.height ~/ 2) - (height ~/ 2),
+      //           screenSize.width.toInt(),
+      //           height,
+      //         ),
+      //       );
+
+      final arguments = ImmediatePiP(
+        aspectRatio: rational,
+        sourceRectHint: Rectangle<int>(
+          0,
+          (screenSize.height ~/ 2) - (height ~/ 2),
+          screenSize.width.toInt(),
+          height,
+        ),
+      );
+
+      final floating = ref.read(floatingProvider);
+      final status = await floating.enable(arguments);
+
+      if (status == PiPStatus.disabled && context.mounted) {
+        showErrorSnackBar(ctx: context, msg: 'Не удалось активировать PiP');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showErrorSnackBar(ctx: context, msg: 'Ошибка: ${e.toString()}');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = PlayerProviderParameters(widget.extra);
@@ -129,6 +194,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     }
 
     ref.watch(shaderApplicatorProvider);
+    ref.watch(pipAvailabilityProvider);
 
     final studioName = widget.extra.studio.name
         .replaceFirst('.Subtitles', ' (Субтитры)')
@@ -148,461 +214,465 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
 
     return Theme(
       data: appTheme.dark,
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(0),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.white,
+      child: PiPSwitcher(
+        childWhenEnabled: playerWidget,
+        childWhenDisabled: Scaffold(
+          backgroundColor: Colors.black,
+          extendBody: true,
+          extendBodyBehindAppBar: true,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+            ),
           ),
-        ),
-        body: notifier.playableContentAsync.when(
-          data: (_) {
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                playerWidget,
-                AutoHide(
-                  switchDuration: switchDuration,
-                  controller: notifier.hideController,
-                  child: Container(color: Colors.black54),
-                ),
-                Positioned.fill(
-                  left: 16.0,
-                  top: 16.0,
-                  right: 16.0,
-                  bottom: 16.0,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        //flex: 2,
-                        child: GestureDetector(
-                          onTap: notifier.completed
-                              ? null
-                              : notifier.hideController.toggle,
-                          onDoubleTap: notifier.completed
-                              ? null
-                              : _onDoubleTapSeekBackward,
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: notifier.completed
-                              ? null
-                              : notifier.hideController.toggle,
-                        ),
-                      ),
-                      Expanded(
-                        //flex: 2,
-                        child: GestureDetector(
-                          onTap: notifier.completed
-                              ? null
-                              : notifier.hideController.toggle,
-                          onDoubleTap: notifier.completed
-                              ? null
-                              : _onDoubleTapSeekForward,
-                        ),
-                      ),
-                    ],
+          body: notifier.playableContentAsync.when(
+            data: (_) {
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  playerWidget,
+                  AutoHide(
+                    switchDuration: switchDuration,
+                    controller: notifier.hideController,
+                    child: Container(color: Colors.black54),
                   ),
-                ),
-                Positioned.fill(
-                  left: 16.0,
-                  top: 16.0,
-                  right: 16.0,
-                  bottom: 16.0,
-                  child: GestureDetector(
-                    onLongPressStart: !longPressSeek
-                        ? null
-                        : (_) {
-                            if (!notifier.init) {
-                              return;
-                            }
-                            //HapticFeedback.lightImpact();
-                            notifier.longPressSeek(true);
-                          },
-                    onLongPressEnd: !longPressSeek
-                        ? null
-                        : (_) {
-                            notifier.longPressSeek(false);
-                          },
-                    onHorizontalDragStart: (DragStartDetails details) {
-                      if (!notifier.init || notifier.completed) {
-                        return;
-                      }
-
-                      _currentDx = 0;
-                      _seekToDuration = Duration.zero;
-                      _savedPosition = playerState.position;
-                      _startDx = details.localPosition.dx;
-                      _seek = true;
-                    },
-                    onHorizontalDragUpdate: (DragUpdateDetails details) {
-                      if (!notifier.init || notifier.completed) {
-                        _seek = false;
-                        _seekShowUI = false;
-                        return;
-                      }
-
-                      if ((details.localPosition.dx - _startDx).abs() <
-                          _seekOffset) {
-                        _seekToDuration = _savedPosition;
-                        return;
-                      }
-
-                      if (_seek) {
-                        _seek = false;
-                        _seekShowUI = true;
-
-                        //HapticFeedback.lightImpact();
-
-                        notifier.hideController.cancel();
-
-                        notifier.hideController.permShow();
-                      }
-
-                      if ((details.localPosition.dx - _startDx).isNegative) {
-                        _currentDx = details.localPosition.dx + _seekOffset;
-                      } else {
-                        _currentDx = details.localPosition.dx - _seekOffset;
-                      }
-
-                      _seekToPosition(
-                        currentPosition: playerState.position,
-                        duration: playerState.duration,
-                      );
-                    },
-                    onHorizontalDragEnd: (DragEndDetails details) {
-                      _seek = false;
-                      _seekShowUI = false;
-
-                      if (!notifier.init || notifier.completed) {
-                        return;
-                      }
-
-                      notifier.hideController.hide();
-
-                      if (_seekToDuration == _savedPosition) {
-                        return;
-                      }
-
-                      notifier.player.seek(_seekToDuration.clampToRange(
-                        playerState.duration,
-                      ));
-                    },
-                  ),
-                ),
-                //Top controls
-                AutoHide(
-                  switchDuration: switchDuration,
-                  controller: notifier.hideController,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: SafeArea(
-                      top: false,
-                      bottom: false,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: safePaddingTop.value),
-                        child: PlayerTopBar(
-                          title: widget.extra.titleInfo.animeName,
-                          subtitle:
-                              'Серия ${notifier.currentEpNumber} • $studioName',
-                          actions: (notifier.init && !notifier.error)
-                              ? [
-                                  const SizedBox(
-                                    width: 16.0,
-                                  ),
-                                  PlayerSpeedPopUp(
-                                    playbackSpeed: playerState.playbackSpeed,
-                                    onSelected: notifier.setPlaybackSpeed,
-                                  ),
-                                  QualityPopUpMenu(
-                                    playableContent: notifier.playableContent,
-                                    selectedQuality: notifier.selectedQuality,
-                                    onSelected: (q) =>
-                                        notifier.changeQuality(q),
-                                    onOpened: () {
-                                      if (notifier.completed) {
-                                        return;
-                                      }
-
-                                      notifier.hideController.cancel();
-                                      notifier.hideController.permShow();
-                                    },
-                                    onCanceled: () {
-                                      if (notifier.completed) {
-                                        return;
-                                      }
-
-                                      notifier.hideController.toggle();
-                                    },
-                                  ),
-                                ]
-                              : [],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const Align(
-                  child: BufferingIndicator(),
-                ),
-                if (_mountSeekBackwardButton || _mountSeekForwardButton)
                   Positioned.fill(
+                    left: 16.0,
+                    top: 16.0,
+                    right: 16.0,
+                    bottom: 16.0,
                     child: Row(
                       children: [
                         Expanded(
-                          child: _mountSeekBackwardButton
-                              ? TweenAnimationBuilder<double>(
-                                  tween: Tween<double>(
-                                    begin: 0.0,
-                                    end: _hideSeekBackwardButton ? 0.0 : 1.0,
-                                  ),
-                                  duration: const Duration(milliseconds: 200),
-                                  builder: (context, value, child) => Opacity(
-                                    opacity: value,
-                                    child: child,
-                                  ),
-                                  onEnd: () {
-                                    if (_hideSeekBackwardButton) {
-                                      setState(() {
-                                        _hideSeekBackwardButton = false;
-                                        _mountSeekBackwardButton = false;
-                                      });
-                                    }
-                                  },
-                                  child: DoubleTapSeekButton(
-                                    action: DoubleTapSeekAction.backward,
-                                    value: doubleTapSeekValue,
-                                    onChanged: (value) {},
-                                    onSubmitted: (value) {
-                                      setState(() {
-                                        _hideSeekBackwardButton = true;
-                                      });
-
-                                      Duration result =
-                                          playerState.position - value;
-                                      result = result.clampToRange(
-                                        playerState.duration,
-                                      );
-                                      notifier.player.seek(result);
-                                    },
-                                  ),
-                                )
-                              : const SizedBox(),
+                          //flex: 2,
+                          child: GestureDetector(
+                            onTap: notifier.completed
+                                ? null
+                                : notifier.hideController.toggle,
+                            onDoubleTap: notifier.completed
+                                ? null
+                                : _onDoubleTapSeekBackward,
+                          ),
                         ),
-                        const Expanded(child: SizedBox()),
                         Expanded(
-                          child: _mountSeekForwardButton
-                              ? AnimatedOpacity(
-                                  opacity: _hideSeekForwardButton ? 0 : 1.0,
-                                  duration: const Duration(milliseconds: 200),
-                                  child: DoubleTapSeekButton(
-                                    action: DoubleTapSeekAction.forward,
-                                    value: doubleTapSeekValue,
-                                    onChanged: (value) {},
-                                    onSubmitted: (value) {
-                                      _timerSeekForwardButton?.cancel();
-
-                                      _timerSeekForwardButton = Timer(
-                                          const Duration(milliseconds: 200),
-                                          () {
-                                        if (_hideSeekForwardButton) {
-                                          setState(() {
-                                            _hideSeekForwardButton = false;
-                                            _mountSeekForwardButton = false;
-                                          });
-                                        }
-                                      });
-
-                                      setState(() {
-                                        _hideSeekForwardButton = true;
-                                      });
-                                      Duration result =
-                                          playerState.position + value;
-                                      result = result.clampToRange(
-                                        playerState.duration,
-                                      );
-                                      notifier.player.seek(result);
-                                    },
-                                  ),
-                                )
-                              : const SizedBox(),
+                          child: GestureDetector(
+                            onTap: notifier.completed
+                                ? null
+                                : notifier.hideController.toggle,
+                          ),
+                        ),
+                        Expanded(
+                          //flex: 2,
+                          child: GestureDetector(
+                            onTap: notifier.completed
+                                ? null
+                                : notifier.hideController.toggle,
+                            onDoubleTap: notifier.completed
+                                ? null
+                                : _onDoubleTapSeekForward,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                //Center controls
-                ((notifier.hasNextEp && notifier.completed) &&
-                        playerNextEpisode)
-                    ? Align(
-                        child: NextEpisodeCountdown(
-                          number: notifier.currentEpNumber,
-                          onCancel: () {
-                            notifier.onPlayerCompleted(false);
-                            notifier.hideController.toggle();
-                          },
-                          onPlay: () {
-                            notifier
-                                .changeEpisode(notifier.currentEpNumber + 1);
-                            notifier.hideController.toggle();
-                          },
+                  Positioned.fill(
+                    left: 16.0,
+                    top: 16.0,
+                    right: 16.0,
+                    bottom: 16.0,
+                    child: GestureDetector(
+                      onLongPressStart: !longPressSeek
+                          ? null
+                          : (_) {
+                              if (!notifier.init) {
+                                return;
+                              }
+                              //HapticFeedback.lightImpact();
+                              notifier.longPressSeek(true);
+                            },
+                      onLongPressEnd: !longPressSeek
+                          ? null
+                          : (_) {
+                              notifier.longPressSeek(false);
+                            },
+                      onHorizontalDragStart: (DragStartDetails details) {
+                        if (!notifier.init || notifier.completed) {
+                          return;
+                        }
+
+                        _currentDx = 0;
+                        _seekToDuration = Duration.zero;
+                        _savedPosition = playerState.position;
+                        _startDx = details.localPosition.dx;
+                        _seek = true;
+                      },
+                      onHorizontalDragUpdate: (DragUpdateDetails details) {
+                        if (!notifier.init || notifier.completed) {
+                          _seek = false;
+                          _seekShowUI = false;
+                          return;
+                        }
+
+                        if ((details.localPosition.dx - _startDx).abs() <
+                            _seekOffset) {
+                          _seekToDuration = _savedPosition;
+                          return;
+                        }
+
+                        if (_seek) {
+                          _seek = false;
+                          _seekShowUI = true;
+
+                          //HapticFeedback.lightImpact();
+
+                          notifier.hideController.cancel();
+
+                          notifier.hideController.permShow();
+                        }
+
+                        if ((details.localPosition.dx - _startDx).isNegative) {
+                          _currentDx = details.localPosition.dx + _seekOffset;
+                        } else {
+                          _currentDx = details.localPosition.dx - _seekOffset;
+                        }
+
+                        _seekToPosition(
+                          currentPosition: playerState.position,
+                          duration: playerState.duration,
+                        );
+                      },
+                      onHorizontalDragEnd: (DragEndDetails details) {
+                        _seek = false;
+                        _seekShowUI = false;
+
+                        if (!notifier.init || notifier.completed) {
+                          return;
+                        }
+
+                        notifier.hideController.hide();
+
+                        if (_seekToDuration == _savedPosition) {
+                          return;
+                        }
+
+                        notifier.player.seek(_seekToDuration.clampToRange(
+                          playerState.duration,
+                        ));
+                      },
+                    ),
+                  ),
+                  //Top controls
+                  AutoHide(
+                    switchDuration: switchDuration,
+                    controller: notifier.hideController,
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: SafeArea(
+                        top: false,
+                        bottom: false,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: safePaddingTop.value),
+                          child: PlayerTopBar(
+                            title: widget.extra.titleInfo.animeName,
+                            subtitle:
+                                'Серия ${notifier.currentEpNumber} • $studioName',
+                            actions: (notifier.init && !notifier.error)
+                                ? [
+                                    const SizedBox(
+                                      width: 16.0,
+                                    ),
+                                    PlayerSpeedPopUp(
+                                      playbackSpeed: playerState.playbackSpeed,
+                                      onSelected: notifier.setPlaybackSpeed,
+                                    ),
+                                    QualityPopUpMenu(
+                                      playableContent: notifier.playableContent,
+                                      selectedQuality: notifier.selectedQuality,
+                                      onSelected: (q) =>
+                                          notifier.changeQuality(q),
+                                      onOpened: () {
+                                        if (notifier.completed) {
+                                          return;
+                                        }
+
+                                        notifier.hideController.cancel();
+                                        notifier.hideController.permShow();
+                                      },
+                                      onCanceled: () {
+                                        if (notifier.completed) {
+                                          return;
+                                        }
+
+                                        notifier.hideController.toggle();
+                                      },
+                                    ),
+                                  ]
+                                : [],
+                          ),
                         ),
-                      )
-                    : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 150),
-                        child: _seekShowUI
-                            ? Align(
-                                child: SeekIndicator(
-                                  position: _positionText,
-                                  diff: _diffText,
-                                ),
-                              )
-                            : AutoHide(
-                                switchDuration: switchDuration,
-                                controller: notifier.hideController,
-                                child: Align(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      const SizedBox.shrink(),
-                                      IconButton(
-                                        tooltip: 'Предыдущая серия',
-                                        onPressed: notifier.hasPrevEp
-                                            ? () => notifier.changeEpisode(
-                                                notifier.currentEpNumber - 1)
-                                            : null,
-                                        color: Colors.white,
-                                        iconSize: 32.0,
-                                        icon: const Icon(Icons.skip_previous),
-                                      ),
-                                      // const SizedBox(width: 24),
-                                      IgnorePointer(
-                                        ignoring: playerState.buffering,
-                                        child: AnimatedOpacity(
-                                          curve: Curves.easeInOut,
-                                          opacity: !playerState.buffering
-                                              ? 1.0
-                                              : 0.0,
-                                          duration:
-                                              const Duration(milliseconds: 150),
-                                          child: IconButton(
-                                            color: Colors.white,
-                                            iconSize: 48.0,
-                                            icon: AnimatedPlayPause(
-                                              playing: playerState.playing,
+                      ),
+                    ),
+                  ),
+                  const Align(
+                    child: BufferingIndicator(),
+                  ),
+                  if (_mountSeekBackwardButton || _mountSeekForwardButton)
+                    Positioned.fill(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _mountSeekBackwardButton
+                                ? TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(
+                                      begin: 0.0,
+                                      end: _hideSeekBackwardButton ? 0.0 : 1.0,
+                                    ),
+                                    duration: const Duration(milliseconds: 200),
+                                    builder: (context, value, child) => Opacity(
+                                      opacity: value,
+                                      child: child,
+                                    ),
+                                    onEnd: () {
+                                      if (_hideSeekBackwardButton) {
+                                        setState(() {
+                                          _hideSeekBackwardButton = false;
+                                          _mountSeekBackwardButton = false;
+                                        });
+                                      }
+                                    },
+                                    child: DoubleTapSeekButton(
+                                      action: DoubleTapSeekAction.backward,
+                                      value: doubleTapSeekValue,
+                                      onChanged: (value) {},
+                                      onSubmitted: (value) {
+                                        setState(() {
+                                          _hideSeekBackwardButton = true;
+                                        });
+
+                                        Duration result =
+                                            playerState.position - value;
+                                        result = result.clampToRange(
+                                          playerState.duration,
+                                        );
+                                        notifier.player.seek(result);
+                                      },
+                                    ),
+                                  )
+                                : const SizedBox(),
+                          ),
+                          const Expanded(child: SizedBox()),
+                          Expanded(
+                            child: _mountSeekForwardButton
+                                ? AnimatedOpacity(
+                                    opacity: _hideSeekForwardButton ? 0 : 1.0,
+                                    duration: const Duration(milliseconds: 200),
+                                    child: DoubleTapSeekButton(
+                                      action: DoubleTapSeekAction.forward,
+                                      value: doubleTapSeekValue,
+                                      onChanged: (value) {},
+                                      onSubmitted: (value) {
+                                        _timerSeekForwardButton?.cancel();
+
+                                        _timerSeekForwardButton = Timer(
+                                            const Duration(milliseconds: 200),
+                                            () {
+                                          if (_hideSeekForwardButton) {
+                                            setState(() {
+                                              _hideSeekForwardButton = false;
+                                              _mountSeekForwardButton = false;
+                                            });
+                                          }
+                                        });
+
+                                        setState(() {
+                                          _hideSeekForwardButton = true;
+                                        });
+                                        Duration result =
+                                            playerState.position + value;
+                                        result = result.clampToRange(
+                                          playerState.duration,
+                                        );
+                                        notifier.player.seek(result);
+                                      },
+                                    ),
+                                  )
+                                : const SizedBox(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  //Center controls
+                  ((notifier.hasNextEp && notifier.completed) &&
+                          playerNextEpisode)
+                      ? Align(
+                          child: NextEpisodeCountdown(
+                            number: notifier.currentEpNumber,
+                            onCancel: () {
+                              notifier.onPlayerCompleted(false);
+                              notifier.hideController.toggle();
+                            },
+                            onPlay: () {
+                              notifier
+                                  .changeEpisode(notifier.currentEpNumber + 1);
+                              notifier.hideController.toggle();
+                            },
+                          ),
+                        )
+                      : AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 150),
+                          child: _seekShowUI
+                              ? Align(
+                                  child: SeekIndicator(
+                                    position: _positionText,
+                                    diff: _diffText,
+                                  ),
+                                )
+                              : AutoHide(
+                                  switchDuration: switchDuration,
+                                  controller: notifier.hideController,
+                                  child: Align(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        const SizedBox.shrink(),
+                                        IconButton(
+                                          tooltip: 'Предыдущая серия',
+                                          onPressed: notifier.hasPrevEp
+                                              ? () => notifier.changeEpisode(
+                                                  notifier.currentEpNumber - 1)
+                                              : null,
+                                          color: Colors.white,
+                                          iconSize: 32.0,
+                                          icon: const Icon(Icons.skip_previous),
+                                        ),
+                                        // const SizedBox(width: 24),
+                                        IgnorePointer(
+                                          ignoring: playerState.buffering,
+                                          child: AnimatedOpacity(
+                                            curve: Curves.easeInOut,
+                                            opacity: !playerState.buffering
+                                                ? 1.0
+                                                : 0.0,
+                                            duration: const Duration(
+                                                milliseconds: 150),
+                                            child: IconButton(
                                               color: Colors.white,
+                                              iconSize: 48.0,
+                                              icon: AnimatedPlayPause(
+                                                playing: playerState.playing,
+                                                color: Colors.white,
+                                              ),
+                                              onPressed:
+                                                  notifier.player.playOrPause,
                                             ),
-                                            onPressed:
-                                                notifier.player.playOrPause,
                                           ),
                                         ),
-                                      ),
-                                      // const SizedBox(width: 24),
-                                      IconButton(
-                                        tooltip: 'Следующая серия',
-                                        onPressed: notifier.hasNextEp
-                                            ? () => notifier.changeEpisode(
-                                                notifier.currentEpNumber + 1)
-                                            : null,
-                                        color: Colors.white,
-                                        iconSize: 32.0,
-                                        icon: const Icon(Icons.skip_next),
-                                      ),
-                                      const SizedBox.shrink(),
-                                    ],
+                                        // const SizedBox(width: 24),
+                                        IconButton(
+                                          tooltip: 'Следующая серия',
+                                          onPressed: notifier.hasNextEp
+                                              ? () => notifier.changeEpisode(
+                                                  notifier.currentEpNumber + 1)
+                                              : null,
+                                          color: Colors.white,
+                                          iconSize: 32.0,
+                                          icon: const Icon(Icons.skip_next),
+                                        ),
+                                        const SizedBox.shrink(),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                      ),
-                //Bottom controls
-                AutoHide(
-                  switchDuration: switchDuration,
-                  controller: notifier.hideController,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SafeArea(
-                      top: false,
-                      bottom: false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          // bottom: safePadding.bottom == 0.0
-                          //     ? 24.0
-                          //     : safePadding.bottom,
-                          bottom: safePaddingBottom.value,
                         ),
-                        child: BottomControls(
-                          p,
-                          seekShowUI: _seekShowUI,
-                          seekTo: _seekToDuration,
+                  //Bottom controls
+                  AutoHide(
+                    switchDuration: switchDuration,
+                    controller: notifier.hideController,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SafeArea(
+                        top: false,
+                        bottom: false,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            // bottom: safePadding.bottom == 0.0
+                            //     ? 24.0
+                            //     : safePadding.bottom,
+                            bottom: safePaddingBottom.value,
+                          ),
+                          child: BottomControls(
+                            p,
+                            seekShowUI: _seekShowUI,
+                            seekTo: _seekToDuration,
+                            onEnablePip: () => _enablePip(context),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  // const Positioned(
+                  //   top: 4,
+                  //   right: 8,
+                  //   child: ClockWidget(),
+                  // ),
+                ],
+              );
+            },
+            loading: () => Stack(
+              children: [
+                playerWidget,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: safePaddingTop.value),
+                      child: PlayerTopBar(
+                        title: widget.extra.titleInfo.animeName,
+                        subtitle:
+                            'Серия ${notifier.currentEpNumber} • $studioName',
+                        actions: const [],
+                      ),
+                    ),
+                  ),
                 ),
-                // const Positioned(
-                //   top: 4,
-                //   right: 8,
-                //   child: ClockWidget(),
-                // ),
+                const Align(child: CircularProgressIndicator()),
               ],
-            );
-          },
-          loading: () => Stack(
-            children: [
-              playerWidget,
-              Align(
-                alignment: Alignment.topLeft,
-                child: SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: safePaddingTop.value),
-                    child: PlayerTopBar(
-                      title: widget.extra.titleInfo.animeName,
-                      subtitle:
-                          'Серия ${notifier.currentEpNumber} • $studioName',
-                      actions: const [],
+            ),
+            error: (error, stackTrace) => Stack(
+              children: [
+                playerWidget,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: SafeArea(
+                    top: false,
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: safePaddingTop.value),
+                      child: PlayerTopBar(
+                        title: widget.extra.titleInfo.animeName,
+                        subtitle:
+                            'Серия ${notifier.currentEpNumber} • $studioName',
+                        actions: const [],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const Align(child: CircularProgressIndicator()),
-            ],
-          ),
-          error: (error, stackTrace) => Stack(
-            children: [
-              playerWidget,
-              Align(
-                alignment: Alignment.topLeft,
-                child: SafeArea(
-                  top: false,
-                  bottom: false,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: safePaddingTop.value),
-                    child: PlayerTopBar(
-                      title: widget.extra.titleInfo.animeName,
-                      subtitle:
-                          'Серия ${notifier.currentEpNumber} • $studioName',
-                      actions: const [],
-                    ),
+                Align(
+                  child: CustomErrorWidget(
+                    error.toString(),
+                    () {},
+                    showButton: false,
+                    //stackTrace: stackTrace.toString(),
                   ),
                 ),
-              ),
-              Align(
-                child: CustomErrorWidget(
-                  error.toString(),
-                  () {},
-                  showButton: false,
-                  //stackTrace: stackTrace.toString(),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -678,5 +748,18 @@ class MobilePlayerSettings extends StatelessWidget {
         child: MobilePlayerSettings(),
       ),
     );
+  }
+}
+
+extension on Rational {
+  /// Checks whether given [Rational] instance fits into Android requirements
+  /// or not.
+  ///
+  /// Android docs specified boundaries as inclusive.
+  bool get fitsInAndroidRequirements {
+    final aspectRatio = numerator / denominator;
+    const min = 1 / 2.39;
+    const max = 2.39;
+    return (min <= aspectRatio) && (aspectRatio <= max);
   }
 }

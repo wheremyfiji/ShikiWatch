@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../../utils/extensions/buildcontext.dart';
 import '../../domain/player_provider_parameters.dart';
+import '../../pip_provider.dart';
 import '../../shared/audio_video_progress_bar.dart';
 import '../../shared/skip_fragment_button.dart';
 import '../../shared/player_settings.dart';
@@ -14,11 +15,14 @@ class BottomControls extends ConsumerWidget {
   final PlayerProviderParameters p;
   final bool seekShowUI;
   final Duration seekTo;
+  final VoidCallback onEnablePip;
+
   const BottomControls(
     this.p, {
     super.key,
     required this.seekShowUI,
     required this.seekTo,
+    required this.onEnablePip,
   });
 
   @override
@@ -39,6 +43,7 @@ class BottomControls extends ConsumerWidget {
         opTimecode.last > position.inSeconds;
 
     final activeShaders = ref.watch(activeShadersProvider);
+    final isPipAvailable = ref.watch(pipAvailabilityProvider);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -128,6 +133,14 @@ class BottomControls extends ConsumerWidget {
                   : Icons.four_k_outlined),
               iconSize: 21,
             ),
+            if (isPipAvailable)
+              IconButton(
+                tooltip: "Войти в режим PiP",
+                color: Colors.white,
+                onPressed: onEnablePip,
+                icon: const Icon(Icons.picture_in_picture_alt),
+                iconSize: 21,
+              ),
             // IconButton(
             //   color: Colors.white,
             //   onPressed: () =>
