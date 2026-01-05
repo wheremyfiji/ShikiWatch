@@ -2,7 +2,7 @@ name: shikidev
 description: Unofficial application for shikimori
 publish_to: 'none'
 
-version: 0.13.0+88
+version: 0.14.0+90
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
