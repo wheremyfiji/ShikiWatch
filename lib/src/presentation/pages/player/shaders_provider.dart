@@ -57,24 +57,46 @@ class ActiveShadersNotifier extends Notifier<List<PlayerShader>> {
 }
 
 final shaderApplicatorProvider = FutureProvider.autoDispose<void>((ref) async {
+  final playerLogger = PlayerLogger();
+
   final player = ref.watch(playerStateProvider.select((s) => (s.player)));
   final activeShaders = ref.watch(activeShadersProvider);
 
   await player.stream.buffer.first;
 
-  if (activeShaders.isEmpty) {
-    await (player.platform as NativePlayer).setProperty('glsl-shaders', '');
-    return;
-  }
-
   final separator = Platform.isWindows ? ';' : ':';
 
-  final List<String> shaderPaths = activeShaders
-      .map((shader) => PlayerUtils.instance.shadersDir + shader.filePath)
-      .toList();
+  final String targetValue = activeShaders.isEmpty
+      ? ''
+      : activeShaders
+          .map((shader) => PlayerUtils.instance.shadersDir + shader.filePath)
+          .join(separator);
 
-  final joinedPaths = shaderPaths.join(separator);
+  final nativePlayer = player.platform as NativePlayer;
 
-  await (player.platform as NativePlayer)
-      .setProperty('glsl-shaders', joinedPaths);
+  playerLogger.addLog(
+    '[shaders] targetValue: $targetValue',
+  );
+
+  try {
+    final String currentValue = await nativePlayer.getProperty('glsl-shaders');
+
+    playerLogger.addLog(
+      '[shaders] currentValue: $currentValue',
+    );
+
+    if (currentValue == targetValue) {
+      return;
+    }
+  } catch (e) {
+    playerLogger.addLog(
+      '[shaders] error getting glsl-shaders property: $e',
+    );
+  }
+
+  playerLogger.addLog(
+    '[shaders] set: $targetValue',
+  );
+
+  await nativePlayer.setProperty('glsl-shaders', targetValue);
 }, name: 'shaderApplicatorProvider');

@@ -201,6 +201,11 @@ query($title_id: String) {
       name
     }
 
+    scoresStats {
+      count
+      score 
+    }
+
     statusesStats {
       count
       status
@@ -298,6 +303,7 @@ class GraphqlAnime {
   final List<GraphqlStudio> studios;
   final List<GraphqlRelated> related;
   final List<GraphqlStatusesStats> statusesStats;
+  final List<GraphqlScoreStat> scoresStats;
   final List<GraphqlScreenshot> screenshots;
   final GraphqlUserRate? userRate;
 
@@ -332,6 +338,7 @@ class GraphqlAnime {
     required this.studios,
     required this.related,
     required this.statusesStats,
+    required this.scoresStats,
     required this.screenshots,
     required this.userRate,
   });
@@ -389,6 +396,10 @@ class GraphqlAnime {
                 json["related"].map((x) => GraphqlRelated.fromJson(x))),
         statusesStats: List<GraphqlStatusesStats>.from(
             json["statusesStats"].map((x) => GraphqlStatusesStats.fromJson(x))),
+        scoresStats: json["scoresStats"] == null
+            ? []
+            : List<GraphqlScoreStat>.from(
+                json["scoresStats"].map((x) => GraphqlScoreStat.fromJson(x))),
         screenshots: json["screenshots"] == null
             ? []
             : List<GraphqlScreenshot>.from(
@@ -429,6 +440,7 @@ class GraphqlAnime {
     List<GraphqlStudio>? studios,
     List<GraphqlRelated>? related,
     List<GraphqlStatusesStats>? statusesStats,
+    List<GraphqlScoreStat>? scoresStats,
     List<GraphqlScreenshot>? screenshots,
     GraphqlUserRate? userRate,
     bool deleteRate = false,
@@ -464,6 +476,7 @@ class GraphqlAnime {
       studios: studios ?? this.studios,
       related: related ?? this.related,
       statusesStats: statusesStats ?? this.statusesStats,
+      scoresStats: scoresStats ?? this.scoresStats,
       screenshots: screenshots ?? this.screenshots,
       userRate: deleteRate ? null : userRate ?? this.userRate,
     );
@@ -503,6 +516,7 @@ class GraphqlAnime {
         listEquals(other.studios, studios) &&
         listEquals(other.related, related) &&
         listEquals(other.statusesStats, statusesStats) &&
+        listEquals(other.scoresStats, scoresStats) &&
         listEquals(other.screenshots, screenshots) &&
         other.userRate == userRate;
   }
@@ -539,6 +553,7 @@ class GraphqlAnime {
         studios.hashCode ^
         related.hashCode ^
         statusesStats.hashCode ^
+        scoresStats.hashCode ^
         screenshots.hashCode ^
         userRate.hashCode;
   }
@@ -652,6 +667,22 @@ class GraphqlStatusesStats {
       GraphqlStatusesStats(
         count: json["count"],
         status: RateStatus.fromValue(json["status"]),
+      );
+}
+
+class GraphqlScoreStat {
+  final int count;
+  final int score;
+
+  GraphqlScoreStat({
+    required this.count,
+    required this.score,
+  });
+
+  factory GraphqlScoreStat.fromJson(Map<String, dynamic> json) =>
+      GraphqlScoreStat(
+        count: json['count'] as int,
+        score: json['score'] as int,
       );
 }
 

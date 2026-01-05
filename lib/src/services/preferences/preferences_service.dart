@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:collection/collection.dart';
 
+import '../../../kodik/random_device_generator.dart';
 import '../../domain/enums/color_scheme_variant.dart';
 import '../../domain/enums/explore_ongoing_now.dart';
 import '../../domain/enums/library_layout_mode.dart';
@@ -29,6 +30,7 @@ const _playerAndroidNewAudioBackend = 'playerAndroidNewAudioBackend';
 const _explorePageLayout = 'explorePageLayout';
 const _explorePageSort = 'explorePageSort';
 const _playerNextEpisode = 'playerNextEpisode';
+const _playerAutoPip = 'playerAutoPip';
 
 // appLaunchCount
 const _appLaunchCountKey = 'app_launch_count_key';
@@ -45,6 +47,15 @@ class PreferencesService {
 
   static Future<PreferencesService> initialize() async {
     final sp = await SharedPreferences.getInstance();
+
+    final device = sp.getString('custom_user_device');
+
+    if (device == null) {
+      await sp.setString(
+        'custom_user_device',
+        RandomDeviceGenerator.generate(),
+      );
+    }
 
     // try {
     //   final value = sp.getInt(_appLaunchCountKey);
@@ -317,5 +328,15 @@ class PreferencesService {
 
   Future<void> setPlayerNextEpisode(bool v) async {
     await _preferences.setBool(_playerNextEpisode, v);
+  }
+
+  bool getPlayerAutoPip() {
+    final value = _preferences.getBool(_playerAutoPip);
+
+    return value ?? false;
+  }
+
+  Future<void> setPlayerAutoPip(bool v) async {
+    await _preferences.setBool(_playerAutoPip, v);
   }
 }

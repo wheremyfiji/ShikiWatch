@@ -9,20 +9,14 @@ class StudioLeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String text = title.replaceAll(RegExp(r'[ .a-zа-я]'), '');
+    // String text = title.replaceAll(RegExp(r'[ .a-zа-я]'), '');
+    // text = text.length >= 2 ? text.substring(0, 2) : title.substring(0, 2);
 
-    // final pre = text;
+    String text = title.replaceAll(RegExp(r'[^A-ZА-ЯЁ]'), '');
 
-    // text = text.length >= 2 ? text.substring(0, 2) : text;
-    // text = text.length == 1 ? text + title.substring(title.length - 1) : text;
-
-    // if (text.isEmpty) {
-    //   text = title.substring(0, 2);
-    // }
-
-    text = text.length >= 2 ? text.substring(0, 2) : title.substring(0, 2);
-
-    // print('$title -> $pre -> $text');
+    text = text.length >= 2
+        ? text.substring(0, 2)
+        : (title.length >= 2 ? title.substring(0, 2) : title);
 
     return CircleAvatar(
       backgroundColor: context.colorScheme.primaryContainer,
@@ -30,7 +24,6 @@ class StudioLeading extends StatelessWidget {
         text.toUpperCase(),
         style: TextStyle(
           color: context.colorScheme.onPrimaryContainer,
-          // fontSize: 14.0,
         ),
       ),
     );

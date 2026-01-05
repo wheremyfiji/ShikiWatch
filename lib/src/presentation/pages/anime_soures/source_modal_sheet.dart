@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/models/pages_extra.dart';
 import '../../../utils/extensions/buildcontext.dart';
+import '../../../domain/models/pages_extra.dart';
 
-import 'anilib/anilib_source_page.dart';
-import 'anime365/anime365_provider.dart';
+import 'aniliberty/aniliberty_source_page.dart';
 import 'anime365/anime365_source_page.dart';
+import 'anime365/anime365_provider.dart';
+import 'anilib/anilib_source_page.dart';
 import 'kodik/kodik_source_page.dart';
-import 'anilibria/anilibria_source_page.dart';
 
 class SelectSourceSheet extends StatelessWidget {
   const SelectSourceSheet(
@@ -60,14 +61,13 @@ class SelectSourceSheet extends StatelessWidget {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    AnilibriaSourcePage(extra),
+                    AnilibertySourcePage(extra),
                 transitionDuration: Duration.zero,
                 reverseTransitionDuration: Duration.zero,
               ),
             );
           },
-          title: const Text('AniLibria'),
-          enabled: false,
+          title: const Text('AniLiberty'),
         ),
         ListTile(
           onTap: () {
@@ -85,7 +85,7 @@ class SelectSourceSheet extends StatelessWidget {
           },
           title: const Text('AniLib'),
           subtitle: const Text('Прогресс просмотра не сохраняется'),
-          enabled: false,
+          // enabled: false,
         ),
         Consumer(
           builder: (context, ref, child) {

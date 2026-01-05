@@ -31,5 +31,6 @@ class SettingsState with _$SettingsState {
     required ExplorePageLayout explorePageLayout,
     required ExplorePageSort explorePageSort,
     required bool playerNextEpisode,
+    required bool playerAutoPip,
   }) = _SettingsState;
 }

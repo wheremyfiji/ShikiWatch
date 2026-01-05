@@ -16,6 +16,8 @@ class AnimeSourcePageExtra {
     required this.searchName,
     required this.imageUrl,
     required this.searchList,
+    required this.year,
+    required this.isOngoing,
   });
 
   final int shikimoriId;
@@ -24,4 +26,6 @@ class AnimeSourcePageExtra {
   final String searchName;
   final String imageUrl;
   final List<String> searchList;
+  final int? year;
+  final bool isOngoing;
 }

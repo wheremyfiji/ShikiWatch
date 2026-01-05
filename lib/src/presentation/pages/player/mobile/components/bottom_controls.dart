@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../../utils/extensions/buildcontext.dart';
+import '../../../../providers/settings_provider.dart';
 import '../../domain/player_provider_parameters.dart';
 import '../../pip_provider.dart';
 import '../../shared/audio_video_progress_bar.dart';
@@ -43,7 +44,10 @@ class BottomControls extends ConsumerWidget {
         opTimecode.last > position.inSeconds;
 
     final activeShaders = ref.watch(activeShadersProvider);
+
     final isPipAvailable = ref.watch(pipAvailabilityProvider);
+    final autoPip =
+        ref.read(settingsProvider.select((settings) => settings.playerAutoPip));
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -133,7 +137,7 @@ class BottomControls extends ConsumerWidget {
                   : Icons.four_k_outlined),
               iconSize: 21,
             ),
-            if (isPipAvailable)
+            if (isPipAvailable && !autoPip)
               IconButton(
                 tooltip: "Войти в режим PiP",
                 color: Colors.white,

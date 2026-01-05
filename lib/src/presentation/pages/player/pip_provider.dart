@@ -1,7 +1,7 @@
+import 'dart:io';
+
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:floating/floating.dart';
-
-import 'player_provider.dart';
 
 final floatingProvider = Provider<Floating>(
   (ref) => Floating(),
@@ -22,8 +22,10 @@ class PipAvailabilityNotifier extends AutoDisposeNotifier<bool> {
   }
 
   Future<void> _checkAvailability() async {
-    final player = ref.read(playerStateProvider.select((s) => (s.player)));
-    await player.stream.buffer.first;
+    if (!Platform.isAndroid) {
+      state = false;
+      return;
+    }
 
     try {
       final floating = ref.read(floatingProvider);

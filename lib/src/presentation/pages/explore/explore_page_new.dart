@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 
+import '../../../../toggles.dart';
 import '../../../services/secure_storage/secure_storage_service.dart';
 import '../../../services/http/http_service_provider.dart';
 import '../../../domain/enums/explore_ongoing_now.dart';
@@ -169,6 +170,11 @@ class _ExplorePageNewState extends ConsumerState<ExplorePageNew> {
                     onPressed: () => context.push('/explore/search'),
                     icon: const Icon(Icons.search),
                   ),
+                  if (Toggles.showCalendarButton)
+                    IconButton(
+                      onPressed: () => context.pushNamed('calendar'),
+                      icon: const Icon(Icons.calendar_month_rounded),
+                    ),
                 ],
               ),
               const SliverPadding(

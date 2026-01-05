@@ -42,6 +42,7 @@ secrets.json
 /lib/anilibria/
 /lib/anime_lib/
 /lib/anime365/
+/lib/aniliberty/
 
 # Symbolication related
 app.*.symbols

@@ -21,6 +21,8 @@ class TitleHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final avgScore = _getAverageRating(title.scoresStats);
+
     if (useRowLayout) {
       return Stack(
         clipBehavior: Clip.hardEdge,
@@ -81,6 +83,7 @@ class TitleHeader extends StatelessWidget {
                       if (title.score != 0) ...[
                         _Score(
                           title.score,
+                          avgScore: avgScore,
                           padding: false,
                         ),
                       ],
@@ -134,7 +137,11 @@ class TitleHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (title.score != 0) _Score(title.score),
+              if (title.score != 0)
+                _Score(
+                  title.score,
+                  avgScore: avgScore,
+                ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
@@ -169,6 +176,21 @@ class TitleHeader extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  static double? _getAverageRating(List<GraphqlScoreStat> stats) {
+    if (stats.isEmpty) return null;
+
+    final totalScoreSum =
+        stats.fold(0, (sum, item) => sum + (item.score * item.count));
+
+    final totalVotes = stats.fold(0, (sum, item) => sum + item.count);
+
+    if (totalVotes == 0) return null;
+
+    final average = totalScoreSum / totalVotes;
+
+    return double.parse(average.toStringAsFixed(2));
   }
 
   static String _parseSeason(String value) {
@@ -277,10 +299,13 @@ class _BottomShadow extends StatelessWidget {
 class _Score extends StatelessWidget {
   const _Score(
     this.score, {
+    // ignore: unused_element
+    this.avgScore,
     this.padding = true,
   });
 
   final double score;
+  final double? avgScore;
   final bool padding;
 
   @override
@@ -310,6 +335,18 @@ class _Score extends StatelessWidget {
             ),
           ),
         ),
+        if (avgScore != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 4, top: 1),
+            child: Text(
+              '($avgScore)',
+              style: TextStyle(
+                fontSize: 12,
+                height: 1,
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
       ],
     );
   }

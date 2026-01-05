@@ -31,27 +31,17 @@ class ShaderSelectorWidget extends ConsumerWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: Card(
-                  // elevation: 0,
-                  // color: context.colorScheme.primaryContainer,
-                  // shadowColor: Colors.transparent,
-                  // surfaceTintColor: Colors.transparent,
                   margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                   child: ListTile(
                     title: Text(
-                      // activeShaders.isNotEmpty
-                      //     ? 'Шейдеры (${activeShaders.length})'
-                      //     :
                       'Шейдеры',
-                      // style: context.textTheme.titleLarge,
                       style: context.textTheme.titleLarge?.copyWith(
                         color: context.colorScheme.onPrimaryContainer,
                       ),
                     ),
                     subtitle: Text(
-                      // 'При использовании возможны проблемы с воспроизведением.\nОбычные шейдеры можно наслаивать друг на друга в порядке выбора.',
                       'При использовании возможны проблемы с воспроизведением',
                       style: context.textTheme.bodySmall?.copyWith(
-                        // color: context.colorScheme.onSurfaceVariant,
                         color: context.colorScheme.onPrimaryContainer
                             .withOpacity(0.8),
                       ),
@@ -59,65 +49,14 @@ class ShaderSelectorWidget extends ConsumerWidget {
                     trailing: activeShaders.isNotEmpty
                         ? TextButton(
                             onPressed: () => notifier.clearAll(),
-                            // onPressed: () {},
                             child: const Text('Сбросить'),
                           )
                         : null,
                   ),
                 ),
               ),
-              // SliverToBoxAdapter(
-              //   child: Padding(
-              //     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //       children: [
-              //         Expanded(
-              //           child: Column(
-              //             mainAxisSize: MainAxisSize.min,
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               Text('Шейдеры (${activeShaders.length})',
-              //                   style:
-              //                       Theme.of(context).textTheme.headlineSmall),
-              //               Text(
-              //                 'При использовании возможны проблемы с воспроизведением.\nНекоторые шейдеры можно наслаивать друг на друга.',
-              //                 style: TextStyle(
-              //                   fontSize: 12,
-              //                   color: context.colorScheme.onSurfaceVariant,
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //         if (activeShaders.isNotEmpty)
-              //           TextButton(
-              //             // onPressed: () => notifier.clearAll(),
-              //             onPressed: () {},
-              //             child: const Text('Сбросить'),
-              //           ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              // const SliverToBoxAdapter(
-              //   child: Padding(
-              //     padding: EdgeInsets.symmetric(horizontal: 16.0),
-              //     child: Divider(),
-              //   ),
-              // ),
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Row(
-                    children: [
-                      Text('Обычные шейдеры'),
-                      SizedBox(width: 12.0),
-                      Expanded(child: Divider()),
-                    ],
-                  ),
-                ),
-              ),
+              const SliverPadding(padding: EdgeInsets.only(top: 12)),
+              const TextWithDivider(label: 'Обычные шейдеры'),
               SliverList.builder(
                 itemCount: nonExclusive.length,
                 itemBuilder: (context, index) {
@@ -187,18 +126,7 @@ class ShaderSelectorWidget extends ConsumerWidget {
                   );
                 },
               ),
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      Text('Одиночные шейдеры'),
-                      SizedBox(width: 12.0),
-                      Expanded(child: Divider()),
-                    ],
-                  ),
-                ),
-              ),
+              const TextWithDivider(label: 'Одиночные шейдеры'),
               SliverList.builder(
                 itemCount: exclusive.length,
                 itemBuilder: (context, index) {
@@ -291,6 +219,37 @@ class ShaderSelectorWidget extends ConsumerWidget {
       builder: (ctx) {
         return const ShaderSelectorWidget();
       },
+    );
+  }
+}
+
+class TextWithDivider extends StatelessWidget {
+  const TextWithDivider({
+    super.key,
+    required this.label,
+    this.style,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
+    this.space = 12.0,
+  });
+
+  final String label;
+  final double space;
+  final EdgeInsetsGeometry padding;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: padding,
+        child: Row(
+          children: [
+            Text(label, style: style),
+            SizedBox(width: space),
+            const Expanded(child: Divider()),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -22,6 +22,7 @@ import 'widgets/library_layout.dart';
 import 'widgets/library_start_fragment.dart';
 import 'widgets/nav_dest_label_behavior_option.dart';
 import 'widgets/oled_mode.dart';
+import 'widgets/player_auto_pip.dart';
 import 'widgets/player_discord_rpc.dart';
 import 'widgets/player_long_press_seek.dart';
 import 'widgets/player_new_audio_backend.dart';
@@ -163,6 +164,7 @@ class SettingsPage extends ConsumerWidget {
                       //   const PlayerSwipeSeekOption(),
                       if (Platform.isWindows || Platform.isLinux)
                         const PlayerDiscordRpcOption(),
+                      const PlayerAutoPipOption(),
                       SettingsOption(
                         title: 'Player logs',
                         onTap: () async {

@@ -116,14 +116,14 @@ class CharacterPage extends ConsumerWidget {
                       child: TitleDescriptionFromHtml(
                         data.descriptionHtml ?? '',
                         shouldExpand: !AppUtils.instance.isDesktop &&
-                            data.descriptionHtml!.length > 500,
+                            data.descriptionHtml!.length > 600,
                       ).animate().fade(),
                     ),
                   ),
-                if (data.seyu != null && data.seyu!.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: CharacterSeyu(data.seyu!).animate().fade(),
-                  ),
+                // if (data.seyu != null && data.seyu!.isNotEmpty)
+                //   SliverToBoxAdapter(
+                //     child: CharacterSeyu(data.seyu!).animate().fade(),
+                //   ),
                 if (data.animes != null && data.animes!.isNotEmpty)
                   SliverToBoxAdapter(
                     child: CharacterAnimes(data.animes!).animate().fade(),

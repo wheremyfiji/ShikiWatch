@@ -44,6 +44,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
       explorePageLayout: _preferencesService.getExplorePageLayout(),
       explorePageSort: _preferencesService.getExplorePageSort(),
       playerNextEpisode: _preferencesService.getPlayerNextEpisode(),
+      playerAutoPip: _preferencesService.getPlayerAutoPip(),
     );
   }
 
@@ -171,6 +172,13 @@ class SettingsNotifier extends Notifier<SettingsState> {
     await _preferencesService.setPlayerNextEpisode(newValue);
     state = state.copyWith(
       playerNextEpisode: newValue,
+    );
+  }
+
+  Future<void> setPlayerAutoPip(bool newValue) async {
+    await _preferencesService.setPlayerAutoPip(newValue);
+    state = state.copyWith(
+      playerAutoPip: newValue,
     );
   }
 }

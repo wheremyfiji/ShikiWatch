@@ -15,6 +15,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:floating/floating.dart';
 import 'package:intl/intl.dart';
 
 import '../../../services/anime_database/anime_database_provider.dart';
@@ -40,6 +41,8 @@ import 'domain/playable_content.dart';
 import 'domain/player_page_extra.dart';
 import 'domain/player_provider_parameters.dart';
 import 'domain/playlist_item.dart';
+
+import 'pip_provider.dart';
 
 final playerPageProvider = ChangeNotifierProvider.autoDispose
     .family<PlayerController, PlayerProviderParameters>((ref, p) {
@@ -177,7 +180,7 @@ class PlayerController extends SafeChangeNotifier {
 
     await _parseEpisode();
 
-    _safeHls();
+    await _safeHls();
 
     playableContentAsync.whenData((_) async {
       if (!_parseQuality()) {
@@ -210,6 +213,30 @@ class PlayerController extends SafeChangeNotifier {
           'Referer: ${Anime365Endpoints.base}/',
         );
       }
+
+      await (player.platform as NativePlayer).setProperty(
+        'demuxer-lavf-o',
+        [
+          'http_persistent=0',
+          'reconnect=1',
+          'reconnect_streamed=1',
+          'reconnect_on_network_error=1',
+          'reconnect_on_http_error="4xx,5xx"',
+          'reconnect_delay_max=5',
+          'seg_max_retry=5',
+          'strict=experimental',
+          'allowed_extensions=ALL',
+          'protocol_whitelist=[${[
+            'tcp',
+            'tls',
+            'data',
+            'file',
+            'http',
+            'https',
+            'crypto'
+          ].join(',')}]'
+        ].join(','),
+      );
 
       // await (player.platform as NativePlayer).setProperty(
       //   'demuxer-lavf-o',
@@ -257,6 +284,23 @@ class PlayerController extends SafeChangeNotifier {
         _observeAudioSession();
       }
 
+      final floating = ref.read(floatingProvider);
+      final isPipAvailable = ref.read(pipAvailabilityProvider);
+
+      if (isPipAvailable) {
+        _playerSubs.add(
+          floating.pipStatusStream.listen((PiPStatus event) {
+            if (_disposed) {
+              return;
+            }
+
+            if (event == PiPStatus.enabled) {
+              hideController.hide();
+            }
+          }),
+        );
+      }
+
       _playerSubs.addAll(
         [
           player.stream.completed.listen((event) {
@@ -297,6 +341,16 @@ class PlayerController extends SafeChangeNotifier {
 
   void disposeState() async {
     _disposed = true;
+
+    final isPipAvailable = ref.read(pipAvailabilityProvider);
+    final autoPip =
+        ref.read(settingsProvider.select((settings) => settings.playerAutoPip));
+
+    if (isPipAvailable && autoPip) {
+      final floating = ref.read(floatingProvider);
+
+      await floating.cancelOnLeavePiP();
+    }
 
     if (e.animeSource == AnimeSource.anime365) {
       ref.invalidate(anime365UserProvider);
@@ -551,7 +605,7 @@ class PlayerController extends SafeChangeNotifier {
 
       _hasPrevEp = list.firstWhereOrNull((i) => i.number == s - 1) != null;
       _hasNextEp = list.firstWhereOrNull((i) => i.number == s + 1) != null;
-    } else if (_animeSourceType == AnimeSource.libria && e.libria != null) {
+    } else if (_animeSourceType == AnimeSource.liberty && e.libria != null) {
       final list = e.libria!.playlist;
 
       _playlistItem = PlaylistItem(
@@ -645,7 +699,8 @@ class PlayerController extends SafeChangeNotifier {
           );
         },
       );
-    } else if (_animeSourceType == AnimeSource.libria) {
+      // TODO
+    } else if (_animeSourceType == AnimeSource.liberty) {
       playableContentAsync = AsyncValue.data(
         PlayableContent(
           fhd: _playlistItem.libriaPlaylistItem!.fnd == null
@@ -1010,15 +1065,9 @@ class PlayerController extends SafeChangeNotifier {
     unawaited(_safeMpvSetProperty('cache-secs', '120'));
     unawaited(_safeMpvSetProperty('demuxer-seekable-cache', 'yes'));
     unawaited(_safeMpvSetProperty('demuxer-readahead-secs', '15'));
-    unawaited(
-        _safeMpvSetProperty('demuxer-max-back-bytes', '${32 * 1024 * 1024}'));
 
     unawaited(_safeMpvSetProperty('hr-seek-framedrop', 'no'));
     unawaited(_safeMpvSetProperty('framedrop', 'no'));
-
-    unawaited(_safeMpvSetProperty('video-sync', 'display-resample'));
-
-    // unawaited(_safeMpvSetProperty('hwdec', 'auto-safe'));
 
     unawaited(_safeMpvSetProperty('demuxer-lavf-analyzeduration', '10'));
     unawaited(
@@ -1026,18 +1075,7 @@ class PlayerController extends SafeChangeNotifier {
 
     // unawaited(_safeMpvSetProperty('demuxer-lavf-probe-info', 'yes'));
 
-    unawaited(_safeMpvSetProperty('demuxer-lavf-o', 'fflags=+genpts'));
-
-    unawaited(_safeMpvSetProperty(
-      'stream-lavf-o',
-      // 'demuxer-lavf-o',
-      [
-        'http_persistent=1',
-        'reconnect=1',
-        'reconnect_streamed=1',
-        'reconnect_on_http_error=4xx,5xx',
-      ].join(':'),
-    ));
+    // unawaited(_safeMpvSetProperty('demuxer-lavf-o', 'fflags=+genpts'));
   }
 
   Future<void> _safeMpvSetProperty(String property, String value) async {

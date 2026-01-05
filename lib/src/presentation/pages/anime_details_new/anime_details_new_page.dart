@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../services/preferences/preferences_service.dart';
@@ -19,7 +20,7 @@ import '../../widgets/cached_image.dart';
 import '../../../constants/config.dart';
 import '../../../utils/app_utils.dart';
 
-import '../anime_soures/anilibria/anilibria_source_page.dart';
+import '../anime_soures/aniliberty/aniliberty_source_page.dart';
 import '../anime_soures/anime365/anime365_source_page.dart';
 import '../anime_details/anime_user_rate_bottom_sheet.dart';
 import '../anime_soures/anilib/anilib_source_page.dart';
@@ -29,11 +30,12 @@ import '../anime_details/similar_animes.dart';
 import '../anime_details/external_links.dart';
 import '../anime_details/rating_dialog.dart';
 import '../anime_details/videos_page.dart';
+import '../comments/comments_page.dart';
 
+import 'components/title_statuses_stats.dart';
 import 'components/title_other_details.dart';
 import 'components/title_screenshots.dart';
 import 'components/title_characters.dart';
-import '../comments/comments_page.dart';
 import 'components/title_related.dart';
 import 'components/title_header.dart';
 import 'components/title_genres.dart';
@@ -43,34 +45,26 @@ import 'graphql_anime.dart';
 
 const kLayoutWidth = 800; //600
 
-class AnimeDetailsNewPage extends ConsumerStatefulWidget {
+class AnimeDetailsNewPage extends HookConsumerWidget {
   const AnimeDetailsNewPage(this.extra, {super.key});
 
   final TitleDetailsPageExtra extra;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _AnimeDetailsNewPageState();
-}
-
-class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
-  late double flexibleHeight;
-  late bool useRowLayout;
-
-  @override
-  void didChangeDependencies() {
-    useRowLayout = MediaQuery.sizeOf(context).width >= kLayoutWidth;
-
-    flexibleHeight =
-        (MediaQuery.sizeOf(context).height / 2) / (useRowLayout ? 1.25 : 1);
-
-    super.didChangeDependencies();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final id = widget.extra.id;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final id = extra.id;
+    final size = MediaQuery.sizeOf(context);
     final titleAsync = ref.watch(animeDetailsProvider(id));
+
+    final useRowLayout = useMemoized(
+      () => size.width >= kLayoutWidth,
+      [size.width],
+    );
+
+    final flexibleHeight = useMemoized(
+      () => (size.height / 2) / (useRowLayout ? 1.25 : 1),
+      [size.height, useRowLayout],
+    );
 
     return Scaffold(
       body: RefreshIndicator(
@@ -208,6 +202,12 @@ class _AnimeDetailsNewPageState extends ConsumerState<AnimeDetailsNewPage> {
                         sliver: SliverToBoxAdapter(
                           child: TitleGenres(title.genres).animate().fade(),
                         ),
+                      ),
+                    if (title.statusesStats.isNotEmpty)
+                      SliverToBoxAdapter(
+                        child: TitleStatusesStats(title.statusesStats)
+                            .animate()
+                            .fade(),
                       ),
                     if (title.characterRoles.isNotEmpty)
                       TitleCharacters(title.characterRoles),
@@ -462,6 +462,10 @@ class PlayButton extends ConsumerWidget {
 
     searchList.add(title.russian ?? '');
 
+    // airedOn != null && airedOn!.isNotEmpty
+
+    final airedOn = title.airedOn;
+
     final extra = AnimeSourcePageExtra(
       shikimoriId: title.id,
       animeName: (title.russian == '' ? title.name : title.russian) ?? '',
@@ -469,6 +473,10 @@ class PlayButton extends ConsumerWidget {
       epWatched: title.userRate?.episodes ?? 0,
       imageUrl: '/system/animes/original/${title.id}.jpg',
       searchList: searchList,
+      year: (airedOn == null || airedOn == '')
+          ? null
+          : DateTime.parse(airedOn).year,
+      isOngoing: title.status == AnimeStatus.ongoing,
     );
 
     if (forceAlwaysAsk) {
@@ -487,19 +495,15 @@ class PlayButton extends ConsumerWidget {
           extra: extra,
         ),
       // ignore: use_build_context_synchronously
-      AnimeSource.libria => SelectSourceSheet.show(
+      AnimeSource.liberty => Navigator.push(
           ctx,
-          extra: extra,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                AnilibertySourcePage(extra),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
         ),
-      // AnimeSource.libria => Navigator.push(
-      //     ctx,
-      //     PageRouteBuilder(
-      //       pageBuilder: (context, animation1, animation2) =>
-      //           AnilibriaSourcePage(extra),
-      //       transitionDuration: Duration.zero,
-      //       reverseTransitionDuration: Duration.zero,
-      //     ),
-      //   ),
       // ignore: use_build_context_synchronously
       AnimeSource.kodik => Navigator.push(
           ctx,
@@ -511,19 +515,15 @@ class PlayButton extends ConsumerWidget {
           ),
         ),
       // ignore: use_build_context_synchronously
-      AnimeSource.anilib => SelectSourceSheet.show(
+      AnimeSource.anilib => Navigator.push(
           ctx,
-          extra: extra,
+          PageRouteBuilder(
+            pageBuilder: (context, animation1, animation2) =>
+                AnilibSourcePage(extra),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
         ),
-      // Navigator.push(
-      //     ctx,
-      //     PageRouteBuilder(
-      //       pageBuilder: (context, animation1, animation2) =>
-      //           AnilibSourcePage(extra),
-      //       transitionDuration: Duration.zero,
-      //       reverseTransitionDuration: Duration.zero,
-      //     ),
-      //   ),
       // ignore: use_build_context_synchronously
       AnimeSource.anime365 => Navigator.push(
           ctx,

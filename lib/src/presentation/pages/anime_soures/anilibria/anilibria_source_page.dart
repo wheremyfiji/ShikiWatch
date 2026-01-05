@@ -360,7 +360,7 @@ class AnilibriaSourcePage extends HookConsumerWidget {
                                 type: 'voice',
                               ),
                               selected: ep.episode!,
-                              animeSource: AnimeSource.libria,
+                              animeSource: AnimeSource.liberty,
                               startPosition: startPosition,
                               anilib: null,
                               libria: libriaPlaylist,

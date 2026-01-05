@@ -17,6 +17,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:media_kit/media_kit.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 
 import 'src/services/anime_database/anime_database_provider.dart';
 import 'src/services/anime_database/anime_database_service.dart';
@@ -40,6 +41,7 @@ FutureOr<SentryEvent?> sentryBeforeSend(SentryEvent event, Hint? hint) {
 
 bool canSendEvent(dynamic throwable) {
   return switch (throwable) {
+    DioException e when e.type == DioExceptionType.cancel => false,
     //DioException _ => false,
     SocketException _ => false,
     HttpException _ => false,

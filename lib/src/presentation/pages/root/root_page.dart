@@ -12,6 +12,7 @@ import '../../../utils/extensions/buildcontext.dart';
 import '../../widgets/app_update_bottom_sheet.dart';
 import '../../providers/settings_provider.dart';
 import '../../../utils/app_utils.dart';
+import '../player/pip_provider.dart';
 
 class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
@@ -33,6 +34,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
     ref.watch(anime365UserProvider);
 
     ref.listen(kodikWorkaroundProvider, (_, __) {});
+    ref.listen(pipAvailabilityProvider, (_, __) {});
 
     ref.listen(
       appReleaseProvider,

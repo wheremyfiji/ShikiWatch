@@ -97,13 +97,36 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (mounted) {
+        final autoPip = ref.read(
+            settingsProvider.select((settings) => settings.playerAutoPip));
+
+        final isPipAvailable = ref.read(pipAvailabilityProvider);
+
+        if (autoPip && isPipAvailable) {
+          _enablePip(context, auto: true);
+        }
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _timerSeekBackwardButton?.cancel();
     _timerSeekForwardButton?.cancel();
     super.dispose();
   }
 
-  Future<void> _enablePip(BuildContext context) async {
+  Future<void> _enablePip(
+    BuildContext context, {
+    bool auto = false,
+  }) async {
     try {
       final player = ref.read(playerStateProvider.select((s) => (s.player)));
       final w = player.state.width ?? 16;
@@ -121,35 +144,35 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
       final screenSize = mediaQuery.size * mediaQuery.devicePixelRatio;
       final height = screenSize.width ~/ rational.aspectRatio;
 
-      // final arguments = autoEnable
-      //     ? OnLeavePiP(
-      //         aspectRatio: rational,
-      //         sourceRectHint: Rectangle<int>(
-      //           0,
-      //           (screenSize.height ~/ 2) - (height ~/ 2),
-      //           screenSize.width.toInt(),
-      //           height,
-      //         ),
-      //       )
-      //     : ImmediatePiP(
-      //         aspectRatio: rational,
-      //         sourceRectHint: Rectangle<int>(
-      //           0,
-      //           (screenSize.height ~/ 2) - (height ~/ 2),
-      //           screenSize.width.toInt(),
-      //           height,
-      //         ),
-      //       );
+      final arguments = auto
+          ? OnLeavePiP(
+              aspectRatio: rational,
+              sourceRectHint: Rectangle<int>(
+                0,
+                (screenSize.height ~/ 2) - (height ~/ 2),
+                screenSize.width.toInt(),
+                height,
+              ),
+            )
+          : ImmediatePiP(
+              aspectRatio: rational,
+              sourceRectHint: Rectangle<int>(
+                0,
+                (screenSize.height ~/ 2) - (height ~/ 2),
+                screenSize.width.toInt(),
+                height,
+              ),
+            );
 
-      final arguments = ImmediatePiP(
-        aspectRatio: rational,
-        sourceRectHint: Rectangle<int>(
-          0,
-          (screenSize.height ~/ 2) - (height ~/ 2),
-          screenSize.width.toInt(),
-          height,
-        ),
-      );
+      // final arguments = ImmediatePiP(
+      //   aspectRatio: rational,
+      //   sourceRectHint: Rectangle<int>(
+      //     0,
+      //     (screenSize.height ~/ 2) - (height ~/ 2),
+      //     screenSize.width.toInt(),
+      //     height,
+      //   ),
+      // );
 
       final floating = ref.read(floatingProvider);
       final status = await floating.enable(arguments);
@@ -194,7 +217,7 @@ class _MobilePlayerPageState extends ConsumerState<MobilePlayerPage> {
     }
 
     ref.watch(shaderApplicatorProvider);
-    ref.watch(pipAvailabilityProvider);
+    // ref.watch(pipAvailabilityProvider);
 
     final studioName = widget.extra.studio.name
         .replaceFirst('.Subtitles', ' (Субтитры)')

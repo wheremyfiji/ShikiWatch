@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../toggles.dart';
 import '../../../../utils/extensions/buildcontext.dart';
-import '../../../widgets/custom_card_button.dart';
 
 class ExploreActions extends StatelessWidget {
   const ExploreActions({super.key});
@@ -32,16 +30,6 @@ class ExploreActions extends StatelessWidget {
             ),
           ],
         ),
-        if (Toggles.showCalendarButton) ...[
-          const SizedBox(
-            height: 12,
-          ),
-          CustomCardButton(
-            label: 'Календарь онгоингов',
-            icon: Icons.calendar_month_rounded, //schedule
-            onTap: () => context.pushNamed('calendar'),
-          ),
-        ],
       ],
     );
   }

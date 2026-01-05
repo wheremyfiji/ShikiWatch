@@ -46,7 +46,7 @@ final anilibSourceProvider = FutureProvider.family
   );
 
   if (title == null) {
-    throw 'title not found';
+    return [];
   }
 
   return await anilibApi.getPlaylist(
