@@ -32,6 +32,7 @@ import '../anime_details/rating_dialog.dart';
 import '../anime_details/videos_page.dart';
 import '../comments/comments_page.dart';
 
+import 'components/title_next_episode.dart';
 import 'components/title_statuses_stats.dart';
 import 'components/title_other_details.dart';
 import 'components/title_screenshots.dart';
@@ -138,6 +139,16 @@ class AnimeDetailsNewPage extends HookConsumerWidget {
                         ),
                       ),
                     ),
+                    if (title.nextEpisodeAt != null)
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                        sliver: SliverToBoxAdapter(
+                          child: TitleNextEpisode(
+                            episodesAired: title.episodesAired,
+                            nextEpisodeAt: title.nextEpisodeAt!,
+                          ).animate().fade(),
+                        ),
+                      ),
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                       sliver: SliverToBoxAdapter(

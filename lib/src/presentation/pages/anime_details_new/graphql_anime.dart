@@ -373,7 +373,7 @@ class GraphqlAnime {
             : List<String>.from(json["licensors"].map((x) => x)),
         nextEpisodeAt: json["nextEpisodeAt"] == null
             ? null
-            : DateTime.tryParse(json["nextEpisodeAt"]),
+            : DateTime.tryParse(json["nextEpisodeAt"])?.toLocal(),
         description: json["descriptionHtml"] ?? '',
         descriptionLength: (json["description"] is String)
             ? (json["description"] as String).length

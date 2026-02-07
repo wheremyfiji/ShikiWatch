@@ -1,0 +1,94 @@
+APP_NAME := "ShikiWatch"
+BINARY_NAME := "ShikiWatch"
+DESKTOP_FILE := "../../linux/dist/app.desktop"
+ICON_FILE := "../../linux/dist/icon-256.png"
+FLUTTER_BUILD_DIR := "../../build/linux/x64/release/bundle"
+LINUXDEPLOY_URL := "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+GTK_PLUGIN_URL := "https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh"
+APPIMAGETOOL_URL := "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+PUBSPEC_FILE := "../../pubspec.yaml"
+VERSION := shell("grep '^version:' " + PUBSPEC_FILE + " | sed 's/version:[ ]*//' | cut -d'+' -f1")
+
+default: build-appimage
+
+setup-tools:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    mkdir -p ../../tools
+
+    if [ ! -f ../../tools/linuxdeploy ]; then \
+        wget -O ../../tools/linuxdeploy {{ LINUXDEPLOY_URL }}; \
+        chmod +x ../../tools/linuxdeploy; \
+    fi
+
+    if [ ! -f ../../tools/linuxdeploy-plugin-gtk.sh ]; then \
+        wget -O ../../tools/linuxdeploy-plugin-gtk.sh {{ GTK_PLUGIN_URL }}; \
+        chmod +x ../../tools/linuxdeploy-plugin-gtk.sh; \
+    fi
+
+    if [ ! -f ../../tools/appimagetool ]; then \
+        echo "Downloading appimagetool..."; \
+        wget -q -O ../../tools/appimagetool {{ APPIMAGETOOL_URL }}; \
+        chmod +x ../../tools/appimagetool; \
+    fi
+
+prepare:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [ ! -d {{ FLUTTER_BUILD_DIR }} ]; then
+        echo "Error: Build dir not found. Run 'just build' first."
+        exit 1
+    fi
+
+    tmpdir="$(mktemp -d)"
+    echo "Building AppDir in: $tmpdir"
+
+    mkdir -p "$tmpdir/usr/bin"
+    mkdir -p "$tmpdir/usr/share/applications"
+    mkdir -p "$tmpdir/usr/share/icons/hicolor/256x256/apps"
+
+    cp -r {{ FLUTTER_BUILD_DIR }}/* "$tmpdir/usr/bin/"
+
+    cp {{ ICON_FILE }} "$tmpdir/usr/share/icons/hicolor/256x256/apps/{{ BINARY_NAME }}.png"
+    cp {{ DESKTOP_FILE }} "$tmpdir/usr/share/applications/{{ APP_NAME }}.desktop"
+
+    cat > "$tmpdir/AppRun" <<EOF
+    #!/bin/bash
+    HERE="\$(dirname "\$(readlink -f "\$0")")"
+    export LD_LIBRARY_PATH="\$HERE/usr/bin/lib:\$LD_LIBRARY_PATH"
+    exec "\$HERE/usr/bin/{{ BINARY_NAME }}" "\$@"
+    EOF
+
+    chmod +x "$tmpdir/AppRun"
+
+    echo "$tmpdir" > .appdir_path
+
+bundle:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    tmpdir="$(cat .appdir_path)"
+
+    # export PATH="$PWD/tools:$PATH"
+    export NO_STRIP=true
+
+    ../../tools/linuxdeploy \
+        --appdir "$tmpdir" \
+        --executable "$tmpdir/usr/bin/{{ BINARY_NAME }}" \
+        --desktop-file "$tmpdir/usr/share/applications/{{ APP_NAME }}.desktop" \
+        --icon-file "$tmpdir/usr/share/icons/hicolor/256x256/apps/{{ BINARY_NAME }}.png"
+
+    rm -rf "$tmpdir/usr/lib"
+    mkdir -p "$tmpdir/usr/lib"
+
+build-appimage: setup-tools prepare bundle
+    #!/usr/bin/env bash
+    set -euo pipefail
+    tmpdir="$(cat .appdir_path)"
+    mkdir -p ../../dist
+
+    ARCH=x86_64 ../../tools/appimagetool "$tmpdir" "../../dist/{{ APP_NAME }}-{{ VERSION }}-linux-x64.AppImage"
+
+    rm -rf "$tmpdir" .appdir_path
+    echo "Done! AppImage created in dist/"

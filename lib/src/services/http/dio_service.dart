@@ -6,41 +6,21 @@ import 'package:network_logger/network_logger.dart';
 import 'package:sentry_dio/sentry_dio.dart';
 import 'package:dio/dio.dart';
 
-import '../../constants/config.dart';
 import '../../data/repositories/http_service.dart';
+import '../../constants/config.dart';
 import '../../utils/app_utils.dart';
 
-import 'interceptors/request_interceptor.dart';
 import 'interceptors/refresh_token_interceptor.dart';
+import 'interceptors/request_interceptor.dart';
 
 class DioHttpService implements HttpService {
   /// Creates new instance of [DioHttpService]
   DioHttpService() {
     dio = Dio(baseOptions);
 
-    // if (AppUtils.instance.hasGoogleServices) {
-    //   dio.httpClientAdapter = NativeAdapter(
-    //     createCronetEngine: () {
-    //       return CronetEngine.build(
-    //         enableHttp2: true,
-    //         enableBrotli: true,
-    //         cacheMode: CacheMode.memory,
-    //         cacheMaxSize: 5 * 1024 * 1024,
-    //         userAgent: AppUtils.instance.userAgent,
-    //       );
-    //     },
-    //   );
-    // } else {
-    //   dio.httpClientAdapter = Http2Adapter(
-    //     ConnectionManager(
-    //       idleTimeout: const Duration(seconds: 10),
-    //     ),
-    //   );
-    // }
-
     dio.httpClientAdapter = Http2Adapter(
       ConnectionManager(
-        idleTimeout: const Duration(seconds: 10),
+        idleTimeout: const Duration(seconds: 15),
       ),
     );
 

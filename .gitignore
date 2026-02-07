@@ -37,6 +37,8 @@ secrets.json
 .pub-cache/
 .pub/
 /build/
+/dist/
+/tools/
 
 /lib/kodik/
 /lib/anilibria/
